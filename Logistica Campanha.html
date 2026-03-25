@@ -653,7 +653,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
             </div>
             <div>
                 <label style="font-size:0.72rem;color:var(--text2);display:block;margin-bottom:3px;">Função</label>
-                <select id="membroFuncao">
+                <select id="membroFuncao" onchange="toggleMembroOutro()">
                     <option>Distribuidor</option>
                     <option>Panfleteiro</option>
                     <option>Bandeireiro</option>
@@ -662,13 +662,17 @@ tr:hover td { background:rgba(59,130,246,0.05); }
                     <option>Apoio Geral</option>
                     <option>Segurança</option>
                     <option>Fotógrafo/Filmagem</option>
-                    <option>Outro</option>
+                    <option value="__outro__">Outro (especificar)</option>
                 </select>
             </div>
             <div>
                 <label style="font-size:0.72rem;color:transparent;display:block;margin-bottom:3px;">.</label>
                 <button class="btn btn-primary" style="padding:8px 14px;font-size:0.82rem;white-space:nowrap;" onclick="addMembro()">+ Adicionar</button>
             </div>
+        </div>
+        <div id="membroOutroDiv" style="display:none;margin-top:8px;">
+            <label style="font-size:0.72rem;color:var(--text2);display:block;margin-bottom:3px;">Especifique a função:</label>
+            <input type="text" id="membroFuncaoOutro" placeholder="Digite a função personalizada..." style="padding:8px 10px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.82rem;width:100%;">
         </div>
     </div>
 
@@ -1221,6 +1225,18 @@ function openModalMembros(equipeId) {
     document.getElementById('modalMembros').classList.add('show');
 }
 
+function toggleMembroOutro() {
+    var sel = document.getElementById('membroFuncao');
+    var div = document.getElementById('membroOutroDiv');
+    if (sel.value === '__outro__') {
+        div.style.display = 'block';
+        document.getElementById('membroFuncaoOutro').focus();
+    } else {
+        div.style.display = 'none';
+        document.getElementById('membroFuncaoOutro').value = '';
+    }
+}
+
 function addMembro() {
     var equipeId = parseInt(document.getElementById('membrosEquipeId').value);
     var nome = document.getElementById('membroNome').value.trim();
@@ -1228,15 +1244,24 @@ function addMembro() {
     var e = DATA.equipe.find(function(x) { return x.id == equipeId; });
     if (!e) return;
     if (!e.membros) e.membros = [];
+    var funcaoSel = document.getElementById('membroFuncao').value;
+    var funcao = funcaoSel;
+    if (funcaoSel === '__outro__') {
+        funcao = document.getElementById('membroFuncaoOutro').value.trim();
+        if (!funcao) return alert('Preencha a função personalizada.');
+    }
     e.membros.push({
         id: Date.now(),
         nome: nome,
         tel: document.getElementById('membroTel').value.trim(),
-        funcao: document.getElementById('membroFuncao').value
+        funcao: funcao
     });
     saveData();
     document.getElementById('membroNome').value = '';
     document.getElementById('membroTel').value = '';
+    document.getElementById('membroFuncao').value = 'Distribuidor';
+    document.getElementById('membroFuncaoOutro').value = '';
+    document.getElementById('membroOutroDiv').style.display = 'none';
     renderMembros(equipeId);
     renderEquipe();
 }
