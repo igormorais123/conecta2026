@@ -610,7 +610,11 @@ tr:hover td { background:rgba(59,130,246,0.05); }
     <div class="form-group"><label>Coordenador de Equipe</label><input type="text" id="eqChefe" placeholder="Nome do coordenador responsável pela equipe"></div>
     <div class="grid-2">
         <div class="form-group"><label>Função</label>
-            <select id="eqFuncao"><option>Distribuidor</option><option>Credenciamento/QR Code</option><option>Motorista</option><option>Apoio Geral</option><option>Coordenador Regional</option></select>
+            <select id="eqFuncao" onchange="toggleEqFuncaoOutro()">
+                <option>Distribuidor</option><option>Credenciamento/QR Code</option><option>Motorista</option><option>Apoio Geral</option><option>Coordenador Regional</option>
+                <option value="__outro__">Outro (especificar)</option>
+            </select>
+            <input type="text" id="eqFuncaoOutro" placeholder="Digite a função personalizada..." style="display:none;margin-top:6px;padding:8px 10px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.82rem;width:100%;">
         </div>
         <div class="form-group"><label>Telefone</label><input type="text" id="eqTel"></div>
     </div>
@@ -1133,14 +1137,37 @@ function delFornecedor(id) {
 }
 
 // ==================== EQUIPE ====================
+function toggleEqFuncaoOutro() {
+    var sel = document.getElementById('eqFuncao');
+    var input = document.getElementById('eqFuncaoOutro');
+    if (sel.value === '__outro__') {
+        input.style.display = 'block';
+        input.focus();
+    } else {
+        input.style.display = 'none';
+        input.value = '';
+    }
+}
+
 function openModalEquipe(id) {
     document.getElementById('eqEditId').value = id || '';
+    document.getElementById('eqFuncaoOutro').style.display = 'none';
+    document.getElementById('eqFuncaoOutro').value = '';
     if (id) {
         var e = DATA.equipe.find(function(x) { return x.id == id; });
         if (e) {
             document.getElementById('eqChefe').value = e.chefe || '';
             document.getElementById('eqNome').value = e.nome;
-            document.getElementById('eqFuncao').value = e.funcao;
+            // Verificar se a função é personalizada
+            var sel = document.getElementById('eqFuncao');
+            var opcaoExiste = Array.from(sel.options).some(function(o) { return o.value === e.funcao; });
+            if (opcaoExiste) {
+                sel.value = e.funcao;
+            } else {
+                sel.value = '__outro__';
+                document.getElementById('eqFuncaoOutro').value = e.funcao;
+                document.getElementById('eqFuncaoOutro').style.display = 'block';
+            }
             document.getElementById('eqTel').value = e.tel;
             document.getElementById('eqRegiao').value = e.regiao;
             document.getElementById('eqMat').value = e.materiais;
@@ -1148,6 +1175,7 @@ function openModalEquipe(id) {
         }
     } else {
         ['eqChefe','eqNome','eqTel','eqRegiao','eqMat','eqAtribuicoes'].forEach(function(x) { document.getElementById(x).value = ''; });
+        document.getElementById('eqFuncao').value = 'Distribuidor';
     }
     document.getElementById('modalEquipe').classList.add('show');
 }
@@ -1156,9 +1184,15 @@ function saveEquipe() {
     var nome = document.getElementById('eqNome').value.trim();
     if (!nome) return alert('Preencha o nome.');
     var editId = document.getElementById('eqEditId').value;
+    var funcaoSel = document.getElementById('eqFuncao').value;
+    var funcao = funcaoSel;
+    if (funcaoSel === '__outro__') {
+        funcao = document.getElementById('eqFuncaoOutro').value.trim();
+        if (!funcao) return alert('Preencha a função personalizada.');
+    }
     var obj = {
         chefe: document.getElementById('eqChefe').value.trim(),
-        nome: nome, funcao: document.getElementById('eqFuncao').value,
+        nome: nome, funcao: funcao,
         tel: document.getElementById('eqTel').value.trim(),
         regiao: document.getElementById('eqRegiao').value.trim(),
         materiais: document.getElementById('eqMat').value.trim(),
