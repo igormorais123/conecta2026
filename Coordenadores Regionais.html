@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coordenadores Regionais - Campanha Celina</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 20px;
+        }
+        h1 {
+            color: #fff;
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .subtitulo {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1000px;
+            width: 100%;
+        }
+        .card {
+            background: #fff;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.35);
+        }
+        .card-header {
+            padding: 14px 20px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card-header .icone {
+            font-size: 1.2rem;
+        }
+        .card-body {
+            padding: 20px;
+        }
+        .nome {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+        .telefone {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.05rem;
+            color: #334155;
+            background: #f1f5f9;
+            padding: 10px 14px;
+            border-radius: 8px;
+        }
+        .telefone .tel-icon {
+            font-size: 1.1rem;
+        }
+        .telefone a {
+            color: #334155;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .telefone a:hover {
+            color: #2563eb;
+            text-decoration: underline;
+        }
+        .nao-encontrado {
+            color: #dc2626;
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+
+        /* Cores por regiao */
+        .norte .card-header { background: linear-gradient(135deg, #059669, #10b981); }
+        .sul .card-header { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .leste .card-header { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .oeste .card-header { background: linear-gradient(135deg, #7c3aed, #8b5cf6); }
+        .ceiporsol .card-header { background: linear-gradient(135deg, #dc2626, #ef4444); }
+        .entorno .card-header { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+
+        .rodape {
+            margin-top: 40px;
+            color: #64748b;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        @media print {
+            body {
+                background: #fff;
+                padding: 10px;
+            }
+            h1 { color: #000; }
+            .subtitulo { color: #555; }
+            .card { box-shadow: 0 0 0 1px #ccc; break-inside: avoid; }
+            .card:hover { transform: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Coordenadores Regionais</h1>
+    <p class="subtitulo">Campanha Celina &mdash; Contatos das Subcoordenadorias de Mobiliza&ccedil;&atilde;o</p>
+
+    <div class="grid">
+
+        <!-- REGIAO NORTE -->
+        <div class="card norte">
+            <div class="card-header">
+                <span class="icone">&#127757;</span> Regi&atilde;o Norte
+            </div>
+            <div class="card-body">
+                <div class="nome">Estev&atilde;o Reis</div>
+                <div class="telefone">
+                    <span class="tel-icon">&#128222;</span>
+                    <a href="tel:+5561992857514">(61) 99285-7514</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- REGIAO SUL -->
+        <div class="card sul">
+            <div class="card-header">
+                <span class="icone">&#127757;</span> Regi&atilde;o Sul
+            </div>
+            <div class="card-body">
+                <div class="nome">Fabinho</div>
+                <div class="telefone">
+                    <span class="tel-icon">&#128222;</span>
+                    <a href="tel:+5561984254075">(61) 98425-4075</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- REGIAO LESTE -->
+        <div class="card leste">
+            <div class="card-header">
+                <span class="icone">&#127757;</span> Regi&atilde;o Leste
+            </div>
+            <div class="card-body">
+                <div class="nome">Rosil Alves</div>
+                <div class="telefone">
+                    <span class="tel-icon">&#128222;</span>
+                    <a href="tel:+5561993028885">(61) 99302-8885</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- REGIAO OESTE -->
+        <div class="card oeste">
+            <div class="card-header">
+                <span class="icone">&#127757;</span> Regi&atilde;o Oeste
+            </div>
+            <div class="card-body">
+                <div class="nome">Renato Santana</div>
+                <div class="telefone">
+                    <span class="tel-icon">&#128222;</span>
+                    <a href="tel:+5561991305758">(61) 99130-5758</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- REGIAO CEIPORSOL -->
+        <div class="card ceiporsol">
+            <div class="card-header">
+                <span class="icone">&#127757;</span> Regi&atilde;o Ceiporsol
+            </div>
+            <div class="card-body">
+                <div class="nome">M&aacute;rcio Silva</div>
+                <div class="telefone">
+                    <span class="tel-icon">&#128222;</span>
+                    <a href="tel:+5561984963088">(61) 98496-3088</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- REGIAO ENTORNO -->
+        <div class="card entorno">
+            <div class="card-header">
+                <span class="icone">&#127757;</span> Regi&atilde;o Entorno
+            </div>
+            <div class="card-body">
+                <div class="nome">Regina L&uacute;cia Araujo Soares</div>
+                <div class="telefone">
+                    <span class="tel-icon">&#128222;</span>
+                    <a href="tel:+5561986233536">(61) 98623-3536</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <p class="rodape">Atualizado em 22/03/2026 &bull; Dados extra&iacute;dos do sistema CONECTA</p>
+
+</body>
+</html>

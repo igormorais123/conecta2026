@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cadastro de Apoiador - Celina Leão</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --azul: #1B3A5C;
+            --azul-claro: #2A5A8C;
+            --dourado: #D4A843;
+            --dourado-claro: #E8C96A;
+            --bg: #F5F5F0;
+            --texto: #333;
+            --erro: #D32F2F;
+            --sucesso: #2E7D32;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--texto);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--azul) 0%, var(--azul-claro) 100%);
+            padding: 24px 20px;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--dourado), var(--dourado-claro), var(--dourado));
+        }
+
+        .header-iniciais {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 56px;
+            height: 56px;
+            border: 2px solid var(--dourado);
+            border-radius: 50%;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--dourado);
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .header p {
+            font-size: 13px;
+            opacity: 0.85;
+            font-weight: 400;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px 16px 40px;
+        }
+
+        .intro {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--dourado);
+            font-size: 14px;
+            line-height: 1.5;
+            color: #555;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--azul);
+            margin-bottom: 6px;
+        }
+
+        label .obrigatorio {
+            color: var(--erro);
+            margin-left: 2px;
+        }
+
+        label .opcional {
+            color: #999;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 4px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #DDD;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+            background: white;
+            color: var(--texto);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 40px;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--azul);
+            box-shadow: 0 0 0 3px rgba(27, 58, 92, 0.12);
+        }
+
+        input.erro, select.erro {
+            border-color: var(--erro);
+            box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+        }
+
+        .erro-msg {
+            color: var(--erro);
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .erro-msg.visivel {
+            display: block;
+        }
+
+        .instagram-wrapper {
+            position: relative;
+        }
+
+        .instagram-wrapper .prefixo {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 16px;
+            pointer-events: none;
+        }
+
+        .instagram-wrapper input {
+            padding-left: 32px;
+        }
+
+        /* Checkbox LGPD */
+        .lgpd-box {
+            background: white;
+            border: 2px solid #DDD;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+            transition: border-color 0.2s;
+        }
+
+        .lgpd-box.erro {
+            border-color: var(--erro);
+        }
+
+        .lgpd-titulo {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--azul);
+            margin-bottom: 10px;
+        }
+
+        .lgpd-texto {
+            font-size: 12px;
+            line-height: 1.6;
+            color: #666;
+            margin-bottom: 14px;
+            max-height: 120px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        .lgpd-check {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .lgpd-check input[type="checkbox"] {
+            width: 22px;
+            height: 22px;
+            min-width: 22px;
+            margin-top: 1px;
+            accent-color: var(--azul);
+            cursor: pointer;
+        }
+
+        .lgpd-check span {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--texto);
+            line-height: 1.4;
+        }
+
+        .btn-enviar {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--dourado) 0%, var(--dourado-claro) 100%);
+            border: none;
+            border-radius: 12px;
+            color: var(--azul);
+            font-size: 17px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+            box-shadow: 0 4px 12px rgba(212, 168, 67, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-enviar:active {
+            transform: scale(0.98);
+        }
+
+        .btn-enviar:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-enviar svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Tela de sucesso */
+        .tela-sucesso {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .tela-sucesso.ativa {
+            display: block;
+        }
+
+        .sucesso-icone {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--sucesso), #43A047);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .sucesso-icone svg {
+            width: 40px;
+            height: 40px;
+            fill: white;
+        }
+
+        .tela-sucesso h2 {
+            color: var(--sucesso);
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+
+        .tela-sucesso .msg-sucesso {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .resumo {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: left;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+
+        .resumo h3 {
+            font-size: 14px;
+            color: var(--azul);
+            margin-bottom: 10px;
+        }
+
+        .resumo .item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+        }
+
+        .resumo .item:last-child { border-bottom: none; }
+        .resumo .item .rotulo { color: #888; }
+        .resumo .item .valor { color: var(--texto); font-weight: 500; text-align: right; max-width: 60%; word-break: break-word; }
+
+        .btn-novo {
+            width: 100%;
+            padding: 14px;
+            background: white;
+            border: 2px solid var(--azul);
+            border-radius: 12px;
+            color: var(--azul);
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        .form-container.oculto { display: none; }
+
+        /* Loading spinner */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(27, 58, 92, 0.2);
+            border-top-color: var(--azul);
+            border-radius: 50%;
+            animation: girar 0.8s linear infinite;
+        }
+
+        @keyframes girar { to { transform: rotate(360deg); } }
+
+        /* Responsividade extra */
+        @media (max-width: 360px) {
+            .header h1 { font-size: 18px; }
+            .container { padding: 16px 12px 32px; }
+            input, select { padding: 12px 14px; font-size: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="header-iniciais">CL</div>
+    <h1>Celina Leão</h1>
+    <p>Governadora do Distrito Federal</p>
+</div>
+
+<div class="container">
+    <!-- FORMULARIO -->
+    <div class="form-container" id="formContainer">
+        <div class="intro">
+            Cadastre-se para receber novidades e participar das ações do nosso mandato. Seus dados estão protegidos.
+        </div>
+
+        <form id="formCadastro" novalidate>
+            <div class="form-group">
+                <label for="nome">Nome completo <span class="obrigatorio">*</span></label>
+                <input type="text" id="nome" name="nome" autocomplete="name" placeholder="Seu nome completo" required>
+                <div class="erro-msg" id="erroNome">Informe seu nome completo</div>
+            </div>
+
+            <div class="form-group">
+                <label for="telefone">Telefone / WhatsApp <span class="obrigatorio">*</span></label>
+                <input type="tel" id="telefone" name="telefone" autocomplete="tel" placeholder="(61) 99999-9999" required>
+                <div class="erro-msg" id="erroTelefone">Informe um telefone válido com DDD</div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">E-mail <span class="opcional">(opcional)</span></label>
+                <input type="email" id="email" name="email" autocomplete="email" placeholder="seu@email.com">
+                <div class="erro-msg" id="erroEmail">Informe um e-mail válido</div>
+            </div>
+
+            <div class="form-group">
+                <label for="cidade">Cidade / RA onde mora <span class="obrigatorio">*</span></label>
+                <select id="cidade" name="cidade" required>
+                    <option value="">Selecione sua cidade/RA</option>
+                    <option value="Águas Claras">Águas Claras</option>
+                    <option value="Arniqueira">Arniqueira</option>
+                    <option value="Brazlândia">Brazlândia</option>
+                    <option value="Candangolândia">Candangolândia</option>
+                    <option value="Ceilândia">Ceilândia</option>
+                    <option value="Cruzeiro">Cruzeiro</option>
+                    <option value="Fercal">Fercal</option>
+                    <option value="Gama">Gama</option>
+                    <option value="Guará">Guará</option>
+                    <option value="Itapoã">Itapoã</option>
+                    <option value="Jardim Botânico">Jardim Botânico</option>
+                    <option value="Lago Norte">Lago Norte</option>
+                    <option value="Lago Sul">Lago Sul</option>
+                    <option value="Núcleo Bandeirante">Núcleo Bandeirante</option>
+                    <option value="Paranoá">Paranoá</option>
+                    <option value="Park Way">Park Way</option>
+                    <option value="Planaltina">Planaltina</option>
+                    <option value="Plano Piloto">Plano Piloto</option>
+                    <option value="Recanto das Emas">Recanto das Emas</option>
+                    <option value="Riacho Fundo">Riacho Fundo</option>
+                    <option value="Riacho Fundo II">Riacho Fundo II</option>
+                    <option value="Samambaia">Samambaia</option>
+                    <option value="Santa Maria">Santa Maria</option>
+                    <option value="São Sebastião">São Sebastião</option>
+                    <option value="SIA">SIA</option>
+                    <option value="SCIA/Estrutural">SCIA/Estrutural</option>
+                    <option value="Sobradinho">Sobradinho</option>
+                    <option value="Sobradinho II">Sobradinho II</option>
+                    <option value="Sol Nascente/Pôr do Sol">Sol Nascente/Pôr do Sol</option>
+                    <option value="Sudoeste/Octogonal">Sudoeste/Octogonal</option>
+                    <option value="Taguatinga">Taguatinga</option>
+                    <option value="Varjão">Varjão</option>
+                    <option value="Vicente Pires">Vicente Pires</option>
+                    <option value="Entorno/GO">Entorno/GO</option>
+                    <option value="Outro">Outro</option>
+                </select>
+                <div class="erro-msg" id="erroCidade">Selecione sua cidade/RA</div>
+            </div>
+
+            <div class="form-group">
+                <label for="instagram">Instagram <span class="opcional">(opcional)</span></label>
+                <div class="instagram-wrapper">
+                    <span class="prefixo">@</span>
+                    <input type="text" id="instagram" name="instagram" placeholder="seuusuario" autocomplete="off" autocapitalize="none">
+                </div>
+            </div>
+
+            <div class="lgpd-box" id="lgpdBox">
+                <div class="lgpd-titulo">Termo de Consentimento - LGPD</div>
+                <div class="lgpd-texto">
+                    Em conformidade com a Lei Geral de Proteção de Dados Pessoais (Lei nº 13.709/2018),
+                    declaro que autorizo a coleta e o tratamento dos meus dados pessoais aqui fornecidos
+                    para as seguintes finalidades: comunicação sobre ações, projetos e eventos relacionados
+                    ao mandato da Governadora Celina Leão; envio de informativos e convites por WhatsApp,
+                    e-mail ou redes sociais; organização interna de contatos de apoiadores.
+                    <br><br>
+                    Seus dados serão tratados com sigilo e não serão compartilhados com terceiros para
+                    fins comerciais. Você poderá solicitar a exclusão dos seus dados a qualquer momento
+                    entrando em contato pelo mesmo canal utilizado para o cadastro.
+                </div>
+                <label class="lgpd-check">
+                    <input type="checkbox" id="lgpdAceite" name="lgpdAceite" required>
+                    <span>Li e concordo com o Termo de Consentimento acima</span>
+                </label>
+                <div class="erro-msg" id="erroLgpd">Você precisa aceitar o termo para continuar</div>
+            </div>
+
+            <button type="submit" class="btn-enviar" id="btnEnviar">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                Enviar Cadastro
+            </button>
+        </form>
+    </div>
+
+    <!-- TELA DE SUCESSO -->
+    <div class="tela-sucesso" id="telaSucesso">
+        <div class="sucesso-icone">
+            <svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+        </div>
+        <h2>Cadastro realizado!</h2>
+        <p class="msg-sucesso" id="msgSucesso">Seus dados foram salvos com sucesso. Obrigada pelo cadastro!</p>
+
+        <div class="resumo" id="resumo"></div>
+
+        <button class="btn-novo" onclick="novoCadastro()">Fazer novo cadastro</button>
+    </div>
+</div>
+
+<script>
+// ===== MASCARA DE TELEFONE =====
+var telInput = document.getElementById('telefone');
+telInput.addEventListener('input', function() {
+    var v = this.value.replace(/\D/g, '');
+    if (v.length > 11) v = v.slice(0, 11);
+    if (v.length > 6) {
+        this.value = '(' + v.slice(0,2) + ') ' + v.slice(2,7) + '-' + v.slice(7);
+    } else if (v.length > 2) {
+        this.value = '(' + v.slice(0,2) + ') ' + v.slice(2);
+    } else if (v.length > 0) {
+        this.value = '(' + v;
+    }
+});
+
+// ===== VALIDACAO =====
+function validar() {
+    var ok = true;
+
+    var nome = document.getElementById('nome');
+    var telefone = document.getElementById('telefone');
+    var email = document.getElementById('email');
+    var cidade = document.getElementById('cidade');
+    var lgpd = document.getElementById('lgpdAceite');
+
+    // Limpar erros
+    document.querySelectorAll('.erro').forEach(function(el) { el.classList.remove('erro'); });
+    document.querySelectorAll('.erro-msg').forEach(function(el) { el.classList.remove('visivel'); });
+
+    if (!nome.value.trim() || nome.value.trim().length < 3) {
+        nome.classList.add('erro');
+        document.getElementById('erroNome').classList.add('visivel');
+        ok = false;
+    }
+
+    var telDigitos = telefone.value.replace(/\D/g, '');
+    if (telDigitos.length < 10 || telDigitos.length > 11) {
+        telefone.classList.add('erro');
+        document.getElementById('erroTelefone').classList.add('visivel');
+        ok = false;
+    }
+
+    if (email.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
+        email.classList.add('erro');
+        document.getElementById('erroEmail').classList.add('visivel');
+        ok = false;
+    }
+
+    if (!cidade.value) {
+        cidade.classList.add('erro');
+        document.getElementById('erroCidade').classList.add('visivel');
+        ok = false;
+    }
+
+    if (!lgpd.checked) {
+        document.getElementById('lgpdBox').classList.add('erro');
+        document.getElementById('erroLgpd').classList.add('visivel');
+        ok = false;
+    }
+
+    return ok;
+}
+
+// ===== DADOS DO FORMULARIO =====
+var dadosEnviados = null;
+
+function coletarDados() {
+    var ig = document.getElementById('instagram').value.trim().replace(/^@/, '');
+    return {
+        nome: document.getElementById('nome').value.trim(),
+        telefone: document.getElementById('telefone').value.trim(),
+        telefoneNumeros: document.getElementById('telefone').value.replace(/\D/g, ''),
+        email: document.getElementById('email').value.trim() || '',
+        cidade: document.getElementById('cidade').value,
+        instagram: ig ? '@' + ig : '',
+        lgpdAceite: true,
+        dataHora: new Date().toISOString(),
+        dataFormatada: new Date().toLocaleString('pt-BR')
+    };
+}
+
+// ===== ENVIO =====
+document.getElementById('formCadastro').addEventListener('submit', function(e) {
+    e.preventDefault();
+    if (!validar()) {
+        var primeiroErro = document.querySelector('.erro');
+        if (primeiroErro) primeiroErro.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+    }
+
+    var btn = document.getElementById('btnEnviar');
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner"></div> Enviando...';
+
+    dadosEnviados = coletarDados();
+
+    // Construir URL da API relativa ao servidor que serviu esta pagina
+    var apiUrl = window.location.origin + '/api/cadastros';
+
+    fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dadosEnviados)
+    })
+    .then(function(response) {
+        if (!response.ok) throw new Error('Erro no servidor');
+        return response.json();
+    })
+    .then(function(data) {
+        mostrarSucesso(true);
+    })
+    .catch(function(err) {
+        // Servidor indisponivel - salvar localmente como fallback
+        console.log('Servidor indisponivel, dados apenas em tela:', err.message);
+        mostrarSucesso(false);
+    });
+});
+
+function mostrarSucesso(salvoNoServidor) {
+    document.getElementById('formContainer').classList.add('oculto');
+    var tela = document.getElementById('telaSucesso');
+    tela.classList.add('ativa');
+
+    if (salvoNoServidor) {
+        document.getElementById('msgSucesso').textContent = 'Seus dados foram salvos com sucesso. Obrigada pelo cadastro!';
+    } else {
+        document.getElementById('msgSucesso').textContent = 'Cadastro registrado! (Servidor local indisponível - dados exibidos abaixo para registro manual)';
+    }
+
+    // Resumo
+    var resumo = document.getElementById('resumo');
+    var html = '<h3>Seus dados</h3>';
+    html += '<div class="item"><span class="rotulo">Nome</span><span class="valor">' + dadosEnviados.nome + '</span></div>';
+    html += '<div class="item"><span class="rotulo">Telefone</span><span class="valor">' + dadosEnviados.telefone + '</span></div>';
+    if (dadosEnviados.email) {
+        html += '<div class="item"><span class="rotulo">E-mail</span><span class="valor">' + dadosEnviados.email + '</span></div>';
+    }
+    html += '<div class="item"><span class="rotulo">Cidade/RA</span><span class="valor">' + dadosEnviados.cidade + '</span></div>';
+    if (dadosEnviados.instagram) {
+        html += '<div class="item"><span class="rotulo">Instagram</span><span class="valor">' + dadosEnviados.instagram + '</span></div>';
+    }
+    resumo.innerHTML = html;
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ===== NOVO CADASTRO =====
+function novoCadastro() {
+    document.getElementById('formCadastro').reset();
+    document.getElementById('formContainer').classList.remove('oculto');
+    document.getElementById('telaSucesso').classList.remove('ativa');
+    var btn = document.getElementById('btnEnviar');
+    btn.disabled = false;
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg> Enviar Cadastro';
+    dadosEnviados = null;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ===== REMOVER ERRO AO DIGITAR =====
+document.querySelectorAll('input, select').forEach(function(el) {
+    el.addEventListener('input', function() {
+        this.classList.remove('erro');
+        var erroMsg = this.parentElement.querySelector('.erro-msg');
+        if (erroMsg) erroMsg.classList.remove('visivel');
+    });
+});
+
+document.getElementById('lgpdAceite').addEventListener('change', function() {
+    document.getElementById('lgpdBox').classList.remove('erro');
+    document.getElementById('erroLgpd').classList.remove('visivel');
+});
+</script>
+
+</body>
+</html>

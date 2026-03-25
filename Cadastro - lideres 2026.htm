@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<title>Cadastro - Valdelino Barcelos 2026</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;background:#1a3a2a;min-height:100vh;padding:10px;color:#222}
+.ct{max-width:500px;margin:0 auto;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,.3)}
+.hd{background:linear-gradient(135deg,#1B5E20,#2E7D32);color:#fff;padding:20px;text-align:center}
+.hd h1{font-size:20px;letter-spacing:1px}
+.hd p{font-size:14px;opacity:.9;margin-top:4px}
+.hd small{font-size:12px;opacity:.7;display:block;margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,.25)}
+.bd{padding:16px}
+.sc{margin-bottom:16px;border:1px solid #ddd;border-radius:10px;overflow:hidden}
+.st{background:#E8F5E9;padding:8px 12px;font-weight:700;font-size:13px;color:#1B5E20}
+.si{padding:12px}
+.lb{display:block;font-size:12px;font-weight:600;color:#666;margin-bottom:4px}
+.ip{width:100%;padding:10px;border:2px solid #ddd;border-radius:8px;font-size:16px;background:#fafafa;margin-bottom:10px;text-transform:uppercase;color:#222;-webkit-appearance:none;appearance:none}
+.ip:focus{outline:none;border-color:#2E7D32;background:#fff}
+.ip::placeholder{text-transform:none;color:#aaa}
+.dr{display:flex;gap:6px;align-items:center;margin-bottom:10px}
+.dr select{flex:1;padding:10px 4px;border:2px solid #ddd;border-radius:8px;font-size:16px;background:#fafafa;text-align:center;-webkit-appearance:none;appearance:none;color:#222}
+.dr select:focus{outline:none;border-color:#2E7D32}
+.dr b{color:#999;font-size:16px}
+.er{color:#e53935;font-size:12px;margin-bottom:8px;display:none}
+
+/* OPCOES NATIVAS - funciona sem JavaScript */
+.opts input[type="radio"],
+.opts input[type="checkbox"]{display:none}
+.opts label{display:block;padding:11px 12px 11px 44px;border:2px solid #e0e0e0;border-radius:8px;margin-bottom:6px;cursor:pointer;font-size:14px;position:relative;min-height:44px;line-height:22px;-webkit-tap-highlight-color:rgba(0,0,0,0)}
+.opts label:active{background:#f0f9f0}
+.opts label .bx{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:22px;height:22px;border:2px solid #bbb;border-radius:4px;text-align:center;line-height:18px;font-size:14px;font-weight:700;color:transparent;transition:all .15s}
+.opts label.rd .bx{border-radius:50%}
+.opts input[type="radio"]:checked+label,
+.opts input[type="checkbox"]:checked+label{background:#E8F5E9;border-color:#2E7D32;font-weight:600}
+.opts input[type="radio"]:checked+label .bx,
+.opts input[type="checkbox"]:checked+label .bx{background:#2E7D32;border-color:#2E7D32;color:#fff}
+
+.ot{display:flex;align-items:center;gap:6px;padding:6px 12px;border:2px solid #e0e0e0;border-radius:8px;margin-bottom:6px;font-size:13px}
+.ot input{flex:1;border:none;border-bottom:2px solid #ddd;padding:6px 4px;font-size:16px;background:transparent;text-transform:uppercase;color:#222}
+.ot input:focus{outline:none;border-bottom-color:#2E7D32}
+.ot input::placeholder{text-transform:none}
+
+/* LGPD */
+.lg{border:2px solid #C8E6C9;border-radius:10px;padding:14px;margin-bottom:14px;background:#f9fff9}
+.lg h4{font-size:13px;color:#1B5E20;text-align:center;margin-bottom:10px}
+.lg p{font-size:11px;color:#444;line-height:1.5;margin-bottom:8px;text-align:justify}
+.lg .inc{padding-left:10px;border-left:3px solid #C8E6C9;font-size:11px;color:#444;line-height:1.5;margin-bottom:8px}
+.lg .base{font-size:10px;color:#777;text-align:center;margin-bottom:10px}
+.lgck input[type="checkbox"]{display:none}
+.lgck label{display:block;padding:11px 12px 11px 44px;border:2px solid #ddd;border-radius:8px;cursor:pointer;font-size:13px;position:relative;min-height:44px;background:#fff;line-height:1.4;-webkit-tap-highlight-color:rgba(0,0,0,0)}
+.lgck label:active{background:#f0f9f0}
+.lgck label .bx{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:24px;height:24px;border:2px solid #bbb;border-radius:4px;text-align:center;line-height:20px;font-size:14px;font-weight:700;color:transparent;transition:all .15s}
+.lgck input[type="checkbox"]:checked+label{background:#E8F5E9;border-color:#2E7D32}
+.lgck input[type="checkbox"]:checked+label .bx{background:#2E7D32;border-color:#2E7D32;color:#fff}
+.la{font-size:10px;color:#888;text-align:center;margin-top:6px}
+
+/* Botoes */
+.bt{display:block;width:100%;padding:14px;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;text-align:center;margin-bottom:8px;color:#fff;-webkit-tap-highlight-color:rgba(0,0,0,0);text-decoration:none}
+.bt:active{opacity:.85}
+.bt-wh{background:#25D366}
+.bt-em{background:#1976D2}
+.bt-cp{background:#FF6F00}
+.bt-sv{background:#5E35B1}
+.bt-vt{background:#f5f5f5;color:#555;border:2px solid #ddd}
+
+.ft{background:#f5f5f5;text-align:center;padding:10px;font-size:11px;color:#999;border-top:1px solid #eee}
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;z-index:9999;display:none;max-width:90%;text-align:center}
+
+/* Barra fixa noscript - aparece SOMENTE quando JS nao funciona */
+.nsbar{position:fixed;top:0;left:0;right:0;z-index:10000;background:#B71C1C;color:#fff;text-align:center;padding:14px 10px;font-size:14px;font-weight:700;line-height:1.8;box-shadow:0 3px 10px rgba(0,0,0,.4)}
+.nsbar a{color:#FFD54F;text-decoration:underline}
+
+/* Opcoes extras - so aparecem quando JS funciona */
+.extras{display:none;background:#f5f5f5;border-radius:10px;padding:12px;margin-top:12px}
+
+/* Info dispositivo */
+.dev-info{font-size:9px;color:#bbb;text-align:center;margin-top:4px;word-break:break-all}
+
+/* Fix para selects no iOS */
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M6 8L1 3h10z' fill='%23999'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px !important}
+</style>
+</head>
+<body>
+
+<!--
+  NOSCRIPT: Barra vermelha fixa no topo quando JS nao funciona.
+  No iPhone, arquivos HTML abertos pelo WhatsApp entram no Quick Look
+  que NAO roda JavaScript. A pessoa precisa abrir no Safari/Chrome.
+-->
+<noscript>
+<div class="nsbar">
+&#9888; PARA PREENCHER E ENVIAR:<br>
+&#128241; iPHONE: Toque no bot&#227;o &#8593; (Compartilhar) e depois em <a href="#">"Abrir no Safari"</a><br>
+&#128241; ANDROID: Toque nos 3 pontos &#8942; e depois em <a href="#">"Abrir no Chrome"</a><br>
+&#128187; COMPUTADOR: Abra este arquivo no navegador (Chrome, Edge ou Firefox)
+</div>
+<style>body{padding-top:120px !important}</style>
+</noscript>
+
+<div class="ct">
+<div class="hd">
+<div style="font-size:36px">🏛</div>
+<h1>VALDELINO BARCELOS</h1>
+<p>Pré-Candidato a Deputado Distrital</p>
+<small>Distrito Federal - 2026 | Força que vem da estrada</small>
+</div>
+<div class="bd">
+
+<!--
+  FORM: action vai para WhatsApp API direto.
+  Se JavaScript funcionar: onsubmit monta a mensagem completa e envia.
+  Se JavaScript NAO funcionar: o form envia direto para o WhatsApp com mensagem padrão.
+  Funciona nos dois cenários!
+-->
+<form id="frm" action="https://api.whatsapp.com/send" method="GET" target="_blank" onsubmit="return enviar()">
+
+<!-- Campo oculto que vai para o WhatsApp como mensagem -->
+<input type="hidden" name="text" id="msgFinal" value="CADASTRO VALDELINO 2026 - Formulário preenchido. Para ver os dados completos, peça para reenviar pelo navegador.">
+
+<!-- DADOS PESSOAIS -->
+<div class="sc"><div class="st">DADOS PESSOAIS</div><div class="si">
+
+<span class="lb">NOME COMPLETO *</span>
+<input class="ip" type="text" id="f1" required="" placeholder="Digite seu nome completo" autocomplete="name" inputmode="text">
+<div class="er" id="e1">Preencha seu nome</div>
+
+<span class="lb">TELEFONE (WHATSAPP) *</span>
+<input class="ip" type="tel" id="f2" required="" placeholder="(61) 99999-0000" autocomplete="tel" inputmode="tel">
+<div class="er" id="e2">Preencha seu telefone</div>
+
+<span class="lb">ANIVERSÁRIO (DIA E MÊS)</span>
+<div class="dr">
+<select id="f3"><option value="" selected="selected">Dia</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option><option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option><option value="29">29</option><option value="30">30</option><option value="31">31</option></select>
+<b>/</b>
+<select id="f4"><option value="" selected="selected">Mês</option><option value="01">JAN</option><option value="02">FEV</option><option value="03">MAR</option><option value="04">ABR</option><option value="05">MAI</option><option value="06">JUN</option><option value="07">JUL</option><option value="08">AGO</option><option value="09">SET</option><option value="10">OUT</option><option value="11">NOV</option><option value="12">DEZ</option></select>
+</div>
+
+<span class="lb">REGIÃO ADMINISTRATIVA</span>
+<select class="ip" id="f5">
+<option value="" selected="selected">Selecione sua RA...</option>
+<option>ÁGUAS CLARAS</option><option>ARNIQUEIRA</option><option>BRASÍLIA (PLANO PILOTO)</option>
+<option>BRAZLÂNDIA</option><option>CANDANGOLÂNDIA</option><option>CEILÂNDIA</option>
+<option>CRUZEIRO</option><option>FERCAL</option><option>GAMA</option><option>GUARÁ</option>
+<option>ITAPOÃ</option><option>JARDIM BOTÂNICO</option><option>LAGO NORTE</option>
+<option>LAGO SUL</option><option>NÚCLEO BANDEIRANTE</option><option>PARANOÁ</option>
+<option>PARK WAY</option><option>PLANALTINA</option><option>RECANTO DAS EMAS</option>
+<option>RIACHO FUNDO I</option><option>RIACHO FUNDO II</option><option>SAMAMBAIA</option>
+<option>SANTA MARIA</option><option>SÃO SEBASTIÃO</option><option>SCIA/ESTRUTURAL</option>
+<option>SIA</option><option>SOBRADINHO</option><option>SOBRADINHO II</option>
+<option>SOL NASCENTE/PÔR DO SOL</option><option>SUDOESTE/OCTOGONAL</option>
+<option>TAGUATINGA</option><option>VARJÃO</option><option>VICENTE PIRES</option>
+<option>ENTORNO - GO</option>
+</select>
+
+<span class="lb">BAIRRO / QUADRA / ENDEREÇO (opcional)</span>
+<input class="ip" type="text" id="f6" placeholder="Ex: QNM 23, Setor O, Vila..." autocomplete="street-address">
+
+</div></div>
+
+<!-- ÁREA DE ATUAÇÃO -->
+<div class="sc"><div class="st">ÁREA DE ATUAÇÃO (pode marcar várias)</div><div class="si opts">
+<input type="checkbox" id="ar1" value="CAMINHONEIRO"><label for="ar1"><span class="bx">✓</span>CAMINHONEIRO</label>
+<input type="checkbox" id="ar2" value="TAXISTA"><label for="ar2"><span class="bx">✓</span>TAXISTA</label>
+<input type="checkbox" id="ar3" value="MOTORISTA DE APP"><label for="ar3"><span class="bx">✓</span>MOTORISTA DE APP</label>
+<input type="checkbox" id="ar4" value="TRANSPORTE ESCOLAR"><label for="ar4"><span class="bx">✓</span>TRANSPORTE ESCOLAR</label>
+<input type="checkbox" id="ar5" value="EVANGÉLICO"><label for="ar5"><span class="bx">✓</span>EVANGÉLICO</label>
+<input type="checkbox" id="ar6" value="LÍDER COMUNITÁRIO"><label for="ar6"><span class="bx">✓</span>LÍDER COMUNITÁRIO</label>
+<input type="checkbox" id="ar7" value="ESTUDANTE"><label for="ar7"><span class="bx">✓</span>ESTUDANTE</label>
+<input type="checkbox" id="ar8" value="EMPRESÁRIO"><label for="ar8"><span class="bx">✓</span>EMPRESÁRIO</label>
+<input type="checkbox" id="ar9" value="SERVIDOR PÚBLICO"><label for="ar9"><span class="bx">✓</span>SERVIDOR PÚBLICO</label>
+<input type="checkbox" id="ar10" value="TRABALHADOR INFORMAL"><label for="ar10"><span class="bx">✓</span>TRABALHADOR INFORMAL</label>
+<input type="checkbox" id="ar11" value="JUVENTUDE 16-29"><label for="ar11"><span class="bx">✓</span>JUVENTUDE (16 A 29 ANOS)</label>
+<input type="checkbox" id="ar12" value="IDOSO 60+"><label for="ar12"><span class="bx">✓</span>IDOSO (60+)</label>
+<input type="checkbox" id="ar13" value="PCD"><label for="ar13"><span class="bx">✓</span>PcD</label>
+<input type="checkbox" id="ar14" value="PROTEÇÃO ANIMAL"><label for="ar14"><span class="bx">✓</span>PROTEÇÃO ANIMAL</label>
+<div class="ot">OUTROS: <input type="text" id="f8" placeholder="Especifique..."></div>
+</div></div>
+
+<!-- COMO VOCÊ SE DEFINE -->
+<div class="sc"><div class="st">COMO VOCÊ SE DEFINE?</div><div class="si opts">
+<input type="radio" name="def" id="df1" value="ACABEI DE CONHECER O VALDELINO"><label for="df1" class="rd"><span class="bx">✓</span>ACABEI DE CONHECER O VALDELINO</label>
+<input type="radio" name="def" id="df2" value="TENHO INTERESSE EM APOIAR"><label for="df2" class="rd"><span class="bx">✓</span>TENHO INTERESSE EM APOIAR</label>
+<input type="radio" name="def" id="df3" value="QUERO APOIAR A CAMPANHA"><label for="df3" class="rd"><span class="bx">✓</span>QUERO APOIAR A CAMPANHA</label>
+<input type="radio" name="def" id="df4" value="QUERO AJUDAR ATIVAMENTE"><label for="df4" class="rd"><span class="bx">✓</span>QUERO AJUDAR ATIVAMENTE</label>
+</div></div>
+
+<!-- COMO CHEGOU ATÉ NÓS -->
+<div class="sc"><div class="st">COMO CHEGOU ATÉ NÓS?</div><div class="si opts">
+<input type="radio" name="chg" id="ch1" value="AMIGO"><label for="ch1" class="rd"><span class="bx">✓</span>AMIGO</label>
+<input type="radio" name="chg" id="ch2" value="INDICAÇÃO DE FAMILIAR"><label for="ch2" class="rd"><span class="bx">✓</span>INDICAÇÃO DE FAMILIAR</label>
+<input type="radio" name="chg" id="ch3" value="EVENTO OU REUNIÃO"><label for="ch3" class="rd"><span class="bx">✓</span>EVENTO OU REUNIÃO</label>
+<input type="radio" name="chg" id="ch4" value="REDES SOCIAIS"><label for="ch4" class="rd"><span class="bx">✓</span>REDES SOCIAIS</label>
+<input type="radio" name="chg" id="ch5" value="ABORDAGEM NA RUA"><label for="ch5" class="rd"><span class="bx">✓</span>ABORDAGEM NA RUA</label>
+<input type="radio" name="chg" id="ch6" value="WHATSAPP"><label for="ch6" class="rd"><span class="bx">✓</span>WHATSAPP</label>
+<input type="radio" name="chg" id="ch7" value="IGREJA"><label for="ch7" class="rd"><span class="bx">✓</span>IGREJA</label>
+<input type="radio" name="chg" id="ch8" value="SINDICATO"><label for="ch8" class="rd"><span class="bx">✓</span>SINDICATO</label>
+<input type="radio" name="chg" id="ch9" value="CORPO A CORPO"><label for="ch9" class="rd"><span class="bx">✓</span>CORPO A CORPO</label>
+<div class="ot">OUTRO: <input type="text" id="f9" placeholder="Especifique..."></div>
+</div></div>
+
+<!-- LGPD -->
+<div class="lg">
+<h4>TERMO DE CONSENTIMENTO - LGPD</h4>
+<p>Em conformidade com a <b>Lei n.º 13.709/2018</b> (LGPD), <b>autorizo</b> que os dados pessoais aqui fornecidos sejam coletados e tratados pelo Pré-Candidato <b>Valdelino Barcelos</b>, para:</p>
+<div class="inc">
+<b>I.</b> Comunicação política e institucional;<br>
+<b>II.</b> Mobilização e campanha eleitoral;<br>
+<b>III.</b> Envio de mensagens, convites e informações;<br>
+<b>IV.</b> Banco de dados de apoiadores.
+</div>
+<p>Dados tratados com <b>sigilo</b>. O titular pode solicitar <b>acesso, correção, exclusão</b> ou <b>revogação</b> a qualquer tempo (art. 18, LGPD).</p>
+<div class="base"><b>Base legal:</b> Art. 7º, I - Lei 13.709/2018 | <b>Controlador:</b> Valdelino Barcelos</div>
+
+<div class="lgck">
+<input type="checkbox" id="lgpd" required=""><label for="lgpd"><span class="bx">✓</span><b>LI E CONCORDO.</b> Autorizo o tratamento dos meus dados pessoais conforme descrito acima.</label>
+</div>
+<div class="la">Ao enviar, você confirma consentimento livre, informado e inequívoco.</div>
+</div>
+
+<!-- Erro visivel -->
+<div id="errGlobal" style="display:none;background:#FFEBEE;border:2px solid #E53935;border-radius:10px;padding:14px;margin-bottom:12px;text-align:center;font-size:14px;color:#B71C1C;font-weight:700;line-height:1.6"></div>
+
+<!-- BOTAO ENVIAR - funciona como submit nativo do formulário -->
+<input type="submit" class="bt bt-wh" value="ENVIAR PELO WHATSAPP" style="border:none;font-size:18px;font-weight:700;color:#fff;padding:18px;-webkit-appearance:none;appearance:none">
+<div style="text-align:center;font-size:11px;color:#888;margin:-4px 0 4px">Abre o WhatsApp para você escolher o contato e enviar</div>
+
+</form>
+
+<!-- OPCOES EXTRAS - só aparecem quando JavaScript funciona -->
+<div class="extras" id="extraOpcoes" style="display: block;">
+<div style="text-align:center;font-size:12px;color:#666;margin-bottom:8px;font-weight:600">OUTRAS OPÇÕES DE ENVIO:</div>
+<a href="javascript:void(0)" class="bt bt-em" onclick="enviarEmail()">ENVIAR POR E-MAIL</a>
+<a href="javascript:void(0)" class="bt bt-cp" onclick="copiar()">COPIAR TEXTO</a>
+<a href="javascript:void(0)" class="bt bt-sv" onclick="salvarArq()">SALVAR NO APARELHO</a>
+</div>
+
+</div>
+<div class="ft">Valdelino Barcelos 2026 - Força que vem da estrada</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/*
+  CONFIGURAÇÃO DA CAMPANHA
+  Quando tiver, coloque o número e email abaixo.
+  Enquanto estiver vazio, a pessoa escolhe o contato.
+*/
+var FONE_CAMPANHA = "";   /* Ex: "5561999990000" (DDI+DDD+número, só números) */
+var EMAIL_CAMPANHA = "";  /* Ex: "contato@valdelino.com.br" */
+
+
+/* Mostrar opções extras (prova que JS está funcionando) */
+try { document.getElementById("extraOpcoes").style.display = "block"; } catch(x) {}
+
+/* Máscara telefone */
+try {
+  var telEl = document.getElementById("f2");
+  if (telEl) telEl.oninput = function() {
+    try {
+      var v = this.value.replace(/\D/g, "");
+      if (v.length > 11) v = v.substring(0, 11);
+      if (v.length > 6) v = "(" + v.substring(0,2) + ") " + v.substring(2,7) + "-" + v.substring(7);
+      else if (v.length > 2) v = "(" + v.substring(0,2) + ") " + v.substring(2);
+      else if (v.length > 0) v = "(" + v;
+      this.value = v;
+    } catch(x) {}
+  };
+} catch(x) {}
+
+function gR(name) {
+  var els = document.getElementsByName(name);
+  for (var i = 0; i < els.length; i++) { if (els[i].checked) return els[i].value; }
+  return "";
+}
+
+function gC(prefix, max) {
+  var r = [];
+  for (var i = 1; i <= max; i++) {
+    var el = document.getElementById(prefix + i);
+    if (el && el.checked) r.push(el.value);
+  }
+  return r;
+}
+
+function mostrarErro(msg) {
+  var el = document.getElementById("errGlobal");
+  if (el) { el.innerHTML = msg; el.style.display = "block"; try { el.scrollIntoView(false); } catch(x) {} }
+}
+
+function tt(m) {
+  try {
+    var t = document.getElementById("toast");
+    t.innerHTML = m; t.style.display = "block";
+    setTimeout(function() { t.style.display = "none"; }, 4000);
+  } catch(x) {}
+}
+
+/* Detectar tipo de dispositivo */
+function detectarDispositivo() {
+  try {
+    var ua = navigator.userAgent || "";
+    var plat = navigator.platform || "";
+    var tipo = "DESCONHECIDO";
+    var detalhe = "";
+
+    if (/iPhone|iPad|iPod/i.test(ua)) {
+      tipo = "iPHONE/iPAD";
+      var match = ua.match(/OS (\d+[_\.]\d+)/);
+      if (match) detalhe = " (iOS " + match[1].replace("_", ".") + ")";
+    } else if (/Android/i.test(ua)) {
+      tipo = "ANDROID";
+      var match = ua.match(/Android (\d+[\.\d]*)/);
+      if (match) detalhe = " (Android " + match[1] + ")";
+    } else if (/Windows/i.test(ua)) {
+      tipo = "COMPUTADOR WINDOWS";
+    } else if (/Macintosh|Mac OS/i.test(ua)) {
+      tipo = "COMPUTADOR MAC";
+    } else if (/Linux/i.test(ua)) {
+      tipo = "COMPUTADOR LINUX";
+    }
+
+    /* Detectar navegador */
+    var nav = "";
+    if (/CriOS/i.test(ua)) nav = "Chrome iOS";
+    else if (/FxiOS/i.test(ua)) nav = "Firefox iOS";
+    else if (/EdgiOS|Edg\//i.test(ua)) nav = "Edge";
+    else if (/OPR|Opera/i.test(ua)) nav = "Opera";
+    else if (/Chrome/i.test(ua) && !/Chromium/i.test(ua)) nav = "Chrome";
+    else if (/Safari/i.test(ua) && !/Chrome/i.test(ua)) nav = "Safari";
+    else if (/Firefox/i.test(ua)) nav = "Firefox";
+
+    var resultado = tipo + detalhe;
+    if (nav) resultado += " / " + nav;
+
+    return resultado;
+  } catch(x) {
+    return "NÃO IDENTIFICADO";
+  }
+}
+
+/* Obter data e hora formatada */
+function dataHoraAtual() {
+  try {
+    var d = new Date();
+    var dia = ("0" + d.getDate()).slice(-2);
+    var mes = ("0" + (d.getMonth() + 1)).slice(-2);
+    var ano = d.getFullYear();
+    var hor = ("0" + d.getHours()).slice(-2);
+    var min = ("0" + d.getMinutes()).slice(-2);
+    var seg = ("0" + d.getSeconds()).slice(-2);
+    return dia + "/" + mes + "/" + ano + " " + hor + ":" + min + ":" + seg;
+  } catch(x) {
+    return new Date().toLocaleString("pt-BR");
+  }
+}
+
+/* Salvar local - silencioso */
+function svLocal(d) {
+  try {
+    var s = [];
+    try { var r = localStorage.getItem("vb_cad"); if(r) s = JSON.parse(r); } catch(x) {}
+    d.dt = dataHoraAtual();
+    d.dispositivo = detectarDispositivo();
+    s.push(d);
+    try { localStorage.setItem("vb_cad", JSON.stringify(s)); } catch(x) {}
+  } catch(x) {}
+}
+
+/* Montar mensagem a partir dos campos */
+function montarMsg() {
+  var nome = (document.getElementById("f1").value || "").toUpperCase().replace(/^\s+|\s+$/g,"");
+  var tel = (document.getElementById("f2").value || "").replace(/^\s+|\s+$/g,"");
+  var dia = document.getElementById("f3").value || "";
+  var mes = document.getElementById("f4").value || "";
+  var reg = document.getElementById("f5").value || "";
+  var bai = (document.getElementById("f6").value || "").toUpperCase().replace(/^\s+|\s+$/g,"");
+  var are = gC("ar", 14);
+  var ao = (document.getElementById("f8").value || "").toUpperCase().replace(/^\s+|\s+$/g,"");
+  if (ao) are.push("OUTROS: " + ao);
+  var def = gR("def");
+  var chg = gR("chg");
+  var co = (document.getElementById("f9").value || "").toUpperCase().replace(/^\s+|\s+$/g,"");
+  if (co) chg = "OUTRO: " + co;
+
+  var MS = ["","JAN","FEV","MAR","ABR","MAI","JUN","JUL","AGO","SET","OUT","NOV","DEZ"];
+  var aniv = "";
+  if (dia && mes) { var mi = parseInt(mes, 10); if (mi > 0 && mi < 13) aniv = dia + "/" + MS[mi]; }
+
+  /* Validar */
+  document.getElementById("e1").style.display = "none";
+  document.getElementById("e2").style.display = "none";
+  document.getElementById("errGlobal").style.display = "none";
+  var ok = true;
+  if (!nome) { document.getElementById("e1").style.display = "block"; ok = false; }
+  if (!tel || tel.replace(/\D/g,"").length < 10) { document.getElementById("e2").style.display = "block"; ok = false; }
+  if (!ok) { mostrarErro("PREENCHA NOME E TELEFONE"); return null; }
+
+  var lgEl = document.getElementById("lgpd");
+  if (!lgEl || !lgEl.checked) { mostrarErro("ACEITE O TERMO LGPD PARA ENVIAR"); return null; }
+
+  /* Dados do dispositivo e data */
+  var dispositivo = detectarDispositivo();
+  var dataEnvio = dataHoraAtual();
+
+  /* Montar texto */
+  var m = "CADASTRO VALDELINO 2026\n";
+  m += "========================\n";
+  m += "NOME: " + nome + "\n";
+  m += "TEL: " + tel + "\n";
+  if (aniv) m += "ANIVERSÁRIO: " + aniv + "\n";
+  if (reg) { m += "REGIÃO: " + reg; if (bai) m += " / " + bai; m += "\n"; }
+  if (are.length > 0) m += "ÁREA: " + are.join(", ") + "\n";
+  if (def) m += "DEFINE: " + def + "\n";
+  if (chg) m += "CHEGOU: " + chg + "\n";
+  m += "========================\n";
+  m += "LGPD: AUTORIZO (LEI 13.709/18)\n";
+  m += "DATA: " + dataEnvio + "\n";
+  m += "DISPOSITIVO: " + dispositivo + "\n";
+  m += "========================\n";
+  m += "FORMULÁRIO DIGITAL VALDELINO 2026";
+
+  /* Salvar local */
+  try { svLocal({ nome:nome, tel:tel, aniv:aniv, reg:reg, bai:bai, are:are, def:def, chg:chg, lgpd:true }); } catch(x) {}
+
+  return m;
+}
+
+/*
+  ENVIAR - chamada pelo onsubmit do form.
+  Monta a mensagem e coloca no campo oculto "text".
+  Retorna TRUE para deixar o form enviar para o WhatsApp.
+  O form action="https://api.whatsapp.com/send" faz o resto.
+*/
+function enviar() {
+  try {
+    var m = montarMsg();
+    if (!m) return false; /* validação falhou - não envia */
+
+    /* Colocar mensagem no campo oculto do form */
+    document.getElementById("msgFinal").value = m;
+
+    /* Se tem telefone da campanha, adicionar ao form */
+    if (FONE_CAMPANHA) {
+      var phoneField = document.getElementById("phoneField");
+      if (!phoneField) {
+        phoneField = document.createElement("input");
+        phoneField.type = "hidden";
+        phoneField.name = "phone";
+        phoneField.id = "phoneField";
+        document.getElementById("frm").appendChild(phoneField);
+      }
+      phoneField.value = FONE_CAMPANHA;
+    }
+
+    tt("ENVIANDO...");
+
+    /* Retorna TRUE = deixa o formulário enviar para o WhatsApp normalmente */
+    return true;
+
+  } catch(erro) {
+    mostrarErro("ERRO: " + erro.message);
+    return false;
+  }
+}
+
+/* ENVIAR POR EMAIL */
+function enviarEmail() {
+  try {
+    var m = montarMsg();
+    if (!m) return;
+    var url = "mailto:" + EMAIL_CAMPANHA;
+    url += "?subject=" + encodeURIComponent("CADASTRO VALDELINO 2026");
+    url += "&body=" + encodeURIComponent(m);
+    window.location.href = url;
+  } catch(x) { mostrarErro("Erro ao abrir e-mail"); }
+}
+
+/* COPIAR TEXTO */
+function copiar() {
+  try {
+    var m = montarMsg();
+    if (!m) return;
+    /* Criar textarea temporário para copiar */
+    var ta = document.createElement("textarea");
+    ta.value = m;
+    ta.style.position = "fixed";
+    ta.style.left = "-9999px";
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try { ta.setSelectionRange(0, 99999); } catch(x) {}
+    try { document.execCommand("copy"); tt("TEXTO COPIADO! COLE NO WHATSAPP OU ONDE QUISER"); } catch(x) {
+      tt("NÃO FOI POSSÍVEL COPIAR AUTOMATICAMENTE");
+    }
+    try { if (navigator.clipboard) navigator.clipboard.writeText(m); } catch(x) {}
+    document.body.removeChild(ta);
+  } catch(x) { tt("ERRO AO COPIAR"); }
+}
+
+/* SALVAR ARQUIVO */
+function salvarArq() {
+  try {
+    var m = montarMsg();
+    if (!m) return;
+    var nomeArq = "CADASTRO-VALDELINO-" + new Date().getTime() + ".txt";
+    var blob = new Blob([m], {type:"text/plain;charset=utf-8"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = nomeArq;
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function() { try { document.body.removeChild(a); } catch(x) {} }, 200);
+    tt("ARQUIVO SALVO: " + nomeArq);
+  } catch(x) { tt("COPIE O TEXTO MANUALMENTE"); }
+}
+</script>
+
+
+
+</body></html>

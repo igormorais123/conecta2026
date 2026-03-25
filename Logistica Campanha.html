@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Logística Campanha Celina Leão 2026</title>
+<style>
+:root {
+    --bg: #0f172a; --card: #1e293b; --card2: #334155; --accent: #3b82f6;
+    --accent2: #8b5cf6; --green: #10b981; --orange: #f59e0b; --red: #ef4444;
+    --cyan: #06b6d4; --pink: #ec4899; --text: #f1f5f9; --text2: #94a3b8;
+    --border: #475569; --input-bg: #0f172a;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI',Tahoma,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+/* NAV */
+.nav { background:var(--card); border-bottom:2px solid var(--accent); display:flex; align-items:center; padding:0 20px; height:56px; position:sticky; top:0; z-index:100; }
+.nav-brand { font-weight:800; font-size:1.1rem; color:var(--accent); margin-right:30px; white-space:nowrap; }
+.nav-links { display:flex; gap:4px; overflow-x:auto; }
+.nav-links button { background:none; border:none; color:var(--text2); padding:8px 14px; cursor:pointer; border-radius:6px; font-size:0.82rem; white-space:nowrap; transition:all .2s; }
+.nav-links button:hover, .nav-links button.active { background:var(--accent); color:#fff; }
+
+/* LAYOUT */
+.container { max-width:1400px; margin:0 auto; padding:20px; }
+.page { display:none; } .page.active { display:block; }
+
+/* CARDS */
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+.card { background:var(--card); border-radius:12px; padding:20px; border:1px solid var(--border); }
+.card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+.card-title { font-weight:700; font-size:1rem; }
+.card-subtitle { color:var(--text2); font-size:0.8rem; margin-top:2px; }
+
+/* COUNTDOWN */
+.countdown-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:16px 0; }
+.count-box { text-align:center; background:var(--input-bg); border-radius:10px; padding:14px 8px; border:1px solid var(--border); }
+.count-num { font-size:2.2rem; font-weight:800; color:var(--accent); line-height:1; }
+.count-label { font-size:0.7rem; color:var(--text2); margin-top:4px; text-transform:uppercase; letter-spacing:1px; }
+
+/* PHASE BAR */
+.phase-bar { display:flex; gap:0; border-radius:8px; overflow:hidden; margin:16px 0; height:36px; }
+.phase-seg { display:flex; align-items:center; justify-content:center; font-size:0.72rem; font-weight:700; color:#fff; text-transform:uppercase; letter-spacing:.5px; position:relative; }
+
+/* STAT */
+.stat { text-align:center; padding:16px; cursor:pointer; transition:all .2s; position:relative; }
+.stat:hover { transform:translateY(-3px); box-shadow:0 8px 25px rgba(59,130,246,0.2); border-color:var(--accent); }
+.stat:active { transform:translateY(-1px); }
+.stat-num { font-size:2rem; font-weight:800; line-height:1; }
+.stat-label { font-size:0.72rem; color:var(--text2); margin-top:6px; text-transform:uppercase; }
+.stat-hint { font-size:0.62rem; color:var(--text2); margin-top:4px; opacity:0; transition:opacity .2s; }
+.stat:hover .stat-hint { opacity:1; }
+
+/* DETALHE MODAL (drill-down dashboard) */
+.detalhe-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.65); z-index:200; align-items:flex-start; justify-content:center; padding-top:80px; }
+.detalhe-overlay.show { display:flex; }
+.detalhe-panel { background:var(--card); border-radius:16px; width:94%; max-width:700px; max-height:75vh; overflow-y:auto; border:1px solid var(--border); box-shadow:0 20px 60px rgba(0,0,0,.4); animation:slideDown .25s ease; }
+@keyframes slideDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
+.detalhe-header { padding:20px 24px 16px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; background:var(--card); z-index:1; border-radius:16px 16px 0 0; }
+.detalhe-header h3 { font-size:1.1rem; font-weight:700; display:flex; align-items:center; gap:10px; }
+.detalhe-header .detalhe-count { background:var(--accent); color:#fff; font-size:.75rem; padding:2px 10px; border-radius:20px; font-weight:700; }
+.detalhe-close { background:none; border:none; color:var(--text2); font-size:1.4rem; cursor:pointer; padding:4px 8px; border-radius:6px; transition:all .2s; }
+.detalhe-close:hover { background:var(--card2); color:var(--text); }
+.detalhe-body { padding:16px 24px 24px; }
+.detalhe-item { display:flex; justify-content:space-between; align-items:center; padding:12px 14px; border-radius:10px; margin-bottom:8px; background:var(--input-bg); border:1px solid rgba(71,85,105,.3); transition:all .15s; }
+.detalhe-item:hover { border-color:var(--accent); background:rgba(59,130,246,.05); }
+.detalhe-item-info { flex:1; }
+.detalhe-item-title { font-weight:600; font-size:.88rem; margin-bottom:3px; }
+.detalhe-item-sub { font-size:.75rem; color:var(--text2); }
+.detalhe-item-right { text-align:right; flex-shrink:0; margin-left:12px; }
+.detalhe-empty { text-align:center; padding:40px 20px; color:var(--text2); }
+.detalhe-empty-icon { font-size:2.5rem; margin-bottom:10px; opacity:.5; }
+.detalhe-empty-text { font-size:.9rem; }
+.detalhe-action { display:inline-block; margin-top:16px; padding:8px 20px; background:var(--accent); color:#fff; border:none; border-radius:8px; cursor:pointer; font-size:.82rem; font-weight:600; transition:all .2s; }
+.detalhe-action:hover { background:#2563eb; }
+
+/* TABLE */
+table { width:100%; border-collapse:collapse; font-size:0.82rem; }
+th { background:var(--card2); color:var(--text2); padding:10px 12px; text-align:left; font-weight:600; text-transform:uppercase; font-size:0.72rem; letter-spacing:.5px; }
+td { padding:10px 12px; border-bottom:1px solid var(--border); }
+tr:hover td { background:rgba(59,130,246,0.05); }
+
+/* BADGE */
+.badge { padding:3px 10px; border-radius:20px; font-size:0.7rem; font-weight:600; display:inline-block; }
+.badge-green { background:rgba(16,185,129,.15); color:var(--green); }
+.badge-orange { background:rgba(245,158,11,.15); color:var(--orange); }
+.badge-red { background:rgba(239,68,68,.15); color:var(--red); }
+.badge-blue { background:rgba(59,130,246,.15); color:var(--accent); }
+.badge-purple { background:rgba(139,92,246,.15); color:var(--accent2); }
+.badge-cyan { background:rgba(6,182,212,.15); color:var(--cyan); }
+
+/* BTN */
+.btn { padding:8px 18px; border:none; border-radius:8px; cursor:pointer; font-size:0.82rem; font-weight:600; transition:all .2s; }
+.btn-primary { background:var(--accent); color:#fff; }
+.btn-primary:hover { background:#2563eb; }
+.btn-success { background:var(--green); color:#fff; }
+.btn-danger { background:var(--red); color:#fff; }
+.btn-sm { padding:5px 12px; font-size:0.75rem; }
+
+/* FORM */
+.form-group { margin-bottom:12px; }
+.form-group label { display:block; font-size:0.78rem; color:var(--text2); margin-bottom:4px; font-weight:600; }
+.form-group input, .form-group select, .form-group textarea {
+    width:100%; padding:9px 12px; background:var(--input-bg); border:1px solid var(--border);
+    border-radius:8px; color:var(--text); font-size:0.85rem; }
+.form-group textarea { resize:vertical; min-height:60px; }
+
+/* MODAL */
+.modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.6); z-index:200; align-items:center; justify-content:center; }
+.modal-overlay.show { display:flex; }
+.modal { background:var(--card); border-radius:14px; padding:24px; width:90%; max-width:520px; max-height:90vh; overflow-y:auto; border:1px solid var(--border); }
+.modal-lg { max-width:700px; }
+
+/* MEMBROS DA EQUIPE */
+.membro-card { display:flex; align-items:center; gap:12px; padding:12px; background:var(--input-bg); border:1px solid var(--border); border-radius:10px; margin-bottom:8px; transition:border-color .2s; }
+.membro-card:hover { border-color:var(--accent); }
+.membro-avatar { width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.85rem; color:#fff; flex-shrink:0; }
+.membro-info { flex:1; min-width:0; }
+.membro-nome { font-weight:600; font-size:0.88rem; }
+.membro-detalhe { font-size:0.72rem; color:var(--text2); margin-top:2px; }
+.membro-actions { display:flex; gap:4px; flex-shrink:0; }
+.membros-empty { text-align:center; padding:30px 16px; color:var(--text2); }
+.membros-empty-icon { font-size:2.5rem; margin-bottom:8px; }
+.membros-count { display:inline-flex; align-items:center; justify-content:center; min-width:22px; height:22px; border-radius:11px; font-size:0.7rem; font-weight:700; padding:0 6px; }
+.add-membro-row { display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:8px; margin-bottom:14px; align-items:end; }
+.add-membro-row input, .add-membro-row select { padding:8px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:0.82rem; }
+.modal-title { font-size:1.1rem; font-weight:700; margin-bottom:16px; }
+
+/* PROGRESS */
+.progress-bar { background:var(--card2); border-radius:6px; height:8px; overflow:hidden; }
+.progress-fill { height:100%; border-radius:6px; transition:width .3s; }
+
+/* CHECKLIST */
+.check-item { display:flex; align-items:flex-start; gap:10px; padding:8px 0; border-bottom:1px solid rgba(71,85,105,.3); }
+.check-item input[type=checkbox] { margin-top:3px; accent-color:var(--accent); width:16px; height:16px; cursor:pointer; }
+.check-item.done .check-text { text-decoration:line-through; color:var(--text2); }
+.check-text { font-size:0.85rem; flex:1; }
+.check-meta { font-size:0.7rem; color:var(--text2); }
+.add-check-row { display:flex; gap:8px; margin-top:12px; padding-top:12px; border-top:1px solid rgba(71,85,105,.4); }
+.add-check-row input { flex:1; padding:8px 12px; border:1px solid var(--border); border-radius:8px; background:var(--card2); color:var(--text); font-size:0.85rem; }
+.add-check-row input::placeholder { color:var(--text2); }
+.add-check-row button { padding:8px 16px; border:none; border-radius:8px; background:var(--accent); color:#fff; font-weight:600; cursor:pointer; font-size:0.85rem; white-space:nowrap; }
+.add-check-row button:hover { opacity:0.85; }
+.btn-remove-check { background:none; border:none; color:var(--danger,#ef4444); cursor:pointer; font-size:1rem; padding:0 4px; opacity:0.6; }
+.btn-remove-check:hover { opacity:1; }
+
+/* TIMELINE */
+.timeline-item { display:flex; gap:14px; padding:12px 0; border-bottom:1px solid rgba(71,85,105,.3); }
+.timeline-date { min-width:90px; font-size:0.78rem; font-weight:700; color:var(--accent); }
+.timeline-body { flex:1; }
+.timeline-title { font-weight:600; font-size:0.88rem; }
+.timeline-desc { color:var(--text2); font-size:0.8rem; margin-top:2px; }
+
+/* SUBCOORD CARDS */
+.subcoord-card { background:var(--card); border-radius:12px; border:1px solid var(--border); overflow:hidden; }
+.subcoord-header { padding:14px 18px; font-weight:700; font-size:0.85rem; color:#fff; }
+.subcoord-body { padding:16px 18px; }
+.subcoord-body li { font-size:0.82rem; padding:4px 0; color:var(--text2); list-style:none; }
+.subcoord-body li::before { content:'▸ '; color:var(--accent); }
+
+/* PRINT */
+@media print {
+    body { background:#fff; color:#000; }
+    .nav { display:none; }
+    .card { border:1px solid #ccc; background:#fff; }
+    .btn { display:none; }
+}
+@media(max-width:768px) {
+    .grid-2,.grid-3,.grid-4 { grid-template-columns:1fr; }
+    .countdown-grid { grid-template-columns:repeat(2,1fr); }
+    .nav-links { font-size:.7rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<div class="nav">
+    <div class="nav-brand">&#9881; LOGISTICA CELINA 2026</div>
+    <button class="btn btn-sm" style="background:var(--accent2);color:#fff;margin-right:12px;" onclick="showQRCode()">QR Code Celular</button>
+    <div class="nav-links">
+        <button class="active" onclick="showPage('dashboard')">Dashboard</button>
+        <button onclick="showPage('tarefas')">Tarefas</button>
+        <button onclick="showPage('materiais')">Materiais</button>
+        <button onclick="showPage('fornecedores')">Fornecedores</button>
+        <button onclick="showPage('equipe')">Equipe de Campo</button>
+        <button onclick="showPage('subcoord')">Subcoordenações</button>
+        <button onclick="showPage('calendario')">Calendário</button>
+        <button onclick="showPage('checklist')">Checklist</button>
+    </div>
+</div>
+
+<div class="container">
+
+<!-- ============ DASHBOARD ============ -->
+<div class="page active" id="page-dashboard">
+
+    <!-- CONTAGEM REGRESSIVA -->
+    <div class="card" style="margin-bottom:16px; background:linear-gradient(135deg,#1e293b,#0f172a); border-color:var(--accent);">
+        <div style="text-align:center;">
+            <div style="font-size:0.8rem; color:var(--text2); text-transform:uppercase; letter-spacing:2px;">Contagem Regressiva</div>
+            <div style="font-size:1.4rem; font-weight:800; margin:6px 0;" id="faseAtualLabel">Carregando...</div>
+        </div>
+        <div class="countdown-grid" id="countdownGrid"></div>
+        <div class="phase-bar" id="phaseBar"></div>
+        <div style="display:flex; justify-content:space-between; font-size:0.72rem; color:var(--text2); margin-top:4px;">
+            <span>Hoje: <span id="hojeLabel"></span></span>
+            <span id="diasRestLabel"></span>
+        </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="grid-4" style="margin-bottom:16px;">
+        <div class="card stat" onclick="abrirDetalheTarefasHoje()" title="Clique para ver detalhes">
+            <div class="stat-num" style="color:var(--accent);" id="statTarefasHoje">0</div>
+            <div class="stat-label">Tarefas Hoje</div>
+            <div class="stat-hint">clique para ver</div>
+        </div>
+        <div class="card stat" onclick="abrirDetalhePendentes()" title="Clique para ver detalhes">
+            <div class="stat-num" style="color:var(--orange);" id="statTarefasPend">0</div>
+            <div class="stat-label">Pendentes</div>
+            <div class="stat-hint">clique para ver</div>
+        </div>
+        <div class="card stat" onclick="abrirDetalheEstoque()" title="Clique para ver detalhes">
+            <div class="stat-num" style="color:var(--green);" id="statMatEstoque">0</div>
+            <div class="stat-label">Materiais em Estoque</div>
+            <div class="stat-hint">clique para ver</div>
+        </div>
+        <div class="card stat" onclick="abrirDetalheAlertas()" title="Clique para ver detalhes">
+            <div class="stat-num" style="color:var(--red);" id="statMatAlerta">0</div>
+            <div class="stat-label">Alertas Material</div>
+            <div class="stat-hint">clique para ver</div>
+        </div>
+    </div>
+
+    <!-- PROXIMAS TAREFAS + ENTREGAS -->
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Próximas Tarefas</div>
+            </div>
+            <div id="dashTarefas"><p style="color:var(--text2);font-size:.85rem;">Nenhuma tarefa cadastrada.</p></div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Próximas Entregas de Fornecedores</div>
+            </div>
+            <div id="dashEntregas"><p style="color:var(--text2);font-size:.85rem;">Nenhuma entrega cadastrada.</p></div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ TAREFAS ============ -->
+<div class="page" id="page-tarefas">
+    <div class="card-header" style="margin-bottom:16px;">
+        <div>
+            <div class="card-title" style="font-size:1.2rem;">Gestão de Tarefas</div>
+            <div class="card-subtitle">Tarefas diárias do Coordenador de Logística</div>
+        </div>
+        <div style="display:flex;gap:8px;">
+            <select id="filtroTarefaFase" onchange="renderTarefas()" style="padding:6px 10px;background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.8rem;">
+                <option value="">Todas as Fases</option>
+                <option value="pre">Pré-Campanha</option>
+                <option value="campanha">Campanha</option>
+                <option value="ambas">Ambas</option>
+            </select>
+            <select id="filtroTarefaStatus" onchange="renderTarefas()" style="padding:6px 10px;background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.8rem;">
+                <option value="">Todos Status</option>
+                <option value="pendente">Pendente</option>
+                <option value="andamento">Em Andamento</option>
+                <option value="concluida">Concluída</option>
+            </select>
+            <select id="filtroTarefaResp" onchange="renderTarefas()" style="padding:6px 10px;background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.8rem;">
+                <option value="">Todos Responsáveis</option>
+                <option value="__sem__">Sem responsável</option>
+            </select>
+            <button class="btn btn-primary" onclick="openModalTarefa()">+ Nova Tarefa</button>
+        </div>
+    </div>
+    <div class="card"><table><thead><tr>
+        <th style="width:30px;"></th><th>Tarefa</th><th>Responsável</th><th>Categoria</th><th>Fase</th><th>Prazo</th><th>Prioridade</th><th>Status</th><th>Ações</th>
+    </tr></thead><tbody id="tbTarefas"></tbody></table></div>
+</div>
+
+<!-- ============ MATERIAIS ============ -->
+<div class="page" id="page-materiais">
+    <div class="card-header" style="margin-bottom:16px;">
+        <div>
+            <div class="card-title" style="font-size:1.2rem;">Controle de Materiais</div>
+            <div class="card-subtitle">Almoxarifado da Campanha</div>
+        </div>
+        <button class="btn btn-primary" onclick="openModalMaterial()">+ Novo Material</button>
+    </div>
+    <div class="grid-4" style="margin-bottom:16px;" id="matStats"></div>
+    <div class="card"><table><thead><tr>
+        <th>Material</th><th>Fase</th><th>Qtd Pedida</th><th>Em Estoque</th><th>Distribuído</th><th>Uso %</th><th>Status</th><th>Fornecedor</th><th>Ações</th>
+    </tr></thead><tbody id="tbMateriais"></tbody></table></div>
+</div>
+
+<!-- ============ FORNECEDORES ============ -->
+<div class="page" id="page-fornecedores">
+    <div class="card-header" style="margin-bottom:16px;">
+        <div>
+            <div class="card-title" style="font-size:1.2rem;">Fornecedores e Executores</div>
+            <div class="card-subtitle">Controle de prazos e entregas</div>
+        </div>
+        <button class="btn btn-primary" onclick="openModalFornecedor()">+ Novo Fornecedor</button>
+    </div>
+    <div class="card"><table><thead><tr>
+        <th>Empresa</th><th>Contato</th><th>Telefone</th><th>Serviço</th><th>Prazo Entrega</th><th>Status</th><th>Ações</th>
+    </tr></thead><tbody id="tbFornecedores"></tbody></table></div>
+</div>
+
+<!-- ============ EQUIPE DE CAMPO ============ -->
+<div class="page" id="page-equipe">
+    <div class="card-header" style="margin-bottom:16px;">
+        <div>
+            <div class="card-title" style="font-size:1.2rem;">Equipe de Campo</div>
+            <div class="card-subtitle">Equipe para acompanhar a governadora e distribuir materiais</div>
+        </div>
+        <button class="btn btn-primary" onclick="openModalEquipe()">+ Adicionar Membro</button>
+    </div>
+    <div class="card"><table><thead><tr>
+        <th>Nome da Equipe</th><th>Coordenador de Equipe</th><th>Membros</th><th>Função</th><th>Telefone</th><th>Região</th><th>Materiais Designados</th><th>Atribuições</th><th>Status</th><th>Ações</th>
+    </tr></thead><tbody id="tbEquipe"></tbody></table></div>
+</div>
+
+<!-- ============ SUBCOORDENAÇÕES ============ -->
+<div class="page" id="page-subcoord">
+    <div style="margin-bottom:16px;">
+        <div class="card-title" style="font-size:1.2rem;">Subcoordenações da Logística</div>
+        <div class="card-subtitle">Coordenador Geral: Sílvio Vieira</div>
+    </div>
+    <div class="grid-3" id="subcoordGrid">
+        <!-- Estrutura de Eventos -->
+        <div class="subcoord-card">
+            <div class="subcoord-header" style="background:linear-gradient(135deg,#2563eb,#3b82f6);">1. Estrutura de Eventos</div>
+            <div class="subcoord-body">
+                <div class="form-group" style="margin-bottom:8px;"><label>Subcoordenador:</label>
+                <input type="text" id="subcoord1" placeholder="A definir" onchange="saveSubcoords()"></div>
+                <ul>
+                    <li>Palco e estrutura física</li><li>Sonorização</li><li>Iluminação</li>
+                    <li>Tendas e cobertura</li><li>Cadeiras e mesas</li><li>Telões e equipamentos</li>
+                </ul>
+            </div>
+        </div>
+        <!-- Comunicação Visual -->
+        <div class="subcoord-card">
+            <div class="subcoord-header" style="background:linear-gradient(135deg,#7c3aed,#8b5cf6);">2. Comunicação Visual</div>
+            <div class="subcoord-body">
+                <div class="form-group" style="margin-bottom:8px;"><label>Subcoordenador:</label>
+                <input type="text" id="subcoord2" placeholder="A definir" onchange="saveSubcoords()"></div>
+                <ul>
+                    <li>Identidade visual dos eventos</li><li>Banners e faixas</li>
+                    <li>Backdrops e painéis institucionais</li><li>Placas e sinalização</li>
+                    <li>Ambientação visual dos comitês</li><li>Padronização visual da campanha</li>
+                    <li>Materiais visuais para palco e impressos</li>
+                </ul>
+            </div>
+        </div>
+        <!-- Credenciamento -->
+        <div class="subcoord-card">
+            <div class="subcoord-header" style="background:linear-gradient(135deg,#059669,#10b981);">3. Credenciamento e Recepção</div>
+            <div class="subcoord-body">
+                <div class="form-group" style="margin-bottom:8px;"><label>Subcoordenador:</label>
+                <input type="text" id="subcoord3" placeholder="A definir" onchange="saveSubcoords()"></div>
+                <ul>
+                    <li>Apresentação do QR Code para os presentes</li>
+                    <li>Acompanhamento no preenchimento do QR Code</li>
+                    <li>Distribuição do material de campanha</li>
+                    <li>Organização de entrada e fluxo de pessoas</li>
+                    <li>Apoio ao cerimonial</li>
+                </ul>
+            </div>
+        </div>
+        <!-- Infraestrutura -->
+        <div class="subcoord-card">
+            <div class="subcoord-header" style="background:linear-gradient(135deg,#d97706,#f59e0b);">4. Infraestrutura de Comitês</div>
+            <div class="subcoord-body">
+                <div class="form-group" style="margin-bottom:8px;"><label>Subcoordenador:</label>
+                <input type="text" id="subcoord4" placeholder="A definir" onchange="saveSubcoords()"></div>
+                <ul>
+                    <li>Montagem do comitê central</li><li>Estrutura de comitês regionais</li>
+                    <li>Mobiliário (mesas, cadeiras, armários)</li>
+                    <li>Equipamentos (computadores, impressoras, internet)</li>
+                    <li>Salas de reunião e atendimento</li>
+                    <li>Espaços de coordenação e trabalho</li>
+                    <li>Manutenção e funcionamento dos comitês</li>
+                </ul>
+            </div>
+        </div>
+        <!-- Transportes -->
+        <div class="subcoord-card">
+            <div class="subcoord-header" style="background:linear-gradient(135deg,#dc2626,#ef4444);">5. Transportes</div>
+            <div class="subcoord-body">
+                <div class="form-group" style="margin-bottom:8px;"><label>Subcoordenador:</label>
+                <input type="text" id="subcoord5" placeholder="A definir" onchange="saveSubcoords()"></div>
+                <ul>
+                    <li>Frota de veículos da campanha</li><li>Motoristas</li>
+                    <li>Planejamento de deslocamentos</li>
+                    <li>Controle de rotas e agenda de transporte</li>
+                    <li>Controle de combustível</li><li>Manutenção de veículos</li>
+                    <li>Apoio de transporte para eventos</li>
+                </ul>
+            </div>
+        </div>
+        <!-- RH -->
+        <div class="subcoord-card">
+            <div class="subcoord-header" style="background:linear-gradient(135deg,#0891b2,#06b6d4);">6. Recursos Humanos</div>
+            <div class="subcoord-body">
+                <div class="form-group" style="margin-bottom:8px;"><label>Subcoordenador:</label>
+                <input type="text" id="subcoord6" placeholder="A definir" onchange="saveSubcoords()"></div>
+                <ul>
+                    <li>Cadastro de colaboradores da campanha</li>
+                    <li>Organização das equipes de trabalho</li>
+                    <li>Controle de contratos e vínculos</li><li>Escala de trabalho</li>
+                    <li>Integração e orientação de equipes</li>
+                    <li>Gestão administrativa de pessoal</li>
+                    <li>Comunicação interna das equipes</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ CALENDÁRIO ELEITORAL ============ -->
+<div class="page" id="page-calendario">
+    <div style="margin-bottom:16px;">
+        <div class="card-title" style="font-size:1.2rem;">Calendário Eleitoral 2026</div>
+        <div class="card-subtitle">Datas importantes e marcos da campanha</div>
+    </div>
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-title" style="color:var(--orange);margin-bottom:14px;">Pré-Campanha</div>
+            <div class="timeline-item"><div class="timeline-date">05/03</div><div class="timeline-body"><div class="timeline-title">Janela partidária (início)</div><div class="timeline-desc">Início do prazo para troca de partido</div></div></div>
+            <div class="timeline-item"><div class="timeline-date">03/04</div><div class="timeline-body"><div class="timeline-title">Janela partidária (fim)</div><div class="timeline-desc">Fim prazo filiação e domicílio eleitoral</div></div></div>
+            <div class="timeline-item"><div class="timeline-date">06/05</div><div class="timeline-body"><div class="timeline-title">Encerramento alistamento</div><div class="timeline-desc">Último dia para título, transferência e revisão</div></div></div>
+            <div class="timeline-item"><div class="timeline-date">15/05</div><div class="timeline-body"><div class="timeline-title">Financiamento coletivo</div><div class="timeline-desc">Pré-candidatos podem iniciar vaquinha (sem pedir voto)</div></div></div>
+            <div class="timeline-item"><div class="timeline-date">30/06</div><div class="timeline-body"><div class="timeline-title">Restrição rádio/TV</div><div class="timeline-desc">Proibido programa com pré-candidatos</div></div></div>
+            <div class="timeline-item"><div class="timeline-date">04/07</div><div class="timeline-body"><div class="timeline-title">Restrições servidor público</div><div class="timeline-desc">Proibido contratar, inaugurar, etc.</div></div></div>
+            <div class="timeline-item"><div class="timeline-date">20/07 a 05/08</div><div class="timeline-body"><div class="timeline-title">Convenções partidárias</div><div class="timeline-desc">Escolha oficial dos candidatos</div></div></div>
+            <div class="timeline-item"><div class="timeline-date">15/08</div><div class="timeline-body"><div class="timeline-title">Registro de candidatura</div><div class="timeline-desc">Prazo final para registro no TSE</div></div></div>
+        </div>
+        <div class="card">
+            <div class="card-title" style="color:var(--green);margin-bottom:14px;">Campanha Oficial</div>
+            <div class="timeline-item"><div class="timeline-date">16/08</div><div class="timeline-body"><div class="timeline-title">INÍCIO DA CAMPANHA</div><div class="timeline-desc">Propaganda de rua e internet liberada. Material com número!</div></div></div>
+            <div class="timeline-item"><div class="timeline-date">28/08</div><div class="timeline-body"><div class="timeline-title">Horário eleitoral gratuito</div><div class="timeline-desc">Início rádio/TV gratuita</div></div></div>
+            <div class="timeline-item"><div class="timeline-date">01/10</div><div class="timeline-body"><div class="timeline-title">Fim horário eleitoral</div><div class="timeline-desc">Último dia rádio/TV (1º turno)</div></div></div>
+            <div class="timeline-item"><div class="timeline-date">03/10 22h</div><div class="timeline-body"><div class="timeline-title">Fim distribuição material</div><div class="timeline-desc">Último momento para distribuir materiais</div></div></div>
+            <div class="timeline-item" style="border:2px solid var(--green);border-radius:8px;padding:12px;margin:4px 0;">
+                <div class="timeline-date" style="color:var(--green);font-size:1rem;">04/10</div>
+                <div class="timeline-body"><div class="timeline-title" style="font-size:1rem;color:var(--green);">1º TURNO - ELEIÇÃO</div></div>
+            </div>
+            <div class="timeline-item"><div class="timeline-date">25/10</div><div class="timeline-body"><div class="timeline-title">2º Turno (se houver)</div><div class="timeline-desc">Segunda rodada de votação</div></div></div>
+            <div class="timeline-item"><div class="timeline-date">18/12</div><div class="timeline-body"><div class="timeline-title">Diplomação</div><div class="timeline-desc">Cerimônia de diplomação dos eleitos</div></div></div>
+        </div>
+    </div>
+
+    <!-- REGRAS RÁPIDAS -->
+    <div class="grid-2" style="margin-top:16px;">
+        <div class="card" style="border-left:4px solid var(--green);">
+            <div class="card-title" style="color:var(--green);margin-bottom:10px;">O QUE PODE na Pré-Campanha</div>
+            <ul style="list-style:none;font-size:.85rem;">
+                <li style="padding:3px 0;">&#10004; Nome e imagem pessoal</li>
+                <li style="padding:3px 0;">&#10004; Frases institucionais ("Por Brasília")</li>
+                <li style="padding:3px 0;">&#10004; Cartões, folders SEM número</li>
+                <li style="padding:3px 0;">&#10004; Camiseta equipe (uso interno)</li>
+                <li style="padding:3px 0;">&#10004; Adesivo pequeno (uso pessoal)</li>
+                <li style="padding:3px 0;">&#10004; QR Code para cadastro</li>
+                <li style="padding:3px 0;">&#10004; Eventos e reuniões</li>
+                <li style="padding:3px 0;">&#10004; Redes sociais (sem impulsionar)</li>
+            </ul>
+        </div>
+        <div class="card" style="border-left:4px solid var(--red);">
+            <div class="card-title" style="color:var(--red);margin-bottom:10px;">O QUE NÃO PODE</div>
+            <ul style="list-style:none;font-size:.85rem;">
+                <li style="padding:3px 0;">&#10008; Pedir voto ("vote", "eleja")</li>
+                <li style="padding:3px 0;">&#10008; Número de candidatura</li>
+                <li style="padding:3px 0;">&#10008; Outdoor / faixas de rua</li>
+                <li style="padding:3px 0;">&#10008; Showmício</li>
+                <li style="padding:3px 0;">&#10008; Distribuir camisetas ao eleitor</li>
+                <li style="padding:3px 0;">&#10008; Brindes, cestas básicas</li>
+                <li style="padding:3px 0;">&#10008; Impulsionar posts pagos</li>
+                <li style="padding:3px 0;">&#10008; Estrutura grande tipo comício</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- ============ CHECKLIST ============ -->
+<div class="page" id="page-checklist">
+    <div style="margin-bottom:16px;">
+        <div class="card-title" style="font-size:1.2rem;">Checklist do Coordenador de Logística</div>
+        <div class="card-subtitle">Acompanhe cada etapa da preparação</div>
+    </div>
+    <div class="grid-2" id="checklistGrid"></div>
+</div>
+
+<!-- DETALHE DRILL-DOWN -->
+<div class="detalhe-overlay" id="detalheOverlay" onclick="if(event.target===this)fecharDetalhe()">
+    <div class="detalhe-panel">
+        <div class="detalhe-header">
+            <h3><span id="detalheIcone"></span> <span id="detalheTitulo"></span> <span class="detalhe-count" id="detalheCount">0</span></h3>
+            <button class="detalhe-close" onclick="fecharDetalhe()">&times;</button>
+        </div>
+        <div class="detalhe-body" id="detalheBody"></div>
+    </div>
+</div>
+
+</div><!-- /container -->
+
+<!-- ===== MODALS ===== -->
+
+<!-- Modal Tarefa -->
+<div class="modal-overlay" id="modalTarefa">
+<div class="modal">
+    <div class="modal-title">Nova Tarefa</div>
+    <input type="hidden" id="tarefaEditId">
+    <div class="form-group"><label>Título</label><input type="text" id="tarefaTitulo" placeholder="Ex: Encomendar 500 camisetas"></div>
+    <div class="grid-2">
+        <div class="form-group"><label>Categoria</label>
+            <select id="tarefaCat">
+                <option>Material</option><option>Fornecedor</option><option>Equipe</option>
+                <option>Evento</option><option>Transporte</option><option>Infraestrutura</option>
+                <option>Comunicação Visual</option><option>Credenciamento</option><option>RH</option><option>Outro</option>
+            </select>
+        </div>
+        <div class="form-group"><label>Fase</label>
+            <select id="tarefaFase"><option value="pre">Pré-Campanha</option><option value="campanha">Campanha</option><option value="ambas">Ambas</option></select>
+        </div>
+    </div>
+    <div class="grid-2">
+        <div class="form-group"><label>Prazo</label><input type="date" id="tarefaPrazo"></div>
+        <div class="form-group"><label>Prioridade</label>
+            <select id="tarefaPrio"><option value="alta">Alta</option><option value="media">Média</option><option value="baixa">Baixa</option></select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Responsável</label>
+        <div style="display:flex;gap:8px;">
+            <select id="tarefaResponsavel" style="flex:1;" onchange="toggleResponsavelOutro()">
+                <option value="">Sem responsável</option>
+                <option value="__outro__">Outro (digitar nome)</option>
+            </select>
+            <input type="text" id="tarefaResponsavelOutro" placeholder="Nome do responsável..." style="flex:1;display:none;">
+        </div>
+    </div>
+    <div class="form-group"><label>Descrição</label><textarea id="tarefaDesc" placeholder="Detalhes da tarefa..."></textarea></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px;">
+        <button class="btn" style="background:var(--card2);color:var(--text);" onclick="closeModal('modalTarefa')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveTarefa()">Salvar</button>
+    </div>
+</div></div>
+
+<!-- Modal Material -->
+<div class="modal-overlay" id="modalMaterial">
+<div class="modal">
+    <div class="modal-title">Novo Material</div>
+    <input type="hidden" id="matEditId">
+    <div class="form-group"><label>Nome do Material</label><input type="text" id="matNome" placeholder="Ex: Camiseta Equipe"></div>
+    <div class="grid-2">
+        <div class="form-group"><label>Fase</label>
+            <select id="matFase"><option value="pre">Pré-Campanha</option><option value="campanha">Campanha</option><option value="ambas">Ambas</option></select>
+        </div>
+        <div class="form-group"><label>Fornecedor</label><input type="text" id="matFornecedor" placeholder="Nome do fornecedor"></div>
+    </div>
+    <div class="grid-3">
+        <div class="form-group"><label>Qtd Pedida</label><input type="number" id="matQtd" value="0"></div>
+        <div class="form-group"><label>Em Estoque</label><input type="number" id="matEstoque" value="0"></div>
+        <div class="form-group"><label>Distribuído</label><input type="number" id="matDist" value="0"></div>
+    </div>
+    <div class="form-group"><label>Estoque Mínimo</label><input type="number" id="matMinimo" value="0"></div>
+    <div class="form-group"><label>Observações</label><textarea id="matObs" placeholder="Especificações, tamanhos, cores..."></textarea></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px;">
+        <button class="btn" style="background:var(--card2);color:var(--text);" onclick="closeModal('modalMaterial')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveMaterial()">Salvar</button>
+    </div>
+</div></div>
+
+<!-- Modal Fornecedor -->
+<div class="modal-overlay" id="modalFornecedor">
+<div class="modal">
+    <div class="modal-title">Novo Fornecedor</div>
+    <input type="hidden" id="fornEditId">
+    <div class="form-group"><label>Empresa</label><input type="text" id="fornEmpresa" placeholder="Nome da empresa"></div>
+    <div class="grid-2">
+        <div class="form-group"><label>Contato</label><input type="text" id="fornContato" placeholder="Nome da pessoa"></div>
+        <div class="form-group"><label>Telefone</label><input type="text" id="fornTel" placeholder="(61) 99999-9999"></div>
+    </div>
+    <div class="form-group"><label>Serviço / Produto</label><input type="text" id="fornServico" placeholder="Ex: Impressão de folders"></div>
+    <div class="form-group"><label>Prazo de Entrega</label><input type="date" id="fornPrazo"></div>
+    <div class="form-group"><label>Status</label>
+        <select id="fornStatus"><option>Orçamento</option><option>Contratado</option><option>Em Produção</option><option>Entregue</option><option>Pago</option></select>
+    </div>
+    <div class="form-group"><label>Observações</label><textarea id="fornObs"></textarea></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px;">
+        <button class="btn" style="background:var(--card2);color:var(--text);" onclick="closeModal('modalFornecedor')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveFornecedor()">Salvar</button>
+    </div>
+</div></div>
+
+<!-- Modal Equipe -->
+<div class="modal-overlay" id="modalEquipe">
+<div class="modal">
+    <div class="modal-title">Membro da Equipe de Campo</div>
+    <input type="hidden" id="eqEditId">
+    <div class="form-group"><label>Nome da Equipe</label><input type="text" id="eqNome" placeholder="Ex: Equipe Norte, Equipe Central..."></div>
+    <div class="form-group"><label>Coordenador de Equipe</label><input type="text" id="eqChefe" placeholder="Nome do coordenador responsável pela equipe"></div>
+    <div class="grid-2">
+        <div class="form-group"><label>Função</label>
+            <select id="eqFuncao"><option>Distribuidor</option><option>Credenciamento/QR Code</option><option>Motorista</option><option>Apoio Geral</option><option>Coordenador Regional</option></select>
+        </div>
+        <div class="form-group"><label>Telefone</label><input type="text" id="eqTel"></div>
+    </div>
+    <div class="grid-2">
+        <div class="form-group"><label>Região</label><input type="text" id="eqRegiao" placeholder="Ex: Norte, Sul, etc."></div>
+        <div class="form-group"><label>Materiais Designados</label><input type="text" id="eqMat" placeholder="Ex: Adesivos, Cartões"></div>
+    </div>
+    <div class="form-group"><label>Atribuições</label>
+        <textarea id="eqAtribuicoes" rows="3" placeholder="Ex: Distribuir panfletos, Organizar credenciamento, Coordenar logística de transporte..." style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--card2);color:var(--text);font-family:inherit;resize:vertical;"></textarea>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px;">
+        <button class="btn" style="background:var(--card2);color:var(--text);" onclick="closeModal('modalEquipe')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveEquipe()">Salvar</button>
+    </div>
+</div></div>
+
+<!-- Modal Membros da Equipe -->
+<div class="modal-overlay" id="modalMembros">
+<div class="modal modal-lg">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <div>
+            <div class="modal-title" style="margin-bottom:2px;" id="membrosTitle">Membros da Equipe</div>
+            <div style="font-size:0.75rem;color:var(--text2);" id="membrosSubtitle">Coordenador: —</div>
+        </div>
+        <button class="btn" style="background:var(--card2);color:var(--text);padding:6px 12px;font-size:0.8rem;" onclick="closeModal('modalMembros')">&#10005;</button>
+    </div>
+    <input type="hidden" id="membrosEquipeId">
+
+    <!-- Formulário inline para adicionar membro -->
+    <div style="background:var(--card2);border-radius:10px;padding:14px;margin-bottom:16px;">
+        <div style="font-size:0.78rem;font-weight:600;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">Adicionar Membro</div>
+        <div class="add-membro-row">
+            <div>
+                <label style="font-size:0.72rem;color:var(--text2);display:block;margin-bottom:3px;">Nome</label>
+                <input type="text" id="membroNome" placeholder="Nome completo">
+            </div>
+            <div>
+                <label style="font-size:0.72rem;color:var(--text2);display:block;margin-bottom:3px;">Telefone</label>
+                <input type="text" id="membroTel" placeholder="(61) 99999-9999">
+            </div>
+            <div>
+                <label style="font-size:0.72rem;color:var(--text2);display:block;margin-bottom:3px;">Função</label>
+                <select id="membroFuncao">
+                    <option>Distribuidor</option>
+                    <option>Panfleteiro</option>
+                    <option>Bandeireiro</option>
+                    <option>Credenciamento</option>
+                    <option>Motorista</option>
+                    <option>Apoio Geral</option>
+                    <option>Segurança</option>
+                    <option>Fotógrafo/Filmagem</option>
+                    <option>Outro</option>
+                </select>
+            </div>
+            <div>
+                <label style="font-size:0.72rem;color:transparent;display:block;margin-bottom:3px;">.</label>
+                <button class="btn btn-primary" style="padding:8px 14px;font-size:0.82rem;white-space:nowrap;" onclick="addMembro()">+ Adicionar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de membros -->
+    <div id="membrosLista"></div>
+
+    <div style="display:flex;justify-content:flex-end;margin-top:14px;">
+        <button class="btn btn-primary" onclick="closeModal('modalMembros')">Fechar</button>
+    </div>
+</div></div>
+
+<script>
+// ==================== DADOS ====================
+var STORAGE_KEY = 'logistica_celina_2026';
+
+// Datas importantes
+var DATAS = {
+    preCampanhaFim: new Date(2026, 7, 15),  // 15 Ago 2026
+    campanhaInicio: new Date(2026, 7, 16),   // 16 Ago 2026
+    campanhaFim: new Date(2026, 9, 3),       // 03 Out 2026
+    eleicao1: new Date(2026, 9, 4),          // 04 Out 2026
+    eleicao2: new Date(2026, 9, 25),         // 25 Out 2026
+    horarioEleitoralInicio: new Date(2026, 7, 28),
+    convencaoInicio: new Date(2026, 6, 20),
+    convencaoFim: new Date(2026, 7, 5)
+};
+
+function defaultData() {
+    return {
+        tarefas: [],
+        materiais: [],
+        fornecedores: [],
+        equipe: [],
+        subcoords: ['','','','','',''],
+        checklist: {},
+        customChecklist: {},
+        nextId: 1
+    };
+}
+
+function loadData() {
+    try { var d = JSON.parse(localStorage.getItem(STORAGE_KEY)); return d || defaultData(); }
+    catch(e) { return defaultData(); }
+}
+function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA)); }
+var DATA = loadData();
+
+function genId() { var id = DATA.nextId || 1; DATA.nextId = id + 1; saveData(); return id; }
+
+// ==================== NAVEGAÇÃO ====================
+function showPage(id) {
+    document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+    document.querySelectorAll('.nav-links button').forEach(function(b) { b.classList.remove('active'); });
+    document.getElementById('page-' + id).classList.add('active');
+    var btns = document.querySelectorAll('.nav-links button');
+    var pages = ['dashboard','tarefas','materiais','fornecedores','equipe','subcoord','calendario','checklist'];
+    var idx = pages.indexOf(id);
+    if (idx >= 0 && btns[idx]) btns[idx].classList.add('active');
+    if (id === 'dashboard') renderDashboard();
+    if (id === 'tarefas') { populateFiltroResponsavel(); renderTarefas(); }
+    if (id === 'materiais') renderMateriais();
+    if (id === 'fornecedores') renderFornecedores();
+    if (id === 'equipe') renderEquipe();
+    if (id === 'checklist') renderChecklist();
+}
+
+// ==================== COUNTDOWN / DASHBOARD ====================
+function updateCountdown() {
+    var hoje = new Date();
+    hoje.setHours(0,0,0,0);
+    var hojeStr = hoje.toLocaleDateString('pt-BR');
+    document.getElementById('hojeLabel').textContent = hojeStr;
+
+    var fase, alvo, alvoNome;
+    if (hoje < DATAS.campanhaInicio) {
+        fase = 'PRE-CAMPANHA';
+        alvo = DATAS.campanhaInicio;
+        alvoNome = 'para início da Campanha';
+    } else if (hoje <= DATAS.campanhaFim) {
+        fase = 'CAMPANHA OFICIAL';
+        alvo = DATAS.eleicao1;
+        alvoNome = 'para a Eleição (1º Turno)';
+    } else {
+        fase = 'PÓS-ELEIÇÃO';
+        alvo = DATAS.eleicao2;
+        alvoNome = 'para o 2º Turno';
+    }
+
+    document.getElementById('faseAtualLabel').textContent = fase;
+
+    var diff = alvo.getTime() - hoje.getTime();
+    var dias = Math.max(0, Math.ceil(diff / 86400000));
+    var sem = Math.floor(dias / 7);
+    var meses = Math.floor(dias / 30);
+
+    var diasEleicao = Math.max(0, Math.ceil((DATAS.eleicao1.getTime() - hoje.getTime()) / 86400000));
+    var diasCampanha = Math.max(0, Math.ceil((DATAS.campanhaInicio.getTime() - hoje.getTime()) / 86400000));
+    var campInicioStr = DATAS.campanhaInicio.toLocaleDateString('pt-BR');
+
+    document.getElementById('countdownGrid').innerHTML =
+        '<div class="count-box"><div class="count-num">' + dias + '</div><div class="count-label">Dias ' + alvoNome + '</div></div>' +
+        '<div class="count-box"><div class="count-num">' + sem + '</div><div class="count-label">Semanas</div></div>' +
+        '<div class="count-box"><div class="count-num" style="color:var(--orange);">' + diasCampanha + '</div><div class="count-label">Dias p/ Campanha (' + campInicioStr + ')</div></div>' +
+        '<div class="count-box"><div class="count-num" style="color:var(--red);">' + diasEleicao + '</div><div class="count-label">Dias p/ Eleição</div></div>';
+
+    document.getElementById('diasRestLabel').textContent = diasEleicao + ' dias para a Eleição (04/10/2026)';
+
+    // Phase bar
+    var totalDias = Math.ceil((DATAS.eleicao1.getTime() - new Date(2026,0,1).getTime()) / 86400000);
+    var prePct = Math.ceil((DATAS.campanhaInicio.getTime() - new Date(2026,0,1).getTime()) / 86400000) / totalDias * 100;
+    var campPct = Math.ceil((DATAS.eleicao1.getTime() - DATAS.campanhaInicio.getTime()) / 86400000) / totalDias * 100;
+    var passadoPct = Math.min(100, Math.ceil((hoje.getTime() - new Date(2026,0,1).getTime()) / 86400000) / totalDias * 100);
+
+    var diasParaCampanha = Math.max(0, Math.ceil((DATAS.campanhaInicio.getTime() - hoje.getTime()) / 86400000));
+    var diasCampanha = Math.max(0, Math.ceil((DATAS.eleicao1.getTime() - DATAS.campanhaInicio.getTime()) / 86400000));
+
+    document.getElementById('phaseBar').innerHTML =
+        '<div class="phase-seg" style="width:' + prePct + '%;background:var(--orange);">Pré-Campanha (até 15/08/2026) — ' + diasParaCampanha + ' dias restantes</div>' +
+        '<div class="phase-seg" style="width:' + campPct + '%;background:linear-gradient(135deg,#2563eb,#3b82f6);">Campanha (início 16/08/2026) — ' + diasCampanha + ' dias de duração</div>';
+}
+
+function renderDashboard() {
+    updateCountdown();
+
+    var hoje = new Date().toISOString().slice(0,10);
+    var tarefasHoje = DATA.tarefas.filter(function(t) { return t.prazo === hoje && t.status !== 'concluida'; });
+    var tarefasPend = DATA.tarefas.filter(function(t) { return t.status !== 'concluida'; });
+    var matEstoque = DATA.materiais.reduce(function(s,m) { return s + (m.estoque || 0); }, 0);
+    var matAlerta = DATA.materiais.filter(function(m) { return m.estoque <= m.minimo && m.minimo > 0; }).length;
+
+    document.getElementById('statTarefasHoje').textContent = tarefasHoje.length;
+    document.getElementById('statTarefasPend').textContent = tarefasPend.length;
+    document.getElementById('statMatEstoque').textContent = matEstoque.toLocaleString('pt-BR');
+    document.getElementById('statMatAlerta').textContent = matAlerta;
+
+    // Próximas tarefas
+    var proxTarefas = DATA.tarefas.filter(function(t) { return t.status !== 'concluida'; })
+        .sort(function(a,b) { return (a.prazo||'9999') > (b.prazo||'9999') ? 1 : -1; }).slice(0, 5);
+    var html = '';
+    proxTarefas.forEach(function(t) {
+        var prioCor = t.prioridade === 'alta' ? 'red' : t.prioridade === 'media' ? 'orange' : 'blue';
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(71,85,105,.3);">' +
+            '<div><div style="font-size:.85rem;font-weight:600;">' + esc(t.titulo) + '</div>' +
+            '<div style="font-size:.72rem;color:var(--text2);">' + esc(t.categoria) + ' | ' + formatDate(t.prazo) + (t.responsavel ? ' | ' + esc(t.responsavel) : '') + '</div></div>' +
+            '<span class="badge badge-' + prioCor + '">' + t.prioridade + '</span></div>';
+    });
+    document.getElementById('dashTarefas').innerHTML = html || '<p style="color:var(--text2);font-size:.85rem;">Nenhuma tarefa pendente.</p>';
+
+    // Próximas entregas
+    var proxEntregas = DATA.fornecedores.filter(function(f) { return f.status !== 'Entregue' && f.status !== 'Pago'; })
+        .sort(function(a,b) { return (a.prazo||'9999') > (b.prazo||'9999') ? 1 : -1; }).slice(0, 5);
+    var html2 = '';
+    proxEntregas.forEach(function(f) {
+        var stCor = f.status === 'Em Produção' ? 'orange' : f.status === 'Contratado' ? 'blue' : 'purple';
+        html2 += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(71,85,105,.3);">' +
+            '<div><div style="font-size:.85rem;font-weight:600;">' + esc(f.empresa) + '</div>' +
+            '<div style="font-size:.72rem;color:var(--text2);">' + esc(f.servico) + ' | ' + formatDate(f.prazo) + '</div></div>' +
+            '<span class="badge badge-' + stCor + '">' + f.status + '</span></div>';
+    });
+    document.getElementById('dashEntregas').innerHTML = html2 || '<p style="color:var(--text2);font-size:.85rem;">Nenhuma entrega pendente.</p>';
+}
+
+// ==================== TAREFAS ====================
+function populateResponsavelSelect(selectedValue) {
+    var sel = document.getElementById('tarefaResponsavel');
+    var current = selectedValue || '';
+    sel.innerHTML = '<option value="">Sem responsável</option>';
+    // Adicionar membros da equipe
+    var nomes = [];
+    DATA.equipe.forEach(function(e) {
+        if (e.nome && nomes.indexOf(e.nome) === -1) { nomes.push(e.nome); }
+    });
+    // Adicionar subcoordenadores
+    (DATA.subcoords || []).forEach(function(s) {
+        if (s && nomes.indexOf(s) === -1) { nomes.push(s); }
+    });
+    // Adicionar responsáveis já usados em tarefas
+    DATA.tarefas.forEach(function(t) {
+        if (t.responsavel && nomes.indexOf(t.responsavel) === -1) { nomes.push(t.responsavel); }
+    });
+    nomes.sort();
+    nomes.forEach(function(n) {
+        sel.innerHTML += '<option value="' + esc(n) + '">' + esc(n) + '</option>';
+    });
+    sel.innerHTML += '<option value="__outro__">Outro (digitar nome)</option>';
+    // Definir valor selecionado
+    if (current && nomes.indexOf(current) === -1 && current !== '__outro__') {
+        sel.innerHTML = sel.innerHTML.replace('</option><option value="__outro__">',
+            '</option><option value="' + esc(current) + '">' + esc(current) + '</option><option value="__outro__">');
+    }
+    sel.value = current || '';
+    toggleResponsavelOutro();
+}
+
+function toggleResponsavelOutro() {
+    var sel = document.getElementById('tarefaResponsavel');
+    var inp = document.getElementById('tarefaResponsavelOutro');
+    if (sel.value === '__outro__') { inp.style.display = ''; inp.focus(); }
+    else { inp.style.display = 'none'; inp.value = ''; }
+}
+
+function populateFiltroResponsavel() {
+    var sel = document.getElementById('filtroTarefaResp');
+    var current = sel.value;
+    sel.innerHTML = '<option value="">Todos Responsáveis</option><option value="__sem__">Sem responsável</option>';
+    var nomes = [];
+    DATA.tarefas.forEach(function(t) {
+        if (t.responsavel && nomes.indexOf(t.responsavel) === -1) { nomes.push(t.responsavel); }
+    });
+    nomes.sort();
+    nomes.forEach(function(n) {
+        sel.innerHTML += '<option value="' + esc(n) + '">' + esc(n) + '</option>';
+    });
+    sel.value = current || '';
+}
+
+function openModalTarefa(id) {
+    document.getElementById('tarefaEditId').value = id || '';
+    if (id) {
+        var t = DATA.tarefas.find(function(x) { return x.id == id; });
+        if (t) {
+            document.getElementById('tarefaTitulo').value = t.titulo;
+            document.getElementById('tarefaCat').value = t.categoria;
+            document.getElementById('tarefaFase').value = t.fase;
+            document.getElementById('tarefaPrazo').value = t.prazo;
+            document.getElementById('tarefaPrio').value = t.prioridade;
+            document.getElementById('tarefaDesc').value = t.desc || '';
+            populateResponsavelSelect(t.responsavel || '');
+        }
+    } else {
+        ['tarefaTitulo','tarefaDesc'].forEach(function(x) { document.getElementById(x).value = ''; });
+        document.getElementById('tarefaPrazo').value = new Date().toISOString().slice(0,10);
+        populateResponsavelSelect('');
+    }
+    document.getElementById('modalTarefa').classList.add('show');
+}
+
+function saveTarefa() {
+    var titulo = document.getElementById('tarefaTitulo').value.trim();
+    if (!titulo) return alert('Preencha o título.');
+    var editId = document.getElementById('tarefaEditId').value;
+    var selResp = document.getElementById('tarefaResponsavel').value;
+    var responsavel = selResp === '__outro__' ? document.getElementById('tarefaResponsavelOutro').value.trim() : selResp;
+    var obj = {
+        titulo: titulo,
+        categoria: document.getElementById('tarefaCat').value,
+        fase: document.getElementById('tarefaFase').value,
+        prazo: document.getElementById('tarefaPrazo').value,
+        prioridade: document.getElementById('tarefaPrio').value,
+        desc: document.getElementById('tarefaDesc').value.trim(),
+        responsavel: responsavel || '',
+        status: 'pendente'
+    };
+    if (editId) {
+        var idx = DATA.tarefas.findIndex(function(x) { return x.id == editId; });
+        if (idx >= 0) { obj.id = parseInt(editId); obj.status = DATA.tarefas[idx].status; DATA.tarefas[idx] = obj; }
+    } else {
+        obj.id = genId();
+        DATA.tarefas.push(obj);
+    }
+    saveData(); closeModal('modalTarefa'); populateFiltroResponsavel(); renderTarefas();
+}
+
+function renderTarefas() {
+    var filtroFase = document.getElementById('filtroTarefaFase').value;
+    var filtroStatus = document.getElementById('filtroTarefaStatus').value;
+    var filtroResp = document.getElementById('filtroTarefaResp').value;
+    var lista = DATA.tarefas.filter(function(t) {
+        if (filtroFase && t.fase !== filtroFase) return false;
+        if (filtroStatus && t.status !== filtroStatus) return false;
+        if (filtroResp === '__sem__' && t.responsavel) return false;
+        if (filtroResp && filtroResp !== '__sem__' && t.responsavel !== filtroResp) return false;
+        return true;
+    }).sort(function(a,b) {
+        var po = {alta:0,media:1,baixa:2};
+        if (po[a.prioridade] !== po[b.prioridade]) return po[a.prioridade] - po[b.prioridade];
+        return (a.prazo||'9999') > (b.prazo||'9999') ? 1 : -1;
+    });
+
+    var html = '';
+    lista.forEach(function(t) {
+        var prioCor = t.prioridade === 'alta' ? 'red' : t.prioridade === 'media' ? 'orange' : 'blue';
+        var stCor = t.status === 'concluida' ? 'green' : t.status === 'andamento' ? 'cyan' : 'orange';
+        var stLabel = t.status === 'concluida' ? 'Concluída' : t.status === 'andamento' ? 'Em Andamento' : 'Pendente';
+        var faseLabel = t.fase === 'pre' ? 'Pré' : t.fase === 'campanha' ? 'Campanha' : 'Ambas';
+        var checked = t.status === 'concluida' ? 'checked' : '';
+        var respHtml = t.responsavel ? '<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(99,102,241,.15);color:#818cf8;padding:2px 8px;border-radius:10px;font-size:.75rem;font-weight:600;">' +
+            '<span style="width:18px;height:18px;border-radius:50%;background:#818cf8;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.65rem;">' + esc(t.responsavel.charAt(0).toUpperCase()) + '</span>' +
+            esc(t.responsavel) + '</span>' : '<span style="color:var(--text2);font-size:.75rem;font-style:italic;">—</span>';
+        html += '<tr' + (t.status==='concluida'?' style="opacity:.5;"':'') + '>' +
+            '<td><input type="checkbox" ' + checked + ' onchange="toggleTarefa(' + t.id + ')"></td>' +
+            '<td><strong>' + esc(t.titulo) + '</strong>' + (t.desc ? '<br><span style="font-size:.75rem;color:var(--text2);">' + esc(t.desc).substring(0,60) + '</span>' : '') + '</td>' +
+            '<td>' + respHtml + '</td>' +
+            '<td>' + esc(t.categoria) + '</td>' +
+            '<td><span class="badge badge-' + (t.fase==='pre'?'orange':'green') + '">' + faseLabel + '</span></td>' +
+            '<td>' + formatDate(t.prazo) + '</td>' +
+            '<td><span class="badge badge-' + prioCor + '">' + t.prioridade + '</span></td>' +
+            '<td><span class="badge badge-' + stCor + '">' + stLabel + '</span></td>' +
+            '<td><button class="btn btn-sm btn-primary" onclick="openModalTarefa(' + t.id + ')">Editar</button> ' +
+            '<button class="btn btn-sm btn-danger" onclick="delTarefa(' + t.id + ')">X</button></td></tr>';
+    });
+    document.getElementById('tbTarefas').innerHTML = html || '<tr><td colspan="9" style="text-align:center;color:var(--text2);">Nenhuma tarefa.</td></tr>';
+}
+
+function toggleTarefa(id) {
+    var t = DATA.tarefas.find(function(x) { return x.id == id; });
+    if (t) { t.status = t.status === 'concluida' ? 'pendente' : 'concluida'; saveData(); renderTarefas(); }
+}
+
+function delTarefa(id) {
+    if (!confirm('Excluir esta tarefa?')) return;
+    DATA.tarefas = DATA.tarefas.filter(function(x) { return x.id != id; });
+    saveData(); renderTarefas();
+}
+
+// ==================== MATERIAIS ====================
+function openModalMaterial(id) {
+    document.getElementById('matEditId').value = id || '';
+    if (id) {
+        var m = DATA.materiais.find(function(x) { return x.id == id; });
+        if (m) {
+            document.getElementById('matNome').value = m.nome;
+            document.getElementById('matFase').value = m.fase;
+            document.getElementById('matFornecedor').value = m.fornecedor || '';
+            document.getElementById('matQtd').value = m.qtd;
+            document.getElementById('matEstoque').value = m.estoque;
+            document.getElementById('matDist').value = m.dist;
+            document.getElementById('matMinimo').value = m.minimo;
+            document.getElementById('matObs').value = m.obs || '';
+        }
+    } else {
+        ['matNome','matFornecedor','matObs'].forEach(function(x) { document.getElementById(x).value = ''; });
+        ['matQtd','matEstoque','matDist','matMinimo'].forEach(function(x) { document.getElementById(x).value = '0'; });
+    }
+    document.getElementById('modalMaterial').classList.add('show');
+}
+
+function saveMaterial() {
+    var nome = document.getElementById('matNome').value.trim();
+    if (!nome) return alert('Preencha o nome.');
+    var editId = document.getElementById('matEditId').value;
+    var obj = {
+        nome: nome, fase: document.getElementById('matFase').value,
+        fornecedor: document.getElementById('matFornecedor').value.trim(),
+        qtd: parseInt(document.getElementById('matQtd').value) || 0,
+        estoque: parseInt(document.getElementById('matEstoque').value) || 0,
+        dist: parseInt(document.getElementById('matDist').value) || 0,
+        minimo: parseInt(document.getElementById('matMinimo').value) || 0,
+        obs: document.getElementById('matObs').value.trim()
+    };
+    if (editId) {
+        var idx = DATA.materiais.findIndex(function(x) { return x.id == editId; });
+        if (idx >= 0) { obj.id = parseInt(editId); DATA.materiais[idx] = obj; }
+    } else { obj.id = genId(); DATA.materiais.push(obj); }
+    saveData(); closeModal('modalMaterial'); renderMateriais();
+}
+
+function renderMateriais() {
+    var totalItens = DATA.materiais.length;
+    var totalEstoque = DATA.materiais.reduce(function(s,m) { return s + m.estoque; }, 0);
+    var totalDist = DATA.materiais.reduce(function(s,m) { return s + m.dist; }, 0);
+    document.getElementById('matStats').innerHTML =
+        '<div class="card stat"><div class="stat-num" style="color:var(--accent);">' + totalItens + '</div><div class="stat-label">Tipos de Material</div></div>' +
+        '<div class="card stat"><div class="stat-num" style="color:var(--green);">' + totalEstoque.toLocaleString('pt-BR') + '</div><div class="stat-label">Itens em Estoque</div></div>' +
+        '<div class="card stat"><div class="stat-num" style="color:var(--cyan);">' + totalDist.toLocaleString('pt-BR') + '</div><div class="stat-label">Distribuídos</div></div>';
+
+    var html = '';
+    DATA.materiais.forEach(function(m) {
+        var pct = m.qtd > 0 ? Math.round(m.dist / m.qtd * 100) : 0;
+        var pctCor = pct < 50 ? 'var(--green)' : pct < 80 ? 'var(--orange)' : 'var(--red)';
+        var status, stCor;
+        if (m.estoque <= 0) { status = 'Sem Estoque'; stCor = 'red'; }
+        else if (m.minimo > 0 && m.estoque <= m.minimo) { status = 'Estoque Baixo'; stCor = 'orange'; }
+        else { status = 'OK'; stCor = 'green'; }
+        var faseLabel = m.fase === 'pre' ? 'Pré' : m.fase === 'campanha' ? 'Campanha' : 'Ambas';
+
+        html += '<tr><td><strong>' + esc(m.nome) + '</strong></td>' +
+            '<td><span class="badge badge-' + (m.fase==='pre'?'orange':'green') + '">' + faseLabel + '</span></td>' +
+            '<td>' + m.qtd.toLocaleString('pt-BR') + '</td>' +
+            '<td>' + m.estoque.toLocaleString('pt-BR') + '</td>' +
+            '<td>' + m.dist.toLocaleString('pt-BR') + '</td>' +
+            '<td><div class="progress-bar" style="width:80px;display:inline-block;vertical-align:middle;"><div class="progress-fill" style="width:' + pct + '%;background:' + pctCor + ';"></div></div> ' + pct + '%</td>' +
+            '<td><span class="badge badge-' + stCor + '">' + status + '</span></td>' +
+            '<td>' + esc(m.fornecedor || '-') + '</td>' +
+            '<td><button class="btn btn-sm btn-primary" onclick="openModalMaterial(' + m.id + ')">Editar</button> ' +
+            '<button class="btn btn-sm btn-danger" onclick="delMaterial(' + m.id + ')">X</button></td></tr>';
+    });
+    document.getElementById('tbMateriais').innerHTML = html || '<tr><td colspan="9" style="text-align:center;color:var(--text2);">Nenhum material cadastrado.</td></tr>';
+}
+
+function delMaterial(id) {
+    if (!confirm('Excluir este material?')) return;
+    DATA.materiais = DATA.materiais.filter(function(x) { return x.id != id; });
+    saveData(); renderMateriais();
+}
+
+// ==================== FORNECEDORES ====================
+function openModalFornecedor(id) {
+    document.getElementById('fornEditId').value = id || '';
+    if (id) {
+        var f = DATA.fornecedores.find(function(x) { return x.id == id; });
+        if (f) {
+            document.getElementById('fornEmpresa').value = f.empresa;
+            document.getElementById('fornContato').value = f.contato;
+            document.getElementById('fornTel').value = f.tel;
+            document.getElementById('fornServico').value = f.servico;
+            document.getElementById('fornPrazo').value = f.prazo;
+            document.getElementById('fornStatus').value = f.status;
+            document.getElementById('fornObs').value = f.obs || '';
+        }
+    } else {
+        ['fornEmpresa','fornContato','fornTel','fornServico','fornObs'].forEach(function(x) { document.getElementById(x).value = ''; });
+        document.getElementById('fornPrazo').value = '';
+    }
+    document.getElementById('modalFornecedor').classList.add('show');
+}
+
+function saveFornecedor() {
+    var empresa = document.getElementById('fornEmpresa').value.trim();
+    if (!empresa) return alert('Preencha a empresa.');
+    var editId = document.getElementById('fornEditId').value;
+    var obj = {
+        empresa: empresa, contato: document.getElementById('fornContato').value.trim(),
+        tel: document.getElementById('fornTel').value.trim(),
+        servico: document.getElementById('fornServico').value.trim(),
+        prazo: document.getElementById('fornPrazo').value,
+        status: document.getElementById('fornStatus').value,
+        obs: document.getElementById('fornObs').value.trim()
+    };
+    if (editId) {
+        var idx = DATA.fornecedores.findIndex(function(x) { return x.id == editId; });
+        if (idx >= 0) { obj.id = parseInt(editId); DATA.fornecedores[idx] = obj; }
+    } else { obj.id = genId(); DATA.fornecedores.push(obj); }
+    saveData(); closeModal('modalFornecedor'); renderFornecedores();
+}
+
+function renderFornecedores() {
+    var html = '';
+    DATA.fornecedores.sort(function(a,b) { return (a.prazo||'9999') > (b.prazo||'9999') ? 1 : -1; }).forEach(function(f) {
+        var stCores = {'Orçamento':'purple','Contratado':'blue','Em Produção':'orange','Entregue':'green','Pago':'cyan'};
+        var stCor = stCores[f.status] || 'blue';
+        html += '<tr><td><strong>' + esc(f.empresa) + '</strong></td>' +
+            '<td>' + esc(f.contato) + '</td>' +
+            '<td>' + esc(f.tel) + '</td>' +
+            '<td>' + esc(f.servico) + '</td>' +
+            '<td>' + formatDate(f.prazo) + '</td>' +
+            '<td><span class="badge badge-' + stCor + '">' + f.status + '</span></td>' +
+            '<td><button class="btn btn-sm btn-primary" onclick="openModalFornecedor(' + f.id + ')">Editar</button> ' +
+            '<button class="btn btn-sm btn-danger" onclick="delFornecedor(' + f.id + ')">X</button></td></tr>';
+    });
+    document.getElementById('tbFornecedores').innerHTML = html || '<tr><td colspan="8" style="text-align:center;color:var(--text2);">Nenhum fornecedor cadastrado.</td></tr>';
+}
+
+function delFornecedor(id) {
+    if (!confirm('Excluir este fornecedor?')) return;
+    DATA.fornecedores = DATA.fornecedores.filter(function(x) { return x.id != id; });
+    saveData(); renderFornecedores();
+}
+
+// ==================== EQUIPE ====================
+function openModalEquipe(id) {
+    document.getElementById('eqEditId').value = id || '';
+    if (id) {
+        var e = DATA.equipe.find(function(x) { return x.id == id; });
+        if (e) {
+            document.getElementById('eqChefe').value = e.chefe || '';
+            document.getElementById('eqNome').value = e.nome;
+            document.getElementById('eqFuncao').value = e.funcao;
+            document.getElementById('eqTel').value = e.tel;
+            document.getElementById('eqRegiao').value = e.regiao;
+            document.getElementById('eqMat').value = e.materiais;
+            document.getElementById('eqAtribuicoes').value = e.atribuicoes || '';
+        }
+    } else {
+        ['eqChefe','eqNome','eqTel','eqRegiao','eqMat','eqAtribuicoes'].forEach(function(x) { document.getElementById(x).value = ''; });
+    }
+    document.getElementById('modalEquipe').classList.add('show');
+}
+
+function saveEquipe() {
+    var nome = document.getElementById('eqNome').value.trim();
+    if (!nome) return alert('Preencha o nome.');
+    var editId = document.getElementById('eqEditId').value;
+    var obj = {
+        chefe: document.getElementById('eqChefe').value.trim(),
+        nome: nome, funcao: document.getElementById('eqFuncao').value,
+        tel: document.getElementById('eqTel').value.trim(),
+        regiao: document.getElementById('eqRegiao').value.trim(),
+        materiais: document.getElementById('eqMat').value.trim(),
+        atribuicoes: document.getElementById('eqAtribuicoes').value.trim(),
+        ativo: true
+    };
+    if (editId) {
+        var idx = DATA.equipe.findIndex(function(x) { return x.id == editId; });
+        if (idx >= 0) {
+            obj.id = parseInt(editId);
+            obj.membros = DATA.equipe[idx].membros || [];
+            DATA.equipe[idx] = obj;
+        }
+    } else { obj.id = genId(); obj.membros = []; DATA.equipe.push(obj); }
+    saveData(); closeModal('modalEquipe'); renderEquipe();
+}
+
+function renderEquipe() {
+    var html = '';
+    DATA.equipe.forEach(function(e) {
+        var membros = e.membros || [];
+        var qtdMembros = membros.length;
+        var corMembros = qtdMembros === 0 ? 'var(--text2)' : 'var(--accent)';
+        var bgMembros = qtdMembros === 0 ? 'rgba(148,163,184,.15)' : 'rgba(59,130,246,.15)';
+
+        html += '<tr><td><strong>' + esc(e.nome) + '</strong></td>' +
+            '<td>' + esc(e.chefe || '') + '</td>' +
+            '<td style="text-align:center;">' +
+                '<button class="btn btn-sm" style="background:' + bgMembros + ';color:' + corMembros + ';border:1px solid ' + corMembros + '30;padding:4px 10px;font-size:0.75rem;" onclick="openModalMembros(' + e.id + ')">' +
+                '<span class="membros-count" style="background:' + corMembros + ';color:#fff;margin-right:4px;">' + qtdMembros + '</span> ' +
+                (qtdMembros === 0 ? 'Cadastrar' : qtdMembros === 1 ? '1 membro' : qtdMembros + ' membros') +
+                '</button>' +
+            '</td>' +
+            '<td>' + esc(e.funcao) + '</td>' +
+            '<td>' + esc(e.tel) + '</td>' +
+            '<td>' + esc(e.regiao) + '</td>' +
+            '<td>' + esc(e.materiais) + '</td>' +
+            '<td style="max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + esc(e.atribuicoes || '') + '</td>' +
+            '<td><span class="badge badge-green">Ativo</span></td>' +
+            '<td><button class="btn btn-sm btn-primary" onclick="openModalEquipe(' + e.id + ')">Editar</button> ' +
+            '<button class="btn btn-sm btn-danger" onclick="delEquipe(' + e.id + ')">X</button></td></tr>';
+    });
+    document.getElementById('tbEquipe').innerHTML = html || '<tr><td colspan="10" style="text-align:center;color:var(--text2);">Nenhum membro cadastrado.</td></tr>';
+}
+
+function delEquipe(id) {
+    if (!confirm('Remover este membro?')) return;
+    DATA.equipe = DATA.equipe.filter(function(x) { return x.id != id; });
+    saveData(); renderEquipe();
+}
+
+// ==================== MEMBROS DA EQUIPE ====================
+var MEMBRO_CORES = ['#3b82f6','#8b5cf6','#ec4899','#10b981','#f59e0b','#06b6d4','#ef4444','#6366f1','#14b8a6','#f97316'];
+
+function openModalMembros(equipeId) {
+    var e = DATA.equipe.find(function(x) { return x.id == equipeId; });
+    if (!e) return;
+    document.getElementById('membrosEquipeId').value = equipeId;
+    document.getElementById('membrosTitle').textContent = 'Equipe: ' + e.nome;
+    document.getElementById('membrosSubtitle').textContent = 'Coordenador: ' + (e.chefe || 'Não definido') + ' | Região: ' + (e.regiao || '—');
+    document.getElementById('membroNome').value = '';
+    document.getElementById('membroTel').value = '';
+    renderMembros(equipeId);
+    document.getElementById('modalMembros').classList.add('show');
+}
+
+function addMembro() {
+    var equipeId = parseInt(document.getElementById('membrosEquipeId').value);
+    var nome = document.getElementById('membroNome').value.trim();
+    if (!nome) return alert('Preencha o nome do membro.');
+    var e = DATA.equipe.find(function(x) { return x.id == equipeId; });
+    if (!e) return;
+    if (!e.membros) e.membros = [];
+    e.membros.push({
+        id: Date.now(),
+        nome: nome,
+        tel: document.getElementById('membroTel').value.trim(),
+        funcao: document.getElementById('membroFuncao').value
+    });
+    saveData();
+    document.getElementById('membroNome').value = '';
+    document.getElementById('membroTel').value = '';
+    renderMembros(equipeId);
+    renderEquipe();
+}
+
+function delMembro(equipeId, membroId) {
+    if (!confirm('Remover este membro da equipe?')) return;
+    var e = DATA.equipe.find(function(x) { return x.id == equipeId; });
+    if (!e || !e.membros) return;
+    e.membros = e.membros.filter(function(m) { return m.id != membroId; });
+    saveData();
+    renderMembros(equipeId);
+    renderEquipe();
+}
+
+function renderMembros(equipeId) {
+    var e = DATA.equipe.find(function(x) { return x.id == equipeId; });
+    var container = document.getElementById('membrosLista');
+    if (!e || !e.membros || e.membros.length === 0) {
+        container.innerHTML = '<div class="membros-empty">' +
+            '<div class="membros-empty-icon">&#128101;</div>' +
+            '<div style="font-size:0.88rem;font-weight:600;">Nenhum membro cadastrado</div>' +
+            '<div style="font-size:0.75rem;margin-top:4px;">Use o formulário acima para adicionar membros a esta equipe</div>' +
+            '</div>';
+        return;
+    }
+    var html = '<div style="font-size:0.72rem;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">' +
+        e.membros.length + (e.membros.length === 1 ? ' membro cadastrado' : ' membros cadastrados') + '</div>';
+    e.membros.forEach(function(m, idx) {
+        var cor = MEMBRO_CORES[idx % MEMBRO_CORES.length];
+        var iniciais = m.nome.split(' ').map(function(p) { return p.charAt(0).toUpperCase(); }).slice(0,2).join('');
+        html += '<div class="membro-card">' +
+            '<div class="membro-avatar" style="background:' + cor + ';">' + iniciais + '</div>' +
+            '<div class="membro-info">' +
+                '<div class="membro-nome">' + esc(m.nome) + '</div>' +
+                '<div class="membro-detalhe">' + esc(m.funcao || '') +
+                    (m.tel ? ' &bull; ' + esc(m.tel) : '') +
+                '</div>' +
+            '</div>' +
+            '<div class="membro-actions">' +
+                '<button class="btn btn-sm btn-danger" style="padding:3px 8px;font-size:0.7rem;" onclick="delMembro(' + equipeId + ',' + m.id + ')" title="Remover membro">&#10005;</button>' +
+            '</div>' +
+        '</div>';
+    });
+    container.innerHTML = html;
+}
+
+// ==================== SUBCOORDENAÇÕES ====================
+function saveSubcoords() {
+    for (var i = 1; i <= 6; i++) {
+        DATA.subcoords[i-1] = document.getElementById('subcoord' + i).value;
+    }
+    saveData();
+}
+function loadSubcoords() {
+    if (DATA.subcoords) {
+        for (var i = 1; i <= 6; i++) {
+            document.getElementById('subcoord' + i).value = DATA.subcoords[i-1] || '';
+        }
+    }
+}
+
+// ==================== CHECKLIST ====================
+var CHECKLIST_ITEMS = {
+    'Pré-Campanha (Agora - 15/08)': [
+        'Definir identidade visual (cores, fontes, slogan)',
+        'Encomendar camisetas para equipe (frente: "Celina Leão Por Brasília" / costas: "Quem ama cuida")',
+        'Produzir adesivos pequenos (uso pessoal, 8-12cm)',
+        'Produzir folders institucionais (sem número, sem pedido de voto)',
+        'Produzir cartões com QR Code (cadastro de apoiadores)',
+        'Produzir banner/backdrop institucional',
+        'Montar equipe de campo para acompanhar a governadora',
+        'Treinar equipe para distribuição de material e QR Code',
+        'Definir fornecedores de impressão (orçar com 3-5 gráficas)',
+        'Contratar gráfica principal',
+        'Produzir panfleto de prestação de contas (obras do governo)',
+        'Definir subcoordenadores das 6 áreas da logística',
+        'Montar almoxarifado / local de estoque',
+        'Criar sistema de controle de estoque',
+        'Mapear locais de eventos e reuniões semanais',
+        'Providenciar kit de apoiador (camiseta + adesivo + cartão QR)',
+        'Providenciar kit de coordenação (camiseta premium + crachá + pasta)',
+        'Criar grupo WhatsApp da equipe logística',
+        'Definir rota semanal de eventos da governadora'
+    ],
+    'Campanha Oficial (16/08 - 03/10)': [
+        'Produzir santinhos com número (1ª tiragem)',
+        'Produzir adesivos para carro (até 0,5m²)',
+        'Produzir bandeiras de campanha',
+        'Produzir praguinhas (adesivos redondos com número)',
+        'Produzir jornal de campanha',
+        'Incluir CNPJ e tiragem em TODOS os materiais impressos',
+        'Montar comitê central',
+        'Montar comitês regionais',
+        'Contratar carro de som',
+        'Contratar frota de veículos',
+        'Contratar motoristas',
+        'Definir rotas de distribuição por região',
+        'Escalar equipes de distribuição diárias',
+        'Controlar distribuição diária x estoque',
+        'Planejar logística de carreatas',
+        'Planejar logística de comícios',
+        'Monitorar reposição de material (prazo 1-2 semanas)',
+        'Encomendar 2ª tiragem de materiais (se necessário)',
+        'Reta final: distribuição máxima (últimas 2 semanas)',
+        'Encerrar distribuição até 22h de 03/10'
+    ]
+};
+
+function renderChecklist() {
+    if (!DATA.customChecklist) DATA.customChecklist = {};
+    var html = '';
+    Object.keys(CHECKLIST_ITEMS).forEach(function(secao) {
+        var baseItems = CHECKLIST_ITEMS[secao];
+        var customItems = DATA.customChecklist[secao] || [];
+        var totalItems = baseItems.length + customItems.length;
+        var doneCount = 0;
+        baseItems.forEach(function(item, i) {
+            var key = secao + '_' + i;
+            if (DATA.checklist[key]) doneCount++;
+        });
+        customItems.forEach(function(item, i) {
+            var key = secao + '_custom_' + i;
+            if (DATA.checklist[key]) doneCount++;
+        });
+        var pct = totalItems > 0 ? Math.round(doneCount / totalItems * 100) : 0;
+        var secaoId = secao.replace(/[^a-zA-Z0-9]/g, '_');
+        var cardHtml = '<div class="card"><div class="card-header"><div>' +
+            '<div class="card-title">' + secao + '</div>' +
+            '<div class="card-subtitle">' + doneCount + ' de ' + totalItems + ' concluídos (' + pct + '%)</div></div></div>' +
+            '<div class="progress-bar" style="margin-bottom:12px;"><div class="progress-fill" style="width:' + pct + '%;background:var(--green);"></div></div>';
+        baseItems.forEach(function(item, i) {
+            var key = secao + '_' + i;
+            var done = DATA.checklist[key] || false;
+            cardHtml += '<div class="check-item' + (done ? ' done' : '') + '">' +
+                '<input type="checkbox" ' + (done ? 'checked' : '') + ' onchange="toggleCheck(\'' + key.replace(/'/g,"\\'") + '\')">' +
+                '<span class="check-text">' + item + '</span></div>';
+        });
+        customItems.forEach(function(item, i) {
+            var key = secao + '_custom_' + i;
+            var done = DATA.checklist[key] || false;
+            cardHtml += '<div class="check-item' + (done ? ' done' : '') + '">' +
+                '<input type="checkbox" ' + (done ? 'checked' : '') + ' onchange="toggleCheck(\'' + key.replace(/'/g,"\\'") + '\')">' +
+                '<span class="check-text">' + esc(item) + '</span>' +
+                '<button class="btn-remove-check" title="Remover item" onclick="removeChecklistItem(\'' + secao.replace(/'/g,"\\'") + '\',' + i + ')">&#10005;</button></div>';
+        });
+        cardHtml += '<div class="add-check-row">' +
+            '<input type="text" id="newCheck_' + secaoId + '" placeholder="Adicionar novo item ao checklist..." onkeydown="if(event.key===\'Enter\')addChecklistItem(\'' + secao.replace(/'/g,"\\'") + '\')">' +
+            '<button onclick="addChecklistItem(\'' + secao.replace(/'/g,"\\'") + '\')">+ Adicionar</button></div>';
+        cardHtml += '</div>';
+        html += cardHtml;
+    });
+    document.getElementById('checklistGrid').innerHTML = html;
+}
+
+function toggleCheck(key) {
+    DATA.checklist[key] = !DATA.checklist[key];
+    saveData(); renderChecklist();
+}
+
+function addChecklistItem(secao) {
+    if (!DATA.customChecklist) DATA.customChecklist = {};
+    var secaoId = secao.replace(/[^a-zA-Z0-9]/g, '_');
+    var input = document.getElementById('newCheck_' + secaoId);
+    var texto = input.value.trim();
+    if (!texto) return alert('Digite o texto do item.');
+    if (!DATA.customChecklist[secao]) DATA.customChecklist[secao] = [];
+    DATA.customChecklist[secao].push(texto);
+    saveData(); renderChecklist();
+}
+
+function removeChecklistItem(secao, idx) {
+    if (!confirm('Remover este item do checklist?')) return;
+    var customItems = DATA.customChecklist[secao] || [];
+    var key = secao + '_custom_' + idx;
+    delete DATA.checklist[key];
+    customItems.splice(idx, 1);
+    DATA.customChecklist[secao] = customItems;
+    var newChecklist = {};
+    Object.keys(DATA.checklist).forEach(function(k) {
+        if (k.indexOf(secao + '_custom_') !== 0) { newChecklist[k] = DATA.checklist[k]; }
+    });
+    customItems.forEach(function(item, i) {
+        var oldKey = secao + '_custom_' + (i >= idx ? i + 1 : i);
+        var newKey = secao + '_custom_' + i;
+        if (DATA.checklist[oldKey]) newChecklist[newKey] = true;
+    });
+    DATA.checklist = newChecklist;
+    saveData(); renderChecklist();
+}
+
+// ==================== DRILL-DOWN DOS STAT CARDS ====================
+function abrirDetalhe(icone, titulo, count, bodyHtml) {
+    document.getElementById('detalheIcone').textContent = icone;
+    document.getElementById('detalheTitulo').textContent = titulo;
+    document.getElementById('detalheCount').textContent = count;
+    document.getElementById('detalheBody').innerHTML = bodyHtml;
+    document.getElementById('detalheOverlay').classList.add('show');
+}
+
+function fecharDetalhe() {
+    document.getElementById('detalheOverlay').classList.remove('show');
+}
+
+function abrirDetalheTarefasHoje() {
+    var hoje = new Date().toISOString().slice(0,10);
+    var tarefas = DATA.tarefas.filter(function(t) { return t.prazo === hoje && t.status !== 'concluida'; });
+
+    var html = '';
+    if (tarefas.length === 0) {
+        html = '<div class="detalhe-empty"><div class="detalhe-empty-icon">&#9989;</div>' +
+            '<div class="detalhe-empty-text">Nenhuma tarefa para hoje!</div>' +
+            '<button class="detalhe-action" onclick="fecharDetalhe();showPage(\'tarefas\')">Ver todas as tarefas</button></div>';
+    } else {
+        tarefas.forEach(function(t) {
+            var prioCor = t.prioridade === 'alta' ? 'red' : t.prioridade === 'media' ? 'orange' : 'blue';
+            var stLabel = t.status === 'andamento' ? 'Em Andamento' : 'Pendente';
+            var stCor = t.status === 'andamento' ? 'cyan' : 'orange';
+            html += '<div class="detalhe-item">' +
+                '<div class="detalhe-item-info">' +
+                '<div class="detalhe-item-title">' + esc(t.titulo) + '</div>' +
+                '<div class="detalhe-item-sub">' + esc(t.categoria) + (t.responsavel ? ' | ' + esc(t.responsavel) : '') + (t.desc ? ' &mdash; ' + esc(t.desc).substring(0,80) : '') + '</div></div>' +
+                '<div class="detalhe-item-right">' +
+                '<span class="badge badge-' + prioCor + '">' + t.prioridade + '</span><br>' +
+                '<span class="badge badge-' + stCor + '" style="margin-top:4px;">' + stLabel + '</span></div></div>';
+        });
+        html += '<div style="text-align:center;margin-top:16px;">' +
+            '<button class="detalhe-action" onclick="fecharDetalhe();showPage(\'tarefas\')">Gerenciar Tarefas</button></div>';
+    }
+
+    abrirDetalhe('&#128197;', 'Tarefas para Hoje (' + formatDate(hoje) + ')', tarefas.length, html);
+}
+
+function abrirDetalhePendentes() {
+    var tarefas = DATA.tarefas.filter(function(t) { return t.status !== 'concluida'; })
+        .sort(function(a,b) {
+            var po = {alta:0,media:1,baixa:2};
+            if (po[a.prioridade] !== po[b.prioridade]) return po[a.prioridade] - po[b.prioridade];
+            return (a.prazo||'9999') > (b.prazo||'9999') ? 1 : -1;
+        });
+
+    var html = '';
+    if (tarefas.length === 0) {
+        html = '<div class="detalhe-empty"><div class="detalhe-empty-icon">&#127881;</div>' +
+            '<div class="detalhe-empty-text">Todas as tarefas concluidas!</div></div>';
+    } else {
+        // Agrupar por prioridade
+        var grupos = {alta:[], media:[], baixa:[]};
+        tarefas.forEach(function(t) { (grupos[t.prioridade] || grupos.baixa).push(t); });
+
+        ['alta','media','baixa'].forEach(function(prio) {
+            if (grupos[prio].length === 0) return;
+            var corLabel = prio === 'alta' ? '#ef4444' : prio === 'media' ? '#f59e0b' : '#3b82f6';
+            var nomeLabel = prio === 'alta' ? 'ALTA PRIORIDADE' : prio === 'media' ? 'MEDIA PRIORIDADE' : 'BAIXA PRIORIDADE';
+            html += '<div style="font-size:.7rem;font-weight:700;color:' + corLabel + ';text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;padding-bottom:6px;border-bottom:1px solid ' + corLabel + '40;">' +
+                nomeLabel + ' (' + grupos[prio].length + ')</div>';
+
+            grupos[prio].forEach(function(t) {
+                var stLabel = t.status === 'andamento' ? 'Em Andamento' : 'Pendente';
+                var stCor = t.status === 'andamento' ? 'cyan' : 'orange';
+                var prazoStr = t.prazo ? formatDate(t.prazo) : 'Sem prazo';
+                var hoje = new Date().toISOString().slice(0,10);
+                var atrasado = t.prazo && t.prazo < hoje;
+                html += '<div class="detalhe-item"' + (atrasado ? ' style="border-color:var(--red);"' : '') + '>' +
+                    '<div class="detalhe-item-info">' +
+                    '<div class="detalhe-item-title">' + esc(t.titulo) + '</div>' +
+                    '<div class="detalhe-item-sub">' + esc(t.categoria) + (t.responsavel ? ' | ' + esc(t.responsavel) : '') + ' | Prazo: ' + prazoStr +
+                    (atrasado ? ' <span style="color:var(--red);font-weight:700;">ATRASADA</span>' : '') + '</div></div>' +
+                    '<div class="detalhe-item-right"><span class="badge badge-' + stCor + '">' + stLabel + '</span></div></div>';
+            });
+        });
+
+        html += '<div style="text-align:center;margin-top:16px;">' +
+            '<button class="detalhe-action" onclick="fecharDetalhe();showPage(\'tarefas\')">Gerenciar Tarefas</button></div>';
+    }
+
+    abrirDetalhe('&#9888;', 'Tarefas Pendentes', tarefas.length, html);
+}
+
+function abrirDetalheEstoque() {
+    var materiais = DATA.materiais.slice().sort(function(a,b) { return (b.estoque||0) - (a.estoque||0); });
+
+    var html = '';
+    if (materiais.length === 0) {
+        html = '<div class="detalhe-empty"><div class="detalhe-empty-icon">&#128230;</div>' +
+            '<div class="detalhe-empty-text">Nenhum material cadastrado.</div>' +
+            '<button class="detalhe-action" onclick="fecharDetalhe();showPage(\'materiais\')">Cadastrar Material</button></div>';
+    } else {
+        var totalEstoque = materiais.reduce(function(s,m) { return s + (m.estoque||0); }, 0);
+        html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;">' +
+            '<div style="background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;">' +
+            '<div style="font-size:1.5rem;font-weight:800;color:var(--green);">' + totalEstoque.toLocaleString('pt-BR') + '</div>' +
+            '<div style="font-size:.7rem;color:var(--text2);text-transform:uppercase;">Total em Estoque</div></div>' +
+            '<div style="background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;">' +
+            '<div style="font-size:1.5rem;font-weight:800;color:var(--cyan);">' + materiais.reduce(function(s,m){return s+(m.dist||0);},0).toLocaleString('pt-BR') + '</div>' +
+            '<div style="font-size:.7rem;color:var(--text2);text-transform:uppercase;">Distribuidos</div></div>' +
+            '<div style="background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;">' +
+            '<div style="font-size:1.5rem;font-weight:800;color:var(--accent);">' + materiais.length + '</div>' +
+            '<div style="font-size:.7rem;color:var(--text2);text-transform:uppercase;">Tipos de Material</div></div></div>';
+
+        materiais.forEach(function(m) {
+            var pct = m.qtd > 0 ? Math.round(m.dist / m.qtd * 100) : 0;
+            var status, stCor;
+            if (m.estoque <= 0) { status = 'Sem Estoque'; stCor = 'red'; }
+            else if (m.minimo > 0 && m.estoque <= m.minimo) { status = 'Estoque Baixo'; stCor = 'orange'; }
+            else { status = 'OK'; stCor = 'green'; }
+
+            html += '<div class="detalhe-item">' +
+                '<div class="detalhe-item-info">' +
+                '<div class="detalhe-item-title">' + esc(m.nome) + '</div>' +
+                '<div class="detalhe-item-sub">Pedido: ' + (m.qtd||0).toLocaleString('pt-BR') +
+                ' | Estoque: <strong>' + (m.estoque||0).toLocaleString('pt-BR') + '</strong>' +
+                ' | Distribuido: ' + (m.dist||0).toLocaleString('pt-BR') +
+                ' | Uso: ' + pct + '%' +
+                (m.fornecedor ? ' | Forn: ' + esc(m.fornecedor) : '') + '</div></div>' +
+                '<div class="detalhe-item-right"><span class="badge badge-' + stCor + '">' + status + '</span></div></div>';
+        });
+
+        html += '<div style="text-align:center;margin-top:16px;">' +
+            '<button class="detalhe-action" onclick="fecharDetalhe();showPage(\'materiais\')">Gerenciar Materiais</button></div>';
+    }
+
+    var totalEst = materiais.reduce(function(s,m) { return s + (m.estoque||0); }, 0);
+    abrirDetalhe('&#128230;', 'Materiais em Estoque', totalEst.toLocaleString('pt-BR'), html);
+}
+
+function abrirDetalheAlertas() {
+    var alertas = DATA.materiais.filter(function(m) { return m.minimo > 0 && m.estoque <= m.minimo; })
+        .sort(function(a,b) { return (a.estoque||0) - (b.estoque||0); });
+
+    var html = '';
+    if (alertas.length === 0) {
+        html = '<div class="detalhe-empty"><div class="detalhe-empty-icon">&#9989;</div>' +
+            '<div class="detalhe-empty-text">Nenhum alerta de material! Todos os estoques estao acima do minimo.</div></div>';
+    } else {
+        html += '<div style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:14px;margin-bottom:16px;font-size:.85rem;color:#fca5a5;">' +
+            '&#9888; <strong>' + alertas.length + ' material(is)</strong> com estoque abaixo do minimo definido. Reponha o quanto antes!</div>';
+
+        alertas.forEach(function(m) {
+            var semEstoque = m.estoque <= 0;
+            var pctMin = m.minimo > 0 ? Math.round(m.estoque / m.minimo * 100) : 0;
+            html += '<div class="detalhe-item" style="border-color:' + (semEstoque ? 'var(--red)' : 'var(--orange)') + ';">' +
+                '<div class="detalhe-item-info">' +
+                '<div class="detalhe-item-title">' + (semEstoque ? '&#128308; ' : '&#128992; ') + esc(m.nome) + '</div>' +
+                '<div class="detalhe-item-sub">' +
+                'Estoque: <strong style="color:' + (semEstoque ? 'var(--red)' : 'var(--orange)') + ';">' + (m.estoque||0).toLocaleString('pt-BR') + '</strong>' +
+                ' / Minimo: ' + (m.minimo||0).toLocaleString('pt-BR') +
+                ' (' + pctMin + '% do minimo)' +
+                (m.fornecedor ? ' | Forn: ' + esc(m.fornecedor) : '') + '</div></div>' +
+                '<div class="detalhe-item-right">' +
+                '<span class="badge badge-' + (semEstoque ? 'red' : 'orange') + '">' + (semEstoque ? 'SEM ESTOQUE' : 'ESTOQUE BAIXO') + '</span>' +
+                '</div></div>';
+        });
+
+        html += '<div style="text-align:center;margin-top:16px;">' +
+            '<button class="detalhe-action" onclick="fecharDetalhe();showPage(\'materiais\')">Gerenciar Materiais</button></div>';
+    }
+
+    abrirDetalhe('&#128680;', 'Alertas de Material', alertas.length, html);
+}
+
+// Fechar detalhe com ESC
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') fecharDetalhe(); });
+
+// ==================== UTILS ====================
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+function esc(s) { var d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+function formatDate(d) {
+    if (!d) return '-';
+    var p = d.split('-');
+    return p[2] + '/' + p[1] + '/' + p[0];
+}
+
+// ==================== QR CODE ====================
+function showQRCode() {
+    var url = 'http://192.168.0.2:8080/Logistica%20Campanha.html';
+    var qrApi = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' + encodeURIComponent(url);
+    var overlay = document.createElement('div');
+    overlay.className = 'modal-overlay show';
+    overlay.innerHTML = '<div class="modal" style="text-align:center;">' +
+        '<div class="modal-title">Acesse pelo Celular</div>' +
+        '<p style="color:var(--text2);font-size:.85rem;margin-bottom:14px;">Escaneie o QR Code com a câmera do celular<br>(mesma rede Wi-Fi)</p>' +
+        '<img src="' + qrApi + '" alt="QR Code" style="border-radius:8px;background:#fff;padding:10px;">' +
+        '<p style="margin-top:12px;font-size:.8rem;color:var(--accent);word-break:break-all;">' + url + '</p>' +
+        '<button class="btn btn-primary" style="margin-top:14px;" onclick="this.closest(\'.modal-overlay\').remove()">Fechar</button>' +
+        '</div>';
+    overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+    document.body.appendChild(overlay);
+}
+
+// Click fora do modal fecha
+document.querySelectorAll('.modal-overlay').forEach(function(o) {
+    o.addEventListener('click', function(e) { if (e.target === o) o.classList.remove('show'); });
+});
+
+// ==================== INIT ====================
+loadSubcoords();
+renderDashboard();
+
+// Atualiza countdown a cada minuto
+setInterval(updateCountdown, 60000);
+</script>
+</body>
+</html>
