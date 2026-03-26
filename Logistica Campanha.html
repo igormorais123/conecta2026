@@ -185,7 +185,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
         <button onclick="showPage('tarefas')">Tarefas</button>
         <button onclick="showPage('materiais')">Materiais</button>
         <button onclick="showPage('fornecedores')">Fornecedores</button>
-        <button onclick="showPage('equipe')">Equipe de Campo</button>
+        <button onclick="showPage('equipe')">Equipe</button>
         <button onclick="showPage('subcoord')">Subcoordenações</button>
         <button onclick="showPage('calendario')">Calendário</button>
         <button onclick="showPage('checklist')">Checklist</button>
@@ -313,11 +313,11 @@ tr:hover td { background:rgba(59,130,246,0.05); }
     </tr></thead><tbody id="tbFornecedores"></tbody></table></div>
 </div>
 
-<!-- ============ EQUIPE DE CAMPO ============ -->
+<!-- ============ EQUIPE ============ -->
 <div class="page" id="page-equipe">
     <div class="card-header" style="margin-bottom:16px;">
         <div>
-            <div class="card-title" style="font-size:1.2rem;">Equipe de Campo</div>
+            <div class="card-title" style="font-size:1.2rem;">Equipe</div>
             <div class="card-subtitle">Equipe para acompanhar a governadora e distribuir materiais</div>
         </div>
         <button class="btn btn-primary" onclick="openModalEquipe()">+ Adicionar Membro</button>
@@ -604,7 +604,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
 <!-- Modal Equipe -->
 <div class="modal-overlay" id="modalEquipe">
 <div class="modal">
-    <div class="modal-title">Membro da Equipe de Campo</div>
+    <div class="modal-title">Membro da Equipe</div>
     <input type="hidden" id="eqEditId">
     <div class="form-group"><label>Nome da Equipe</label><input type="text" id="eqNome" placeholder="Ex: Equipe Norte, Equipe Central..."></div>
     <div class="form-group"><label>Coordenador de Equipe</label><input type="text" id="eqChefe" placeholder="Nome do coordenador responsável pela equipe"></div>
@@ -1389,7 +1389,7 @@ var CHECKLIST_ITEMS = {
         'Produzir folders institucionais (sem número, sem pedido de voto)',
         'Produzir cartões com QR Code (cadastro de apoiadores)',
         'Produzir banner/backdrop institucional',
-        'Montar equipe de campo para acompanhar a governadora',
+        'Montar equipe para acompanhar a governadora',
         'Treinar equipe para distribuição de material e QR Code',
         'Definir fornecedores de impressão (orçar com 3-5 gráficas)',
         'Contratar gráfica principal',
