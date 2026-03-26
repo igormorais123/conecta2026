@@ -610,7 +610,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
 
     <!-- Tabela de agendamentos -->
     <div class="card"><table><thead><tr>
-        <th>Sala</th><th>Data</th><th>Horário</th><th>Pessoa</th><th>Telefone</th><th>Assunto</th><th>Status</th><th>Ações</th>
+        <th>Sala</th><th>Data</th><th>Horário</th><th>Pessoa</th><th>Telefone</th><th>Pessoas</th><th>Assunto</th><th>Status</th><th>Ações</th>
     </tr></thead><tbody id="tbAgendaSalas"></tbody></table></div>
 </div>
 
@@ -821,9 +821,17 @@ tr:hover td { background:rgba(59,130,246,0.05); }
     </div>
     <div class="grid-2">
         <div class="form-group"><label>Nome da Pessoa</label><input type="text" id="agendaSalaPessoa" placeholder="Nome de quem reservou"></div>
-        <div class="form-group"><label>Telefone</label><input type="text" id="agendaSalaTel" placeholder="(61) 99999-9999"></div>
+        <div class="form-group"><label>Telefone</label>
+            <div style="display:flex;gap:6px;">
+                <input type="text" id="agendaSalaDDD" placeholder="61" maxlength="2" style="width:56px;text-align:center;" oninput="this.value=this.value.replace(/\D/g,'');if(this.value.length===2)document.getElementById('agendaSalaTelNum').focus();">
+                <input type="text" id="agendaSalaTelNum" placeholder="99999-9999" style="flex:1;" oninput="formatarTelNum(this)">
+            </div>
+        </div>
     </div>
-    <div class="form-group"><label>Assunto / Motivo</label><input type="text" id="agendaSalaAssunto" placeholder="Ex: Reunião de coordenadores"></div>
+    <div class="grid-2">
+        <div class="form-group"><label>Qtd de Pessoas</label><input type="number" id="agendaSalaQtdPessoas" min="1" value="1" placeholder="Quantidade de participantes"></div>
+        <div class="form-group"><label>Assunto / Motivo</label><input type="text" id="agendaSalaAssunto" placeholder="Ex: Reunião de coordenadores"></div>
+    </div>
     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px;">
         <button class="btn" style="background:var(--card2);color:var(--text);" onclick="closeModal('modalAgendaSala')">Cancelar</button>
         <button class="btn btn-primary" onclick="saveAgendaSala()">Salvar</button>
@@ -1656,6 +1664,26 @@ function removeChecklistItem(secao, idx) {
 // ==================== AGENDA DE SALAS ====================
 var SALAS = ['Sala 1','Sala 2','Sala 3','Sala 4','Sala 5','Auditório'];
 
+function formatarTelNum(el) {
+    var v = el.value.replace(/\D/g,'');
+    if (v.length > 5) v = v.slice(0,5) + '-' + v.slice(5,9);
+    el.value = v;
+}
+
+function montarTelefone() {
+    var ddd = document.getElementById('agendaSalaDDD').value.trim();
+    var num = document.getElementById('agendaSalaTelNum').value.trim();
+    if (!ddd && !num) return '';
+    return '(' + ddd + ') ' + num;
+}
+
+function desmontarTelefone(tel) {
+    if (!tel) return { ddd: '', num: '' };
+    var m = tel.match(/\((\d{1,2})\)\s*(.*)/);
+    if (m) return { ddd: m[1], num: m[2] };
+    return { ddd: '', num: tel };
+}
+
 function openModalAgendaSala(id) {
     document.getElementById('agendaSalaEditId').value = id || '';
     if (id) {
@@ -1666,7 +1694,10 @@ function openModalAgendaSala(id) {
             document.getElementById('agendaSalaHoraInicio').value = a.horaInicio;
             document.getElementById('agendaSalaHoraFim').value = a.horaFim;
             document.getElementById('agendaSalaPessoa').value = a.pessoa;
-            document.getElementById('agendaSalaTel').value = a.telefone || '';
+            var tel = desmontarTelefone(a.telefone);
+            document.getElementById('agendaSalaDDD').value = tel.ddd;
+            document.getElementById('agendaSalaTelNum').value = tel.num;
+            document.getElementById('agendaSalaQtdPessoas').value = a.qtdPessoas || 1;
             document.getElementById('agendaSalaAssunto').value = a.assunto || '';
         }
     } else {
@@ -1675,7 +1706,9 @@ function openModalAgendaSala(id) {
         document.getElementById('agendaSalaHoraInicio').value = '';
         document.getElementById('agendaSalaHoraFim').value = '';
         document.getElementById('agendaSalaPessoa').value = '';
-        document.getElementById('agendaSalaTel').value = '';
+        document.getElementById('agendaSalaDDD').value = '61';
+        document.getElementById('agendaSalaTelNum').value = '';
+        document.getElementById('agendaSalaQtdPessoas').value = 1;
         document.getElementById('agendaSalaAssunto').value = '';
     }
     document.getElementById('modalAgendaSala').classList.add('show');
@@ -1687,7 +1720,8 @@ function saveAgendaSala() {
     var horaInicio = document.getElementById('agendaSalaHoraInicio').value;
     var horaFim = document.getElementById('agendaSalaHoraFim').value;
     var pessoa = document.getElementById('agendaSalaPessoa').value.trim();
-    var telefone = document.getElementById('agendaSalaTel').value.trim();
+    var telefone = montarTelefone();
+    var qtdPessoas = parseInt(document.getElementById('agendaSalaQtdPessoas').value) || 1;
     var assunto = document.getElementById('agendaSalaAssunto').value.trim();
 
     if (!data) return alert('Preencha a data.');
@@ -1701,9 +1735,8 @@ function saveAgendaSala() {
 
     // Validação de conflito de horário
     var conflito = DATA.agendaSalas.find(function(a) {
-        if (editId && a.id == editId) return false; // ignorar o próprio registro ao editar
+        if (editId && a.id == editId) return false;
         if (a.sala !== sala || a.data !== data) return false;
-        // Verifica sobreposição: inicio1 < fim2 && inicio2 < fim1
         return horaInicio < a.horaFim && a.horaInicio < horaFim;
     });
 
@@ -1713,7 +1746,7 @@ function saveAgendaSala() {
 
     var obj = {
         sala: sala, data: data, horaInicio: horaInicio, horaFim: horaFim,
-        pessoa: pessoa, telefone: telefone, assunto: assunto, status: 'confirmado'
+        pessoa: pessoa, telefone: telefone, qtdPessoas: qtdPessoas, assunto: assunto, status: 'confirmado'
     };
 
     if (editId) {
@@ -1803,12 +1836,13 @@ function renderAgendaSalas() {
             '<td>' + a.horaInicio + ' - ' + a.horaFim + '</td>' +
             '<td>' + esc(a.pessoa) + '</td>' +
             '<td>' + esc(a.telefone || '-') + '</td>' +
+            '<td style="text-align:center;">' + (a.qtdPessoas || 1) + '</td>' +
             '<td>' + esc(a.assunto || '-') + '</td>' +
             '<td><span class="badge badge-' + stCor + '">' + stLabel + '</span></td>' +
             '<td><button class="btn btn-sm btn-primary" onclick="openModalAgendaSala(' + a.id + ')">Editar</button> ' +
             '<button class="btn btn-sm btn-danger" onclick="delAgendaSala(' + a.id + ')">X</button></td></tr>';
     });
-    document.getElementById('tbAgendaSalas').innerHTML = html || '<tr><td colspan="8" style="text-align:center;color:var(--text2);">Nenhum agendamento cadastrado.</td></tr>';
+    document.getElementById('tbAgendaSalas').innerHTML = html || '<tr><td colspan="9" style="text-align:center;color:var(--text2);">Nenhum agendamento cadastrado.</td></tr>';
 }
 
 // ==================== DRILL-DOWN DOS STAT CARDS ====================
