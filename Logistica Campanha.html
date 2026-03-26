@@ -725,11 +725,18 @@ tr:hover td { background:rgba(59,130,246,0.05); }
     <div class="form-group"><label>Coordenador de Equipe</label><input type="text" id="eqChefe" placeholder="Nome do coordenador responsável pela equipe"></div>
     <div class="grid-2">
         <div class="form-group"><label>Função</label>
-            <select id="eqFuncao" onchange="toggleEqFuncaoOutro()">
-                <option>Distribuidor</option><option>Credenciamento/QR Code</option><option>Motorista</option><option>Apoio Geral</option><option>Coordenador Regional</option>
-                <option value="__outro__">Outro (especificar)</option>
-            </select>
-            <input type="text" id="eqFuncaoOutro" placeholder="Digite a função personalizada..." style="display:none;margin-top:6px;padding:8px 10px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.82rem;width:100%;">
+            <input type="text" id="eqFuncao" list="eqFuncaoList" placeholder="Digite ou selecione a função..." style="padding:8px 10px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.82rem;width:100%;">
+            <datalist id="eqFuncaoList">
+                <option value="Distribuidor">
+                <option value="Credenciamento/QR Code">
+                <option value="Motorista">
+                <option value="Apoio Geral">
+                <option value="Coordenador Regional">
+                <option value="Panfleteiro">
+                <option value="Bandeireiro">
+                <option value="Segurança">
+                <option value="Fotógrafo/Filmagem">
+            </datalist>
         </div>
         <div class="form-group"><label>Telefone</label><input type="text" id="eqTel"></div>
     </div>
@@ -773,26 +780,24 @@ tr:hover td { background:rgba(59,130,246,0.05); }
             </div>
             <div>
                 <label style="font-size:0.72rem;color:var(--text2);display:block;margin-bottom:3px;">Função</label>
-                <select id="membroFuncao" onchange="toggleMembroOutro()">
-                    <option>Distribuidor</option>
-                    <option>Panfleteiro</option>
-                    <option>Bandeireiro</option>
-                    <option>Credenciamento</option>
-                    <option>Motorista</option>
-                    <option>Apoio Geral</option>
-                    <option>Segurança</option>
-                    <option>Fotógrafo/Filmagem</option>
-                    <option value="__outro__">Outro (especificar)</option>
-                </select>
+                <input type="text" id="membroFuncao" list="membroFuncaoList" placeholder="Digite a função..." style="padding:8px 10px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.82rem;width:100%;">
+                <datalist id="membroFuncaoList">
+                    <option value="Distribuidor">
+                    <option value="Panfleteiro">
+                    <option value="Bandeireiro">
+                    <option value="Credenciamento">
+                    <option value="Motorista">
+                    <option value="Apoio Geral">
+                    <option value="Segurança">
+                    <option value="Fotógrafo/Filmagem">
+                    <option value="Coordenador Regional">
+                    <option value="Credenciamento/QR Code">
+                </datalist>
             </div>
             <div>
                 <label style="font-size:0.72rem;color:transparent;display:block;margin-bottom:3px;">.</label>
                 <button class="btn btn-primary" style="padding:8px 14px;font-size:0.82rem;white-space:nowrap;" onclick="addMembro()" id="membroBtnSalvar">+ Adicionar</button>
             </div>
-        </div>
-        <div id="membroOutroDiv" style="display:none;margin-top:8px;">
-            <label style="font-size:0.72rem;color:var(--text2);display:block;margin-bottom:3px;">Especifique a função:</label>
-            <input type="text" id="membroFuncaoOutro" placeholder="Digite a função personalizada..." style="padding:8px 10px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.82rem;width:100%;">
         </div>
     </div>
 
@@ -1312,45 +1317,22 @@ function delFornecedor(id) {
 }
 
 // ==================== EQUIPE ====================
-function toggleEqFuncaoOutro() {
-    var sel = document.getElementById('eqFuncao');
-    var input = document.getElementById('eqFuncaoOutro');
-    if (sel.value === '__outro__') {
-        input.style.display = 'block';
-        input.focus();
-    } else {
-        input.style.display = 'none';
-        input.value = '';
-    }
-}
 
 function openModalEquipe(id) {
     document.getElementById('eqEditId').value = id || '';
-    document.getElementById('eqFuncaoOutro').style.display = 'none';
-    document.getElementById('eqFuncaoOutro').value = '';
     if (id) {
         var e = DATA.equipe.find(function(x) { return x.id == id; });
         if (e) {
             document.getElementById('eqChefe').value = e.chefe || '';
             document.getElementById('eqNome').value = e.nome;
-            // Verificar se a função é personalizada
-            var sel = document.getElementById('eqFuncao');
-            var opcaoExiste = Array.from(sel.options).some(function(o) { return o.value === e.funcao; });
-            if (opcaoExiste) {
-                sel.value = e.funcao;
-            } else {
-                sel.value = '__outro__';
-                document.getElementById('eqFuncaoOutro').value = e.funcao;
-                document.getElementById('eqFuncaoOutro').style.display = 'block';
-            }
+            document.getElementById('eqFuncao').value = e.funcao || '';
             document.getElementById('eqTel').value = e.tel;
             document.getElementById('eqRegiao').value = e.regiao;
             document.getElementById('eqMat').value = e.materiais;
             document.getElementById('eqAtribuicoes').value = e.atribuicoes || '';
         }
     } else {
-        ['eqChefe','eqNome','eqTel','eqRegiao','eqMat','eqAtribuicoes'].forEach(function(x) { document.getElementById(x).value = ''; });
-        document.getElementById('eqFuncao').value = 'Distribuidor';
+        ['eqChefe','eqNome','eqFuncao','eqTel','eqRegiao','eqMat','eqAtribuicoes'].forEach(function(x) { document.getElementById(x).value = ''; });
     }
     document.getElementById('modalEquipe').classList.add('show');
 }
@@ -1359,12 +1341,7 @@ function saveEquipe() {
     var nome = document.getElementById('eqNome').value.trim();
     if (!nome) return alert('Preencha o nome.');
     var editId = document.getElementById('eqEditId').value;
-    var funcaoSel = document.getElementById('eqFuncao').value;
-    var funcao = funcaoSel;
-    if (funcaoSel === '__outro__') {
-        funcao = document.getElementById('eqFuncaoOutro').value.trim();
-        if (!funcao) return alert('Preencha a função personalizada.');
-    }
+    var funcao = document.getElementById('eqFuncao').value.trim();
     var obj = {
         chefe: document.getElementById('eqChefe').value.trim(),
         nome: nome, funcao: funcao,
@@ -1433,18 +1410,6 @@ function openModalMembros(equipeId) {
     document.getElementById('modalMembros').classList.add('show');
 }
 
-function toggleMembroOutro() {
-    var sel = document.getElementById('membroFuncao');
-    var div = document.getElementById('membroOutroDiv');
-    if (sel.value === '__outro__') {
-        div.style.display = 'block';
-        document.getElementById('membroFuncaoOutro').focus();
-    } else {
-        div.style.display = 'none';
-        document.getElementById('membroFuncaoOutro').value = '';
-    }
-}
-
 function editarMembro(equipeId, membroId) {
     var e = DATA.equipe.find(function(x) { return x.id == equipeId; });
     if (!e || !e.membros) return;
@@ -1453,18 +1418,7 @@ function editarMembro(equipeId, membroId) {
     document.getElementById('membroEditId').value = membroId;
     document.getElementById('membroNome').value = m.nome;
     document.getElementById('membroTel').value = m.tel || '';
-    // Verificar se a função existe no select
-    var sel = document.getElementById('membroFuncao');
-    var opcaoExiste = Array.from(sel.options).some(function(o) { return o.value === m.funcao; });
-    if (opcaoExiste) {
-        sel.value = m.funcao;
-        document.getElementById('membroOutroDiv').style.display = 'none';
-        document.getElementById('membroFuncaoOutro').value = '';
-    } else {
-        sel.value = '__outro__';
-        document.getElementById('membroOutroDiv').style.display = 'block';
-        document.getElementById('membroFuncaoOutro').value = m.funcao;
-    }
+    document.getElementById('membroFuncao').value = m.funcao || '';
     document.getElementById('membroFormLabel').textContent = 'Editar Membro';
     document.getElementById('membroBtnSalvar').textContent = 'Salvar';
     document.getElementById('membroNome').focus();
@@ -1474,9 +1428,7 @@ function cancelarEdicaoMembro() {
     document.getElementById('membroEditId').value = '';
     document.getElementById('membroNome').value = '';
     document.getElementById('membroTel').value = '';
-    document.getElementById('membroFuncao').value = 'Distribuidor';
-    document.getElementById('membroFuncaoOutro').value = '';
-    document.getElementById('membroOutroDiv').style.display = 'none';
+    document.getElementById('membroFuncao').value = '';
     document.getElementById('membroFormLabel').textContent = 'Adicionar Membro';
     document.getElementById('membroBtnSalvar').textContent = '+ Adicionar';
 }
@@ -1488,12 +1440,7 @@ function addMembro() {
     var e = DATA.equipe.find(function(x) { return x.id == equipeId; });
     if (!e) return;
     if (!e.membros) e.membros = [];
-    var funcaoSel = document.getElementById('membroFuncao').value;
-    var funcao = funcaoSel;
-    if (funcaoSel === '__outro__') {
-        funcao = document.getElementById('membroFuncaoOutro').value.trim();
-        if (!funcao) return alert('Preencha a função personalizada.');
-    }
+    var funcao = document.getElementById('membroFuncao').value.trim();
     var editId = document.getElementById('membroEditId').value;
     if (editId) {
         // Editar membro existente
