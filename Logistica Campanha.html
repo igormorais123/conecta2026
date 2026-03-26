@@ -189,6 +189,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
         <button onclick="showPage('subcoord')">Subcoordenações</button>
         <button onclick="showPage('calendario')">Calendário</button>
         <button onclick="showPage('checklist')">Checklist</button>
+        <button onclick="showPage('eleitorado')">Eleitorado DF</button>
     </div>
 </div>
 
@@ -489,6 +490,79 @@ tr:hover td { background:rgba(59,130,246,0.05); }
     </div>
 </div>
 
+<!-- ============ ELEITORADO DF ============ -->
+<div class="page" id="page-eleitorado">
+    <div class="card" style="margin-bottom:16px;">
+        <div class="card-header">
+            <div>
+                <div class="card-title" style="font-size:1.2rem;">Eleitorado do Distrito Federal por Região Administrativa</div>
+                <div class="card-subtitle">Base: Eleições 2022 - TRE-DF</div>
+            </div>
+        </div>
+        <div class="grid-3" style="margin-bottom:20px;">
+            <div class="card stat" style="background:var(--card2);">
+                <div class="stat-num" style="color:var(--accent);">2.853.835</div>
+                <div class="stat-label">Total de Eleitores</div>
+            </div>
+            <div class="card stat" style="background:var(--card2);">
+                <div class="stat-num" style="color:var(--green);">34</div>
+                <div class="stat-label">Regiões Administrativas</div>
+            </div>
+            <div class="card stat" style="background:var(--card2);">
+                <div class="stat-num" style="color:var(--cyan);">3.092.855</div>
+                <div class="stat-label">Total de Habitantes</div>
+            </div>
+        </div>
+        <table>
+            <thead><tr>
+                <th style="width:5%;">#</th>
+                <th>Região Administrativa</th>
+                <th style="text-align:right;">Eleitores</th>
+                <th style="text-align:right;">Habitantes</th>
+                <th style="text-align:right;">% Eleitorado</th>
+            </tr></thead>
+            <tbody>
+                <tr><td>1</td><td><strong>Ceilândia</strong></td><td style="text-align:right;">318.000</td><td style="text-align:right;">287.023</td><td style="text-align:right;"><span class="badge badge-blue">11,14%</span></td></tr>
+                <tr><td>2</td><td><strong>Samambaia</strong></td><td style="text-align:right;">252.000</td><td style="text-align:right;">218.840</td><td style="text-align:right;"><span class="badge badge-blue">8,83%</span></td></tr>
+                <tr><td>3</td><td><strong>Taguatinga</strong></td><td style="text-align:right;">223.000</td><td style="text-align:right;">193.367</td><td style="text-align:right;"><span class="badge badge-blue">7,82%</span></td></tr>
+                <tr><td>4</td><td><strong>Plano Piloto</strong></td><td style="text-align:right;">171.000</td><td style="text-align:right;">198.697</td><td style="text-align:right;"><span class="badge badge-purple">5,99%</span></td></tr>
+                <tr><td>5</td><td><strong>Planaltina</strong></td><td style="text-align:right;">136.418</td><td style="text-align:right;">200.000</td><td style="text-align:right;"><span class="badge badge-purple">4,78%</span></td></tr>
+                <tr><td>6</td><td><strong>Gama</strong></td><td style="text-align:right;">128.431</td><td style="text-align:right;">127.000</td><td style="text-align:right;"><span class="badge badge-purple">4,50%</span></td></tr>
+                <tr><td>7</td><td><strong>Águas Claras</strong></td><td style="text-align:right;">115.000</td><td style="text-align:right;">135.000</td><td style="text-align:right;"><span class="badge badge-purple">4,03%</span></td></tr>
+                <tr><td>8</td><td><strong>Recanto das Emas</strong></td><td style="text-align:right;">114.741</td><td style="text-align:right;">160.000</td><td style="text-align:right;"><span class="badge badge-purple">4,02%</span></td></tr>
+                <tr><td>9</td><td><strong>Guarà</strong></td><td style="text-align:right;">102.000</td><td style="text-align:right;">113.000</td><td style="text-align:right;"><span class="badge badge-cyan">3,57%</span></td></tr>
+                <tr><td>10</td><td><strong>Santa Maria</strong></td><td style="text-align:right;">101.226</td><td style="text-align:right;">123.000</td><td style="text-align:right;"><span class="badge badge-cyan">3,55%</span></td></tr>
+                <tr><td>11</td><td><strong>Sol Nascente / Pôr do Sol</strong></td><td style="text-align:right;">95.000</td><td style="text-align:right;">101.866</td><td style="text-align:right;"><span class="badge badge-cyan">3,33%</span></td></tr>
+                <tr><td>12</td><td><strong>Sobradinho</strong></td><td style="text-align:right;">78.000</td><td style="text-align:right;">85.000</td><td style="text-align:right;"><span class="badge badge-cyan">2,73%</span></td></tr>
+                <tr><td>13</td><td><strong>Riacho Fundo II</strong></td><td style="text-align:right;">77.000</td><td style="text-align:right;">39.000</td><td style="text-align:right;"><span class="badge badge-cyan">2,70%</span></td></tr>
+                <tr><td>14</td><td><strong>São Sebastião</strong></td><td style="text-align:right;">74.000</td><td style="text-align:right;">99.000</td><td style="text-align:right;"><span class="badge badge-cyan">2,59%</span></td></tr>
+                <tr><td>15</td><td><strong>Itapoã</strong></td><td style="text-align:right;">68.000</td><td style="text-align:right;">65.408</td><td style="text-align:right;"><span class="badge badge-cyan">2,38%</span></td></tr>
+                <tr><td>16</td><td><strong>Vicente Pires</strong></td><td style="text-align:right;">63.000</td><td style="text-align:right;">96.871</td><td style="text-align:right;"><span class="badge badge-cyan">2,21%</span></td></tr>
+                <tr><td>17</td><td><strong>Sobradinho II</strong></td><td style="text-align:right;">51.000</td><td style="text-align:right;">82.785</td><td style="text-align:right;"><span class="badge badge-green">1,79%</span></td></tr>
+                <tr><td>18</td><td><strong>Paranóa</strong></td><td style="text-align:right;">46.000</td><td style="text-align:right;">46.000</td><td style="text-align:right;"><span class="badge badge-green">1,61%</span></td></tr>
+                <tr><td>19</td><td><strong>Sudoeste/Octogonal</strong></td><td style="text-align:right;">45.000</td><td style="text-align:right;">52.000</td><td style="text-align:right;"><span class="badge badge-green">1,58%</span></td></tr>
+                <tr><td>20</td><td><strong>Riacho Fundo</strong></td><td style="text-align:right;">43.000</td><td style="text-align:right;">37.000</td><td style="text-align:right;"><span class="badge badge-green">1,51%</span></td></tr>
+                <tr><td>21</td><td><strong>Brazlândia</strong></td><td style="text-align:right;">42.000</td><td style="text-align:right;">55.561</td><td style="text-align:right;"><span class="badge badge-green">1,47%</span></td></tr>
+                <tr><td>22</td><td><strong>Lago Norte</strong></td><td style="text-align:right;">39.000</td><td style="text-align:right;">34.000</td><td style="text-align:right;"><span class="badge badge-green">1,37%</span></td></tr>
+                <tr><td>23</td><td><strong>SCIA / Estrutural</strong></td><td style="text-align:right;">36.000</td><td style="text-align:right;">36.042</td><td style="text-align:right;"><span class="badge badge-green">1,26%</span></td></tr>
+                <tr><td>24</td><td><strong>Cruzeiro</strong></td><td style="text-align:right;">32.000</td><td style="text-align:right;">32.000</td><td style="text-align:right;"><span class="badge badge-green">1,12%</span></td></tr>
+                <tr><td>25</td><td><strong>Jardim Botânico</strong></td><td style="text-align:right;">31.000</td><td style="text-align:right;">77.767</td><td style="text-align:right;"><span class="badge badge-green">1,09%</span></td></tr>
+                <tr><td>26</td><td><strong>Arniqueira</strong></td><td style="text-align:right;">29.000</td><td style="text-align:right;">42.320</td><td style="text-align:right;"><span class="badge badge-green">1,02%</span></td></tr>
+                <tr><td>27</td><td><strong>Núcleo Bandeirante</strong></td><td style="text-align:right;">24.000</td><td style="text-align:right;">23.000</td><td style="text-align:right;"><span class="badge badge-orange">0,84%</span></td></tr>
+                <tr><td>28</td><td><strong>Lago Sul</strong></td><td style="text-align:right;">23.000</td><td style="text-align:right;">30.000</td><td style="text-align:right;"><span class="badge badge-orange">0,81%</span></td></tr>
+                <tr><td>29</td><td><strong>Park Way</strong></td><td style="text-align:right;">19.000</td><td style="text-align:right;">22.289</td><td style="text-align:right;"><span class="badge badge-orange">0,67%</span></td></tr>
+                <tr><td>30</td><td><strong>Candangolândia</strong></td><td style="text-align:right;">13.000</td><td style="text-align:right;">16.000</td><td style="text-align:right;"><span class="badge badge-orange">0,46%</span></td></tr>
+                <tr><td>31</td><td><strong>Fercal</strong></td><td style="text-align:right;">7.500</td><td style="text-align:right;">10.268</td><td style="text-align:right;"><span class="badge badge-orange">0,26%</span></td></tr>
+                <tr><td>32</td><td><strong>Varjão</strong></td><td style="text-align:right;">6.500</td><td style="text-align:right;">8.600</td><td style="text-align:right;"><span class="badge badge-orange">0,23%</span></td></tr>
+                <tr><td>33</td><td><strong>SIA</strong></td><td style="text-align:right;">3.000</td><td style="text-align:right;">5.131</td><td style="text-align:right;"><span class="badge badge-orange">0,11%</span></td></tr>
+            </tbody>
+            <tfoot><tr style="background:var(--card2);font-weight:700;">
+                <td></td><td><strong>TOTAL</strong></td><td style="text-align:right;"><strong>2.853.835</strong></td><td style="text-align:right;"><strong>3.092.855</strong></td><td style="text-align:right;"><span class="badge badge-blue">100%</span></td>
+            </tr></tfoot>
+        </table>
+    </div>
+</div>
+
 <!-- ============ CHECKLIST ============ -->
 <div class="page" id="page-checklist">
     <div style="margin-bottom:16px;">
@@ -732,7 +806,7 @@ function showPage(id) {
     document.querySelectorAll('.nav-links button').forEach(function(b) { b.classList.remove('active'); });
     document.getElementById('page-' + id).classList.add('active');
     var btns = document.querySelectorAll('.nav-links button');
-    var pages = ['dashboard','tarefas','materiais','fornecedores','equipe','subcoord','calendario','checklist'];
+    var pages = ['dashboard','tarefas','materiais','fornecedores','equipe','subcoord','calendario','checklist','eleitorado'];
     var idx = pages.indexOf(id);
     if (idx >= 0 && btns[idx]) btns[idx].classList.add('active');
     if (id === 'dashboard') renderDashboard();
