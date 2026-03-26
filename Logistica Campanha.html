@@ -1788,7 +1788,7 @@ function renderAgendaSalas() {
         }
 
         var cores = ['var(--accent)','var(--accent2)','var(--cyan)','var(--orange)','var(--pink)','var(--green)'];
-        cardsHtml += '<div class="card" style="border-top:3px solid ' + cores[i] + ';text-align:center;padding:16px 12px;">' +
+        cardsHtml += '<div class="card" style="border-top:3px solid ' + cores[i] + ';text-align:center;padding:16px 12px;cursor:pointer;transition:all .2s;" onclick="abrirDetalheCardSala(\'' + sala.replace(/'/g,"\\'") + '\')" title="Clique para ver agendamentos">' +
             '<div style="font-weight:700;font-size:0.9rem;margin-bottom:8px;">' + sala + '</div>' +
             '<div style="display:inline-block;padding:4px 14px;border-radius:20px;font-size:0.75rem;font-weight:700;background:' + statusBg + ';color:' + statusCor + ';">' + statusLabel + '</div>';
 
@@ -1831,7 +1831,7 @@ function renderAgendaSalas() {
         else { stLabel = 'Confirmado'; stCor = 'green'; }
 
         html += '<tr' + (passado && !emAndamento ? ' style="opacity:.5;"' : '') + '>' +
-            '<td><strong>' + esc(a.sala) + '</strong></td>' +
+            '<td><strong><a href="#" onclick="abrirDetalheSala(' + a.id + ');return false;" style="color:var(--accent);text-decoration:none;cursor:pointer;">' + esc(a.sala) + '</a></strong></td>' +
             '<td>' + formatDate(a.data) + '</td>' +
             '<td>' + a.horaInicio + ' - ' + a.horaFim + '</td>' +
             '<td>' + esc(a.pessoa) + '</td>' +
@@ -1843,6 +1843,111 @@ function renderAgendaSalas() {
             '<button class="btn btn-sm btn-danger" onclick="delAgendaSala(' + a.id + ')">X</button></td></tr>';
     });
     document.getElementById('tbAgendaSalas').innerHTML = html || '<tr><td colspan="9" style="text-align:center;color:var(--text2);">Nenhum agendamento cadastrado.</td></tr>';
+}
+
+// ==================== DETALHE AGENDA SALA ====================
+function abrirDetalheSala(id) {
+    var a = (DATA.agendaSalas || []).find(function(x) { return x.id == id; });
+    if (!a) return;
+
+    var agora = new Date();
+    var hojeStr = agora.toISOString().slice(0,10);
+    var horaAtual = agora.toTimeString().slice(0,5);
+    var passado = a.data < hojeStr || (a.data === hojeStr && a.horaFim <= horaAtual);
+    var emAndamento = a.data === hojeStr && horaAtual >= a.horaInicio && horaAtual < a.horaFim;
+    var stLabel, stCor;
+    if (emAndamento) { stLabel = 'Em uso'; stCor = 'cyan'; }
+    else if (passado) { stLabel = 'Encerrado'; stCor = 'purple'; }
+    else { stLabel = 'Confirmado'; stCor = 'green'; }
+
+    var html = '<div style="padding:4px 0;">';
+
+    // Cabeçalho com status
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">' +
+        '<div style="font-size:1.1rem;font-weight:800;color:var(--accent);">' + esc(a.sala) + '</div>' +
+        '<span class="badge badge-' + stCor + '" style="font-size:.8rem;padding:5px 14px;">' + stLabel + '</span></div>';
+
+    // Informações em grid
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">';
+
+    html += '<div style="background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:14px;">' +
+        '<div style="font-size:.68rem;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Data</div>' +
+        '<div style="font-size:.95rem;font-weight:600;">' + formatDate(a.data) + '</div></div>';
+
+    html += '<div style="background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:14px;">' +
+        '<div style="font-size:.68rem;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Horário</div>' +
+        '<div style="font-size:.95rem;font-weight:600;">' + a.horaInicio + ' às ' + a.horaFim + '</div></div>';
+
+    html += '<div style="background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:14px;">' +
+        '<div style="font-size:.68rem;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Pessoa Responsável</div>' +
+        '<div style="font-size:.95rem;font-weight:600;">' + esc(a.pessoa) + '</div></div>';
+
+    html += '<div style="background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:14px;">' +
+        '<div style="font-size:.68rem;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Telefone</div>' +
+        '<div style="font-size:.95rem;font-weight:600;">' + esc(a.telefone || 'Não informado') + '</div></div>';
+
+    html += '<div style="background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:14px;">' +
+        '<div style="font-size:.68rem;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Qtd de Pessoas</div>' +
+        '<div style="font-size:.95rem;font-weight:600;">' + (a.qtdPessoas || 1) + ' pessoa' + ((a.qtdPessoas || 1) > 1 ? 's' : '') + '</div></div>';
+
+    html += '<div style="background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:14px;">' +
+        '<div style="font-size:.68rem;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Assunto / Motivo</div>' +
+        '<div style="font-size:.95rem;font-weight:600;">' + esc(a.assunto || 'Não informado') + '</div></div>';
+
+    html += '</div>';
+
+    // Botões de ação
+    html += '<div style="display:flex;gap:8px;justify-content:center;margin-top:20px;">' +
+        '<button class="btn btn-primary" onclick="fecharDetalhe();openModalAgendaSala(' + a.id + ')">Editar Agendamento</button>' +
+        '<button class="btn btn-danger" onclick="fecharDetalhe();delAgendaSala(' + a.id + ')">Excluir</button></div>';
+
+    html += '</div>';
+
+    abrirDetalhe('&#128197;', a.sala + ' — Detalhes do Agendamento', '1', html);
+}
+
+function abrirDetalheCardSala(nomeSala) {
+    var agora = new Date();
+    var hojeStr = agora.toISOString().slice(0,10);
+    var horaAtual = agora.toTimeString().slice(0,5);
+
+    // Agendamentos futuros e de hoje dessa sala
+    var agendamentos = (DATA.agendaSalas || []).filter(function(a) {
+        return a.sala === nomeSala && a.data >= hojeStr;
+    }).sort(function(a,b) {
+        if (a.data !== b.data) return a.data > b.data ? 1 : -1;
+        return a.horaInicio > b.horaInicio ? 1 : -1;
+    });
+
+    var html = '';
+    if (agendamentos.length === 0) {
+        html = '<div class="detalhe-empty"><div class="detalhe-empty-icon">&#128197;</div>' +
+            '<div class="detalhe-empty-text">Nenhum agendamento futuro para ' + esc(nomeSala) + '.</div>' +
+            '<button class="detalhe-action" onclick="fecharDetalhe();openModalAgendaSala()">Agendar esta sala</button></div>';
+    } else {
+        agendamentos.forEach(function(a) {
+            var passado = a.data < hojeStr || (a.data === hojeStr && a.horaFim <= horaAtual);
+            var emAndamento = a.data === hojeStr && horaAtual >= a.horaInicio && horaAtual < a.horaFim;
+            var stLabel, stCor;
+            if (emAndamento) { stLabel = 'Em uso'; stCor = 'cyan'; }
+            else if (passado) { stLabel = 'Encerrado'; stCor = 'purple'; }
+            else { stLabel = 'Confirmado'; stCor = 'green'; }
+
+            html += '<div class="detalhe-item" style="cursor:pointer;' + (emAndamento ? 'border-color:var(--cyan);' : '') + '" onclick="fecharDetalhe();abrirDetalheSala(' + a.id + ')">' +
+                '<div class="detalhe-item-info">' +
+                '<div class="detalhe-item-title">' + esc(a.pessoa) + '</div>' +
+                '<div class="detalhe-item-sub">' + formatDate(a.data) + ' | ' + a.horaInicio + ' - ' + a.horaFim +
+                ' | ' + (a.qtdPessoas || 1) + ' pessoa' + ((a.qtdPessoas || 1) > 1 ? 's' : '') +
+                (a.assunto ? ' | ' + esc(a.assunto) : '') +
+                (a.telefone ? ' | ' + esc(a.telefone) : '') + '</div></div>' +
+                '<div class="detalhe-item-right"><span class="badge badge-' + stCor + '">' + stLabel + '</span></div></div>';
+        });
+
+        html += '<div style="text-align:center;margin-top:16px;">' +
+            '<button class="detalhe-action" onclick="fecharDetalhe();openModalAgendaSala()">+ Novo Agendamento</button></div>';
+    }
+
+    abrirDetalhe('&#127970;', nomeSala, agendamentos.length, html);
 }
 
 // ==================== DRILL-DOWN DOS STAT CARDS ====================
