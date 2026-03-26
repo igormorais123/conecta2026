@@ -1018,12 +1018,35 @@ function saveMaterial() {
     var nome = document.getElementById('matNome').value.trim();
     if (!nome) return alert('Preencha o nome.');
     var editId = document.getElementById('matEditId').value;
+    var novoDist = parseInt(document.getElementById('matDist').value) || 0;
+    var novoEstoque = parseInt(document.getElementById('matEstoque').value) || 0;
+
+    // Ao editar, ajustar estoque automaticamente com base na diferença do distribuído
+    if (editId) {
+        var matAntigo = DATA.materiais.find(function(x) { return x.id == editId; });
+        if (matAntigo) {
+            var distAnterior = matAntigo.dist || 0;
+            var difDist = novoDist - distAnterior;
+            if (difDist > 0) {
+                // Distribuiu mais → diminui do estoque
+                if (difDist > novoEstoque) {
+                    if (!confirm('A quantidade a distribuir (' + difDist + ') é maior que o estoque atual (' + novoEstoque + '). Deseja continuar mesmo assim?')) return;
+                }
+                novoEstoque = novoEstoque - difDist;
+                if (novoEstoque < 0) novoEstoque = 0;
+            } else if (difDist < 0) {
+                // Devolveu materiais → aumenta o estoque
+                novoEstoque = novoEstoque + Math.abs(difDist);
+            }
+        }
+    }
+
     var obj = {
         nome: nome, fase: document.getElementById('matFase').value,
         fornecedor: document.getElementById('matFornecedor').value.trim(),
         qtd: parseInt(document.getElementById('matQtd').value) || 0,
-        estoque: parseInt(document.getElementById('matEstoque').value) || 0,
-        dist: parseInt(document.getElementById('matDist').value) || 0,
+        estoque: novoEstoque,
+        dist: novoDist,
         minimo: parseInt(document.getElementById('matMinimo').value) || 0,
         obs: document.getElementById('matObs').value.trim()
     };
