@@ -1773,11 +1773,17 @@
             <div class="org-frame-header">
                 <h2>Organograma da Campanha - Conecta Celina Le&atilde;o</h2>
                 <div>
-                    <button class="btn btn-warning" onclick="window.open('Organograma da Campanha.pdf','_blank')" style="margin-right:8px;">Ver PDF</button>
+                    <button class="btn btn-warning" onclick="window.open('organograma.pdf','_blank')" style="margin-right:8px;">Ver PDF</button>
                     <button class="btn" style="background:#fff;color:var(--primary);" onclick="document.getElementById('orgFrame').contentWindow.location.reload()">Recarregar</button>
                 </div>
             </div>
-            <iframe id="orgFrame" class="org-iframe" src="../ORGANOGRAMA/organograma.html"></iframe>
+            <div id="orgFrame" class="org-iframe" style="display:flex;align-items:center;justify-content:center;background:#f5f5f5;color:#666;font-size:1.1rem;text-align:center;padding:40px;">
+                <div>
+                    <p style="font-size:2rem;margin-bottom:12px;">📋</p>
+                    <p><strong>Organograma</strong></p>
+                    <p style="font-size:0.85rem;margin-top:8px;">Use o bot&atilde;o "Ver PDF" acima para visualizar o organograma completo.</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1790,7 +1796,13 @@
                     <button class="btn" style="background:#fff;color:var(--primary);" onclick="document.getElementById('agendaFrame').contentWindow.location.reload()">Recarregar</button>
                 </div>
             </div>
-            <iframe id="agendaFrame" class="org-iframe" src="../AGENDA/agenda-celina-leao.html"></iframe>
+            <div id="agendaFrame" class="org-iframe" style="display:flex;align-items:center;justify-content:center;background:#f5f5f5;color:#666;font-size:1.1rem;text-align:center;padding:40px;">
+                <div>
+                    <p style="font-size:2rem;margin-bottom:12px;">📅</p>
+                    <p><strong>Agenda integrada</strong></p>
+                    <p style="font-size:0.85rem;margin-top:8px;">Use a se&ccedil;&atilde;o de Eventos abaixo para gerenciar a agenda.</p>
+                </div>
+            </div>
         </div>
     </div>
 

@@ -358,32 +358,10 @@
 </div>
 
 <script>
-// Auto-detect local server URL
+// URL do formulário público
 (function detectURL() {
-    var host = window.location.hostname;
-    var port = window.location.port || '3847';
-    var baseUrl;
-
-    if (host && host !== '' && host !== 'localhost' && host !== '127.0.0.1') {
-        baseUrl = 'http://' + host + ':' + port;
-    } else {
-        // Try to fetch server info for the IP
-        baseUrl = 'http://localhost:' + port;
-    }
-
-    var formUrl = baseUrl + '/conecta/cadastro-apoiador.html';
+    var formUrl = 'https://inteia.com.br/conecta/cadastro-apoiador.html';
     document.getElementById('urlInput').value = formUrl;
-
-    // Also try fetching the server info endpoint
-    fetch('/api/server-info')
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-            if (data.ip && data.ip !== '127.0.0.1') {
-                var betterUrl = 'http://' + data.ip + ':' + data.port + '/conecta/cadastro-apoiador.html';
-                document.getElementById('urlInput').value = betterUrl;
-            }
-        })
-        .catch(function() {});
 })();
 
 function gerarQR() {

@@ -593,26 +593,37 @@ document.getElementById('formCadastro').addEventListener('submit', function(e) {
 
     dadosEnviados = coletarDados();
 
-    // Construir URL da API relativa ao servidor que serviu esta pagina
-    var apiUrl = window.location.origin + '/api/cadastros';
-
-    fetch(apiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dadosEnviados)
-    })
-    .then(function(response) {
-        if (!response.ok) throw new Error('Erro no servidor');
-        return response.json();
-    })
-    .then(function(data) {
-        mostrarSucesso(true);
-    })
-    .catch(function(err) {
-        // Servidor indisponivel - salvar localmente como fallback
-        console.log('Servidor indisponivel, dados apenas em tela:', err.message);
+    // Tentar salvar no Supabase, fallback para localStorage
+    if (window._conectaSupabase) {
+        window._conectaSupabase.from('apoiadores').insert({
+            nome: dadosEnviados.nome,
+            telefone: dadosEnviados.telefone,
+            telefone_numeros: dadosEnviados.telefoneNumeros,
+            email: dadosEnviados.email || null,
+            cidade: dadosEnviados.cidade,
+            instagram: dadosEnviados.instagram || null,
+            lgpd_aceite: true
+        }).then(function(result) {
+            if (result.error) {
+                console.warn('Supabase erro, salvando local:', result.error);
+                salvarLocal(dadosEnviados);
+                mostrarSucesso(false);
+            } else {
+                mostrarSucesso(true);
+            }
+        });
+    } else {
+        salvarLocal(dadosEnviados);
         mostrarSucesso(false);
-    });
+    }
+
+    function salvarLocal(dados) {
+        try {
+            var cadastros = JSON.parse(localStorage.getItem('conecta_apoiadores') || '[]');
+            cadastros.push(dados);
+            localStorage.setItem('conecta_apoiadores', JSON.stringify(cadastros));
+        } catch(e) { console.warn('Erro localStorage:', e); }
+    }
 });
 
 function mostrarSucesso(salvoNoServidor) {
@@ -668,6 +679,20 @@ document.getElementById('lgpdAceite').addEventListener('change', function() {
     document.getElementById('lgpdBox').classList.remove('erro');
     document.getElementById('erroLgpd').classList.remove('visivel');
 });
+</script>
+
+<!-- Supabase para salvar cadastros no banco -->
+<script>
+(function() {
+    var SUPABASE_URL = 'https://SEU-PROJETO.supabase.co';
+    var SUPABASE_ANON_KEY = 'SUA-ANON-KEY';
+    var s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
+    s.onload = function() {
+        window._conectaSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    };
+    document.head.appendChild(s);
+})();
 </script>
 
 </body>
