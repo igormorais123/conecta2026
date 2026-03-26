@@ -582,7 +582,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
     <div class="card-header" style="margin-bottom:16px;">
         <div>
             <div class="card-title" style="font-size:1.2rem;">Agenda de Salas do Comitê</div>
-            <div class="card-subtitle">Salas S6, S5, S16, S14 e Auditório</div>
+            <div class="card-subtitle">Auditório, S5, S6, S14 e S16</div>
         </div>
         <button class="btn btn-primary" onclick="openModalAgendaSala()">+ Novo Agendamento</button>
     </div>
@@ -596,11 +596,11 @@ tr:hover td { background:rgba(59,130,246,0.05); }
             <div style="font-size:0.78rem;font-weight:600;color:var(--text2);text-transform:uppercase;">Filtros:</div>
             <select id="filtroSala" onchange="renderAgendaSalas()" style="padding:6px 10px;background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.8rem;">
                 <option value="">Todas as Salas</option>
-                <option value="S6">S6</option>
-                <option value="S5">S5</option>
-                <option value="S16">S16</option>
-                <option value="S14">S14</option>
                 <option value="Auditório">Auditório</option>
+                <option value="S5">S5</option>
+                <option value="S6">S6</option>
+                <option value="S14">S14</option>
+                <option value="S16">S16</option>
             </select>
             <input type="date" id="filtroDataSala" onchange="renderAgendaSalas()" style="padding:6px 10px;background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.8rem;">
             <button class="btn btn-sm" style="background:var(--card2);color:var(--text);" onclick="document.getElementById('filtroSala').value='';document.getElementById('filtroDataSala').value='';renderAgendaSalas();">Limpar Filtros</button>
@@ -810,7 +810,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
     <input type="hidden" id="agendaSalaEditId">
     <div class="form-group"><label>Sala</label>
         <select id="agendaSalaSala">
-            <option>S6</option><option>S5</option><option>S16</option><option>S14</option><option>Auditório</option>
+            <option>Auditório</option><option>S5</option><option>S6</option><option>S14</option><option>S16</option>
         </select>
     </div>
     <div class="grid-3">
@@ -1661,7 +1661,7 @@ function removeChecklistItem(secao, idx) {
 }
 
 // ==================== AGENDA DE SALAS ====================
-var SALAS = ['S6','S5','S16','S14','Auditório'];
+var SALAS = ['Auditório','S5','S6','S14','S16'];
 
 function formatarTelNum(el) {
     var v = el.value.replace(/\D/g,'');
@@ -1700,7 +1700,7 @@ function openModalAgendaSala(id) {
             document.getElementById('agendaSalaAssunto').value = a.assunto || '';
         }
     } else {
-        document.getElementById('agendaSalaSala').value = 'S6';
+        document.getElementById('agendaSalaSala').value = 'Auditório';
         document.getElementById('agendaSalaData').value = new Date().toISOString().slice(0,10);
         document.getElementById('agendaSalaHoraInicio').value = '';
         document.getElementById('agendaSalaHoraFim').value = '';
