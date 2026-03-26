@@ -757,10 +757,11 @@ tr:hover td { background:rgba(59,130,246,0.05); }
         <button class="btn" style="background:var(--card2);color:var(--text);padding:6px 12px;font-size:0.8rem;" onclick="closeModal('modalMembros')">&#10005;</button>
     </div>
     <input type="hidden" id="membrosEquipeId">
+    <input type="hidden" id="membroEditId" value="">
 
     <!-- Formulário inline para adicionar membro -->
     <div style="background:var(--card2);border-radius:10px;padding:14px;margin-bottom:16px;">
-        <div style="font-size:0.78rem;font-weight:600;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">Adicionar Membro</div>
+        <div style="font-size:0.78rem;font-weight:600;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;" id="membroFormLabel">Adicionar Membro</div>
         <div class="add-membro-row">
             <div>
                 <label style="font-size:0.72rem;color:var(--text2);display:block;margin-bottom:3px;">Nome</label>
@@ -786,7 +787,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
             </div>
             <div>
                 <label style="font-size:0.72rem;color:transparent;display:block;margin-bottom:3px;">.</label>
-                <button class="btn btn-primary" style="padding:8px 14px;font-size:0.82rem;white-space:nowrap;" onclick="addMembro()">+ Adicionar</button>
+                <button class="btn btn-primary" style="padding:8px 14px;font-size:0.82rem;white-space:nowrap;" onclick="addMembro()" id="membroBtnSalvar">+ Adicionar</button>
             </div>
         </div>
         <div id="membroOutroDiv" style="display:none;margin-top:8px;">
@@ -1427,8 +1428,7 @@ function openModalMembros(equipeId) {
     document.getElementById('membrosEquipeId').value = equipeId;
     document.getElementById('membrosTitle').textContent = 'Equipe: ' + e.nome;
     document.getElementById('membrosSubtitle').textContent = 'Coordenador: ' + (e.chefe || 'Não definido') + ' | Região: ' + (e.regiao || '—');
-    document.getElementById('membroNome').value = '';
-    document.getElementById('membroTel').value = '';
+    cancelarEdicaoMembro();
     renderMembros(equipeId);
     document.getElementById('modalMembros').classList.add('show');
 }
@@ -1445,6 +1445,42 @@ function toggleMembroOutro() {
     }
 }
 
+function editarMembro(equipeId, membroId) {
+    var e = DATA.equipe.find(function(x) { return x.id == equipeId; });
+    if (!e || !e.membros) return;
+    var m = e.membros.find(function(x) { return x.id == membroId; });
+    if (!m) return;
+    document.getElementById('membroEditId').value = membroId;
+    document.getElementById('membroNome').value = m.nome;
+    document.getElementById('membroTel').value = m.tel || '';
+    // Verificar se a função existe no select
+    var sel = document.getElementById('membroFuncao');
+    var opcaoExiste = Array.from(sel.options).some(function(o) { return o.value === m.funcao; });
+    if (opcaoExiste) {
+        sel.value = m.funcao;
+        document.getElementById('membroOutroDiv').style.display = 'none';
+        document.getElementById('membroFuncaoOutro').value = '';
+    } else {
+        sel.value = '__outro__';
+        document.getElementById('membroOutroDiv').style.display = 'block';
+        document.getElementById('membroFuncaoOutro').value = m.funcao;
+    }
+    document.getElementById('membroFormLabel').textContent = 'Editar Membro';
+    document.getElementById('membroBtnSalvar').textContent = 'Salvar';
+    document.getElementById('membroNome').focus();
+}
+
+function cancelarEdicaoMembro() {
+    document.getElementById('membroEditId').value = '';
+    document.getElementById('membroNome').value = '';
+    document.getElementById('membroTel').value = '';
+    document.getElementById('membroFuncao').value = 'Distribuidor';
+    document.getElementById('membroFuncaoOutro').value = '';
+    document.getElementById('membroOutroDiv').style.display = 'none';
+    document.getElementById('membroFormLabel').textContent = 'Adicionar Membro';
+    document.getElementById('membroBtnSalvar').textContent = '+ Adicionar';
+}
+
 function addMembro() {
     var equipeId = parseInt(document.getElementById('membrosEquipeId').value);
     var nome = document.getElementById('membroNome').value.trim();
@@ -1458,18 +1494,26 @@ function addMembro() {
         funcao = document.getElementById('membroFuncaoOutro').value.trim();
         if (!funcao) return alert('Preencha a função personalizada.');
     }
-    e.membros.push({
-        id: Date.now(),
-        nome: nome,
-        tel: document.getElementById('membroTel').value.trim(),
-        funcao: funcao
-    });
+    var editId = document.getElementById('membroEditId').value;
+    if (editId) {
+        // Editar membro existente
+        var m = e.membros.find(function(x) { return x.id == parseInt(editId); });
+        if (m) {
+            m.nome = nome;
+            m.tel = document.getElementById('membroTel').value.trim();
+            m.funcao = funcao;
+        }
+    } else {
+        // Adicionar novo
+        e.membros.push({
+            id: Date.now(),
+            nome: nome,
+            tel: document.getElementById('membroTel').value.trim(),
+            funcao: funcao
+        });
+    }
     saveData();
-    document.getElementById('membroNome').value = '';
-    document.getElementById('membroTel').value = '';
-    document.getElementById('membroFuncao').value = 'Distribuidor';
-    document.getElementById('membroFuncaoOutro').value = '';
-    document.getElementById('membroOutroDiv').style.display = 'none';
+    cancelarEdicaoMembro();
     renderMembros(equipeId);
     renderEquipe();
 }
@@ -1509,6 +1553,7 @@ function renderMembros(equipeId) {
                 '</div>' +
             '</div>' +
             '<div class="membro-actions">' +
+                '<button class="btn btn-sm btn-primary" style="padding:3px 8px;font-size:0.7rem;margin-right:3px;" onclick="editarMembro(' + equipeId + ',' + m.id + ')" title="Editar membro">&#9998;</button>' +
                 '<button class="btn btn-sm btn-danger" style="padding:3px 8px;font-size:0.7rem;" onclick="delMembro(' + equipeId + ',' + m.id + ')" title="Remover membro">&#10005;</button>' +
             '</div>' +
         '</div>';
