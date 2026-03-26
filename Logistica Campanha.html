@@ -171,6 +171,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
     .grid-2,.grid-3,.grid-4 { grid-template-columns:1fr; }
     .countdown-grid { grid-template-columns:repeat(2,1fr); }
     .nav-links { font-size:.7rem; }
+    #salasStatusGrid { grid-template-columns:repeat(2,1fr) !important; }
 }
 </style>
 </head>
@@ -190,6 +191,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
         <button onclick="showPage('calendario')">Calendário</button>
         <button onclick="showPage('checklist')">Checklist</button>
         <button onclick="showPage('eleitorado')">Eleitorado DF</button>
+        <button onclick="showPage('agendasalas')">Agenda Salas</button>
     </div>
 </div>
 
@@ -498,6 +500,9 @@ tr:hover td { background:rgba(59,130,246,0.05); }
                 <div class="card-title" style="font-size:1.2rem;">Eleitorado do Distrito Federal por Região Administrativa</div>
                 <div class="card-subtitle">Base: Eleições 2022 - TRE-DF</div>
             </div>
+            <div>
+                <input type="text" id="buscaRA" placeholder="Buscar Região Administrativa..." oninput="filtrarEleitorado()" style="padding:9px 14px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.85rem;width:280px;">
+            </div>
         </div>
         <div class="grid-3" style="margin-bottom:20px;">
             <div class="card stat" style="background:var(--card2);">
@@ -570,6 +575,42 @@ tr:hover td { background:rgba(59,130,246,0.05); }
         <div class="card-subtitle">Acompanhe cada etapa da preparação</div>
     </div>
     <div class="grid-2" id="checklistGrid"></div>
+</div>
+
+<!-- ============ AGENDA DE SALAS ============ -->
+<div class="page" id="page-agendasalas">
+    <div class="card-header" style="margin-bottom:16px;">
+        <div>
+            <div class="card-title" style="font-size:1.2rem;">Agenda de Salas do Comitê</div>
+            <div class="card-subtitle">Gerenciamento das 5 salas de reunião</div>
+        </div>
+        <button class="btn btn-primary" onclick="openModalAgendaSala()">+ Novo Agendamento</button>
+    </div>
+
+    <!-- Cards de status das salas -->
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px;" id="salasStatusGrid"></div>
+
+    <!-- Filtros -->
+    <div class="card" style="margin-bottom:16px;padding:14px 20px;">
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+            <div style="font-size:0.78rem;font-weight:600;color:var(--text2);text-transform:uppercase;">Filtros:</div>
+            <select id="filtroSala" onchange="renderAgendaSalas()" style="padding:6px 10px;background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.8rem;">
+                <option value="">Todas as Salas</option>
+                <option value="Sala 1">Sala 1</option>
+                <option value="Sala 2">Sala 2</option>
+                <option value="Sala 3">Sala 3</option>
+                <option value="Sala 4">Sala 4</option>
+                <option value="Sala 5">Sala 5</option>
+            </select>
+            <input type="date" id="filtroDataSala" onchange="renderAgendaSalas()" style="padding:6px 10px;background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.8rem;">
+            <button class="btn btn-sm" style="background:var(--card2);color:var(--text);" onclick="document.getElementById('filtroSala').value='';document.getElementById('filtroDataSala').value='';renderAgendaSalas();">Limpar Filtros</button>
+        </div>
+    </div>
+
+    <!-- Tabela de agendamentos -->
+    <div class="card"><table><thead><tr>
+        <th>Sala</th><th>Data</th><th>Horário</th><th>Pessoa</th><th>Telefone</th><th>Assunto</th><th>Status</th><th>Ações</th>
+    </tr></thead><tbody id="tbAgendaSalas"></tbody></table></div>
 </div>
 
 <!-- DETALHE DRILL-DOWN -->
@@ -762,6 +803,32 @@ tr:hover td { background:rgba(59,130,246,0.05); }
     </div>
 </div></div>
 
+<!-- Modal Agenda Sala -->
+<div class="modal-overlay" id="modalAgendaSala">
+<div class="modal">
+    <div class="modal-title">Novo Agendamento de Sala</div>
+    <input type="hidden" id="agendaSalaEditId">
+    <div class="form-group"><label>Sala</label>
+        <select id="agendaSalaSala">
+            <option>Sala 1</option><option>Sala 2</option><option>Sala 3</option><option>Sala 4</option><option>Sala 5</option>
+        </select>
+    </div>
+    <div class="grid-3">
+        <div class="form-group"><label>Data</label><input type="date" id="agendaSalaData"></div>
+        <div class="form-group"><label>Hora Início</label><input type="time" id="agendaSalaHoraInicio"></div>
+        <div class="form-group"><label>Hora Fim</label><input type="time" id="agendaSalaHoraFim"></div>
+    </div>
+    <div class="grid-2">
+        <div class="form-group"><label>Nome da Pessoa</label><input type="text" id="agendaSalaPessoa" placeholder="Nome de quem reservou"></div>
+        <div class="form-group"><label>Telefone</label><input type="text" id="agendaSalaTel" placeholder="(61) 99999-9999"></div>
+    </div>
+    <div class="form-group"><label>Assunto / Motivo</label><input type="text" id="agendaSalaAssunto" placeholder="Ex: Reunião de coordenadores"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px;">
+        <button class="btn" style="background:var(--card2);color:var(--text);" onclick="closeModal('modalAgendaSala')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveAgendaSala()">Salvar</button>
+    </div>
+</div></div>
+
 <script>
 // ==================== DADOS ====================
 var STORAGE_KEY = 'logistica_celina_2026';
@@ -787,6 +854,7 @@ function defaultData() {
         subcoords: ['','','','','',''],
         checklist: {},
         customChecklist: {},
+        agendaSalas: [],
         nextId: 1
     };
 }
@@ -806,7 +874,7 @@ function showPage(id) {
     document.querySelectorAll('.nav-links button').forEach(function(b) { b.classList.remove('active'); });
     document.getElementById('page-' + id).classList.add('active');
     var btns = document.querySelectorAll('.nav-links button');
-    var pages = ['dashboard','tarefas','materiais','fornecedores','equipe','subcoord','calendario','checklist','eleitorado'];
+    var pages = ['dashboard','tarefas','materiais','fornecedores','equipe','subcoord','calendario','checklist','eleitorado','agendasalas'];
     var idx = pages.indexOf(id);
     if (idx >= 0 && btns[idx]) btns[idx].classList.add('active');
     if (id === 'dashboard') renderDashboard();
@@ -815,6 +883,7 @@ function showPage(id) {
     if (id === 'fornecedores') renderFornecedores();
     if (id === 'equipe') renderEquipe();
     if (id === 'checklist') renderChecklist();
+    if (id === 'agendasalas') renderAgendaSalas();
 }
 
 // ==================== COUNTDOWN / DASHBOARD ====================
@@ -1583,6 +1652,164 @@ function removeChecklistItem(secao, idx) {
     saveData(); renderChecklist();
 }
 
+// ==================== AGENDA DE SALAS ====================
+var SALAS = ['Sala 1','Sala 2','Sala 3','Sala 4','Sala 5'];
+
+function openModalAgendaSala(id) {
+    document.getElementById('agendaSalaEditId').value = id || '';
+    if (id) {
+        var a = (DATA.agendaSalas || []).find(function(x) { return x.id == id; });
+        if (a) {
+            document.getElementById('agendaSalaSala').value = a.sala;
+            document.getElementById('agendaSalaData').value = a.data;
+            document.getElementById('agendaSalaHoraInicio').value = a.horaInicio;
+            document.getElementById('agendaSalaHoraFim').value = a.horaFim;
+            document.getElementById('agendaSalaPessoa').value = a.pessoa;
+            document.getElementById('agendaSalaTel').value = a.telefone || '';
+            document.getElementById('agendaSalaAssunto').value = a.assunto || '';
+        }
+    } else {
+        document.getElementById('agendaSalaSala').value = 'Sala 1';
+        document.getElementById('agendaSalaData').value = new Date().toISOString().slice(0,10);
+        document.getElementById('agendaSalaHoraInicio').value = '';
+        document.getElementById('agendaSalaHoraFim').value = '';
+        document.getElementById('agendaSalaPessoa').value = '';
+        document.getElementById('agendaSalaTel').value = '';
+        document.getElementById('agendaSalaAssunto').value = '';
+    }
+    document.getElementById('modalAgendaSala').classList.add('show');
+}
+
+function saveAgendaSala() {
+    var sala = document.getElementById('agendaSalaSala').value;
+    var data = document.getElementById('agendaSalaData').value;
+    var horaInicio = document.getElementById('agendaSalaHoraInicio').value;
+    var horaFim = document.getElementById('agendaSalaHoraFim').value;
+    var pessoa = document.getElementById('agendaSalaPessoa').value.trim();
+    var telefone = document.getElementById('agendaSalaTel').value.trim();
+    var assunto = document.getElementById('agendaSalaAssunto').value.trim();
+
+    if (!data) return alert('Preencha a data.');
+    if (!horaInicio) return alert('Preencha a hora de início.');
+    if (!horaFim) return alert('Preencha a hora de fim.');
+    if (!pessoa) return alert('Preencha o nome da pessoa.');
+    if (horaFim <= horaInicio) return alert('A hora de fim deve ser depois da hora de início.');
+
+    if (!DATA.agendaSalas) DATA.agendaSalas = [];
+    var editId = document.getElementById('agendaSalaEditId').value;
+
+    // Validação de conflito de horário
+    var conflito = DATA.agendaSalas.find(function(a) {
+        if (editId && a.id == editId) return false; // ignorar o próprio registro ao editar
+        if (a.sala !== sala || a.data !== data) return false;
+        // Verifica sobreposição: inicio1 < fim2 && inicio2 < fim1
+        return horaInicio < a.horaFim && a.horaInicio < horaFim;
+    });
+
+    if (conflito) {
+        return alert('CONFLITO DE HORÁRIO!\n\nA ' + sala + ' já está reservada nesta data das ' + conflito.horaInicio + ' às ' + conflito.horaFim + ' por ' + conflito.pessoa + '.\n\nEscolha outro horário ou outra sala.');
+    }
+
+    var obj = {
+        sala: sala, data: data, horaInicio: horaInicio, horaFim: horaFim,
+        pessoa: pessoa, telefone: telefone, assunto: assunto, status: 'confirmado'
+    };
+
+    if (editId) {
+        var idx = DATA.agendaSalas.findIndex(function(x) { return x.id == editId; });
+        if (idx >= 0) { obj.id = parseInt(editId); DATA.agendaSalas[idx] = obj; }
+    } else {
+        obj.id = genId();
+        DATA.agendaSalas.push(obj);
+    }
+    saveData(); closeModal('modalAgendaSala'); renderAgendaSalas();
+}
+
+function delAgendaSala(id) {
+    if (!confirm('Excluir este agendamento?')) return;
+    DATA.agendaSalas = (DATA.agendaSalas || []).filter(function(x) { return x.id != id; });
+    saveData(); renderAgendaSalas();
+}
+
+function renderAgendaSalas() {
+    if (!DATA.agendaSalas) DATA.agendaSalas = [];
+    var agora = new Date();
+    var hojeStr = agora.toISOString().slice(0,10);
+    var horaAtual = agora.toTimeString().slice(0,5);
+
+    // --- Cards de status das salas ---
+    var cardsHtml = '';
+    SALAS.forEach(function(sala, i) {
+        var agendHoje = DATA.agendaSalas.filter(function(a) { return a.sala === sala && a.data === hojeStr; })
+            .sort(function(a,b) { return a.horaInicio > b.horaInicio ? 1 : -1; });
+
+        var ocupadaAgora = agendHoje.find(function(a) { return horaAtual >= a.horaInicio && horaAtual < a.horaFim; });
+        var proxima = agendHoje.find(function(a) { return a.horaInicio > horaAtual; });
+
+        var statusLabel, statusCor, statusBg;
+        if (ocupadaAgora) {
+            statusLabel = 'OCUPADA'; statusCor = 'var(--red)'; statusBg = 'rgba(239,68,68,.12)';
+        } else {
+            statusLabel = 'LIVRE'; statusCor = 'var(--green)'; statusBg = 'rgba(16,185,129,.12)';
+        }
+
+        var cores = ['var(--accent)','var(--accent2)','var(--cyan)','var(--orange)','var(--pink)'];
+        cardsHtml += '<div class="card" style="border-top:3px solid ' + cores[i] + ';text-align:center;padding:16px 12px;">' +
+            '<div style="font-weight:700;font-size:0.9rem;margin-bottom:8px;">' + sala + '</div>' +
+            '<div style="display:inline-block;padding:4px 14px;border-radius:20px;font-size:0.75rem;font-weight:700;background:' + statusBg + ';color:' + statusCor + ';">' + statusLabel + '</div>';
+
+        if (ocupadaAgora) {
+            cardsHtml += '<div style="margin-top:8px;font-size:0.72rem;color:var(--text2);">' +
+                esc(ocupadaAgora.pessoa) + '<br>' + ocupadaAgora.horaInicio + ' - ' + ocupadaAgora.horaFim + '</div>';
+        }
+        if (proxima) {
+            cardsHtml += '<div style="margin-top:8px;font-size:0.68rem;color:var(--text2);border-top:1px solid var(--border);padding-top:6px;">' +
+                'Próximo: ' + proxima.horaInicio + '<br>' + esc(proxima.pessoa) + '</div>';
+        } else if (!ocupadaAgora) {
+            cardsHtml += '<div style="margin-top:8px;font-size:0.68rem;color:var(--text2);">Sem agendamentos hoje</div>';
+        }
+
+        cardsHtml += '</div>';
+    });
+    document.getElementById('salasStatusGrid').innerHTML = cardsHtml;
+
+    // --- Tabela de agendamentos ---
+    var filtroSala = document.getElementById('filtroSala').value;
+    var filtroData = document.getElementById('filtroDataSala').value;
+
+    var lista = DATA.agendaSalas.filter(function(a) {
+        if (filtroSala && a.sala !== filtroSala) return false;
+        if (filtroData && a.data !== filtroData) return false;
+        return true;
+    }).sort(function(a,b) {
+        if (a.data !== b.data) return a.data > b.data ? 1 : -1;
+        if (a.horaInicio !== b.horaInicio) return a.horaInicio > b.horaInicio ? 1 : -1;
+        return a.sala > b.sala ? 1 : -1;
+    });
+
+    var html = '';
+    lista.forEach(function(a) {
+        var passado = a.data < hojeStr || (a.data === hojeStr && a.horaFim <= horaAtual);
+        var emAndamento = a.data === hojeStr && horaAtual >= a.horaInicio && horaAtual < a.horaFim;
+        var stLabel, stCor;
+        if (emAndamento) { stLabel = 'Em uso'; stCor = 'cyan'; }
+        else if (passado) { stLabel = 'Encerrado'; stCor = 'purple'; }
+        else { stLabel = 'Confirmado'; stCor = 'green'; }
+
+        html += '<tr' + (passado && !emAndamento ? ' style="opacity:.5;"' : '') + '>' +
+            '<td><strong>' + esc(a.sala) + '</strong></td>' +
+            '<td>' + formatDate(a.data) + '</td>' +
+            '<td>' + a.horaInicio + ' - ' + a.horaFim + '</td>' +
+            '<td>' + esc(a.pessoa) + '</td>' +
+            '<td>' + esc(a.telefone || '-') + '</td>' +
+            '<td>' + esc(a.assunto || '-') + '</td>' +
+            '<td><span class="badge badge-' + stCor + '">' + stLabel + '</span></td>' +
+            '<td><button class="btn btn-sm btn-primary" onclick="openModalAgendaSala(' + a.id + ')">Editar</button> ' +
+            '<button class="btn btn-sm btn-danger" onclick="delAgendaSala(' + a.id + ')">X</button></td></tr>';
+    });
+    document.getElementById('tbAgendaSalas').innerHTML = html || '<tr><td colspan="8" style="text-align:center;color:var(--text2);">Nenhum agendamento cadastrado.</td></tr>';
+}
+
 // ==================== DRILL-DOWN DOS STAT CARDS ====================
 function abrirDetalhe(icone, titulo, count, bodyHtml) {
     document.getElementById('detalheIcone').textContent = icone;
@@ -1755,6 +1982,18 @@ function abrirDetalheAlertas() {
 
 // Fechar detalhe com ESC
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape') fecharDetalhe(); });
+
+// ==================== FILTRO ELEITORADO ====================
+function filtrarEleitorado() {
+    var termo = document.getElementById('buscaRA').value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    var tabela = document.querySelector('#page-eleitorado table tbody');
+    var linhas = tabela.querySelectorAll('tr');
+    linhas.forEach(function(tr) {
+        var cidade = (tr.children[1] || {}).textContent || '';
+        var cidadeNorm = cidade.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+        tr.style.display = cidadeNorm.indexOf(termo) >= 0 ? '' : 'none';
+    });
+}
 
 // ==================== UTILS ====================
 function closeModal(id) { document.getElementById(id).classList.remove('show'); }
