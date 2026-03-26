@@ -171,7 +171,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
     .grid-2,.grid-3,.grid-4 { grid-template-columns:1fr; }
     .countdown-grid { grid-template-columns:repeat(2,1fr); }
     .nav-links { font-size:.7rem; }
-    #salasStatusGrid { grid-template-columns:repeat(2,1fr) !important; }
+    #salasStatusGrid { grid-template-columns:repeat(3,1fr) !important; }
 }
 </style>
 </head>
@@ -582,13 +582,13 @@ tr:hover td { background:rgba(59,130,246,0.05); }
     <div class="card-header" style="margin-bottom:16px;">
         <div>
             <div class="card-title" style="font-size:1.2rem;">Agenda de Salas do Comitê</div>
-            <div class="card-subtitle">Gerenciamento das 5 salas de reunião</div>
+            <div class="card-subtitle">Gerenciamento das salas de reunião e auditório</div>
         </div>
         <button class="btn btn-primary" onclick="openModalAgendaSala()">+ Novo Agendamento</button>
     </div>
 
     <!-- Cards de status das salas -->
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px;" id="salasStatusGrid"></div>
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:16px;" id="salasStatusGrid"></div>
 
     <!-- Filtros -->
     <div class="card" style="margin-bottom:16px;padding:14px 20px;">
@@ -601,6 +601,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
                 <option value="Sala 3">Sala 3</option>
                 <option value="Sala 4">Sala 4</option>
                 <option value="Sala 5">Sala 5</option>
+                <option value="Auditório">Auditório</option>
             </select>
             <input type="date" id="filtroDataSala" onchange="renderAgendaSalas()" style="padding:6px 10px;background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.8rem;">
             <button class="btn btn-sm" style="background:var(--card2);color:var(--text);" onclick="document.getElementById('filtroSala').value='';document.getElementById('filtroDataSala').value='';renderAgendaSalas();">Limpar Filtros</button>
@@ -810,7 +811,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
     <input type="hidden" id="agendaSalaEditId">
     <div class="form-group"><label>Sala</label>
         <select id="agendaSalaSala">
-            <option>Sala 1</option><option>Sala 2</option><option>Sala 3</option><option>Sala 4</option><option>Sala 5</option>
+            <option>Sala 1</option><option>Sala 2</option><option>Sala 3</option><option>Sala 4</option><option>Sala 5</option><option>Auditório</option>
         </select>
     </div>
     <div class="grid-3">
@@ -1653,7 +1654,7 @@ function removeChecklistItem(secao, idx) {
 }
 
 // ==================== AGENDA DE SALAS ====================
-var SALAS = ['Sala 1','Sala 2','Sala 3','Sala 4','Sala 5'];
+var SALAS = ['Sala 1','Sala 2','Sala 3','Sala 4','Sala 5','Auditório'];
 
 function openModalAgendaSala(id) {
     document.getElementById('agendaSalaEditId').value = id || '';
@@ -1753,7 +1754,7 @@ function renderAgendaSalas() {
             statusLabel = 'LIVRE'; statusCor = 'var(--green)'; statusBg = 'rgba(16,185,129,.12)';
         }
 
-        var cores = ['var(--accent)','var(--accent2)','var(--cyan)','var(--orange)','var(--pink)'];
+        var cores = ['var(--accent)','var(--accent2)','var(--cyan)','var(--orange)','var(--pink)','var(--green)'];
         cardsHtml += '<div class="card" style="border-top:3px solid ' + cores[i] + ';text-align:center;padding:16px 12px;">' +
             '<div style="font-weight:700;font-size:0.9rem;margin-bottom:8px;">' + sala + '</div>' +
             '<div style="display:inline-block;padding:4px 14px;border-radius:20px;font-size:0.75rem;font-weight:700;background:' + statusBg + ';color:' + statusCor + ';">' + statusLabel + '</div>';
