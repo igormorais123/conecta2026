@@ -36,19 +36,24 @@
 
 1. No Supabase Dashboard, vá em Authentication → Providers
 2. Email está habilitado por padrão
-3. Para Magic Link: já funciona por padrão
+3. Para Magic Link: desativar (não usaremos magic links neste projeto)
 4. Em Authentication → URL Configuration:
-   - Site URL: `https://inteia.com.br/conecta/`
-   - Redirect URLs: adicione `https://inteia.com.br/conecta/login.html`
+   - Site URL: `https://inteia.com.br/conecta2026/`
+   - Redirect URLs: adicione `https://inteia.com.br/conecta2026/login.html`
 
-## 6. Criar primeiro usuário admin
+## 6. Criar 3 usuários operacionais iniciais
 
 1. Vá em Authentication → Users
-2. Clique "Add user" → "Create new user"
-3. Email e senha do admin
-4. Após criar, vá em SQL Editor e execute:
+2. Clique "Add user" → "Create new user" (desmarque o Auto Confirm se for forçar mas o recomendado é deixá-los ativados se o e-mail não existir de verdade)
+3. Crie os três emails exatos abaixo (gerar senhas fortes por conta e enviá-las a cada um):
+   - `silvio2026@conecta.interno`
+   - `karla2026@conecta.interno`
+   - `igor2026@conecta.interno`
+4. Após criar todos, vá em SQL Editor e defina os papéis executando a query abaixo:
 ```sql
-UPDATE perfis SET papel = 'admin' WHERE email = 'SEU-EMAIL@AQUI';
+UPDATE perfis SET papel = 'admin' WHERE email = 'silvio2026@conecta.interno';
+UPDATE perfis SET papel = 'coordenador' WHERE email = 'karla2026@conecta.interno';
+UPDATE perfis SET papel = 'admin' WHERE email = 'igor2026@conecta.interno';
 ```
 
 ## 7. Configurar credenciais no código

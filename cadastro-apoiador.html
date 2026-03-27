@@ -370,6 +370,8 @@
             input, select { padding: 12px 14px; font-size: 15px; }
         }
     </style>
+    <!-- Importacao do Cliente Supabase Consolidado -->
+    <script src="js/supabase-config.js"></script>
 </head>
 <body>
 
@@ -679,20 +681,6 @@ document.getElementById('lgpdAceite').addEventListener('change', function() {
     document.getElementById('lgpdBox').classList.remove('erro');
     document.getElementById('erroLgpd').classList.remove('visivel');
 });
-</script>
-
-<!-- Supabase para salvar cadastros no banco -->
-<script>
-(function() {
-    var SUPABASE_URL = 'https://SEU-PROJETO.supabase.co';
-    var SUPABASE_ANON_KEY = 'SUA-ANON-KEY';
-    var s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
-    s.onload = function() {
-        window._conectaSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    };
-    document.head.appendChild(s);
-})();
 </script>
 
 </body>
