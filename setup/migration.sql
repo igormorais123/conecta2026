@@ -625,5 +625,88 @@ ON CONFLICT (cidade) DO NOTHING;
 
 
 -- ============================================================
+-- 19. COLUNA USERNAME EM PERFIS
+-- ============================================================
+
+ALTER TABLE perfis ADD COLUMN IF NOT EXISTS username TEXT UNIQUE;
+
+COMMENT ON COLUMN perfis.username IS 'Username operacional para login (ex: silvio2026)';
+
+-- Trigger atualizado para incluir username
+CREATE OR REPLACE FUNCTION public.criar_perfil_ao_registrar()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  INSERT INTO public.perfis (id, nome, email, papel, username)
+  VALUES (
+    NEW.id,
+    COALESCE(NEW.raw_user_meta_data->>'nome', NEW.raw_user_meta_data->>'full_name', ''),
+    NEW.email,
+    COALESCE(NEW.raw_user_meta_data->>'papel', 'operador'),
+    COALESCE(NEW.raw_user_meta_data->>'username', SPLIT_PART(NEW.email, '@', 1))
+  );
+  RETURN NEW;
+END;
+$$;
+
+
+-- ============================================================
+-- 20. CONFIGURACOES_APP (JSON singleton para Logistica e outros)
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS configuracoes_app (
+  chave         TEXT PRIMARY KEY,
+  payload       JSONB NOT NULL DEFAULT '{}'::jsonb,
+  atualizado_por UUID REFERENCES perfis(id),
+  atualizado_em TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+COMMENT ON TABLE configuracoes_app IS 'Armazena configuracoes e estados JSON singleton (logistica, organograma, etc)';
+
+ALTER TABLE configuracoes_app ENABLE ROW LEVEL SECURITY;
+
+-- SELECT para autenticados
+CREATE POLICY "config_app_select" ON configuracoes_app
+  FOR SELECT TO authenticated USING (TRUE);
+
+-- INSERT para admin/coordenador
+CREATE POLICY "config_app_insert" ON configuracoes_app
+  FOR INSERT TO authenticated
+  WITH CHECK (usuario_eh_gestor());
+
+-- UPDATE para admin/coordenador
+CREATE POLICY "config_app_update" ON configuracoes_app
+  FOR UPDATE TO authenticated
+  USING (usuario_eh_gestor());
+
+-- DELETE para admin/coordenador
+CREATE POLICY "config_app_delete" ON configuracoes_app
+  FOR DELETE TO authenticated
+  USING (usuario_eh_gestor());
+
+-- Permitir leitura anonima da coluna username para resolver login
+-- (necessario porque o login consulta perfis antes de autenticar)
+CREATE POLICY "perfis_select_anon_username" ON perfis
+  FOR SELECT TO anon
+  USING (TRUE);
+
+
+-- ============================================================
+-- SEED: Usernames dos 3 usuarios iniciais
+-- (executar APOS criar os usuarios no auth)
+-- ============================================================
+
+-- UPDATE perfis SET username = 'silvio2026' WHERE email = 'silvio2026@conecta.interno';
+-- UPDATE perfis SET username = 'karla2026' WHERE email = 'karla2026@conecta.interno';
+-- UPDATE perfis SET username = 'igor2026' WHERE email = 'igor2026@conecta.interno';
+-- UPDATE perfis SET papel = 'admin' WHERE email = 'silvio2026@conecta.interno';
+-- UPDATE perfis SET papel = 'coordenador' WHERE email = 'karla2026@conecta.interno';
+-- UPDATE perfis SET papel = 'admin' WHERE email = 'igor2026@conecta.interno';
+
+
+-- ============================================================
 -- FIM DA MIGRAÇÃO
 -- ============================================================

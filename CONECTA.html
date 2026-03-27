@@ -4930,6 +4930,7 @@ async function bootstrapApp() {
 if (window.CONECTA_SUPABASE || window._conectaSupabaseError) {
     bootstrapApp();
 } else {
+    window.addEventListener('conecta-supabase-ready', bootstrapApp, { once: true });
     window.addEventListener('supabase-ready', bootstrapApp, { once: true });
 }
 </script>

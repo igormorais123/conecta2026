@@ -4,6 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coordenadores Regionais - Campanha Celina</title>
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="/conecta2026/manifest.json">
+    <meta name="theme-color" content="#1a237e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="CONECTA">
+    <link rel="apple-touch-icon" href="/conecta2026/icons/icon-192.png">
+    
+    <script src="js/supabase-config.js"></script>
+    <script>
+        // Auth guard — redireciona se nao logado
+        window.addEventListener('supabase-ready', async function() {
+            var client = window.CONECTA_SUPABASE;
+            if (!client) return;
+            var sessionResult = await client.auth.getSession();
+            if (!sessionResult.data.session) {
+                window.location.href = (window.CONECTA_CONFIG && window.CONECTA_CONFIG.loginPath) || '/conecta2026/login.html';
+            }
+        });
+    </script>
     <style>
         * {
             margin: 0;
@@ -223,6 +243,14 @@
     </div>
 
     <p class="rodape">Atualizado em 22/03/2026 &bull; Dados extra&iacute;dos do sistema CONECTA</p>
+
+    <footer style="text-align:center;padding:20px;font-size:0.7rem;color:#64748b;margin-top:20px;">
+        <div style="margin-bottom:4px;">
+            <img src="icons/inteia-logo.svg" alt="INTEIA" style="height:24px;vertical-align:middle;margin-right:6px;">
+            Implementado por <strong>INTEIA &mdash; Inteligencia Estrategica Eleitoral</strong>
+        </div>
+        <div>Sistema desenvolvido por <strong>Silvio Morais Vieira</strong></div>
+    </footer>
 
 </body>
 </html>

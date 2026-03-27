@@ -22,7 +22,10 @@
 2. Clique "New Query"
 3. Cole o conteúdo do arquivo `migration.sql` (que está nesta pasta)
 4. Clique "Run"
-5. Verifique que todas as 18 tabelas foram criadas em Table Editor
+5. Verifique que todas as tabelas foram criadas em Table Editor, incluindo:
+   - `perfis` (com coluna `username`)
+   - `configuracoes_app` (para JSON singletons como logistica e organograma)
+   - `eventos`, `veiculos`, `pessoas`, `lideres`, `apoiadores`, etc
 
 ## 4. Configurar Storage (fotos)
 
@@ -49,12 +52,13 @@
    - `silvio2026@conecta.interno`
    - `karla2026@conecta.interno`
    - `igor2026@conecta.interno`
-4. Após criar todos, vá em SQL Editor e defina os papéis executando a query abaixo:
+4. Apos criar todos, va em SQL Editor e defina papeis e usernames:
 ```sql
-UPDATE perfis SET papel = 'admin' WHERE email = 'silvio2026@conecta.interno';
-UPDATE perfis SET papel = 'coordenador' WHERE email = 'karla2026@conecta.interno';
-UPDATE perfis SET papel = 'admin' WHERE email = 'igor2026@conecta.interno';
+UPDATE perfis SET username = 'silvio2026', papel = 'admin' WHERE email = 'silvio2026@conecta.interno';
+UPDATE perfis SET username = 'karla2026', papel = 'coordenador' WHERE email = 'karla2026@conecta.interno';
+UPDATE perfis SET username = 'igor2026', papel = 'admin' WHERE email = 'igor2026@conecta.interno';
 ```
+5. Verifique na tabela `perfis` que os 3 registros existem com `username` e `papel` corretos.
 
 ## 7. Configurar credenciais no código
 
@@ -102,7 +106,18 @@ git push origin main
 | Realtime | 200 conexões | OK para equipe |
 | Bandwidth | 5 GB/mês | OK para dashboard |
 
-## Papéis de usuário
+## Smoke test pos-deploy
+
+1. Abrir `/conecta2026/` — deve redirecionar para login
+2. Entrar com `silvio2026` — deve abrir CONECTA.html
+3. Criar um evento e verificar persistencia apos refresh
+4. Abrir segunda sessao com `karla2026` — deve ver o mesmo evento
+5. Abrir Logistica — salvar alteracao e confirmar persistencia
+6. Abrir `cadastro-apoiador.html` (sem login) — enviar cadastro
+7. Abrir `conta.html` — trocar senha e verificar
+8. Verificar QR code aponta para URL correta
+
+## Papeis de usuario
 
 | Papel | Pode ver | Pode editar | Pode excluir |
 |-------|---------|-------------|-------------|

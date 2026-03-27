@@ -595,9 +595,10 @@ document.getElementById('formCadastro').addEventListener('submit', function(e) {
 
     dadosEnviados = coletarDados();
 
-    // Tentar salvar no Supabase, fallback para localStorage
-    if (window._conectaSupabase) {
-        window._conectaSupabase.from('apoiadores').insert({
+    // Tentar salvar no Supabase via client compartilhado
+    var sb = window.CONECTA_SUPABASE || window._conectaSupabase;
+    if (sb) {
+        sb.from('apoiadores').insert({
             nome: dadosEnviados.nome,
             telefone: dadosEnviados.telefone,
             telefone_numeros: dadosEnviados.telefoneNumeros,
@@ -613,6 +614,9 @@ document.getElementById('formCadastro').addEventListener('submit', function(e) {
             } else {
                 mostrarSucesso(true);
             }
+        }).catch(function() {
+            salvarLocal(dadosEnviados);
+            mostrarSucesso(false);
         });
     } else {
         salvarLocal(dadosEnviados);
@@ -621,11 +625,33 @@ document.getElementById('formCadastro').addEventListener('submit', function(e) {
 
     function salvarLocal(dados) {
         try {
-            var cadastros = JSON.parse(localStorage.getItem('conecta_apoiadores') || '[]');
-            cadastros.push(dados);
-            localStorage.setItem('conecta_apoiadores', JSON.stringify(cadastros));
+            var fila = JSON.parse(localStorage.getItem('conecta_apoiadores_fila') || '[]');
+            fila.push(dados);
+            localStorage.setItem('conecta_apoiadores_fila', JSON.stringify(fila));
         } catch(e) { console.warn('Erro localStorage:', e); }
     }
+});
+
+// Retry da fila quando ficar online
+window.addEventListener('online', function() {
+    var sb = window.CONECTA_SUPABASE || window._conectaSupabase;
+    if (!sb) return;
+    try {
+        var fila = JSON.parse(localStorage.getItem('conecta_apoiadores_fila') || '[]');
+        if (fila.length === 0) return;
+        var restante = [];
+        fila.forEach(function(dados) {
+            sb.from('apoiadores').insert({
+                nome: dados.nome, telefone: dados.telefone,
+                telefone_numeros: dados.telefoneNumeros,
+                email: dados.email || null, cidade: dados.cidade,
+                instagram: dados.instagram || null, lgpd_aceite: true
+            }).then(function(r) {
+                if (r.error) restante.push(dados);
+            }).catch(function() { restante.push(dados); });
+        });
+        localStorage.setItem('conecta_apoiadores_fila', JSON.stringify(restante));
+    } catch(e) {}
 });
 
 function mostrarSucesso(salvoNoServidor) {
@@ -636,7 +662,7 @@ function mostrarSucesso(salvoNoServidor) {
     if (salvoNoServidor) {
         document.getElementById('msgSucesso').textContent = 'Seus dados foram salvos com sucesso. Obrigada pelo cadastro!';
     } else {
-        document.getElementById('msgSucesso').textContent = 'Cadastro registrado! (Servidor local indisponível - dados exibidos abaixo para registro manual)';
+        document.getElementById('msgSucesso').textContent = 'Cadastro registrado localmente. Sera enviado automaticamente quando a conexao for restabelecida.';
     }
 
     // Resumo

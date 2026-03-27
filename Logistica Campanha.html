@@ -2220,6 +2220,7 @@ async function bootstrapLogistica() {
 if (window.CONECTA_SUPABASE || window._conectaSupabaseError) {
     bootstrapLogistica();
 } else {
+    window.addEventListener('conecta-supabase-ready', bootstrapLogistica, { once: true });
     window.addEventListener('supabase-ready', bootstrapLogistica, { once: true });
 }
 </script>
