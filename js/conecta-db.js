@@ -458,6 +458,25 @@ var ConectaDB = (function() {
             });
     }
 
+    function remove(key) {
+        var fallback = getDefault(key);
+        cache[key] = fallback;
+        writeLocal(key, fallback);
+
+        if (!TABLES[key] || !supabase) {
+            return;
+        }
+
+        syncToSupabase(key, fallback)
+            .then(function() {
+                removePending(key);
+            })
+            .catch(function(err) {
+                console.warn('ConectaDB: deferred remove sync for ' + key, err);
+                enqueuePending(key, fallback);
+            });
+    }
+
     async function syncArrayRows(config, rows) {
         var remoteIdsResult = await supabase.from(config.table).select('id');
         if (remoteIdsResult.error) throw remoteIdsResult.error;
@@ -630,6 +649,7 @@ var ConectaDB = (function() {
         onReady: onReady,
         get: get,
         set: set,
+        remove: remove,
         logout: logout,
         getUser: getUser,
         getUserProfile: getUserProfile,
@@ -662,6 +682,7 @@ var ConectaDB = (function() {
     ];
     var originalGetItem = localStorage.getItem.bind(localStorage);
     var originalSetItem = localStorage.setItem.bind(localStorage);
+    var originalRemoveItem = localStorage.removeItem.bind(localStorage);
 
     localStorage.getItem = function(key) {
         if (ConectaDB.isReady() && managedKeys.indexOf(key) !== -1) {
@@ -676,5 +697,13 @@ var ConectaDB = (function() {
             return;
         }
         originalSetItem(key, value);
+    };
+
+    localStorage.removeItem = function(key) {
+        if (ConectaDB.isReady() && managedKeys.indexOf(key) !== -1) {
+            ConectaDB.remove(key);
+            return;
+        }
+        originalRemoveItem(key);
     };
 })();
