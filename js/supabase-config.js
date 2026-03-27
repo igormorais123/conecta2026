@@ -55,8 +55,8 @@
 
     window.CONECTA_CONFIG = createConfig();
 
-    var supabaseUrl = window.CONECTA_SUPABASE_URL || 'https://SEU-PROJETO.supabase.co';
-    var supabaseAnonKey = window.CONECTA_SUPABASE_KEY || 'SUA-ANON-KEY';
+    var supabaseUrl = window.CONECTA_SUPABASE_URL || 'https://dvgbqbwipwegkndutvte.supabase.co';
+    var supabaseAnonKey = window.CONECTA_SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2Z2JxYndpcHdlZ2tuZHV0dnRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MjY1MTgsImV4cCI6MjA5MDIwMjUxOH0.HM53lLdM4tN-9cndCIp2DgMHQ0BrWcSDnOArIr8XL8w';
 
     window.CONECTA_SUPABASE_URL = supabaseUrl;
     window.CONECTA_SUPABASE_KEY = supabaseAnonKey;
