@@ -2,11 +2,22 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a237e">
     <meta http-equiv="refresh" content="0;url=login.html">
     <title>CONECTA 2026</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
 </head>
 <body>
     <p>Redirecionando...</p>
-    <script>window.location.href='login.html';</script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js').catch(function(error) {
+                console.warn('Falha ao registrar service worker do CONECTA:', error);
+            });
+        }
+        window.location.href='login.html';
+    </script>
 </body>
 </html>

@@ -4,11 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minha Conta - CONECTA 2026</title>
+    <link rel="manifest" id="manifestLink" href="manifest.json">
+    <meta name="theme-color" content="#1a237e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="CONECTA">
+    <link rel="apple-touch-icon" id="appleTouchIcon" href="icons/icon-192.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="js/supabase-config.js"></script>
     <script src="js/conecta-db.js"></script>
+    <script>
+        (function initPwaAssets() {
+            var cfg = window.CONECTA_CONFIG || {};
+            var basePath = cfg.basePath || './';
+            var manifestLink = document.getElementById('manifestLink');
+            var appleTouchIcon = document.getElementById('appleTouchIcon');
+
+            if (manifestLink) {
+                manifestLink.href = basePath + 'manifest.json';
+            }
+            if (appleTouchIcon) {
+                appleTouchIcon.href = basePath + 'icons/icon-192.png';
+            }
+
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                    navigator.serviceWorker.register(basePath + 'service-worker.js').catch(function(error) {
+                        console.warn('Falha ao registrar service worker do CONECTA:', error);
+                    });
+                });
+            }
+        })();
+    </script>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         body {
