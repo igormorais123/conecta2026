@@ -1709,7 +1709,7 @@
     <div class="header-actions">
         <span class="header-clock" id="clock"></span>
         <span id="userName" style="font-size:0.8rem;color:var(--text-light);font-weight:600;"></span>
-        <button class="btn-header" onclick="window.location.href='conta.html'">Minha Conta</button>
+        <button class="btn-header" onclick="window.location.href=(window.CONECTA_CONFIG && window.CONECTA_CONFIG.contaPath) || 'conta.html'">Minha Conta</button>
         <button class="btn-header" onclick="ConectaDB.logout()">Sair</button>
         <button class="btn-header" onclick="exportData()">Exportar Dados</button>
     </div>
