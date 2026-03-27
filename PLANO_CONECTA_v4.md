@@ -84,6 +84,32 @@ O objetivo de v1 nao e "reescrever tudo". O objetivo e:
    - rotas corretas;
    - setup documentado.
 
+### 2.3 Gap confirmado entre o arquivo de verificacao e o codigo real
+
+O arquivo [Verification___Conecta2026_Implementation_PRD.md](C:\Users\IgorPC\.claude\projects\Conecta 2026\Verification___Conecta2026_Implementation_PRD.md) nao descreve um estado ja entregue do projeto. Ele descreve correcoes recomendadas que continuam pendentes no codigo atual.
+
+Validacao local realizada no repositorio em 27/03/2026:
+
+| Item de verificacao | Estado real no repositorio |
+|---------------------|----------------------------|
+| Login por username | ainda nao implementado |
+| Remocao do magic link | ainda nao implementada |
+| `REDIRECT_URL` em `/conecta2026/` | ainda nao implementado em `login.html` |
+| `index.html` raiz | ainda nao existe |
+| `conta.html` | ainda nao existe |
+| Scripts Supabase em `CONECTA.html` | ainda nao existem |
+| Auth guard em `CONECTA.html` | ainda nao existe |
+| Integracao Supabase em `Logistica Campanha.html` | ainda nao existe |
+| Sync real de arrays em `conecta-db.js` | ainda nao existe |
+| `cadastro-apoiador.html` com carga segura do Supabase | ainda nao existe |
+| `setup/SETUP.md` alinhado aos 3 usuarios e `/conecta2026/` | ainda nao esta alinhado |
+
+Implicacao de planejamento:
+
+- nenhum comentario do arquivo de verificacao deve ser tratado como "ja implementado" sem nova validacao no codigo;
+- o backlog executivo da Fase 0 e da Fase 1 deve assumir esse gap como ponto de partida real;
+- toda evolucao futura deve ser validada no codigo e nao apenas no PRD, na review ou no plano.
+
 ---
 
 ## 3. Ajustes obrigatorios em relacao ao plano anterior
@@ -382,7 +408,8 @@ Padronizar configuracao, rotas, usuarios e documentacao para que as paginas pare
 - atualizar `WORKING.md` para refletir `/conecta2026/`;
 - definir a tabela `configuracoes_app` no plano SQL;
 - documentar a criacao exata dos 3 usuarios;
-- documentar a estrategia de branches para execucao paralela.
+- documentar a estrategia de branches para execucao paralela;
+- transformar os 11 comentarios do arquivo de verificacao em checklist executavel de backlog.
 
 ### Ajustes obrigatorios
 
@@ -401,7 +428,8 @@ Padronizar configuracao, rotas, usuarios e documentacao para que as paginas pare
 - nenhuma pagina cria client proprio do Supabase;
 - toda documentacao usa `/conecta2026/`;
 - o setup de usuarios esta descrito de forma exata;
-- o plano de execucao paralela nao depende de push simultaneo na `main`.
+- o plano de execucao paralela nao depende de push simultaneo na `main`;
+- o PO registra explicitamente que o codigo ainda nao contem as correcoes do arquivo de verificacao.
 
 ---
 
@@ -777,6 +805,7 @@ Acao obrigatoria apos o primeiro login:
 17. Uma carga grande de registros usa `upsert` em lote, sem disparar centenas de requests unitarias.
 18. Alteracoes offline entram em fila e sao sincronizadas ao disparar o evento `online`.
 19. O frontend nao abre subscriptions realtime fora do contexto da pagina ativa.
+20. O codigo real evidencia que os 11 comentarios do arquivo de verificacao foram de fato implementados, e nao apenas descritos no plano.
 
 ---
 
