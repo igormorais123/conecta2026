@@ -1709,8 +1709,10 @@
     <div class="header-actions">
         <span class="header-clock" id="clock"></span>
         <span id="userName" style="font-size:0.8rem;color:var(--text-light);font-weight:600;"></span>
+        <span id="syncStatusBadge" style="font-size:0.72rem;font-weight:700;padding:6px 10px;border-radius:999px;background:#eceff1;color:#455a64;">Sync local</span>
         <button class="btn-header" onclick="window.location.href=(window.CONECTA_CONFIG && window.CONECTA_CONFIG.contaPath) || 'conta.html'">Minha Conta</button>
         <button class="btn-header" onclick="ConectaDB.logout()">Sair</button>
+        <button class="btn-header" onclick="syncAgora()">Sincronizar</button>
         <button class="btn-header" onclick="triggerImportBackup()">Importar Backup</button>
         <button class="btn-header" onclick="exportData()">Exportar Dados</button>
     </div>
@@ -4878,6 +4880,67 @@ function exportData() {
     a.click();
 }
 
+function formatarSyncHorario(value) {
+    if (!value) return '';
+    try {
+        return new Date(value).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    } catch (error) {
+        return '';
+    }
+}
+
+function updateSyncBadge(status) {
+    var badge = document.getElementById('syncStatusBadge');
+    if (!badge || !status) return;
+
+    var text = 'Sync local';
+    var background = '#eceff1';
+    var color = '#455a64';
+
+    if (!status.online) {
+        text = 'Offline';
+        background = '#fff3e0';
+        color = '#ef6c00';
+    } else if (status.pendingCount > 0) {
+        text = 'Fila pendente: ' + status.pendingCount;
+        background = '#fff8e1';
+        color = '#f57c00';
+    } else if (status.lastSyncAt) {
+        text = 'Sync ' + formatarSyncHorario(status.lastSyncAt);
+        background = '#e8f5e9';
+        color = '#2e7d32';
+    }
+
+    badge.textContent = text;
+    badge.style.background = background;
+    badge.style.color = color;
+    badge.title = status.lastError || text;
+}
+
+async function syncAgora() {
+    if (!window.ConectaDB || typeof window.ConectaDB.syncNow !== 'function') {
+        alert('Camada de sincronizacao indisponivel no momento.');
+        return;
+    }
+
+    var badge = document.getElementById('syncStatusBadge');
+    if (badge) {
+        badge.textContent = 'Sincronizando...';
+        badge.style.background = '#e3f2fd';
+        badge.style.color = '#1565c0';
+    }
+
+    try {
+        await window.ConectaDB.syncNow();
+        updateSyncBadge(window.ConectaDB.getSyncStatus());
+        alert('Sincronizacao concluida.');
+    } catch (error) {
+        console.error('Falha ao sincronizar manualmente:', error);
+        updateSyncBadge(window.ConectaDB.getSyncStatus());
+        alert('Nao foi possivel concluir a sincronizacao agora.');
+    }
+}
+
 function triggerImportBackup() {
     var input = document.getElementById('backupImportInput');
     if (!input) return;
@@ -5030,6 +5093,7 @@ async function bootstrapApp() {
         await ConectaDB.init();
         updateRealtimeScope(currentPage);
         refreshStateFromStorage();
+        updateSyncBadge(ConectaDB.getSyncStatus());
 
         var profile = await ConectaDB.getUserProfile();
         var userNameEl = document.getElementById('userName');
@@ -5044,6 +5108,10 @@ async function bootstrapApp() {
 
     init();
 }
+
+window.addEventListener('conecta-sync-status', function(event) {
+    updateSyncBadge(event.detail || null);
+});
 
 if (window.CONECTA_SUPABASE || window._conectaSupabaseError) {
     bootstrapApp();

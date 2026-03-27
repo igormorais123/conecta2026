@@ -25,6 +25,9 @@ Deve encerrar a sessão e voltar para `/conecta2026/login.html`.
 - [ ] Abrir uma segunda sessão com outro usuário e validar leitura do mesmo dado.
 - [ ] Alterar `coordSegmentosSociais` e confirmar persistência após refresh.
 - [ ] Alterar o organograma customizado e confirmar persistência após refresh.
+- [ ] Validar o badge de sync no cabeçalho:
+deve indicar `Offline`, `Fila pendente: N`, `Sync HH:MM` ou `Erro de sync` conforme o estado.
+- [ ] Clicar em `Sincronizar` e confirmar replay manual sem erro visual.
 
 ## 4. Sync da Logística
 - [ ] Alterar qualquer bloco de `logistica_celina_2026` e recarregar.
@@ -34,6 +37,7 @@ Deve encerrar a sessão e voltar para `/conecta2026/login.html`.
 ## 5. Offline e fila
 - [ ] Desligar a rede no app autenticado, fazer alterações e religar a conexão.
 - [ ] Confirmar replay da fila do `ConectaDB` no evento `online`.
+- [ ] Confirmar que o badge mostra `Offline` sem rede e volta para `Sync`/`Fila pendente` ao reconectar.
 - [ ] Abrir `cadastro-apoiador.html` offline, enviar um cadastro e verificar gravação em `conecta_apoiadores_fila`.
 - [ ] Reabrir a página online e confirmar replay da fila pública.
 

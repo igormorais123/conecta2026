@@ -18,6 +18,12 @@ var ConectaDB = (function() {
     var supabase = null;
     var currentUser = null;
     var activeManagedKeys = [];
+    var syncState = {
+        pendingCount: 0,
+        lastSyncAt: null,
+        lastError: null,
+        online: typeof navigator === 'undefined' ? true : navigator.onLine
+    };
 
     var TABLES = {
         'conectacelina_eventos': { table: 'eventos', type: 'array' },
@@ -56,6 +62,35 @@ var ConectaDB = (function() {
     function writeLocal(key, value) {
         var raw = typeof value === 'string' ? value : JSON.stringify(value);
         STORAGE.setItem(key, raw);
+    }
+
+    function getPendingQueue() {
+        var queue = readLocal(PENDING_QUEUE_KEY, []);
+        return Array.isArray(queue) ? queue : [];
+    }
+
+    function emitSyncStatus() {
+        syncState.pendingCount = getPendingQueue().length;
+        syncState.online = typeof navigator === 'undefined' ? true : navigator.onLine;
+        window.dispatchEvent(new CustomEvent('conecta-sync-status', {
+            detail: {
+                pendingCount: syncState.pendingCount,
+                lastSyncAt: syncState.lastSyncAt,
+                lastError: syncState.lastError,
+                online: syncState.online
+            }
+        }));
+    }
+
+    function markSyncSuccess() {
+        syncState.lastSyncAt = new Date().toISOString();
+        syncState.lastError = null;
+        emitSyncStatus();
+    }
+
+    function markSyncError(err) {
+        syncState.lastError = err ? String(err.message || err) : 'Erro desconhecido';
+        emitSyncStatus();
     }
 
     function getDefault(key) {
@@ -322,7 +357,7 @@ var ConectaDB = (function() {
     }
 
     function enqueuePending(key, data) {
-        var queue = readLocal(PENDING_QUEUE_KEY, []);
+        var queue = getPendingQueue();
         queue = (queue || []).filter(function(entry) { return entry.key !== key; });
         queue.push({
             key: key,
@@ -330,16 +365,18 @@ var ConectaDB = (function() {
             updatedAt: new Date().toISOString()
         });
         writeLocal(PENDING_QUEUE_KEY, queue);
+        emitSyncStatus();
     }
 
     function removePending(key) {
-        var queue = readLocal(PENDING_QUEUE_KEY, []);
+        var queue = getPendingQueue();
         queue = (queue || []).filter(function(entry) { return entry.key !== key; });
         writeLocal(PENDING_QUEUE_KEY, queue);
+        emitSyncStatus();
     }
 
     async function syncPendingQueue() {
-        var queue = readLocal(PENDING_QUEUE_KEY, []);
+        var queue = getPendingQueue();
         if (!supabase || !Array.isArray(queue) || queue.length === 0) return;
 
         for (var i = 0; i < queue.length; i += 1) {
@@ -347,8 +384,27 @@ var ConectaDB = (function() {
             try {
                 await syncToSupabase(entry.key, entry.data);
                 removePending(entry.key);
+                markSyncSuccess();
             } catch (err) {
                 console.warn('ConectaDB: pending queue sync failed for ' + entry.key, err);
+                markSyncError(err);
+            }
+        }
+    }
+
+    async function syncAllManagedKeys() {
+        if (!supabase) return;
+
+        for (var i = 0; i < MANAGED_KEYS.length; i += 1) {
+            var key = MANAGED_KEYS[i];
+            try {
+                await syncToSupabase(key, getCurrentData(key));
+                removePending(key);
+                markSyncSuccess();
+            } catch (err) {
+                console.warn('ConectaDB: syncAllManagedKeys failed for ' + key, err);
+                enqueuePending(key, getCurrentData(key));
+                markSyncError(err);
             }
         }
     }
@@ -434,6 +490,7 @@ var ConectaDB = (function() {
                 await syncPendingQueue();
             }
 
+            emitSyncStatus();
             notifyReady();
         })();
 
@@ -452,10 +509,12 @@ var ConectaDB = (function() {
         syncToSupabase(key, data)
             .then(function() {
                 removePending(key);
+                markSyncSuccess();
             })
             .catch(function(err) {
                 console.warn('ConectaDB: deferred sync for ' + key, err);
                 enqueuePending(key, data);
+                markSyncError(err);
             });
     }
 
@@ -471,10 +530,12 @@ var ConectaDB = (function() {
         syncToSupabase(key, fallback)
             .then(function() {
                 removePending(key);
+                markSyncSuccess();
             })
             .catch(function(err) {
                 console.warn('ConectaDB: deferred remove sync for ' + key, err);
                 enqueuePending(key, fallback);
+                markSyncError(err);
             });
     }
 
@@ -681,7 +742,14 @@ var ConectaDB = (function() {
     }
 
     window.addEventListener('online', function() {
+        syncState.online = true;
+        emitSyncStatus();
         syncPendingQueue();
+    });
+
+    window.addEventListener('offline', function() {
+        syncState.online = false;
+        emitSyncStatus();
     });
 
     return {
@@ -696,6 +764,15 @@ var ConectaDB = (function() {
         getUserProfile: getUserProfile,
         uploadFoto: uploadFoto,
         syncPendingQueue: syncPendingQueue,
+        syncNow: syncAllManagedKeys,
+        getSyncStatus: function() {
+            return {
+                pendingCount: getPendingQueue().length,
+                lastSyncAt: syncState.lastSyncAt,
+                lastError: syncState.lastError,
+                online: typeof navigator === 'undefined' ? true : navigator.onLine
+            };
+        },
         getCache: function() { return cache; },
         isReady: function() { return ready; }
     };
