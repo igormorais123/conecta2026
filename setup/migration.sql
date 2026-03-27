@@ -687,11 +687,27 @@ CREATE POLICY "config_app_delete" ON configuracoes_app
   FOR DELETE TO authenticated
   USING (usuario_eh_gestor());
 
--- Permitir leitura anonima da coluna username para resolver login
--- (necessario porque o login consulta perfis antes de autenticar)
-CREATE POLICY "perfis_select_anon_username" ON perfis
-  FOR SELECT TO anon
-  USING (TRUE);
+-- RPC segura para resolver username -> email antes do login
+CREATE OR REPLACE FUNCTION public.resolver_email_por_username(p_username TEXT)
+RETURNS TEXT
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT p.email
+  FROM public.perfis p
+  WHERE p.ativo = TRUE
+    AND p.username IS NOT NULL
+    AND lower(p.username) = lower(btrim(p_username))
+  LIMIT 1;
+$$;
+
+COMMENT ON FUNCTION public.resolver_email_por_username IS
+'Resolve o email interno correspondente ao username operacional, sem expor SELECT anonimo amplo em perfis.';
+
+REVOKE ALL ON FUNCTION public.resolver_email_por_username(TEXT) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.resolver_email_por_username(TEXT) TO anon;
+GRANT EXECUTE ON FUNCTION public.resolver_email_por_username(TEXT) TO authenticated;
 
 
 -- ============================================================

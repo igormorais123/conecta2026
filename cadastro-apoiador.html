@@ -632,27 +632,51 @@ document.getElementById('formCadastro').addEventListener('submit', function(e) {
     }
 });
 
-// Retry da fila quando ficar online
-window.addEventListener('online', function() {
+async function replayFilaApoiadores() {
     var sb = window.CONECTA_SUPABASE || window._conectaSupabase;
     if (!sb) return;
+
     try {
         var fila = JSON.parse(localStorage.getItem('conecta_apoiadores_fila') || '[]');
         if (fila.length === 0) return;
-        var restante = [];
-        fila.forEach(function(dados) {
-            sb.from('apoiadores').insert({
+
+        var resultados = await Promise.all(fila.map(function(dados) {
+            return sb.from('apoiadores').insert({
                 nome: dados.nome, telefone: dados.telefone,
                 telefone_numeros: dados.telefoneNumeros,
                 email: dados.email || null, cidade: dados.cidade,
                 instagram: dados.instagram || null, lgpd_aceite: true
             }).then(function(r) {
-                if (r.error) restante.push(dados);
-            }).catch(function() { restante.push(dados); });
+                return { ok: !r.error, dados: dados };
+            }).catch(function() {
+                return { ok: false, dados: dados };
+            });
+        }));
+
+        var restante = resultados.filter(function(item) {
+            return !item.ok;
+        }).map(function(item) {
+            return item.dados;
         });
+
         localStorage.setItem('conecta_apoiadores_fila', JSON.stringify(restante));
-    } catch(e) {}
+    } catch(e) {
+        console.warn('Erro ao reenviar fila de apoiadores:', e);
+    }
+}
+
+// Retry da fila quando ficar online
+window.addEventListener('online', function() {
+    replayFilaApoiadores();
 });
+
+if (navigator.onLine) {
+    if (window.CONECTA_SUPABASE || window._conectaSupabase) {
+        replayFilaApoiadores();
+    } else {
+        window.addEventListener('supabase-ready', replayFilaApoiadores, { once: true });
+    }
+}
 
 function mostrarSucesso(salvoNoServidor) {
     document.getElementById('formContainer').classList.add('oculto');

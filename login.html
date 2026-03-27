@@ -201,20 +201,18 @@
 (function() {
     'use strict';
 
-    // Fallback temporario — sera removido quando perfis.username estiver populado
-    var USER_EMAIL_MAP = {
-        silvio2026: 'silvio2026@conecta.interno',
-        karla2026: 'karla2026@conecta.interno',
-        igor2026: 'igor2026@conecta.interno'
-    };
-
-    // Resolver username -> email: tenta perfis.username, fallback no mapa local
     async function resolveEmail(client, username) {
         try {
-            var result = await client.from('perfis').select('email').eq('username', username).maybeSingle();
-            if (result.data && result.data.email) return result.data.email;
-        } catch(e) {}
-        return USER_EMAIL_MAP[username] || null;
+            var result = await client.rpc('resolver_email_por_username', { p_username: username });
+            if (result.error) {
+                console.warn('Falha ao resolver username via RPC:', result.error);
+                return null;
+            }
+            return result.data || null;
+        } catch (error) {
+            console.warn('Erro ao resolver username via RPC:', error);
+            return null;
+        }
     }
 
     var messageEl = document.getElementById('message');
@@ -285,7 +283,7 @@
         try {
             var email = await resolveEmail(client, username);
             if (!email) {
-                showMessage('Usuario nao autorizado.', 'error');
+                showMessage('Usuario nao localizado. Confirme o username ou execute a migration de login.', 'error');
                 return;
             }
 

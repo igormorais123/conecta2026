@@ -74,8 +74,8 @@ var supabaseAnonKey = window.CONECTA_SUPABASE_KEY || 'SUA-ANON-KEY';
 
 Observacoes:
 - `login.html`, `CONECTA.html`, `Logistica Campanha.html`, `conta.html` e `cadastro-apoiador.html` consomem esse arquivo compartilhado; nao replique credenciais neles.
-- O login atual usa `username` na interface, mas ainda faz um mapeamento temporario local para os e-mails internos no frontend.
-- Para producao, o ideal continua sendo substituir esse fallback por RPC ou Edge Function para resolver `username -> email` fora do navegador.
+- O login por `username` depende da função SQL `public.resolver_email_por_username`, criada na `migration.sql`.
+- Se o login retornar erro de username nao localizado logo apos o setup, verifique se a `migration.sql` foi executada por completo e se os `username` dos 3 usuarios foram preenchidos no passo 6.
 
 ## 8. Deploy
 
