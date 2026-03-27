@@ -394,13 +394,13 @@ Regra recomendada:
 
 ## 5. Fases de implementacao
 
-## Fase 0 - Fundacao tecnica e contratos
+### Fase 0 - Fundacao tecnica e contratos
 
-### Objetivo
+#### Objetivo
 
 Padronizar configuracao, rotas, usuarios e documentacao para que as paginas parem de divergir entre si.
 
-### Entregas
+#### Entregas
 
 - revisar `js/supabase-config.js`;
 - padronizar `window.CONECTA_CONFIG`;
@@ -411,7 +411,7 @@ Padronizar configuracao, rotas, usuarios e documentacao para que as paginas pare
 - documentar a estrategia de branches para execucao paralela;
 - transformar os 11 comentarios do arquivo de verificacao em checklist executavel de backlog.
 
-### Ajustes obrigatorios
+#### Ajustes obrigatorios
 
 - `supabase-config.js` passa a ser a unica fonte de:
   - URL do projeto;
@@ -422,7 +422,7 @@ Padronizar configuracao, rotas, usuarios e documentacao para que as paginas pare
 - evitar sobrescrita fragil de `window.supabase`.
 - definir desde ja o contrato da fila offline de sincronizacao.
 
-### Criterio de aceite
+#### Criterio de aceite
 
 - existe um contrato unico de configuracao;
 - nenhuma pagina cria client proprio do Supabase;
@@ -433,13 +433,13 @@ Padronizar configuracao, rotas, usuarios e documentacao para que as paginas pare
 
 ---
 
-## Fase 1 - Login, conta e rotas de entrada
+### Fase 1 - Login, conta e rotas de entrada
 
-### Objetivo
+#### Objetivo
 
 Trocar o fluxo atual por autenticacao real via username.
 
-### Entregas
+#### Entregas
 
 - reescrever `login.html`;
 - criar `conta.html`;
@@ -447,7 +447,7 @@ Trocar o fluxo atual por autenticacao real via username.
 - remover magic link do fluxo;
 - corrigir redirects absolutos.
 
-### Requisitos
+#### Requisitos
 
 - campo `Usuario`, nao `E-mail`;
 - placeholder com `silvio2026, karla2026 ou igor2026`;
@@ -463,7 +463,7 @@ Trocar o fluxo atual por autenticacao real via username.
   - troca de senha;
   - logout.
 
-### Criterio de aceite
+#### Criterio de aceite
 
 - acessar `/conecta2026/` redireciona para `login.html`;
 - `silvio2026` entra com a senha forte provisionada;
@@ -474,13 +474,13 @@ Trocar o fluxo atual por autenticacao real via username.
 
 ---
 
-## Fase 2 - Sincronizacao segura do `CONECTA.html`
+### Fase 2 - Sincronizacao segura do `CONECTA.html`
 
-### Objetivo
+#### Objetivo
 
 Fazer a pagina principal funcionar online sem quebrar o comportamento atual.
 
-### Entregas
+#### Entregas
 
 - incluir scripts compartilhados em `CONECTA.html`;
 - adicionar auth guard antes da inicializacao principal;
@@ -492,7 +492,7 @@ Fazer a pagina principal funcionar online sem quebrar o comportamento atual.
 - adicionar botoes `Minha Conta` e `Sair`;
 - introduzir fila local de sincronizacao pendente.
 
-### Decisao tecnica recomendada
+#### Decisao tecnica recomendada
 
 Em vez de sair reescrevendo todos os CRUDs do `CONECTA.html`, a v1 deve:
 
@@ -500,7 +500,7 @@ Em vez de sair reescrevendo todos os CRUDs do `CONECTA.html`, a v1 deve:
 - fazer `ConectaDB` traduzir isso para `upsert()` em massa com loteamento;
 - usar storage local apenas como fallback e fila de resiliencia, nao como fonte principal.
 
-### Criterio de aceite
+#### Criterio de aceite
 
 - `CONECTA.html` nao abre sem sessao;
 - criar ou editar um item em uma conta persiste no banco;
@@ -511,13 +511,13 @@ Em vez de sair reescrevendo todos os CRUDs do `CONECTA.html`, a v1 deve:
 
 ---
 
-## Fase 3 - Sincronizacao da `Logistica Campanha.html`
+### Fase 3 - Sincronizacao da `Logistica Campanha.html`
 
-### Objetivo
+#### Objetivo
 
 Colocar a pagina de Logistica online com o menor risco possivel.
 
-### Entregas
+#### Entregas
 
 - incluir scripts compartilhados;
 - aplicar auth guard;
@@ -526,7 +526,7 @@ Colocar a pagina de Logistica online com o menor risco possivel.
 - preservar o comportamento atual dos modais e do `saveData()`;
 - colocar a Logistica na mesma fila offline da app principal.
 
-### Decisao recomendada
+#### Decisao recomendada
 
 Para v1, a tela de Logistica deve sincronizar como um unico documento JSON.
 
@@ -537,13 +537,13 @@ Motivos:
 - reduz regressao em uma tela grande;
 - entrega valor real mais rapido.
 
-### O que fica para uma fase posterior
+#### O que fica para uma fase posterior
 
 - normalizar materiais de Logistica em tabela propria;
 - transformar checklist e agenda em entidades consultaveis;
 - cruzar Logistica com relatórios analiticos.
 
-### Criterio de aceite
+#### Criterio de aceite
 
 - `Logistica Campanha.html` nao abre sem login;
 - uma alteracao em tarefas, materiais, fornecedores ou equipe permanece apos refresh;
@@ -553,20 +553,20 @@ Motivos:
 
 ---
 
-## Fase 4 - Paginas secundarias e formulario publico
+### Fase 4 - Paginas secundarias e formulario publico
 
-### Objetivo
+#### Objetivo
 
 Fechar os pontos de entrada e apoio ao usuario.
 
-### Entregas
+#### Entregas
 
 - corrigir `qrcode-cartao.html` para apontar a `/conecta2026/cadastro-apoiador.html`;
 - proteger `qrcode-cartao.html` e `Coordenadores Regionais.html` se forem consideradas paginas internas;
 - estabilizar `cadastro-apoiador.html` com inicializacao antecipada do Supabase;
 - exibir status real de envio no formulario publico.
 
-### Requisitos do formulario publico
+#### Requisitos do formulario publico
 
 - nao exigir login;
 - nao depender de magic link;
@@ -575,7 +575,7 @@ Fechar os pontos de entrada e apoio ao usuario.
 - se houver fallback local, deixar claro que o envio ficou pendente;
 - se houver fila local, tentar reenvio no evento `online`.
 
-### Criterio de aceite
+#### Criterio de aceite
 
 - o QR code abre a URL correta de producao;
 - o formulario publico salva com submit rapido;
@@ -584,13 +584,13 @@ Fechar os pontos de entrada e apoio ao usuario.
 
 ---
 
-## Fase 5 - Banco, seguranca e setup operacional
+### Fase 5 - Banco, seguranca e setup operacional
 
-### Objetivo
+#### Objetivo
 
 Ajustar o schema para a aplicacao real e documentar o provisionamento sem ambiguidades.
 
-### Entregas
+#### Entregas
 
 - revisar `setup/migration.sql`;
 - adicionar `configuracoes_app`;
@@ -599,7 +599,7 @@ Ajustar o schema para a aplicacao real e documentar o provisionamento sem ambigu
 - descrever a criacao dos 3 usuarios e seus papeis;
 - documentar bucket `fotos-campanha`.
 
-### Tabela adicional recomendada
+#### Tabela adicional recomendada
 
 ```sql
 CREATE TABLE IF NOT EXISTS configuracoes_app (
@@ -616,7 +616,7 @@ Politicas recomendadas:
 - `INSERT`, `UPDATE` e `DELETE` para `admin` e `coordenador`;
 - nenhuma permissao anonima nessa tabela.
 
-### Criterio de aceite
+#### Criterio de aceite
 
 - o setup documenta exatamente os 3 usuarios iniciais;
 - `configuracoes_app` existe e pode armazenar JSON singleton;
@@ -625,27 +625,27 @@ Politicas recomendadas:
 
 ---
 
-## Fase 6 - Migracao de dados locais e homologacao
+### Fase 6 - Migracao de dados locais e homologacao
 
-### Objetivo
+#### Objetivo
 
 Levar o historico ja existente para o ambiente online e validar com dados reais.
 
-### Entregas
+#### Entregas
 
 - criar rotina de importacao do `localStorage` atual para o banco;
 - validar importacao do `CONECTA.html`;
 - validar importacao do `logistica_celina_2026`;
 - executar rodada de homologacao em 2 navegadores ou 2 perfis.
 
-### Estrategia recomendada
+#### Estrategia recomendada
 
 - capturar snapshot do `localStorage` antes de qualquer deploy;
 - importar primeiro em ambiente de homologacao;
 - depois promover para producao;
 - manter export JSON manual no app como seguranca adicional.
 
-### Criterio de aceite
+#### Criterio de aceite
 
 - dados existentes nao se perdem;
 - pelo menos 2 usuarios conseguem ver o mesmo conjunto de dados;
@@ -653,13 +653,13 @@ Levar o historico ja existente para o ambiente online e validar com dados reais.
 
 ---
 
-## Fase 7 - PWA, refinamento visual e branding
+### Fase 7 - PWA, refinamento visual e branding
 
-### Objetivo
+#### Objetivo
 
 Melhorar experiencia e apresentacao depois da base estar estavel.
 
-### Entregas
+#### Entregas
 
 - `manifest.json`;
 - `service-worker.js`;
@@ -667,7 +667,7 @@ Melhorar experiencia e apresentacao depois da base estar estavel.
 - rodape padrao;
 - melhorias visuais em `login.html`, `conta.html` e cabecalhos internos.
 
-### Regra de prioridade
+#### Regra de prioridade
 
 Nenhum item desta fase deve bloquear:
 
@@ -676,7 +676,7 @@ Nenhum item desta fase deve bloquear:
 - setup;
 - deploy.
 
-### Criterio de aceite
+#### Criterio de aceite
 
 - PWA instala no mobile;
 - o service worker nao mascara bug de rota nem cacheia uma versao quebrada;
@@ -684,20 +684,20 @@ Nenhum item desta fase deve bloquear:
 
 ---
 
-## Fase 8 - Deploy, checklist operacional e go-live
+### Fase 8 - Deploy, checklist operacional e go-live
 
-### Objetivo
+#### Objetivo
 
 Publicar com previsibilidade e rollback claro.
 
-### Entregas
+#### Entregas
 
 - `index.html` na raiz publicada;
 - rewrite do `vercel.json` para `/conecta2026` e `/conecta2026/`;
 - checklist de smoke test pos-deploy;
 - plano de rollback.
 
-### Smoke test minimo
+#### Smoke test minimo
 
 1. abrir `/conecta2026/`;
 2. validar redirect para login;
@@ -710,7 +710,7 @@ Publicar com previsibilidade e rollback claro.
 9. validar `cadastro-apoiador.html`;
 10. validar QR code.
 
-### Rollback
+#### Rollback
 
 - manter snapshot dos arquivos publicados antes do go-live;
 - manter export do `localStorage` antigo;
@@ -718,7 +718,56 @@ Publicar com previsibilidade e rollback claro.
 
 ---
 
-## 6. Matriz de arquivos e entregas
+## 6. Backlog executivo do novo PO
+
+Regra operacional para o novo PO:
+
+- nada conta como concluido apenas porque aparece no plano, no PRD ou na revisao;
+- cada item precisa de evidencia no codigo e validacao objetiva;
+- quando um comentario da verificacao conflitar com o estado real do repositorio, deve prevalecer a adaptacao registrada neste plano.
+
+### Backlog P0 - bloqueadores de entrada em producao
+
+| ID | Origem | Status atual | Arquivos principais | Estrategia aprovada |
+|----|--------|--------------|---------------------|---------------------|
+| P0-01 | Comentarios 1 e 5 | pendente | `login.html` | login por username sem magic link; sem papeis hardcoded no frontend |
+| P0-02 | Comentarios 2 e 7 | pendente | `login.html`, `js/conecta-db.js`, `setup/SETUP.md`, `index.html` | migrar tudo para `/conecta2026/` e criar `index.html` |
+| P0-03 | Comentario 10 | pendente | `js/supabase-config.js`, `login.html`, `cadastro-apoiador.html` | `supabase-config.js` como fonte unica de inicializacao |
+| P0-04 | Comentario 3 | pendente | `CONECTA.html` | carregar scripts compartilhados, auth guard e init do sync |
+| P0-05 | Comentario 8 | pendente | `js/conecta-db.js` | implementar sync real de arrays com `upsert` em lote |
+| P0-06 | Comentario 6 | pendente | `conta.html`, `CONECTA.html` | criar pagina de conta e expor acesso na area logada |
+| P0-07 | Gap validado | pendente | `js/conecta-db.js` | corrigir recursao do override de `localStorage` |
+
+### Backlog P1 - sincronizacao e fluxo operacional
+
+| ID | Origem | Status atual | Arquivos principais | Estrategia aprovada |
+|----|--------|--------------|---------------------|---------------------|
+| P1-01 | Comentario 4 | pendente | `Logistica Campanha.html`, `js/conecta-db.js` | adaptar a verificacao ao estado real e sincronizar a Logistica como JSON em `configuracoes_app` |
+| P1-02 | Comentario 9 | pendente | `cadastro-apoiador.html` | carga antecipada do Supabase, estado visual e fila/retry |
+| P1-03 | Gap validado | pendente | `CONECTA.html`, `js/conecta-db.js` | incluir `coordSegmentosSociais` e `organograma_lista_completa` no sync |
+| P1-04 | Gap validado | pendente | `js/conecta-db.js` | fila offline com replay no evento `online` |
+| P1-05 | Gap validado | pendente | `js/conecta-db.js` | realtime seletivo por pagina, nao global |
+
+### Backlog P2 - setup, migracao e qualidade de entrega
+
+| ID | Origem | Status atual | Arquivos principais | Estrategia aprovada |
+|----|--------|--------------|---------------------|---------------------|
+| P2-01 | Comentario 11 | pendente | `setup/SETUP.md` | setup com 3 usuarios reais do projeto, rotas corretas e fluxo atualizado |
+| P2-02 | Gap validado | pendente | `setup/migration.sql` | incluir `configuracoes_app` e revisar alinhamento do schema |
+| P2-03 | Gap validado | pendente | `WORKING.md`, `PLANO_CONECTA_v4.md` | manter documentacao sincronizada com o codigo real |
+| P2-04 | Risco operacional | pendente | Git / processo | trabalho paralelo em branches, merge centralizado |
+
+### Itens que nao devem ser aplicados literalmente
+
+| Origem | Motivo | Adaptacao correta |
+|--------|--------|-------------------|
+| Comentario 1 | mapa de usuarios com papeis no frontend e inseguro | usar RPC/Edge Function ou alias controlado; se houver fallback temporario, sem papeis em producao |
+| Comentario 4 | a verificacao presume chaves de Logistica que nao existem no codigo atual | sincronizar `logistica_celina_2026` como JSON em `configuracoes_app` na v1 |
+| Comentario 11 | a revisao sugere senha igual ao username | usar senhas fortes e individuais, entregues por canal seguro |
+
+---
+
+## 7. Matriz de arquivos e entregas
 
 | Arquivo | Acao principal |
 |---------|----------------|
@@ -738,16 +787,16 @@ Publicar com previsibilidade e rollback claro.
 
 ---
 
-## 7. Setup inicial do Supabase
+## 8. Setup inicial do Supabase
 
-### 7.1 Projeto
+### 8.1 Projeto
 
 - nome sugerido: `conecta-2026`
 - regiao: Sao Paulo
 - plano inicial: pode ser Free para homologacao
 - upgrade para Pro apenas apos validacao de uso real ou necessidade de backup diario nativo
 
-### 7.2 Auth
+### 8.2 Auth
 
 - provider: Email/Password
 - magic link: fora do escopo
@@ -755,7 +804,7 @@ Publicar com previsibilidade e rollback claro.
 - sem recuperacao por e-mail para os enderecos `@conecta.interno`
 - a resolucao de username deve ficar fora do HTML estatico sempre que possivel
 
-### 7.3 Usuarios iniciais
+### 8.3 Usuarios iniciais
 
 Criar exatamente estes usuarios:
 
@@ -777,14 +826,14 @@ Acao obrigatoria apos o primeiro login:
 - trocar senha em `conta.html`
 - validar se o perfil e o username esperado foram associados corretamente no banco
 
-### 7.4 Storage
+### 8.4 Storage
 
 - bucket: `fotos-campanha`
 - criar so depois de validar que o upload realmente sera usado na v1
 
 ---
 
-## 8. Testes de aceitacao
+## 9. Testes de aceitacao
 
 1. Acessar `/conecta2026/` redireciona para `login.html`.
 2. Username invalido mostra `Usuario nao autorizado`.
@@ -809,7 +858,7 @@ Acao obrigatoria apos o primeiro login:
 
 ---
 
-## 9. Riscos principais e mitigacoes
+## 10. Riscos principais e mitigacoes
 
 ### Risco 0 - Exposicao de mapeamento de usuarios e credenciais fracas
 
@@ -900,7 +949,7 @@ Mitigacao:
 
 ---
 
-## 10. Decisoes pendentes
+## 11. Decisoes pendentes
 
 | Codigo | Decisao | Recomendacao |
 |--------|---------|--------------|
@@ -912,7 +961,7 @@ Mitigacao:
 
 ---
 
-## 11. Cronograma realista
+## 12. Cronograma realista
 
 ### Semana 1
 
@@ -935,7 +984,7 @@ Observacao:
 
 ---
 
-## 12. Definition of done
+## 13. Definition of done
 
 O projeto so deve ser considerado pronto quando:
 
@@ -950,7 +999,7 @@ O projeto so deve ser considerado pronto quando:
 
 ---
 
-## 13. Resumo executivo final
+## 14. Resumo executivo final
 
 O plano revisado muda a estrategia em tres pontos centrais:
 
