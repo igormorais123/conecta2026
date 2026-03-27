@@ -69,6 +69,34 @@ var ConectaDB = (function() {
         return Array.isArray(queue) ? queue : [];
     }
 
+    function normalizeManagedData(key, data) {
+        if (key !== 'conectacelina_atividades' || !Array.isArray(data)) {
+            return data;
+        }
+
+        var used = {};
+        var nextId = Date.now();
+        var changed = false;
+
+        var normalized = data.map(function(item) {
+            var row = item ? Object.assign({}, item) : { text: '', time: new Date().toISOString() };
+            if (row.id != null) {
+                used[String(row.id)] = true;
+                return row;
+            }
+            while (used[String(nextId)]) {
+                nextId += 1;
+            }
+            row.id = nextId;
+            used[String(nextId)] = true;
+            nextId += 1;
+            changed = true;
+            return row;
+        });
+
+        return changed ? normalized : data;
+    }
+
     function emitSyncStatus() {
         syncState.pendingCount = getPendingQueue().length;
         syncState.online = typeof navigator === 'undefined' ? true : navigator.onLine;
@@ -245,11 +273,13 @@ var ConectaDB = (function() {
             };
         } else if (table === 'atividades') {
             row = {
-                id: item.id,
                 texto: item.text || item.texto || '',
                 criado_em: item.time || item.criado_em || new Date().toISOString(),
                 usuario_id: currentUser ? currentUser.id : null
             };
+            if (item.id != null) {
+                row.id = item.id;
+            }
         } else {
             row = Object.assign({}, item);
         }
@@ -347,7 +377,8 @@ var ConectaDB = (function() {
 
     function getCurrentData(key) {
         if (!(key in cache)) {
-            cache[key] = readLocal(key, getDefault(key));
+            cache[key] = normalizeManagedData(key, readLocal(key, getDefault(key)));
+            writeLocal(key, cache[key]);
         }
         return cache[key];
     }
@@ -357,6 +388,7 @@ var ConectaDB = (function() {
     }
 
     function enqueuePending(key, data) {
+        data = normalizeManagedData(key, data);
         var queue = getPendingQueue();
         queue = (queue || []).filter(function(entry) { return entry.key !== key; });
         queue.push({
@@ -381,8 +413,9 @@ var ConectaDB = (function() {
 
         for (var i = 0; i < queue.length; i += 1) {
             var entry = queue[i];
+            var normalizedData = normalizeManagedData(entry.key, entry.data);
             try {
-                await syncToSupabase(entry.key, entry.data);
+                await syncToSupabase(entry.key, normalizedData);
                 removePending(entry.key);
                 markSyncSuccess();
             } catch (err) {
@@ -482,6 +515,7 @@ var ConectaDB = (function() {
                     console.warn('ConectaDB: fallback to localStorage for ' + key, err);
                     cache[key] = readLocal(key, getDefault(key));
                 }
+                cache[key] = normalizeManagedData(key, cache[key]);
                 writeLocal(key, cache[key]);
             }
 
@@ -499,6 +533,7 @@ var ConectaDB = (function() {
 
     function set(key, value) {
         var data = typeof value === 'string' ? parseJson(value, getDefault(key)) : value;
+        data = normalizeManagedData(key, data);
         cache[key] = data;
         writeLocal(key, data);
 

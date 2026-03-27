@@ -2661,7 +2661,40 @@ let comunicacao = getData('comunicacao', { whats: 0, insta: 0, videos: 0, midia:
 let materiais = getData('materiais', []);
 let lideres = getData('lideres', []);
 let visitas = getData('visitas', {});
-let atividades = getData('atividades', []);
+function gerarIdAtividade(base) {
+    var candidate = Date.now();
+    var used = {};
+    (base || []).forEach(function(item) {
+        if (item && item.id != null) {
+            used[String(item.id)] = true;
+        }
+    });
+    while (used[String(candidate)]) {
+        candidate += 1;
+    }
+    return candidate;
+}
+
+function normalizeAtividadesData(list) {
+    var changed = false;
+    var normalized = (Array.isArray(list) ? list : []).map(function(item, index, arr) {
+        if (!item) {
+            changed = true;
+            return { id: gerarIdAtividade(arr), text: '', time: new Date().toISOString() };
+        }
+        if (item.id == null) {
+            changed = true;
+            return Object.assign({}, item, { id: gerarIdAtividade(arr) + index });
+        }
+        return item;
+    });
+    if (changed) {
+        setData('atividades', normalized);
+    }
+    return normalized;
+}
+
+let atividades = normalizeAtividadesData(getData('atividades', []));
 
 // Regioes do DF
 const cidadesDF = [
@@ -2797,7 +2830,7 @@ document.addEventListener('keydown', function(e) {
 
 // ===== ATIVIDADES =====
 function addAtividade(text) {
-    atividades.unshift({ text, time: new Date().toISOString() });
+    atividades.unshift({ id: gerarIdAtividade(atividades), text, time: new Date().toISOString() });
     if (atividades.length > 50) atividades = atividades.slice(0, 50);
     setData('atividades', atividades);
     renderDashboard();
@@ -5071,7 +5104,7 @@ function refreshStateFromStorage() {
     materiais = getData('materiais', []);
     lideres = getData('lideres', []);
     visitas = getData('visitas', {});
-    atividades = getData('atividades', []);
+    atividades = normalizeAtividadesData(getData('atividades', []));
 }
 
 async function bootstrapApp() {
