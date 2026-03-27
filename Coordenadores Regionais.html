@@ -27,6 +27,14 @@
                 appleTouchIcon.href = basePath + 'icons/icon-192.png';
             }
 
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                    navigator.serviceWorker.register(basePath + 'service-worker.js').catch(function(error) {
+                        console.warn('Falha ao registrar service worker do CONECTA:', error);
+                    });
+                });
+            }
+
             window.addEventListener('supabase-ready', async function() {
                 var client = window.CONECTA_SUPABASE;
                 if (!client) return;
