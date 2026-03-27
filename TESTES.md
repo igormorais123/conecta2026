@@ -1,34 +1,58 @@
 # CONECTA 2026 — Checklist de Testes e Homologação
 
-Este documento centraliza os testes funcionais para garantir que a migração para o Supabase e implantação do sistema (Versão 4.x) ocorreu com sucesso.
+Checklist operacional alinhado ao estado atual do repositório em 27/03/2026.
 
-## 1. Testes de Autenticação (Login)
-- [ ] Acessar `login.html` sem credenciais.
-- [ ] Tentar burlar o login acessando `CONECTA.html` diretamente (deve redirecionar para login).
-- [ ] Efetuar login com usuário `silvio2026` usando senha forte. Deve redirecionar para `CONECTA.html`.
-- [ ] Deslogar ou limpar cache do LocalStorage e verificar se o Auth Guard do Supabase bloqueia o acesso via URL direta.
+## 1. Entrada, rotas e sessão
+- [ ] Abrir `/conecta2026/` e confirmar redirect imediato para `login.html`.
+- [ ] Tentar abrir `CONECTA.html`, `Logistica Campanha.html`, `conta.html`, `qrcode-cartao.html` e `Coordenadores Regionais.html` sem sessão.
+Deve redirecionar para login.
+- [ ] Fazer login com `silvio2026`.
+Deve abrir `CONECTA.html`.
+- [ ] Testar username inválido.
+Deve mostrar erro claro antes do `signInWithPassword`.
+- [ ] Clicar em `Sair` em páginas protegidas.
+Deve encerrar a sessão e voltar para `/conecta2026/login.html`.
 
-## 2. Testes de Dashboard e Sessão (`CONECTA.html`)
-- [ ] Verificar se as informações do usuário (nome, papel) aparecem na sidebar (carregadas via `js/conecta-db.js`).
-- [ ] Acessar a página principal em múltiplos navegadores e observar se há estabilidade na sessão, sem duplicação de perfis.
-- [ ] Simular clique no botão "Sair" (Logout), certificando-se de que a sessão é destruída remotamente e direciona para `/conecta2026/login.html`.
+## 2. Conta e credenciais
+- [ ] Abrir `conta.html` autenticado e conferir nome e e-mail do usuário.
+- [ ] Alterar a senha com mínimo de 8 caracteres.
+- [ ] Confirmar que a senha antiga deixa de funcionar.
+- [ ] Confirmar que a nova senha funciona no login.
 
-## 3. Testes de Banco de Dados (`conecta-db.js`)
-- [ ] Cadastrar uma nova "Tarefa" ou modificar o "Cronograma" e salvar. O salvamento deve ativar o método *Bulk Upsert* e refletir no Supabase Web Console na tabela respectiva.
-- [ ] Abrir uma aba anônima (com usuário logado diferente) e checar se os arrays estão lendo do banco e preenchendo as varáveis globais no startup.
-- [ ] Teste Offline: desligar a aba NETWORK, interagir com o sistema, religar a internet e testar se os relatórios agendados locais se unem aos dados remotos por união array ou upsert assíncrono.
+## 3. Sync do CONECTA
+- [ ] Criar ou editar um evento na agenda.
+- [ ] Recarregar a página e confirmar persistência.
+- [ ] Abrir uma segunda sessão com outro usuário e validar leitura do mesmo dado.
+- [ ] Alterar `coordSegmentosSociais` e confirmar persistência após refresh.
+- [ ] Alterar o organograma customizado e confirmar persistência após refresh.
 
-## 4. Testes do Formulário Público (`cadastro-apoiador.html`)
-- [ ] Acessar `cadastro-apoiador.html` num ambiente deslogado do app (é página puramente expositiva e liberada ao público móvel).
-- [ ] Preencher com nome e telefone válidos. Clicar em Enviar e constatar Sucesso.
-- [ ] Validar integridade forçando um rate-limit ou descarregando dependências e notar se a falha aciona com êxito o Fallback para o `localStorage.getItem('conecta_apoiadores')`, viabilizando recuperar esses dados pro DB mais tarde manualmente.
+## 4. Sync da Logística
+- [ ] Alterar qualquer bloco de `logistica_celina_2026` e recarregar.
+- [ ] Confirmar persistência do estado completo.
+- [ ] Abrir uma segunda sessão autenticada e validar o mesmo estado.
 
-## 5. Testes da Interface Privativa Secundária
-- [ ] Tentar visitar `Coordenadores Regionais.html` desconectado (Espera-se redirect imediato e automático p/ login).
-- [ ] Fazer login e visitar `Coordenadores Regionais.html` ou `qrcode-cartao.html`. (Acesso liberado e guard transposto sem exibir relâmpagos visuais do layout antes do redirect).
-- [ ] Ao final de ambas as páginas, confirmar a renderização perfeita da logomarca SVG da **INTEIA** em rodapé.
+## 5. Offline e fila
+- [ ] Desligar a rede no app autenticado, fazer alterações e religar a conexão.
+- [ ] Confirmar replay da fila do `ConectaDB` no evento `online`.
+- [ ] Abrir `cadastro-apoiador.html` offline, enviar um cadastro e verificar gravação em `conecta_apoiadores_fila`.
+- [ ] Reabrir a página online e confirmar replay da fila pública.
 
-## 6. Homologação PWA (Mobile e Web-App)
-- [ ] DevTools (Aba Application → Manifest): Confirme se o sistema já captou o JSON do Manifest assim que a IA Opus provisioná-lo.
-- [ ] Confirmar se a barra status do aparelho mobile iOS tingiu corretamente usando o hexa da nossa metatag (`#1a237e` - primary color e transparente).
-- [ ] Adicionar um Web-Clip na Home Screen do Celular e abrir o app enxergando em Full Screen (Standalone).
+## 6. Formulário público
+- [ ] Acessar `cadastro-apoiador.html` sem login.
+- [ ] Enviar um cadastro válido e confirmar mensagem coerente com o resultado real.
+- [ ] Repetir com submit rápido e confirmar que não há perda silenciosa de dados.
+
+## 7. Páginas secundárias
+- [ ] Abrir `qrcode-cartao.html` autenticado e validar que o QR aponta para `cadastro-apoiador.html` na base correta.
+- [ ] Abrir `Coordenadores Regionais.html` autenticado e validar carregamento sem redirect indevido.
+- [ ] Confirmar rodapé com marca INTEIA nas páginas secundárias protegidas.
+
+## 8. Realtime e carga
+- [ ] Navegar entre páginas do `CONECTA.html` e confirmar que não há erro visual ao trocar de seção.
+- [ ] Confirmar que o realtime reage a mudanças visíveis da página ativa.
+- [ ] Confirmar que a troca de páginas não deixa múltiplos canais acumulados no console/rede.
+
+## 9. PWA e deploy
+- [ ] Verificar `manifest` nas páginas que já receberam metatags PWA.
+- [ ] Confirmar que o cache do service worker não mascara rota quebrada.
+Se o service worker ainda não existir, marcar como pendente e não bloquear go-live técnico.

@@ -37,8 +37,8 @@ Deploy alvo: inteia.com.br/conecta2026/ via Vercel.
 | 4 | Paginas secundarias e formulario publico | CONCLUIDA |
 | 5 | Banco, seguranca e setup operacional | CONCLUIDA |
 | 6 | Migracao de dados locais e homologacao | PENDENTE — depende de Supabase ativo |
-| 7 | PWA, refinamento visual e branding | PARCIAL — meta tags PWA adicionadas pela outra IA |
-| 8 | Deploy, checklist e go-live | PENDENTE — vercel.json criado |
+| 7 | PWA, refinamento visual e branding | PARCIAL — metatags PWA e rodapes adicionados em paginas secundarias |
+| 8 | Deploy, checklist e go-live | PARCIAL — checklist de testes atualizado; deploy final depende de credenciais e `vercel.json` |
 
 ### Arquivos do projeto
 
@@ -59,7 +59,7 @@ Deploy alvo: inteia.com.br/conecta2026/ via Vercel.
 | Arquivo | Funcao |
 |---------|--------|
 | `js/supabase-config.js` | Fonte unica de config: URL, chave, base path, CONECTA_AUTH_GUARD, CONECTA_READY |
-| `js/conecta-db.js` | Sync layer: cache + localStorage + Supabase (bulk upsert, fila offline, singletons) |
+| `js/conecta-db.js` | Sync layer: cache + localStorage + Supabase (bulk upsert, fila offline, singletons, realtime seletivo) |
 
 ### Setup e banco
 
@@ -127,12 +127,11 @@ Dados que iniciam VAZIOS (preenchidos pelo usuario via interface):
 9. [ ] Testar criacao de dados e sync entre contas
 10. [ ] Exportar localStorage existente e importar no Supabase (Fase 6)
 11. [ ] Deploy em inteia.com.br/conecta2026/
-12. [ ] Smoke test completo (ver SETUP.md)
+12. [ ] Smoke test completo (ver TESTES.md e SETUP.md)
 
 ### Melhorias futuras (nao bloqueante)
 
 - [ ] PWA completa (manifest.json, service-worker.js, icones)
-- [ ] Realtime seletivo por pagina (hoje escuta todas as tabelas)
 - [ ] Relatorios analiticos
 - [ ] Normalizacao da Logistica (tabelas separadas em vez de JSON)
 

@@ -5,24 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coordenadores Regionais - Campanha Celina</title>
     <!-- PWA Meta Tags -->
-    <link rel="manifest" href="/conecta2026/manifest.json">
+    <link rel="manifest" id="manifestLink" href="manifest.json">
     <meta name="theme-color" content="#1a237e">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="CONECTA">
-    <link rel="apple-touch-icon" href="/conecta2026/icons/icon-192.png">
+    <link rel="apple-touch-icon" id="appleTouchIcon" href="icons/icon-192.png">
     
     <script src="js/supabase-config.js"></script>
     <script>
-        // Auth guard — redireciona se nao logado
-        window.addEventListener('supabase-ready', async function() {
-            var client = window.CONECTA_SUPABASE;
-            if (!client) return;
-            var sessionResult = await client.auth.getSession();
-            if (!sessionResult.data.session) {
-                window.location.href = (window.CONECTA_CONFIG && window.CONECTA_CONFIG.loginPath) || '/conecta2026/login.html';
+        (function initProtectedPaths() {
+            var cfg = window.CONECTA_CONFIG || {};
+            var basePath = cfg.basePath || './';
+            var manifestLink = document.getElementById('manifestLink');
+            var appleTouchIcon = document.getElementById('appleTouchIcon');
+
+            if (manifestLink) {
+                manifestLink.href = basePath + 'manifest.json';
             }
-        });
+            if (appleTouchIcon) {
+                appleTouchIcon.href = basePath + 'icons/icon-192.png';
+            }
+
+            window.addEventListener('supabase-ready', async function() {
+                var client = window.CONECTA_SUPABASE;
+                if (!client) return;
+                var sessionResult = await client.auth.getSession();
+                if (!sessionResult.data.session) {
+                    window.location.href = (cfg && cfg.loginPath) || (basePath + 'login.html');
+                }
+            });
+        })();
     </script>
     <style>
         * {
