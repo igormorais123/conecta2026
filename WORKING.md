@@ -1,6 +1,7 @@
 # CONECTA 2026 — Status de Implementacao
 
-> Atualizado: 2026-03-26
+> Atualizado: 2026-03-27
+> Plano de referencia: PLANO_CONECTA_v4.md
 > Projeto: Sistema de campanha Celina Leao — migracao para producao online
 
 ---
@@ -8,150 +9,143 @@
 ## CONTEXTO
 
 Sistema web de gestao de campanha politica (CONECTA Celina Leao 2026).
-Originalmente: 6 arquivos HTML standalone com localStorage.
-Objetivo: colocar online em inteia.com.br/conecta com banco de dados real, multi-usuario, autenticacao.
+Stack: HTML5 + CSS3 + JavaScript puro — sem frameworks, sem bundlers.
+Cada .html e standalone (CSS e JS inline).
+Backend: Supabase (banco + auth + storage + realtime).
+Deploy alvo: inteia.com.br/conecta2026/ via Vercel.
 
 ### Repositorios
 
 | Repo | Local | GitHub | Funcao |
 |------|-------|--------|--------|
-| Conecta-2026 (original Silvio) | `C:\Users\IgorPC\.claude\projects\Conecta 2026` | silviomvieira-hub/Conecta-2026 | Repo original |
-| Conecta-2026 (fork Igor) | mesmo diretorio, remote `fork` | igormorais123/Conecta-2026 | Fork com integracoes Supabase |
+| Conecta-2026 (original Silvio) | `C:\Users\IgorPC\.claude\projects\Conecta 2026` | silviomvieira-hub/Conecta-2026 | Repo principal |
+| Conecta-2026 (fork Igor) | mesmo diretorio, remote `fork` | igormorais123/Conecta-2026 | Fork com integracoes |
 | pesquisa-eleitoral-df | `C:\Agentes` | igormorais123/pesquisa-eleitoral-df | Vercel deploy (inteia.com.br) |
-
-### Dominio
-
-- **URL alvo**: `inteia.com.br/conecta`
-- **Hosting**: Vercel (via repo pesquisa-eleitoral-df em C:\Agentes)
-- **Arquivos ficam em**: `C:\Agentes\frontend\public\conecta\`
 
 ---
 
-## O QUE JA FOI FEITO
+## ESTADO ATUAL (27/03/2026)
 
-### 1. Analise completa do sistema (FEITO)
-- [x] Mapeamento das 6 paginas HTML e suas funcionalidades
-- [x] Identificacao de 12 entidades no localStorage
-- [x] Diagnostico: sem auth, sem backend, dados presos no navegador
+### Fases implementadas (Plano v4)
 
-### 2. Plano de arquitetura (FEITO)
-- [x] Decisao: Supabase (banco + auth + storage + realtime) + Vercel (hosting)
-- [x] Modelagem de 18 tabelas PostgreSQL
-- [x] Definicao de 4 papeis (admin, coordenador, operador, visualizador)
-- [x] Row Level Security desenhado
+| Fase | Descricao | Status |
+|------|-----------|--------|
+| 0 | Fundacao tecnica (config, rotas, contratos) | CONCLUIDA |
+| 1 | Login por username + conta.html + index.html | CONCLUIDA |
+| 2 | Sincronizacao do CONECTA.html | CONCLUIDA |
+| 3 | Sincronizacao da Logistica | CONCLUIDA |
+| 4 | Paginas secundarias e formulario publico | CONCLUIDA |
+| 5 | Banco, seguranca e setup operacional | CONCLUIDA |
+| 6 | Migracao de dados locais e homologacao | PENDENTE — depende de Supabase ativo |
+| 7 | PWA, refinamento visual e branding | PARCIAL — meta tags PWA adicionadas pela outra IA |
+| 8 | Deploy, checklist e go-live | PENDENTE — vercel.json criado |
 
-### 3. Arquivos criados no fork (FEITO — commitados em igormorais123/Conecta-2026)
+### Arquivos do projeto
 
-| Arquivo | Status | O que faz |
-|---------|--------|-----------|
-| `js/supabase-config.js` | CRIADO | Carrega client Supabase via CDN. **TEM PLACEHOLDER** |
-| `js/conecta-db.js` | CRIADO | Camada de sincronizacao localStorage <-> Supabase com cache e realtime |
-| `login.html` | CRIADO | Tela de login (senha + magic link). **TEM PLACEHOLDER** |
-| `setup/migration.sql` | CRIADO | Schema completo: 18 tabelas, RLS, triggers, seeds (37 RAs do DF) |
-| `setup/SETUP.md` | CRIADO | Guia passo-a-passo de configuracao do Supabase |
-| `CONECTA.html` | MODIFICADO | Scripts Supabase injetados + auth check + iframes corrigidos |
-| `cadastro-apoiador.html` | MODIFICADO | Insert no Supabase (publico) com fallback localStorage. **TEM PLACEHOLDER** |
-| `qrcode-cartao.html` | MODIFICADO | URL corrigida para inteia.com.br/conecta/cadastro-apoiador.html |
-| `CLAUDE.md` | MODIFICADO | Documentacao completa da arquitetura e convencoes |
+| Arquivo | Funcao | Auth guard | Sync |
+|---------|--------|-----------|------|
+| `index.html` | Redirect para login.html | Nao (publico) | Nao |
+| `login.html` | Login por username (sem magic link) | Nao (publico) | Nao |
+| `conta.html` | Troca de senha e logout | Sim | Nao |
+| `CONECTA.html` | Aplicacao principal (dashboard, agenda, equipe, etc) | Sim | Sim (ConectaDB) |
+| `Logistica Campanha.html` | Logistica (tarefas, materiais, equipe, checklist, salas) | Sim | Sim (ConectaDB) |
+| `cadastro-apoiador.html` | Formulario publico de apoiadores | Nao (publico) | Insert anonimo + fila offline |
+| `qrcode-cartao.html` | Gerador de QR code para cartao de visita | Sim | Nao |
+| `Coordenadores Regionais.html` | Grid de coordenadores regionais | Sim | Nao |
+| `Cadastro - lideres 2026.htm` | Cadastro de lideres (Valdelino Barcelos — fora do escopo) | Nao | Nao |
 
-### 4. Correcoes aplicadas (FEITO)
-- [x] Iframes quebrados (organograma e agenda) substituidos por placeholders funcionais
-- [x] Link do PDF do organograma corrigido
-- [x] QR Code apontando para URL de producao
-- [x] API fetch /api/cadastros (inexistente) substituida por Supabase + fallback
+### Scripts compartilhados
 
-### 5. Deploy parcial (FEITO — mas REVERTIDO)
-- [x] Arquivos copiados para `C:\Agentes\frontend\public\conecta\`
-- [x] Commit feito e pushado no pesquisa-eleitoral-df (commit 304f9547)
-- [x] vercel.json teve rewrite adicionado para /conecta
-- [ ] **PROBLEMA**: as mudancas no C:\Agentes foram revertidas com `git checkout` porque Igor pediu para usar o fork
-- [ ] Os arquivos atualizados (com Supabase) foram copiados de volta para C:\Agentes mas NAO foram commitados
+| Arquivo | Funcao |
+|---------|--------|
+| `js/supabase-config.js` | Fonte unica de config: URL, chave, base path, CONECTA_AUTH_GUARD, CONECTA_READY |
+| `js/conecta-db.js` | Sync layer: cache + localStorage + Supabase (bulk upsert, fila offline, singletons) |
+
+### Setup e banco
+
+| Arquivo | Funcao |
+|---------|--------|
+| `setup/migration.sql` | Schema completo: 20 tabelas + RLS + triggers + seeds + configuracoes_app + coluna username |
+| `setup/migration_username_login.sql` | Patch: RPC resolver_email_por_username para login seguro |
+| `setup/SETUP.md` | Guia completo de provisionamento (3 usuarios, usernames, smoke test) |
+| `vercel.json` | Rewrites para /conecta2026/ |
+
+---
+
+## DADOS REAIS NO SISTEMA
+
+Dados hardcoded no codigo (nao dependem de localStorage nem Supabase):
+
+| Dado | Quantidade | Localizacao |
+|------|-----------|-------------|
+| Contatos por cidade | 341 pessoas em 33 cidades | `CONTATOS_CAMPANHA` no CONECTA.html |
+| Coordenadores gerais (organograma) | 12 pessoas | Organograma no CONECTA.html |
+| Coordenadores regionais | 6 pessoas | Coordenadores Regionais.html |
+| Eventos do sabado 14/03/2026 | 15 eventos | Auto-popular no CONECTA.html |
+| Calendario eleitoral | 15 datas | `CALENDARIO_ELEITORAL` no CONECTA.html |
+| Cidades do DF | 34 cidades | `cidadesDF` no CONECTA.html |
+| Regioes administrativas | 37 regioes | Seed no migration.sql |
+| Eleitorado por regiao | 33 regioes com dados TRE-DF | Tabela no Logistica Campanha.html |
+| Checklist do coordenador | 39 itens (pre-campanha + campanha) | `CHECKLIST_ITEMS` no Logistica Campanha.html |
+| Salas do comite | 5 salas (Auditorio, S5, S6, S14, S16) | Logistica Campanha.html |
+
+Dados que iniciam VAZIOS (preenchidos pelo usuario via interface):
+
+| Dado | Chave localStorage | Tabela Supabase |
+|------|-------------------|-----------------|
+| Pesquisas eleitorais | conectacelina_pesquisas | pesquisas |
+| Demandas publicas | conectacelina_demandas | demandas |
+| Materiais de campanha | conectacelina_materiais | materiais |
+| Lideres comunitarios | conectacelina_lideres | lideres |
+| Veiculos | conectacelina_veiculos | veiculos |
+| Juridico / Prazos | conectacelina_juridico | juridico |
+| Tarefas de pessoas | conectacelina_tarefas_pessoas | tarefas |
+| Comunicacao (contadores) | conectacelina_comunicacao | comunicacao |
+| Visitas ao mapa | conectacelina_visitas | visitas |
+| Atividades (log) | conectacelina_atividades | atividades |
+| Logistica completa | logistica_celina_2026 | configuracoes_app (JSON) |
+| Coord. Segmentos Sociais | coordSegmentosSociais | configuracoes_app (JSON) |
+| Organograma customizado | organograma_lista_completa | configuracoes_app (JSON) |
 
 ---
 
 ## O QUE FALTA FAZER
 
-### FASE A — Supabase (BLOQUEANTE — precisa de acao do Igor)
+### BLOQUEANTE — Supabase (acao manual do Igor ou Silvio)
 
-1. [ ] **Criar projeto Supabase** em supabase.com
-   - Plano Free
-   - Regiao: South America (Sao Paulo) — `sa-east-1`
-   - Nome sugerido: `conecta-2026`
+1. [ ] Criar projeto Supabase (Free, Sao Paulo)
+2. [ ] Rodar `setup/migration.sql` no SQL Editor
+3. [ ] Rodar `setup/migration_username_login.sql` no SQL Editor
+4. [ ] Criar 3 usuarios (silvio2026, karla2026, igor2026) com Auto Confirm
+5. [ ] Setar usernames e papeis via SQL (ver SETUP.md passo 6)
+6. [ ] Substituir placeholders em `js/supabase-config.js` (URL + anon key)
+7. [ ] Commit e push
 
-2. [ ] **Rodar migration.sql** no SQL Editor do Supabase
-   - Arquivo: `setup/migration.sql` (esta no fork)
-   - Cria 18 tabelas + RLS + triggers + seeds
+### Apos Supabase ativo
 
-3. [ ] **Copiar credenciais** e substituir placeholders em 3 arquivos:
-   - `js/supabase-config.js` — linhas 2-3 (SUPABASE_URL e SUPABASE_ANON_KEY)
-   - `login.html` — linhas 19-20
-   - `cadastro-apoiador.html` — linhas 687-688
-   - As credenciais ficam em: Supabase Dashboard > Settings > API
+8. [ ] Testar login com os 3 usuarios
+9. [ ] Testar criacao de dados e sync entre contas
+10. [ ] Exportar localStorage existente e importar no Supabase (Fase 6)
+11. [ ] Deploy em inteia.com.br/conecta2026/
+12. [ ] Smoke test completo (ver SETUP.md)
 
-4. [ ] **Criar bucket** `fotos-campanha` no Supabase Storage
-   - Dashboard > Storage > New Bucket
-   - Marcar como publico
+### Melhorias futuras (nao bloqueante)
 
-5. [ ] **Criar primeiro usuario admin**
-   - Dashboard > Authentication > Users > Add User
-   - Email do Igor ou do Silvio
-   - Depois rodar SQL para setar papel admin:
-   ```sql
-   UPDATE perfis SET papel = 'admin' WHERE email = 'EMAIL_AQUI';
-   ```
-
-### FASE B — Deploy no Vercel (apos Fase A)
-
-6. [ ] **Commitar arquivos no C:\Agentes** (pesquisa-eleitoral-df)
-   - Os arquivos ja estao em `frontend/public/conecta/` (copiados mas nao commitados)
-   - Precisa tambem do rewrite no vercel.json:
-   ```json
-   { "source": "/conecta", "destination": "/conecta/index.html" },
-   { "source": "/conecta/", "destination": "/conecta/index.html" }
-   ```
-   - Push para main → Vercel deploya automaticamente
-
-7. [ ] **Testar URLs** apos deploy:
-   - [ ] inteia.com.br/conecta → redireciona para login
-   - [ ] inteia.com.br/conecta/login.html → tela de login funciona
-   - [ ] inteia.com.br/conecta/cadastro-apoiador.html → formulario publico (sem login)
-   - [ ] inteia.com.br/conecta/organograma.pdf → PDF abre
-   - [ ] inteia.com.br/conecta/qrcode-cartao.html → QR code aponta para URL correta
-
-### FASE C — Validacao funcional
-
-8. [ ] **Testar fluxo completo**:
-   - [ ] Login com magic link
-   - [ ] Login com senha
-   - [ ] Criar evento e ver se persiste (Supabase, nao localStorage)
-   - [ ] Abrir em outro navegador e ver os mesmos dados (multi-usuario)
-   - [ ] Cadastro de apoiador (pagina publica) salva no banco
-   - [ ] Upload de foto de pessoa
-
-9. [ ] **Criar usuarios para a equipe**
-   - Definir quem sao os primeiros usuarios e seus papeis
-   - Admin: Igor e/ou Silvio
-   - Coordenadores: definir
-   - Operadores: equipe de campo
-
-### FASE D — Melhorias futuras (nao bloqueante)
-
-10. [ ] Realtime — quando um usuario edita, outros veem em tempo real (conecta-db.js ja tem o codigo, mas precisa testar)
-11. [ ] Migrar dados existentes do localStorage para Supabase (importar JSON)
-12. [ ] Organograma interativo (substituir placeholder pelo HTML original ou embeds do PDF)
-13. [ ] Agenda integrada (substituir placeholder)
-14. [ ] Dashboard com dados reais do banco (contadores, graficos)
-15. [ ] Backup automatico (Supabase Pro faz diario, ou script de export)
+- [ ] PWA completa (manifest.json, service-worker.js, icones)
+- [ ] Realtime seletivo por pagina (hoje escuta todas as tabelas)
+- [ ] Relatorios analiticos
+- [ ] Normalizacao da Logistica (tabelas separadas em vez de JSON)
 
 ---
 
 ## DECISOES PENDENTES
 
-| # | Decisao | Contexto |
-|---|---------|----------|
-| D1 | Cadastro de lideres do Valdelino Barcelos entra no mesmo sistema? | Arquivo `Cadastro - lideres 2026.htm` tem paleta verde e candidato diferente |
-| D2 | Quem sao os primeiros usuarios e seus papeis? | Necessario para criar perfis apos o Supabase estar rodando |
-| D3 | Dominio proprio (conecta2026.com.br) ou manter subpath inteia.com.br/conecta? | Subpath ja funciona, dominio proprio custa ~R$40/ano |
+| # | Decisao | Recomendacao |
+|---|---------|--------------|
+| D1 | Cadastro lideres Valdelino Barcelos entra no escopo? | Nao (manter fora) |
+| D2 | Coordenadores Regionais.html e pagina protegida? | Sim (ja tem auth guard) |
+| D3 | Dominio proprio ou subpath? | Subpath /conecta2026/ por ora |
+| D4 | Tabelas normalizadas de Logistica na v1? | Nao (JSON em configuracoes_app) |
 
 ---
 
@@ -161,35 +155,8 @@ Objetivo: colocar online em inteia.com.br/conecta com banco de dados real, multi
 |------|--------|------|
 | Supabase Free | R$0 | 500MB banco, 1GB storage, 50K auth |
 | Vercel Free | R$0 | Ja em uso |
-| Total | R$0 | Ate precisar escalar |
-| Supabase Pro (se escalar) | ~R$150 | $25/mes, backup diario |
+| Total v1 | R$0 | Ate precisar escalar |
 
 ---
 
-## ARQUIVOS-CHAVE
-
-```
-Fork (igormorais123/Conecta-2026):
-  CONECTA.html          ← pagina principal (217KB, com Supabase injetado)
-  cadastro-apoiador.html ← formulario publico (com Supabase)
-  qrcode-cartao.html     ← URL corrigida
-  login.html             ← NOVO: tela de login
-  js/supabase-config.js  ← NOVO: config Supabase (TEM PLACEHOLDER)
-  js/conecta-db.js       ← NOVO: camada de dados
-  setup/migration.sql    ← NOVO: schema PostgreSQL completo
-  setup/SETUP.md         ← NOVO: guia de configuracao
-
-Deploy (C:\Agentes\frontend\public\conecta\):
-  Mesmos arquivos copiados, NAO commitados ainda
-```
-
----
-
-## PARA CONTINUAR
-
-Comando rapido para retomar:
-```
-"Continuar implementacao do CONECTA 2026 — ler WORKING.md para status"
-```
-
-Proximo passo imediato: **Fase A** — criar projeto Supabase e rodar migration.
+> Ultima atualizacao: 27/03/2026 por ONIR
