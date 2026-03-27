@@ -1711,8 +1711,10 @@
         <span id="userName" style="font-size:0.8rem;color:var(--text-light);font-weight:600;"></span>
         <button class="btn-header" onclick="window.location.href=(window.CONECTA_CONFIG && window.CONECTA_CONFIG.contaPath) || 'conta.html'">Minha Conta</button>
         <button class="btn-header" onclick="ConectaDB.logout()">Sair</button>
+        <button class="btn-header" onclick="triggerImportBackup()">Importar Backup</button>
         <button class="btn-header" onclick="exportData()">Exportar Dados</button>
     </div>
+    <input type="file" id="backupImportInput" accept=".json,application/json" style="display:none;" onchange="handleImportBackup(event)">
 </header>
 
 <!-- ===== MAIN ===== -->
@@ -4861,14 +4863,109 @@ function exportData() {
     var tarefasPessoas = getTarefasPessoas();
     const data = {
         exportDate: new Date().toISOString(),
+        exportVersion: '2026.1',
         eventos, veiculos, pessoas, pesquisas, demandas, juridico, comunicacao, materiais, visitas, lideres,
-        tarefas_pessoas: tarefasPessoas
+        tarefas_pessoas: tarefasPessoas,
+        atividades: atividades,
+        organograma_lista_completa: JSON.parse(localStorage.getItem('organograma_lista_completa') || '[]'),
+        coordSegmentosSociais: localStorage.getItem('coordSegmentosSociais') || '',
+        logistica_celina_2026: localStorage.getItem('logistica_celina_2026') ? JSON.parse(localStorage.getItem('logistica_celina_2026')) : null
     };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = 'conectacelina_backup_' + new Date().toISOString().split('T')[0] + '.json';
     a.click();
+}
+
+function triggerImportBackup() {
+    var input = document.getElementById('backupImportInput');
+    if (!input) return;
+    input.value = '';
+    input.click();
+}
+
+function handleImportBackup(event) {
+    var file = event && event.target && event.target.files ? event.target.files[0] : null;
+    if (!file) return;
+
+    var reader = new FileReader();
+    reader.onload = async function(loadEvent) {
+        try {
+            var imported = JSON.parse(loadEvent.target.result);
+            var resumo = [
+                Array.isArray(imported.eventos) ? imported.eventos.length + ' evento(s)' : null,
+                Array.isArray(imported.veiculos) ? imported.veiculos.length + ' veiculo(s)' : null,
+                Array.isArray(imported.pessoas) ? imported.pessoas.length + ' pessoa(s)' : null,
+                Array.isArray(imported.lideres) ? imported.lideres.length + ' lider(es)' : null
+            ].filter(Boolean).join(', ');
+
+            if (!confirm('Importar este backup e sobrescrever os dados locais atuais?\n\n' + (resumo || 'Backup valido detectado.') + '\n\nEsta acao pode ser desfeita reimportando um backup anterior.')) {
+                return;
+            }
+
+            importarBackupData(imported);
+            addAtividade('Backup importado em ' + new Date().toLocaleString('pt-BR'));
+
+            if (window.ConectaDB && typeof window.ConectaDB.syncPendingQueue === 'function') {
+                await window.ConectaDB.syncPendingQueue();
+            }
+
+            alert('Backup importado com sucesso.');
+        } catch (error) {
+            console.error('Falha ao importar backup:', error);
+            alert('Nao foi possivel importar o arquivo. Verifique se o JSON e valido.');
+        } finally {
+            if (event && event.target) event.target.value = '';
+        }
+    };
+    reader.readAsText(file, 'utf-8');
+}
+
+function importarBackupData(imported) {
+    var mappings = [
+        ['eventos', imported.eventos, []],
+        ['veiculos', imported.veiculos, []],
+        ['pessoas', imported.pessoas, []],
+        ['pesquisas', imported.pesquisas, []],
+        ['demandas', imported.demandas, []],
+        ['juridico', imported.juridico, []],
+        ['comunicacao', imported.comunicacao, { whats: 0, insta: 0, videos: 0, midia: 0, jingles: 0, santinhos: 0 }],
+        ['materiais', imported.materiais, []],
+        ['visitas', imported.visitas, {}],
+        ['lideres', imported.lideres, []],
+        ['tarefas_pessoas', imported.tarefas_pessoas, {}],
+        ['atividades', imported.atividades, []]
+    ];
+
+    mappings.forEach(function(entry) {
+        var key = entry[0];
+        var value = typeof entry[1] === 'undefined' ? entry[2] : entry[1];
+        setData(key, value);
+    });
+
+    var listaCompleta = Array.isArray(imported.organograma_lista_completa) ? imported.organograma_lista_completa : [];
+    localStorage.setItem('organograma_lista_completa', JSON.stringify(listaCompleta));
+
+    var segmentos = typeof imported.coordSegmentosSociais === 'string' ? imported.coordSegmentosSociais : '';
+    localStorage.setItem('coordSegmentosSociais', segmentos);
+
+    if (typeof imported.logistica_celina_2026 !== 'undefined' && imported.logistica_celina_2026 !== null) {
+        localStorage.setItem('logistica_celina_2026', JSON.stringify(imported.logistica_celina_2026));
+    }
+
+    refreshStateFromStorage();
+    renderDashboard();
+    renderAgenda();
+    renderVeiculos();
+    renderPessoas();
+    renderMapa();
+    renderPesquisas();
+    renderComunicacao();
+    renderDemandas();
+    renderJuridico();
+    renderMateriais();
+    renderLideres();
 }
 
 // ===== RECEBER DADOS DO ORGANOGRAMA VIA POSTMESSAGE =====

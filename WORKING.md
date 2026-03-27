@@ -36,9 +36,9 @@ Deploy alvo: inteia.com.br/conecta2026/ via Vercel.
 | 3 | Sincronizacao da Logistica | CONCLUIDA |
 | 4 | Paginas secundarias e formulario publico | CONCLUIDA |
 | 5 | Banco, seguranca e setup operacional | CONCLUIDA |
-| 6 | Migracao de dados locais e homologacao | PENDENTE — depende de Supabase ativo |
-| 7 | PWA, refinamento visual e branding | PARCIAL — metatags PWA e rodapes adicionados em paginas secundarias |
-| 8 | Deploy, checklist e go-live | PARCIAL — checklist de testes atualizado; deploy final depende de credenciais e `vercel.json` |
+| 6 | Migracao de dados locais e homologacao | PARCIAL — export/import de backup local implementado; falta carga final no Supabase e homologacao multiusuario |
+| 7 | PWA, refinamento visual e branding | PARCIAL — PWA minima entregue (manifest, service worker, icones, favicon, metatags); refinamento visual segue pendente |
+| 8 | Deploy, checklist e go-live | PARCIAL — checklist e `vercel.json` prontos; go-live final depende de smoke no ambiente publicado |
 
 ### Arquivos do projeto
 
@@ -119,19 +119,20 @@ Dados que iniciam VAZIOS (preenchidos pelo usuario via interface):
 4. [ ] Criar 3 usuarios (silvio2026, karla2026, igor2026) com Auto Confirm
 5. [ ] Setar usernames e papeis via SQL (ver SETUP.md passo 6)
 6. [ ] Substituir placeholders em `js/supabase-config.js` (URL + anon key)
-7. [ ] Commit e push
+7. [x] Commit e push
 
 ### Apos Supabase ativo
 
 8. [ ] Testar login com os 3 usuarios
 9. [ ] Testar criacao de dados e sync entre contas
-10. [ ] Exportar localStorage existente e importar no Supabase (Fase 6)
+10. [ ] Importar no Supabase o backup/localStorage exportado pelo `CONECTA.html` (Fase 6)
 11. [ ] Deploy em inteia.com.br/conecta2026/
 12. [ ] Smoke test completo (ver TESTES.md e SETUP.md)
 
 ### Melhorias futuras (nao bloqueante)
 
-- [ ] PWA completa (manifest.json, service-worker.js, icones)
+- [x] PWA minima (manifest.json, service-worker.js, icones, favicon)
+- [ ] Refinamento extra de PWA offline e invalidacao de cache
 - [ ] Relatorios analiticos
 - [ ] Normalizacao da Logistica (tabelas separadas em vez de JSON)
 

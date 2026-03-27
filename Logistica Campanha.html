@@ -197,8 +197,8 @@ tr:hover td { background:rgba(59,130,246,0.05); }
     </div>
     <div style="margin-left:auto;display:flex;align-items:center;gap:8px;padding-left:12px;">
         <span id="userName" style="font-size:0.78rem;color:var(--text2);font-weight:600;"></span>
-        <button class="btn btn-sm" style="background:var(--green);color:#fff;" onclick="window.location.href='CONECTA.html'">&#8592; CONECTA</button>
-        <button class="btn btn-sm" style="background:var(--card2);color:#fff;" onclick="window.location.href='conta.html'">Conta</button>
+        <button class="btn btn-sm" style="background:var(--green);color:#fff;" onclick="window.location.href=(window.CONECTA_CONFIG && window.CONECTA_CONFIG.appPath) || 'CONECTA.html'">&#8592; CONECTA</button>
+        <button class="btn btn-sm" style="background:var(--card2);color:#fff;" onclick="window.location.href=(window.CONECTA_CONFIG && window.CONECTA_CONFIG.contaPath) || 'conta.html'">Conta</button>
         <button class="btn btn-sm" style="background:var(--red);color:#fff;" onclick="ConectaDB.logout()">Sair</button>
     </div>
 </div>
@@ -2164,7 +2164,15 @@ function formatDate(d) {
 
 // ==================== QR CODE ====================
 function showQRCode() {
-    var url = 'http://192.168.0.2:8080/Logistica%20Campanha.html';
+    var cfg = window.CONECTA_CONFIG || {};
+    var path = cfg.logisticaPath || 'Logistica Campanha.html';
+    var url;
+    if (/^https?:\/\//i.test(path)) {
+        url = path;
+    } else {
+        var normalizedPath = path.charAt(0) === '/' ? path : '/' + path.replace(/^\.\//, '');
+        url = window.location.origin + normalizedPath;
+    }
     var qrApi = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' + encodeURIComponent(url);
     var overlay = document.createElement('div');
     overlay.className = 'modal-overlay show';
