@@ -855,6 +855,12 @@ tr:hover td { background:rgba(59,130,246,0.05); }
 // ==================== DADOS ====================
 var STORAGE_KEY = 'logistica_celina_2026';
 var CURRENT_PAGE = 'dashboard';
+var LOGISTICA_REALTIME_KEYS = ['logistica_celina_2026'];
+
+function updateRealtimeScope() {
+    if (!window.ConectaDB || typeof window.ConectaDB.setActiveKeys !== 'function') return;
+    window.ConectaDB.setActiveKeys(LOGISTICA_REALTIME_KEYS);
+}
 
 // Datas importantes
 var DATAS = {
@@ -894,6 +900,7 @@ function genId() { var id = DATA.nextId || 1; DATA.nextId = id + 1; saveData(); 
 // ==================== NAVEGAÇÃO ====================
 function showPage(id) {
     CURRENT_PAGE = id;
+    updateRealtimeScope();
     document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
     document.querySelectorAll('.nav-links button').forEach(function(b) { b.classList.remove('active'); });
     document.getElementById('page-' + id).classList.add('active');
@@ -2199,6 +2206,7 @@ async function bootstrapLogistica() {
         }
 
         await ConectaDB.init();
+        updateRealtimeScope();
         refreshStateFromStorage();
         loadSubcoords();
 

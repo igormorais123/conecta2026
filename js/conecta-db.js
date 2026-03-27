@@ -17,6 +17,7 @@ var ConectaDB = (function() {
     var subscriptions = [];
     var supabase = null;
     var currentUser = null;
+    var activeManagedKeys = [];
 
     var TABLES = {
         'conectacelina_eventos': { table: 'eventos', type: 'array' },
@@ -567,6 +568,28 @@ var ConectaDB = (function() {
         return TABLES[key] ? TABLES[key].table : null;
     }
 
+    function normalizeActiveKeys(keys) {
+        var source = Array.isArray(keys) ? keys : [];
+        var normalized = [];
+        source.forEach(function(key) {
+            if (MANAGED_KEYS.indexOf(key) === -1) return;
+            if (normalized.indexOf(key) !== -1) return;
+            normalized.push(key);
+        });
+        return normalized;
+    }
+
+    function clearRealtimeSubscriptions() {
+        while (subscriptions.length) {
+            var channel = subscriptions.pop();
+            try {
+                channel.unsubscribe();
+            } catch (err) {
+                console.warn('ConectaDB: failed to unsubscribe realtime channel', err);
+            }
+        }
+    }
+
     async function reloadManagedKey(key) {
         if (!TABLES[key] || !supabase) return;
         try {
@@ -578,18 +601,23 @@ var ConectaDB = (function() {
     }
 
     function setupRealtimeSubscriptions() {
-        if (!supabase || subscriptions.length > 0) return;
+        if (!supabase) return;
+
+        clearRealtimeSubscriptions();
+
+        var scopedKeys = activeManagedKeys.slice();
+        if (scopedKeys.length === 0) return;
 
         var tables = {};
-        Object.keys(TABLES).forEach(function(key) {
-            var tableName = TABLES[key].table;
+        scopedKeys.forEach(function(key) {
+            var tableName = tableNameForKey(key);
             tables[tableName] = true;
         });
 
         Object.keys(tables).forEach(function(tableName) {
             var channel = supabase.channel(tableName + '-changes');
             channel.on('postgres_changes', { event: '*', schema: 'public', table: tableName }, async function() {
-                var managedKeys = MANAGED_KEYS.filter(function(key) {
+                var managedKeys = activeManagedKeys.filter(function(key) {
                     return tableNameForKey(key) === tableName;
                 });
 
@@ -604,6 +632,18 @@ var ConectaDB = (function() {
             channel.subscribe();
             subscriptions.push(channel);
         });
+    }
+
+    function setActiveKeys(keys) {
+        var normalized = normalizeActiveKeys(keys);
+        if (JSON.stringify(normalized) === JSON.stringify(activeManagedKeys)) {
+            return;
+        }
+
+        activeManagedKeys = normalized;
+        if (supabase) {
+            setupRealtimeSubscriptions();
+        }
     }
 
     async function logout() {
@@ -650,6 +690,7 @@ var ConectaDB = (function() {
         get: get,
         set: set,
         remove: remove,
+        setActiveKeys: setActiveKeys,
         logout: logout,
         getUser: getUser,
         getUserProfile: getUserProfile,
