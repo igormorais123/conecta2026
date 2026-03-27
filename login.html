@@ -186,7 +186,7 @@
         </form>
 
         <div class="helper">
-            Use seu usuario da campanha. O mapeamento de username abaixo e apenas um fallback temporario desta implementacao local.
+            Use seu usuario da campanha para acessar o sistema.
         </div>
     </div>
 
@@ -201,11 +201,21 @@
 (function() {
     'use strict';
 
+    // Fallback temporario — sera removido quando perfis.username estiver populado
     var USER_EMAIL_MAP = {
         silvio2026: 'silvio2026@conecta.interno',
         karla2026: 'karla2026@conecta.interno',
         igor2026: 'igor2026@conecta.interno'
     };
+
+    // Resolver username -> email: tenta perfis.username, fallback no mapa local
+    async function resolveEmail(client, username) {
+        try {
+            var result = await client.from('perfis').select('email').eq('username', username).maybeSingle();
+            if (result.data && result.data.email) return result.data.email;
+        } catch(e) {}
+        return USER_EMAIL_MAP[username] || null;
+    }
 
     var messageEl = document.getElementById('message');
     var formEl = document.getElementById('loginForm');
@@ -258,10 +268,9 @@
 
         var username = usernameEl.value.trim().toLowerCase();
         var password = passwordEl.value;
-        var email = USER_EMAIL_MAP[username];
 
-        if (!email) {
-            showMessage('Usuario nao autorizado.', 'error');
+        if (!username || !password) {
+            showMessage('Preencha usuario e senha.', 'error');
             return;
         }
 
@@ -274,6 +283,12 @@
         setLoading(true);
 
         try {
+            var email = await resolveEmail(client, username);
+            if (!email) {
+                showMessage('Usuario nao autorizado.', 'error');
+                return;
+            }
+
             var result = await client.auth.signInWithPassword({ email: email, password: password });
             if (result.error) {
                 if (result.error.message === 'Invalid login credentials') {

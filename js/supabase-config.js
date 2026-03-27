@@ -27,11 +27,14 @@
             loginPath: existing.loginPath || basePath + 'login.html',
             appPath: existing.appPath || basePath + 'CONECTA.html',
             contaPath: existing.contaPath || basePath + 'conta.html',
+            logisticaPath: existing.logisticaPath || basePath + 'Logistica Campanha.html',
             cadastroPublicoPath: existing.cadastroPublicoPath || basePath + 'cadastro-apoiador.html'
         };
     }
 
     function dispatchReady() {
+        window.dispatchEvent(new Event('conecta-supabase-ready'));
+        // Compatibilidade com codigo legado
         window.dispatchEvent(new Event('supabase-ready'));
     }
 
@@ -95,4 +98,44 @@
         dispatchReady();
     };
     document.head.appendChild(script);
+
+    // ===== AUTH GUARD =====
+    // Usar em paginas protegidas: window.CONECTA_AUTH_GUARD().then(function(session) { ... })
+    window.CONECTA_AUTH_GUARD = function() {
+        return new Promise(function(resolve) {
+            function check() {
+                var sb = window.CONECTA_SUPABASE;
+                if (!sb) {
+                    window.location.href = window.CONECTA_CONFIG.loginPath;
+                    return;
+                }
+                sb.auth.getSession().then(function(result) {
+                    if (result.data.session) {
+                        resolve(result.data.session);
+                    } else {
+                        window.location.href = window.CONECTA_CONFIG.loginPath;
+                    }
+                }).catch(function() {
+                    window.location.href = window.CONECTA_CONFIG.loginPath;
+                });
+            }
+
+            if (window.CONECTA_SUPABASE) {
+                check();
+            } else {
+                window.addEventListener('conecta-supabase-ready', check);
+            }
+        });
+    };
+
+    // ===== HELPER: esperar Supabase pronto =====
+    window.CONECTA_READY = function(callback) {
+        if (window.CONECTA_SUPABASE) {
+            callback(window.CONECTA_SUPABASE);
+        } else {
+            window.addEventListener('conecta-supabase-ready', function() {
+                callback(window.CONECTA_SUPABASE);
+            });
+        }
+    };
 })();

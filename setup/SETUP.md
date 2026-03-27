@@ -58,42 +58,39 @@ UPDATE perfis SET papel = 'admin' WHERE email = 'igor2026@conecta.interno';
 
 ## 7. Configurar credenciais no código
 
-Edite os 3 arquivos e substitua os placeholders:
+Hoje o projeto centraliza as credenciais em um unico arquivo:
 
-### `js/supabase-config.js`:
+### `js/supabase-config.js`
+Substitua apenas os dois placeholders abaixo:
+
 ```javascript
-var SUPABASE_URL = 'https://SEU-PROJETO.supabase.co';
-var SUPABASE_ANON_KEY = 'SUA-ANON-KEY';
+var supabaseUrl = window.CONECTA_SUPABASE_URL || 'https://SEU-PROJETO.supabase.co';
+var supabaseAnonKey = window.CONECTA_SUPABASE_KEY || 'SUA-ANON-KEY';
 ```
 
-### `login.html`:
-```javascript
-var SUPABASE_URL = 'https://SEU-PROJETO.supabase.co';
-var SUPABASE_ANON_KEY = 'SUA-ANON-KEY-AQUI';
-```
-
-### `cadastro-apoiador.html`:
-```javascript
-var SUPABASE_URL = 'https://SEU-PROJETO.supabase.co';
-var SUPABASE_ANON_KEY = 'SUA-ANON-KEY-AQUI';
-```
+Observacoes:
+- `login.html`, `CONECTA.html`, `Logistica Campanha.html`, `conta.html` e `cadastro-apoiador.html` consomem esse arquivo compartilhado; nao replique credenciais neles.
+- O login atual usa `username` na interface, mas ainda faz um mapeamento temporario local para os e-mails internos no frontend.
+- Para producao, o ideal continua sendo substituir esse fallback por RPC ou Edge Function para resolver `username -> email` fora do navegador.
 
 ## 8. Deploy
 
-Faça commit e push — o Vercel deploya automaticamente.
+Faça commit e push no proprio repositorio do projeto.
 
 ```bash
-cd C:\Agentes
-git add frontend/public/conecta/
-git commit -m "Configurar Supabase para CONECTA"
+cd "C:\Users\IgorPC\.claude\projects\Conecta 2026"
+git add .
+git commit -m "Configura Supabase do CONECTA 2026"
 git push origin main
 ```
 
 ## 9. Verificar
 
-1. Acesse https://inteia.com.br/conecta/login.html
-2. Faça login com o admin criado no passo 6
-3. O sistema deve carregar os dados do Supabase
+1. Acesse `https://inteia.com.br/conecta2026/login.html`
+2. Faça login com um dos usuarios criados no passo 6
+3. Confirme que o redirecionamento vai para `CONECTA.html`
+4. Acesse tambem `Logistica Campanha.html` e `conta.html` com a sessao ativa
+5. Teste `cadastro-apoiador.html` sem login e confirme persistencia no Supabase
 
 ## Custos
 

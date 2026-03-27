@@ -146,7 +146,7 @@
 
         <div class="actions">
             <button class="primary" id="saveButton" type="button">Alterar senha</button>
-            <a class="button-link secondary" href="CONECTA.html">Voltar ao CONECTA</a>
+            <a class="button-link secondary" id="linkVoltar" href="CONECTA.html">Voltar ao CONECTA</a>
             <button class="danger" id="logoutButton" type="button">Sair</button>
         </div>
 
@@ -204,8 +204,8 @@
             var newPassword = newPasswordEl.value;
             var confirmPassword = confirmPasswordEl.value;
 
-            if (newPassword.length < 6) {
-                showMessage('A nova senha precisa ter pelo menos 6 caracteres.', 'error');
+            if (newPassword.length < 8) {
+                showMessage('A nova senha precisa ter pelo menos 8 caracteres.', 'error');
                 return;
             }
             if (newPassword !== confirmPassword) {
@@ -241,6 +241,11 @@
         logoutButton.addEventListener('click', function() {
             ConectaDB.logout();
         });
+
+        // Ajustar link de volta
+        var cfg = window.CONECTA_CONFIG || {};
+        var linkVoltar = document.getElementById('linkVoltar');
+        if (linkVoltar && cfg.appPath) linkVoltar.href = cfg.appPath;
 
         if (window.CONECTA_SUPABASE || window._conectaSupabaseError) {
             loadProfile();
