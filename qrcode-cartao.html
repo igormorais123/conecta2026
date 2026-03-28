@@ -183,8 +183,8 @@
 
         /* Cartao 90x50mm = proporção 9:5 */
         .cartao {
-            width: 340px;
-            height: 189px;
+            width: min(340px, 100%);
+            aspect-ratio: 9 / 5;
             background: white;
             border-radius: 8px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.12);
@@ -350,6 +350,7 @@
 </head>
 <body>
 
+<a href="CONECTA.html" style="color:#1B3A5C;text-decoration:none;font-size:0.85rem;display:inline-block;margin-bottom:8px;">&larr; Voltar ao CONECTA</a>
 <h1>QR Code para Cartão de Visita</h1>
 <p class="subtitulo">Gere o QR Code que direciona ao formulário de cadastro</p>
 

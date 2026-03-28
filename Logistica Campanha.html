@@ -172,13 +172,14 @@ tr:hover td { background:rgba(59,130,246,0.05); }
 @media(max-width:768px) {
     .grid-2,.grid-3,.grid-4 { grid-template-columns:1fr; }
     .countdown-grid { grid-template-columns:repeat(2,1fr); }
-    .nav-links { font-size:.75rem; white-space:nowrap; overflow-x:auto; padding-bottom:8px; display:flex; -webkit-overflow-scrolling:touch; }
+    .nav-links { font-size:.75rem; white-space:nowrap; overflow-x:auto; padding-bottom:8px; display:flex; -webkit-overflow-scrolling:touch; scrollbar-width:none; mask-image:linear-gradient(to right, black 90%, transparent); -webkit-mask-image:linear-gradient(to right, black 90%, transparent); }
+    .nav-links::-webkit-scrollbar { display:none; }
     #salasStatusGrid { grid-template-columns:repeat(3,1fr) !important; }
     table { display:block; overflow-x:auto; white-space:nowrap; }
     .modal { width:95%; padding:16px; margin:20px auto; }
     .nav { flex-direction:column; align-items:flex-start; height:auto; padding:10px; }
     .nav > div:last-child { margin-left:0; margin-top:10px; flex-wrap:wrap; }
-    .form-group input, .form-group select { font-size:16px; } 
+    .form-group input, .form-group select { font-size:16px; }
 }
 @media(max-width:480px) {
     .countdown-grid { grid-template-columns:1fr; }
@@ -654,7 +655,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
 <!-- ===== MODALS ===== -->
 
 <!-- Modal Tarefa -->
-<div class="modal-overlay" id="modalTarefa">
+<div class="modal-overlay" role="dialog" aria-modal="true" id="modalTarefa">
 <div class="modal">
     <div class="modal-title">Nova Tarefa</div>
     <input type="hidden" id="tarefaEditId">
@@ -695,7 +696,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
 </div></div>
 
 <!-- Modal Material -->
-<div class="modal-overlay" id="modalMaterial">
+<div class="modal-overlay" role="dialog" aria-modal="true" id="modalMaterial">
 <div class="modal">
     <div class="modal-title">Novo Material</div>
     <input type="hidden" id="matEditId">
@@ -721,7 +722,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
 </div></div>
 
 <!-- Modal Fornecedor -->
-<div class="modal-overlay" id="modalFornecedor">
+<div class="modal-overlay" role="dialog" aria-modal="true" id="modalFornecedor">
 <div class="modal">
     <div class="modal-title">Novo Fornecedor</div>
     <input type="hidden" id="fornEditId">
@@ -743,7 +744,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
 </div></div>
 
 <!-- Modal Equipe -->
-<div class="modal-overlay" id="modalEquipe">
+<div class="modal-overlay" role="dialog" aria-modal="true" id="modalEquipe">
 <div class="modal">
     <div class="modal-title">Membro da Equipe</div>
     <input type="hidden" id="eqEditId">
@@ -780,7 +781,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
 </div></div>
 
 <!-- Modal Membros da Equipe -->
-<div class="modal-overlay" id="modalMembros">
+<div class="modal-overlay" role="dialog" aria-modal="true" id="modalMembros">
 <div class="modal modal-lg">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
         <div>
@@ -836,7 +837,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
 </div></div>
 
 <!-- Modal Agenda Sala -->
-<div class="modal-overlay" id="modalAgendaSala">
+<div class="modal-overlay" role="dialog" aria-modal="true" id="modalAgendaSala">
 <div class="modal">
     <div class="modal-title">Novo Agendamento de Sala</div>
     <input type="hidden" id="agendaSalaEditId">
@@ -889,7 +890,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
 </div>
 
 <!-- Modal Orcamento -->
-<div class="modal-overlay" id="modalOrcamento">
+<div class="modal-overlay" role="dialog" aria-modal="true" id="modalOrcamento">
 <div class="modal">
     <div class="modal-title" id="modalOrcamentoTitle">Nova Despesa</div>
     <input type="hidden" id="orcamentoEditId">
@@ -946,7 +947,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
 </div>
 
 <!-- Modal Distribuicao -->
-<div class="modal-overlay" id="modalDistribuicao">
+<div class="modal-overlay" role="dialog" aria-modal="true" id="modalDistribuicao">
 <div class="modal">
     <div class="modal-title" id="modalDistribuicaoTitle">Registrar Distribuicao</div>
     <input type="hidden" id="distEditId">
@@ -994,7 +995,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
 </div>
 
 <!-- Modal Vales -->
-<div class="modal-overlay" id="modalVale">
+<div class="modal-overlay" role="dialog" aria-modal="true" id="modalVale">
 <div class="modal">
     <div class="modal-title">Emitir Vale Combustível</div>
     <input type="hidden" id="valeEditId">
@@ -1044,7 +1045,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
 </div>
 
 <!-- Modal Bandeiracos -->
-<div class="modal-overlay" id="modalBandeiraco">
+<div class="modal-overlay" role="dialog" aria-modal="true" id="modalBandeiraco">
 <div class="modal">
     <div class="modal-title">Agendar Bandeiraço / Evento</div>
     <input type="hidden" id="bandEditId">

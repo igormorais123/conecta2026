@@ -1213,6 +1213,15 @@
             color: var(--text-light);
         }
 
+        .sidebar-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+        .sidebar-backdrop.show { display: block; }
+
         /* ===== RESPONSIVO ===== */
         @media (max-width: 900px) {
             .sidebar { transform: translateX(-100%); }
@@ -1651,6 +1660,7 @@
 </head>
 <body>
 
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
 <!-- ===== SIDEBAR ===== -->
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
@@ -2215,7 +2225,7 @@
 <!-- ===== MODAIS ===== -->
 
 <!-- Modal Evento -->
-<div class="modal-overlay" id="modalEvento" onclick="closeModal('modalEvento')">
+<div class="modal-overlay" role="dialog" aria-modal="true" id="modalEvento" onclick="closeModal('modalEvento')">
     <div class="modal" onclick="event.stopPropagation()">
         <h2>Novo Compromisso</h2>
         <div class="form-group">
@@ -2257,7 +2267,7 @@
 </div>
 
 <!-- Modal Veiculo -->
-<div class="modal-overlay" id="modalVeiculo" onclick="fecharModalVeiculo()">
+<div class="modal-overlay" role="dialog" aria-modal="true" id="modalVeiculo" onclick="fecharModalVeiculo()">
     <div class="modal" onclick="event.stopPropagation()">
         <h2 id="modalVeiculoTitulo">Adicionar Ve&iacute;culo</h2>
         <input type="hidden" id="veicEditId" value="">
@@ -2321,7 +2331,7 @@
 </div>
 
 <!-- Modal Pessoa -->
-<div class="modal-overlay" id="modalPessoa" onclick="closeModal('modalPessoa')">
+<div class="modal-overlay" role="dialog" aria-modal="true" id="modalPessoa" onclick="closeModal('modalPessoa')">
     <div class="modal" onclick="event.stopPropagation()">
         <h2 id="modalPessoaTitulo">Adicionar Pessoa</h2>
         <div class="form-group">
@@ -2358,7 +2368,7 @@
 </div>
 
 <!-- Modal Pesquisa -->
-<div class="modal-overlay" id="modalPesquisa" onclick="closeModal('modalPesquisa')">
+<div class="modal-overlay" role="dialog" aria-modal="true" id="modalPesquisa" onclick="closeModal('modalPesquisa')">
     <div class="modal" onclick="event.stopPropagation()">
         <h2>Registrar Pesquisa</h2>
         <div class="form-group">
@@ -2397,7 +2407,7 @@
 </div>
 
 <!-- Modal Demanda -->
-<div class="modal-overlay" id="modalDemanda" onclick="closeModal('modalDemanda')">
+<div class="modal-overlay" role="dialog" aria-modal="true" id="modalDemanda" onclick="closeModal('modalDemanda')">
     <div class="modal" onclick="event.stopPropagation()">
         <h2>Nova Demanda</h2>
         <div class="form-group">
@@ -2444,7 +2454,7 @@
 </div>
 
 <!-- Modal Juridico -->
-<div class="modal-overlay" id="modalJuridico" onclick="closeModal('modalJuridico')">
+<div class="modal-overlay" role="dialog" aria-modal="true" id="modalJuridico" onclick="closeModal('modalJuridico')">
     <div class="modal" onclick="event.stopPropagation()">
         <h2>Prazo / Evento Jur&iacute;dico</h2>
         <div class="form-group">
@@ -2476,7 +2486,7 @@
 </div>
 
 <!-- Modal Comunicacao -->
-<div class="modal-overlay" id="modalCom" onclick="closeModal('modalCom')">
+<div class="modal-overlay" role="dialog" aria-modal="true" id="modalCom" onclick="closeModal('modalCom')">
     <div class="modal" onclick="event.stopPropagation()">
         <h2>Atualizar Comunica&ccedil;&atilde;o</h2>
         <div class="form-group">
@@ -2511,7 +2521,7 @@
 </div>
 
 <!-- Modal Material -->
-<div class="modal-overlay" id="modalMaterial" onclick="closeModal('modalMaterial')">
+<div class="modal-overlay" role="dialog" aria-modal="true" id="modalMaterial" onclick="closeModal('modalMaterial')">
     <div class="modal" onclick="event.stopPropagation()">
         <h2 id="matModalTitle">Novo Material</h2>
         <input type="hidden" id="matEditId">
@@ -2563,7 +2573,7 @@
 </div>
 
 <!-- Modal Visita Cidade -->
-<div class="modal-overlay" id="modalVisita" onclick="closeModal('modalVisita')">
+<div class="modal-overlay" role="dialog" aria-modal="true" id="modalVisita" onclick="closeModal('modalVisita')">
     <div class="modal" onclick="event.stopPropagation()">
         <h2 id="visitaCidadeNome">Registrar Visita</h2>
         <div class="form-group">
@@ -2792,6 +2802,7 @@ function showPage(page) {
 
     // Fechar sidebar mobile
     document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarBackdrop').classList.remove('show');
 }
 
 window.renderCurrentPage = function() {
@@ -2817,6 +2828,7 @@ window.renderCurrentPage = function() {
 
 function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebarBackdrop').classList.toggle('show');
 }
 
 // ===== RELOGIO =====
