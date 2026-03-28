@@ -208,6 +208,8 @@ tr:hover td { background:rgba(59,130,246,0.05); }
         <button onclick="showPage('orcamento')">Orçamento</button>
         <button onclick="showPage('distribuicao')">Distribuição</button>
         <button onclick="showPage('vales')">Vales Combustíveis</button>
+        <button onclick="showPage('reversa')">Ativos na Rua (Reversa)</button>
+        <button onclick="showPage('bandeiracos')">Eventos & Bandeiraços</button>
     </div>
     <div style="margin-left:auto;display:flex;align-items:center;gap:8px;padding-left:12px;">
         <span id="userName" style="font-size:0.78rem;color:var(--text2);font-weight:600;"></span>
@@ -711,6 +713,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
     </div>
     <div class="form-group"><label>Estoque Mínimo</label><input type="number" id="matMinimo" value="0"></div>
     <div class="form-group"><label>Observações</label><textarea id="matObs" placeholder="Especificações, tamanhos, cores..."></textarea></div>
+    <div style="margin-top:10px;margin-bottom:14px;"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" id="matRetornavel" style="width:16px;height:16px;margin:0;"><span><b>Material Retornável</b> (Gera Logística Reversa: ex. Tendas, Bandeiras)</span></label></div>
     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px;">
         <button class="btn" style="background:var(--card2);color:var(--text);" onclick="closeModal('modalMaterial')">Cancelar</button>
         <button class="btn btn-primary" onclick="saveMaterial()">Salvar</button>
@@ -1011,6 +1014,73 @@ tr:hover td { background:rgba(59,130,246,0.05); }
     </div>
 </div></div>
 
+<!-- ============ LOGISTICA REVERSA ============ -->
+<div class="page" id="page-reversa">
+    <div class="card-header" style="margin-bottom:16px;">
+        <div>
+            <div class="card-title" style="font-size:1.2rem;">Ativos na Rua (Logística Reversa)</div>
+            <div class="card-subtitle">Controle de materiais retornáveis despachados (Tendas, Bandeiras, etc)</div>
+        </div>
+    </div>
+    <div class="grid-3" id="reversaStats" style="margin-bottom:16px;"></div>
+    <div class="card"><table><thead><tr>
+        <th>Local / RA</th><th>Material</th><th>Qtd</th><th>Responsável</th><th>Saída</th><th>Status</th><th>Ações</th>
+    </tr></thead><tbody id="tbReversa"></tbody></table></div>
+</div>
+
+<!-- ============ BANDEIRACOS ============ -->
+<div class="page" id="page-bandeiracos">
+    <div class="card-header" style="margin-bottom:16px;">
+        <div>
+            <div class="card-title" style="font-size:1.2rem;">Revezamento de Eventos e Bandeiraços</div>
+            <div class="card-subtitle">Agendamento de equipes para evitar conflitos no mesmo ponto.</div>
+        </div>
+        <button class="btn btn-primary" onclick="openModalBandeiraco()">+ Agendar Evento</button>
+    </div>
+    <div class="grid-3" id="bandeiracosStats" style="margin-bottom:16px;"></div>
+    <div class="card"><table><thead><tr>
+        <th>Data</th><th>Ponto Físico (RA e Detalhe)</th><th>Turno</th><th>Equipe / Liderança</th><th>Qtd Prevista</th><th>Ações</th>
+    </tr></thead><tbody id="tbBandeiracos"></tbody></table></div>
+</div>
+
+<!-- Modal Bandeiracos -->
+<div class="modal-overlay" id="modalBandeiraco">
+<div class="modal">
+    <div class="modal-title">Agendar Bandeiraço / Evento</div>
+    <input type="hidden" id="bandEditId">
+    <div class="grid-2">
+        <div class="form-group"><label>Data</label><input type="date" id="bandData"></div>
+        <div class="form-group"><label>Turno</label>
+            <select id="bandTurno"><option>Manhã</option><option>Tarde</option><option>Noite</option><option>O Dia Todo</option></select>
+        </div>
+    </div>
+    <div class="grid-2">
+        <div class="form-group"><label>Região / RA</label>
+            <!-- Same combo as used in other places -->
+            <select id="bandRegiao">
+                <option value="">Selecione</option>
+                <option>Plano Piloto</option><option>Gama</option><option>Taguatinga</option>
+                <option>Brazlandia</option><option>Sobradinho</option><option>Planaltina</option>
+                <option>Paranoa</option><option>Nucleo Bandeirante</option><option>Ceilandia</option>
+                <option>Guara</option><option>Cruzeiro</option><option>Samambaia</option>
+                <option>Santa Maria</option><option>Sao Sebastiao</option><option>Recanto das Emas</option>
+                <option>Lago Sul</option><option>Riacho Fundo</option><option>Lago Norte</option>
+                <option>Aguas Claras</option><option>Vicente Pires</option><option>Estrutural</option>
+                <option>Sobradinho II</option><option>Jardim Botanico</option><option>Itapoa</option>
+                <option>Sol Nascente</option><option>Arniqueira</option><option>Fercal</option>
+            </select>
+        </div>
+        <div class="form-group"><label>Ponto Específico</label><input type="text" id="bandPonto" placeholder="Ex: Balão do Relógio"></div>
+    </div>
+    <div class="form-group"><label>Equipe / Liderança Responsável</label><input type="text" id="bandEquipe" placeholder="Nome do grupo ou líder"></div>
+    <div class="form-group"><label>Quantidade Prevista (Pessoas)</label><input type="number" id="bandQtd" min="1" value="10"></div>
+    <div id="bandError" style="display:none; color:var(--red); font-size:0.85rem; padding:8px; background:rgba(239,68,68,0.1); border-left:3px solid var(--red); margin:10px 0;">Já existe uma equipe agendada neste Ponto, Data e Turno! Escolha outro local ou turno.</div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px;">
+        <button class="btn" style="background:var(--card2);color:var(--text);" onclick="closeModal('modalBandeiraco')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveBandeiraco()">Agendar</button>
+    </div>
+</div></div>
+
 <script>
 // ==================== DADOS ====================
 var STORAGE_KEY = 'logistica_celina_2026';
@@ -1047,6 +1117,8 @@ function defaultData() {
         orcamento: [],
         distribuicao: [],
         vales_combustivel: [],
+        logistica_reversa: [],
+        escala_bandeiracos: [],
         nextId: 1
     };
 }
@@ -1068,7 +1140,7 @@ function showPage(id) {
     document.querySelectorAll('.nav-links button').forEach(function(b) { b.classList.remove('active'); });
     document.getElementById('page-' + id).classList.add('active');
     var btns = document.querySelectorAll('.nav-links button');
-    var pages = ['dashboard','tarefas','materiais','fornecedores','equipe','subcoord','calendario','checklist','eleitorado','agendasalas','orcamento','distribuicao','vales'];
+    var pages = ['dashboard','tarefas','materiais','fornecedores','equipe','subcoord','calendario','checklist','eleitorado','agendasalas','orcamento','distribuicao','vales','reversa','bandeiracos'];
     var idx = pages.indexOf(id);
     if (idx >= 0 && btns[idx]) btns[idx].classList.add('active');
     if (id === 'dashboard') renderDashboard();
@@ -1081,6 +1153,8 @@ function showPage(id) {
     if (id === 'orcamento') renderOrcamento();
     if (id === 'distribuicao') renderDistribuicao();
     if (id === 'vales') renderVales();
+    if (id === 'reversa') renderReversa();
+    if (id === 'bandeiracos') renderBandeiracos();
 }
 
 window.renderCurrentPage = function() {
@@ -1356,10 +1430,12 @@ function openModalMaterial(id) {
             document.getElementById('matDist').value = m.dist;
             document.getElementById('matMinimo').value = m.minimo;
             document.getElementById('matObs').value = m.obs || '';
+            document.getElementById('matRetornavel').checked = !!m.retornavel;
         }
     } else {
         ['matNome','matFornecedor','matObs'].forEach(function(x) { document.getElementById(x).value = ''; });
         ['matQtd','matEstoque','matDist','matMinimo'].forEach(function(x) { document.getElementById(x).value = '0'; });
+        document.getElementById('matRetornavel').checked = false;
     }
     document.getElementById('modalMaterial').classList.add('show');
 }
@@ -1398,7 +1474,8 @@ function saveMaterial() {
         estoque: novoEstoque,
         dist: novoDist,
         minimo: parseInt(document.getElementById('matMinimo').value) || 0,
-        obs: document.getElementById('matObs').value.trim()
+        obs: document.getElementById('matObs').value.trim(),
+        retornavel: document.getElementById('matRetornavel').checked
     };
     if (editId) {
         var idx = DATA.materiais.findIndex(function(x) { return x.id == editId; });
@@ -1425,8 +1502,9 @@ function renderMateriais() {
         else if (m.minimo > 0 && m.estoque <= m.minimo) { status = 'Estoque Baixo'; stCor = 'orange'; }
         else { status = 'OK'; stCor = 'green'; }
         var faseLabel = m.fase === 'pre' ? 'Pré' : m.fase === 'campanha' ? 'Campanha' : 'Ambas';
+        var alertRet = m.retornavel ? ' <span class="badge" style="background:var(--accent2);font-size:0.65rem;">Retornável</span>' : '';
 
-        html += '<tr><td><strong>' + esc(m.nome) + '</strong></td>' +
+        html += '<tr><td><strong>' + esc(m.nome) + '</strong>' + alertRet + '</td>' +
             '<td><span class="badge badge-' + (m.fase==='pre'?'orange':'green') + '">' + faseLabel + '</span></td>' +
             '<td>' + m.qtd.toLocaleString('pt-BR') + '</td>' +
             '<td>' + m.estoque.toLocaleString('pt-BR') + '</td>' +
@@ -2444,6 +2522,22 @@ function saveDistribuicao() {
         if (idx >= 0) DATA.distribuicao[idx] = item;
     } else {
         DATA.distribuicao.push(item);
+        
+        var mObj = DATA.materiais.find(function(m) { return m.nome.trim().toLowerCase() === item.material.trim().toLowerCase(); });
+        if (mObj && mObj.retornavel) {
+            if (!DATA.logistica_reversa) DATA.logistica_reversa = [];
+            DATA.logistica_reversa.push({
+                id: genId(),
+                distId: item.id,
+                material: item.material,
+                qtd: item.qtd,
+                responsavel: item.responsavel,
+                regiao: item.regiao,
+                dataSaida: item.data,
+                horaSaida: new Date().toTimeString().slice(0,5),
+                status: 'Na Rua'
+            });
+        }
     }
     saveData(); closeModal('modalDistribuicao'); renderDistribuicao();
 }
@@ -2526,6 +2620,230 @@ function openInteiaSite() {
 document.querySelectorAll('.modal-overlay').forEach(function(o) {
     o.addEventListener('click', function(e) { if (e.target === o) o.classList.remove('show'); });
 });
+
+// ==================== VALES COMBUSTÍVEIS ====================
+function renderVales() {
+    var vales = DATA.vales_combustivel || [];
+    var totalCota = 0;
+    var html = '';
+    
+    var sorted = vales.slice().sort(function(a,b) { return new Date(b.data||'') - new Date(a.data||''); });
+    sorted.forEach(function(v) {
+        totalCota += (v.valor || 0);
+        html += '<tr><td><strong>' + (v.placa || '') + '</strong></td>' +
+            '<td>' + (v.modelo || '') + '</td>' +
+            '<td>' + (v.motorista || '') + '</td>' +
+            '<td>' + (v.litros || 0) + ' L</td>' +
+            '<td>R$ ' + (v.valor || 0).toLocaleString('pt-BR',{minimumFractionDigits:2}) + '</td>' +
+            '<td>' + (v.data||'').slice(0,10).split('-').reverse().join('/') + '</td>' +
+            '<td><button class="btn btn-sm btn-primary" onclick="openModalVale(' + v.id + ')">Editar</button> ' +
+            '<button class="btn btn-sm" style="background:var(--red);color:#fff;" onclick="delVale(' + v.id + ')">X</button></td></tr>';
+    });
+    document.getElementById('tbVales').innerHTML = html || '<tr><td colspan="7" style="text-align:center;color:var(--text2);">Nenhum vale emitido.</td></tr>';
+    
+    var htmlStats = '<div class="card stat"><div class="stat-num" style="color:var(--orange);">' + vales.length + '</div><div class="stat-label">Vales Emitidos</div></div>' +
+                    '<div class="card stat"><div class="stat-num" style="color:var(--green);">R$ ' + totalCota.toLocaleString('pt-BR',{minimumFractionDigits:2}) + '</div><div class="stat-label">Cota Total Gasta (R$)</div></div>';
+    document.getElementById('valesStats').innerHTML = htmlStats;
+}
+
+function openModalVale(id) {
+    document.getElementById('valeEditId').value = id || '';
+    if (id) {
+        var v = (DATA.vales_combustivel||[]).find(function(x) { return x.id == id; });
+        if (v) {
+            document.getElementById('valePlaca').value = v.placa;
+            document.getElementById('valeModelo').value = v.modelo;
+            document.getElementById('valeMotorista').value = v.motorista;
+            document.getElementById('valeLitros').value = v.litros || '';
+            document.getElementById('valeValor').value = v.valor || '';
+            document.getElementById('valeData').value = (v.data||'').slice(0,10);
+        }
+    } else {
+        ['valePlaca','valeModelo','valeMotorista','valeLitros','valeValor'].forEach(function(x){document.getElementById(x).value='';});
+        document.getElementById('valeData').value = new Date().toISOString().slice(0,10);
+    }
+    document.getElementById('modalVale').classList.add('show');
+}
+
+function saveVale() {
+    var id = document.getElementById('valeEditId').value;
+    var v = {
+        placa: document.getElementById('valePlaca').value.trim().toUpperCase(),
+        modelo: document.getElementById('valeModelo').value.trim(),
+        motorista: document.getElementById('valeMotorista').value.trim(),
+        litros: parseFloat(document.getElementById('valeLitros').value) || 0,
+        valor: parseFloat(document.getElementById('valeValor').value) || 0,
+        data: document.getElementById('valeData').value
+    };
+    if (!v.placa) { alert('A placa do veículo é obrigatória'); return; }
+    if (!DATA.vales_combustivel) DATA.vales_combustivel = [];
+    if (id) {
+        var idx = DATA.vales_combustivel.findIndex(function(x){return x.id==id;});
+        if(idx>=0) { v.id=parseInt(id); DATA.vales_combustivel[idx]=v; }
+    } else {
+        v.id = genId();
+        DATA.vales_combustivel.push(v);
+    }
+    saveData(); closeModal('modalVale'); renderVales();
+}
+
+function delVale(id) {
+    if (!confirm('Tem certeza que deseja excluir este vale?')) return;
+    DATA.vales_combustivel = DATA.vales_combustivel.filter(function(x){return x.id!=id;});
+    saveData(); renderVales();
+}
+
+// ==================== LOGISTICA REVERSA ====================
+function renderReversa() {
+    var itens = DATA.logistica_reversa || [];
+    var ativos = 0; var devolvidos = 0; var atrasados = 0;
+    
+    var html = '';
+    var hojeIso = new Date().toISOString().slice(0,10);
+    var horaAtual = new Date().getHours();
+    
+    var sorted = itens.slice().sort(function(a,b) { return new Date(b.dataSaida||'') - new Date(a.dataSaida||''); });
+    sorted.forEach(function(r) {
+        if (r.status === 'Na Rua' && (r.dataSaida < hojeIso || (r.dataSaida === hojeIso && horaAtual >= 20))) {
+            r.status = 'Atrasado/Perdido';
+            var idx = DATA.logistica_reversa.findIndex(function(x){return x.id==r.id});
+            if(idx>=0) DATA.logistica_reversa[idx].status = r.status;
+            saveData();
+        }
+        
+        if (r.status === 'Na Rua') ativos++;
+        else if (r.status === 'Atrasado/Perdido') atrasados++;
+        else devolvidos++;
+        
+        var stCor = r.status==='Devolvido' ? 'var(--green)' : r.status==='Atrasado/Perdido' ? 'var(--red)' : 'var(--orange)';
+        
+        html += '<tr><td><strong>' + esc(r.regiao) + '</strong></td>' +
+            '<td>' + esc(r.material) + '</td>' +
+            '<td>' + (r.qtd || 0) + '</td>' +
+            '<td>' + esc(r.responsavel) + '</td>' +
+            '<td>' + formatDate(r.dataSaida) + ' ' + (r.horaSaida||'') + '</td>' +
+            '<td><span class="badge" style="background:' + stCor + ';color:#fff;">' + r.status + '</span></td>' +
+            '<td>' + 
+            (r.status !== 'Devolvido' ? '<button class="btn btn-sm" style="background:var(--green);color:#fff;" onclick="baixaReversa(' + r.id + ')">Dar Baixa</button> ' : '') + 
+            '<button class="btn btn-sm" style="background:var(--red);color:#fff;" onclick="delReversa(' + r.id + ')">X</button></td></tr>';
+    });
+    document.getElementById('tbReversa').innerHTML = html || '<tr><td colspan="7" style="text-align:center;color:var(--text2);">Nenhum ativo registrado na rua.</td></tr>';
+    
+    document.getElementById('reversaStats').innerHTML = 
+        '<div class="card stat"><div class="stat-num" style="color:var(--orange);">' + ativos + '</div><div class="stat-label">Ativos Atualmente na Rua</div></div>' +
+        '<div class="card stat"><div class="stat-num" style="color:var(--red);">' + atrasados + '</div><div class="stat-label">Atrasados / Não Devolvidos</div></div>' +
+        '<div class="card stat"><div class="stat-num" style="color:var(--green);">' + devolvidos + '</div><div class="stat-label">Devolvidos com Sucesso</div></div>';
+}
+
+function baixaReversa(id) {
+    if (!confirm('Confirmar a devolução deste material?')) return;
+    var idx = DATA.logistica_reversa.findIndex(function(x){return x.id==id;});
+    if (idx >= 0) {
+        DATA.logistica_reversa[idx].status = 'Devolvido';
+        DATA.logistica_reversa[idx].dataRetorno = new Date().toISOString().slice(0,10);
+        saveData(); renderReversa();
+    }
+}
+
+function delReversa(id) {
+    if (!confirm('Excluir este registro do histórico?')) return;
+    DATA.logistica_reversa = DATA.logistica_reversa.filter(function(x){return x.id!=id;});
+    saveData(); renderReversa();
+}
+
+// ==================== EVENTOS E BANDEIRACOS ====================
+function renderBandeiracos() {
+    var itens = DATA.escala_bandeiracos || [];
+    var html = '';
+    
+    var totalPessoas = 0; var pontosDistintos = {};
+    
+    var sorted = itens.slice().sort(function(a,b) { return (a.data||'').localeCompare(b.data||''); });
+    sorted.forEach(function(b) {
+        totalPessoas += (b.qtd || 0);
+        pontosDistintos[b.ponto] = true;
+        
+        html += '<tr><td><strong>' + formatDate(b.data) + '</strong></td>' +
+            '<td><span style="color:var(--text2);font-size:0.8rem;">' + esc(b.regiao) + ' /</span> ' + esc(b.ponto) + '</td>' +
+            '<td><span class="badge" style="background:var(--card2);color:#fff;">' + b.turno + '</span></td>' +
+            '<td>' + esc(b.equipe) + '</td>' +
+            '<td>' + (b.qtd||0) + '</td>' +
+            '<td><button class="btn btn-sm btn-primary" onclick="openModalBandeiraco(' + b.id + ')">Editar</button> ' +
+             '<button class="btn btn-sm" style="background:var(--red);color:#fff;" onclick="delBandeiraco(' + b.id + ')">X</button></td></tr>';
+    });
+    document.getElementById('tbBandeiracos').innerHTML = html || '<tr><td colspan="6" style="text-align:center;color:var(--text2);">Nenhum bandeiraço ou evento agendado.</td></tr>';
+    
+    document.getElementById('bandeiracosStats').innerHTML = 
+        '<div class="card stat"><div class="stat-num" style="color:var(--accent);">' + itens.length + '</div><div class="stat-label">Eventos Agendados</div></div>' +
+        '<div class="card stat"><div class="stat-num" style="color:var(--orange);">' + Object.keys(pontosDistintos).length + '</div><div class="stat-label">Pontos Cobertos</div></div>' +
+        '<div class="card stat"><div class="stat-num" style="color:var(--green);">' + totalPessoas + '</div><div class="stat-label">Total Geração/Pessoas Estimadas</div></div>';
+}
+
+function openModalBandeiraco(id) {
+    document.getElementById('bandEditId').value = id || '';
+    document.getElementById('bandError').style.display = 'none';
+    if (id) {
+        var b = (DATA.escala_bandeiracos||[]).find(function(x) { return x.id == id; });
+        if (b) {
+            document.getElementById('bandData').value = b.data||'';
+            document.getElementById('bandTurno').value = b.turno;
+            document.getElementById('bandRegiao').value = b.regiao;
+            document.getElementById('bandPonto').value = b.ponto;
+            document.getElementById('bandEquipe').value = b.equipe;
+            document.getElementById('bandQtd').value = b.qtd;
+        }
+    } else {
+        ['bandPonto','bandEquipe'].forEach(function(x){document.getElementById(x).value='';});
+        document.getElementById('bandRegiao').value = '';
+        document.getElementById('bandTurno').value = 'Manhã';
+        document.getElementById('bandQtd').value = '10';
+        document.getElementById('bandData').value = new Date().toISOString().slice(0,10);
+    }
+    document.getElementById('modalBandeiraco').classList.add('show');
+}
+
+function saveBandeiraco() {
+    var id = document.getElementById('bandEditId').value;
+    var b = {
+        data: document.getElementById('bandData').value,
+        turno: document.getElementById('bandTurno').value,
+        regiao: document.getElementById('bandRegiao').value,
+        ponto: document.getElementById('bandPonto').value.trim(),
+        equipe: document.getElementById('bandEquipe').value.trim(),
+        qtd: parseInt(document.getElementById('bandQtd').value) || 0
+    };
+    if (!b.data || !b.regiao || !b.ponto) { alert('Data, Região e Ponto são obrigatórios.'); return; }
+    if (!DATA.escala_bandeiracos) DATA.escala_bandeiracos = [];
+    
+    // Conflito check: Mesma data, mesmo turno, mesma regiao e mesmo ponto
+    // Ignorar a si mesmo (se for edit)
+    var conflito = DATA.escala_bandeiracos.find(function(x) { 
+        if (id && x.id == id) return false;
+        var mesmoTempo = (x.data === b.data && (x.turno === 'O Dia Todo' || b.turno === 'O Dia Todo' || x.turno === b.turno));
+        var mesmoLugar = (x.regiao === b.regiao && x.ponto.toLowerCase() === b.ponto.toLowerCase());
+        return mesmoTempo && mesmoLugar;
+    });
+    
+    if (conflito) {
+        document.getElementById('bandError').style.display = 'block';
+        return; // Impossibilita o agendamento
+    }
+    
+    if (id) {
+        var idx = DATA.escala_bandeiracos.findIndex(function(x){return x.id==id;});
+        if(idx>=0) { b.id=parseInt(id); DATA.escala_bandeiracos[idx]=b; }
+    } else {
+        b.id = genId();
+        DATA.escala_bandeiracos.push(b);
+    }
+    saveData(); closeModal('modalBandeiraco'); renderBandeiracos();
+}
+
+function delBandeiraco(id) {
+    if (!confirm('Cancelar este bandeiraço/evento?')) return;
+    DATA.escala_bandeiracos = DATA.escala_bandeiracos.filter(function(x){return x.id!=id;});
+    saveData(); renderBandeiracos();
+}
 
 // ==================== INIT ====================
 function refreshStateFromStorage() {
