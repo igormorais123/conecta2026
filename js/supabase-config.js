@@ -25,7 +25,7 @@
             _initialized: true,
             basePath: basePath,
             sitePath: existing.sitePath || 'https://inteia.com.br/',
-            fallbackIconPath: existing.fallbackIconPath || 'https://inteia.com.br/brand/escudo-v2-256.png',
+            fallbackIconPath: existing.fallbackIconPath || (basePath + 'icons/icon-192.png'),
             loginPath: existing.loginPath || basePath + 'login.html',
             appPath: existing.appPath || basePath + 'CONECTA.html',
             contaPath: existing.contaPath || basePath + 'conta.html',
