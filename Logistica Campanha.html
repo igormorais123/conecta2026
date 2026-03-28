@@ -194,6 +194,8 @@ tr:hover td { background:rgba(59,130,246,0.05); }
         <button onclick="showPage('checklist')">Checklist</button>
         <button onclick="showPage('eleitorado')">Eleitorado DF</button>
         <button onclick="showPage('agendasalas')">Agenda Salas</button>
+        <button onclick="showPage('orcamento')">Orçamento</button>
+        <button onclick="showPage('distribuicao')">Distribuição</button>
     </div>
     <div style="margin-left:auto;display:flex;align-items:center;gap:8px;padding-left:12px;">
         <span id="userName" style="font-size:0.78rem;color:var(--text2);font-weight:600;"></span>
@@ -851,6 +853,115 @@ tr:hover td { background:rgba(59,130,246,0.05); }
     </div>
 </div></div>
 
+<!-- ============ ORCAMENTO ============ -->
+<div class="page" id="page-orcamento">
+    <div class="card" style="margin-bottom:16px;">
+        <div class="card-header">
+            <div class="card-title" style="font-size:1.2rem;">Controle Orcamentario da Campanha</div>
+            <button class="btn btn-primary" onclick="openModalOrcamento()">+ Nova Despesa</button>
+        </div>
+        <div class="grid-3" id="orcamentoStats" style="margin-bottom:16px;"></div>
+        <table>
+            <thead><tr>
+                <th>Categoria</th><th>Descricao</th><th>Fornecedor</th>
+                <th style="text-align:right;">Valor (R$)</th><th>Status</th><th>Data</th><th>Acoes</th>
+            </tr></thead>
+            <tbody id="orcamentoBody"></tbody>
+            <tfoot id="orcamentoTotal"></tfoot>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Orcamento -->
+<div class="modal-overlay" id="modalOrcamento">
+<div class="modal">
+    <div class="modal-title" id="modalOrcamentoTitle">Nova Despesa</div>
+    <input type="hidden" id="orcamentoEditId">
+    <div class="grid-2">
+        <div class="form-group"><label>Categoria</label>
+            <select id="orcCategoria">
+                <option value="Grafica">Grafica / Impressao</option>
+                <option value="Transporte">Transporte / Combustivel</option>
+                <option value="Alimentacao">Alimentacao / Eventos</option>
+                <option value="Equipamentos">Equipamentos / Aluguel</option>
+                <option value="Comunicacao">Comunicacao / Midia</option>
+                <option value="Pessoal">Pessoal / Diarias</option>
+                <option value="Juridico">Juridico / Contabil</option>
+                <option value="Outros">Outros</option>
+            </select>
+        </div>
+        <div class="form-group"><label>Status</label>
+            <select id="orcStatus">
+                <option value="Previsto">Previsto</option>
+                <option value="Aprovado">Aprovado</option>
+                <option value="Pago">Pago</option>
+                <option value="Cancelado">Cancelado</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group"><label>Descricao</label><input type="text" id="orcDescricao" placeholder="Ex: 10.000 santinhos"></div>
+    <div class="grid-2">
+        <div class="form-group"><label>Fornecedor</label><input type="text" id="orcFornecedor" placeholder="Nome do fornecedor"></div>
+        <div class="form-group"><label>Valor (R$)</label><input type="number" id="orcValor" min="0" step="0.01" placeholder="0,00"></div>
+    </div>
+    <div class="form-group"><label>Data</label><input type="date" id="orcData"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px;">
+        <button class="btn" style="background:var(--card2);color:var(--text);" onclick="closeModal('modalOrcamento')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveOrcamento()">Salvar</button>
+    </div>
+</div></div>
+
+<!-- ============ DISTRIBUICAO POR REGIAO ============ -->
+<div class="page" id="page-distribuicao">
+    <div class="card" style="margin-bottom:16px;">
+        <div class="card-header">
+            <div class="card-title" style="font-size:1.2rem;">Distribuicao de Material por Regiao</div>
+            <button class="btn btn-primary" onclick="openModalDistribuicao()">+ Registrar Distribuicao</button>
+        </div>
+        <div class="grid-3" id="distStats" style="margin-bottom:16px;"></div>
+        <table>
+            <thead><tr>
+                <th>Regiao / RA</th><th>Material</th><th style="text-align:right;">Quantidade</th>
+                <th>Responsavel</th><th>Data</th><th>Acoes</th>
+            </tr></thead>
+            <tbody id="distribuicaoBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Distribuicao -->
+<div class="modal-overlay" id="modalDistribuicao">
+<div class="modal">
+    <div class="modal-title" id="modalDistribuicaoTitle">Registrar Distribuicao</div>
+    <input type="hidden" id="distEditId">
+    <div class="grid-2">
+        <div class="form-group"><label>Regiao / RA</label>
+            <select id="distRegiao">
+                <option value="">Selecione</option>
+                <option>Plano Piloto</option><option>Gama</option><option>Taguatinga</option>
+                <option>Brazlandia</option><option>Sobradinho</option><option>Planaltina</option>
+                <option>Paranoa</option><option>Nucleo Bandeirante</option><option>Ceilandia</option>
+                <option>Guara</option><option>Cruzeiro</option><option>Samambaia</option>
+                <option>Santa Maria</option><option>Sao Sebastiao</option><option>Recanto das Emas</option>
+                <option>Lago Sul</option><option>Riacho Fundo</option><option>Lago Norte</option>
+                <option>Aguas Claras</option><option>Vicente Pires</option><option>Estrutural</option>
+                <option>Sobradinho II</option><option>Jardim Botanico</option><option>Itapoa</option>
+                <option>Sol Nascente</option><option>Arniqueira</option><option>Fercal</option>
+            </select>
+        </div>
+        <div class="form-group"><label>Material</label><input type="text" id="distMaterial" placeholder="Ex: Santinhos, Adesivos"></div>
+    </div>
+    <div class="grid-2">
+        <div class="form-group"><label>Quantidade</label><input type="number" id="distQtd" min="1" placeholder="0"></div>
+        <div class="form-group"><label>Responsavel</label><input type="text" id="distResponsavel" placeholder="Quem distribuiu"></div>
+    </div>
+    <div class="form-group"><label>Data</label><input type="date" id="distData"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px;">
+        <button class="btn" style="background:var(--card2);color:var(--text);" onclick="closeModal('modalDistribuicao')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveDistribuicao()">Salvar</button>
+    </div>
+</div></div>
+
 <script>
 // ==================== DADOS ====================
 var STORAGE_KEY = 'logistica_celina_2026';
@@ -884,6 +995,8 @@ function defaultData() {
         checklist: {},
         customChecklist: {},
         agendaSalas: [],
+        orcamento: [],
+        distribuicao: [],
         nextId: 1
     };
 }
@@ -905,7 +1018,7 @@ function showPage(id) {
     document.querySelectorAll('.nav-links button').forEach(function(b) { b.classList.remove('active'); });
     document.getElementById('page-' + id).classList.add('active');
     var btns = document.querySelectorAll('.nav-links button');
-    var pages = ['dashboard','tarefas','materiais','fornecedores','equipe','subcoord','calendario','checklist','eleitorado','agendasalas'];
+    var pages = ['dashboard','tarefas','materiais','fornecedores','equipe','subcoord','calendario','checklist','eleitorado','agendasalas','orcamento','distribuicao'];
     var idx = pages.indexOf(id);
     if (idx >= 0 && btns[idx]) btns[idx].classList.add('active');
     if (id === 'dashboard') renderDashboard();
@@ -915,6 +1028,8 @@ function showPage(id) {
     if (id === 'equipe') renderEquipe();
     if (id === 'checklist') renderChecklist();
     if (id === 'agendasalas') renderAgendaSalas();
+    if (id === 'orcamento') renderOrcamento();
+    if (id === 'distribuicao') renderDistribuicao();
 }
 
 window.renderCurrentPage = function() {
@@ -2151,6 +2266,170 @@ function filtrarEleitorado() {
         var cidadeNorm = cidade.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
         tr.style.display = cidadeNorm.indexOf(termo) >= 0 ? '' : 'none';
     });
+}
+
+// ==================== ORCAMENTO ====================
+function openModalOrcamento(id) {
+    document.getElementById('modalOrcamentoTitle').textContent = id ? 'Editar Despesa' : 'Nova Despesa';
+    if (id) {
+        var o = (DATA.orcamento || []).find(function(x) { return x.id === id; });
+        if (!o) return;
+        document.getElementById('orcamentoEditId').value = id;
+        document.getElementById('orcCategoria').value = o.categoria || 'Outros';
+        document.getElementById('orcDescricao').value = o.descricao || '';
+        document.getElementById('orcFornecedor').value = o.fornecedor || '';
+        document.getElementById('orcValor').value = o.valor || '';
+        document.getElementById('orcStatus').value = o.status || 'Previsto';
+        document.getElementById('orcData').value = o.data || '';
+    } else {
+        document.getElementById('orcamentoEditId').value = '';
+        document.getElementById('orcCategoria').value = 'Grafica';
+        document.getElementById('orcDescricao').value = '';
+        document.getElementById('orcFornecedor').value = '';
+        document.getElementById('orcValor').value = '';
+        document.getElementById('orcStatus').value = 'Previsto';
+        document.getElementById('orcData').value = new Date().toISOString().split('T')[0];
+    }
+    document.getElementById('modalOrcamento').classList.add('show');
+}
+
+function saveOrcamento() {
+    if (!DATA.orcamento) DATA.orcamento = [];
+    var id = document.getElementById('orcamentoEditId').value;
+    var item = {
+        id: id ? Number(id) : genId(),
+        categoria: document.getElementById('orcCategoria').value,
+        descricao: document.getElementById('orcDescricao').value,
+        fornecedor: document.getElementById('orcFornecedor').value,
+        valor: parseFloat(document.getElementById('orcValor').value) || 0,
+        status: document.getElementById('orcStatus').value,
+        data: document.getElementById('orcData').value
+    };
+    if (!item.descricao) return;
+    if (id) {
+        var idx = DATA.orcamento.findIndex(function(x) { return x.id === Number(id); });
+        if (idx >= 0) DATA.orcamento[idx] = item;
+    } else {
+        DATA.orcamento.push(item);
+    }
+    saveData(); closeModal('modalOrcamento'); renderOrcamento();
+}
+
+function delOrcamento(id) {
+    if (!confirm('Remover esta despesa?')) return;
+    DATA.orcamento = (DATA.orcamento || []).filter(function(x) { return x.id !== id; });
+    saveData(); renderOrcamento();
+}
+
+function renderOrcamento() {
+    if (!DATA.orcamento) DATA.orcamento = [];
+    var items = DATA.orcamento;
+    var total = 0; var previsto = 0; var pago = 0;
+    items.forEach(function(o) {
+        total += o.valor || 0;
+        if (o.status === 'Previsto' || o.status === 'Aprovado') previsto += o.valor || 0;
+        if (o.status === 'Pago') pago += o.valor || 0;
+    });
+
+    document.getElementById('orcamentoStats').innerHTML =
+        '<div class="card stat" style="background:var(--card2);"><div class="stat-num" style="color:var(--accent);">R$ ' + total.toLocaleString('pt-BR', {minimumFractionDigits:2}) + '</div><div class="stat-label">Total Orcado</div></div>' +
+        '<div class="card stat" style="background:var(--card2);"><div class="stat-num" style="color:var(--orange);">R$ ' + previsto.toLocaleString('pt-BR', {minimumFractionDigits:2}) + '</div><div class="stat-label">Previsto/Aprovado</div></div>' +
+        '<div class="card stat" style="background:var(--card2);"><div class="stat-num" style="color:var(--green);">R$ ' + pago.toLocaleString('pt-BR', {minimumFractionDigits:2}) + '</div><div class="stat-label">Pago</div></div>';
+
+    var statusColors = { Previsto: 'var(--text2)', Aprovado: 'var(--accent)', Pago: 'var(--green)', Cancelado: 'var(--red)' };
+    var html = items.length === 0 ? '<tr><td colspan="7" style="text-align:center;color:var(--text2);padding:30px;">Nenhuma despesa registrada</td></tr>' :
+        items.sort(function(a,b) { return (b.data||'').localeCompare(a.data||''); }).map(function(o) {
+            return '<tr>' +
+                '<td><span class="badge" style="background:var(--card2);font-size:.75rem;">' + esc(o.categoria) + '</span></td>' +
+                '<td>' + esc(o.descricao) + '</td>' +
+                '<td>' + esc(o.fornecedor) + '</td>' +
+                '<td style="text-align:right;font-weight:600;">R$ ' + (o.valor||0).toLocaleString('pt-BR', {minimumFractionDigits:2}) + '</td>' +
+                '<td><span class="badge" style="background:' + (statusColors[o.status]||'var(--text2)') + ';color:#fff;font-size:.7rem;">' + o.status + '</span></td>' +
+                '<td>' + formatDate(o.data) + '</td>' +
+                '<td><button class="btn btn-sm" style="background:var(--accent);color:#fff;" onclick="openModalOrcamento(' + o.id + ')">Editar</button> <button class="btn btn-sm" style="background:var(--red);color:#fff;" onclick="delOrcamento(' + o.id + ')">X</button></td>' +
+                '</tr>';
+        }).join('');
+    document.getElementById('orcamentoBody').innerHTML = html;
+    document.getElementById('orcamentoTotal').innerHTML = items.length > 0 ? '<tr style="background:var(--card2);font-weight:700;"><td colspan="3"><strong>TOTAL</strong></td><td style="text-align:right;"><strong>R$ ' + total.toLocaleString('pt-BR', {minimumFractionDigits:2}) + '</strong></td><td colspan="3"></td></tr>' : '';
+}
+
+// ==================== DISTRIBUICAO ====================
+function openModalDistribuicao(id) {
+    document.getElementById('modalDistribuicaoTitle').textContent = id ? 'Editar Distribuicao' : 'Registrar Distribuicao';
+    if (id) {
+        var d = (DATA.distribuicao || []).find(function(x) { return x.id === id; });
+        if (!d) return;
+        document.getElementById('distEditId').value = id;
+        document.getElementById('distRegiao').value = d.regiao || '';
+        document.getElementById('distMaterial').value = d.material || '';
+        document.getElementById('distQtd').value = d.qtd || '';
+        document.getElementById('distResponsavel').value = d.responsavel || '';
+        document.getElementById('distData').value = d.data || '';
+    } else {
+        document.getElementById('distEditId').value = '';
+        document.getElementById('distRegiao').value = '';
+        document.getElementById('distMaterial').value = '';
+        document.getElementById('distQtd').value = '';
+        document.getElementById('distResponsavel').value = '';
+        document.getElementById('distData').value = new Date().toISOString().split('T')[0];
+    }
+    document.getElementById('modalDistribuicao').classList.add('show');
+}
+
+function saveDistribuicao() {
+    if (!DATA.distribuicao) DATA.distribuicao = [];
+    var id = document.getElementById('distEditId').value;
+    var item = {
+        id: id ? Number(id) : genId(),
+        regiao: document.getElementById('distRegiao').value,
+        material: document.getElementById('distMaterial').value,
+        qtd: parseInt(document.getElementById('distQtd').value) || 0,
+        responsavel: document.getElementById('distResponsavel').value,
+        data: document.getElementById('distData').value
+    };
+    if (!item.regiao || !item.material) return;
+    if (id) {
+        var idx = DATA.distribuicao.findIndex(function(x) { return x.id === Number(id); });
+        if (idx >= 0) DATA.distribuicao[idx] = item;
+    } else {
+        DATA.distribuicao.push(item);
+    }
+    saveData(); closeModal('modalDistribuicao'); renderDistribuicao();
+}
+
+function delDistribuicao(id) {
+    if (!confirm('Remover este registro?')) return;
+    DATA.distribuicao = (DATA.distribuicao || []).filter(function(x) { return x.id !== id; });
+    saveData(); renderDistribuicao();
+}
+
+function renderDistribuicao() {
+    if (!DATA.distribuicao) DATA.distribuicao = [];
+    var items = DATA.distribuicao;
+    var totalQtd = 0; var regioes = {}; var materiais = {};
+    items.forEach(function(d) {
+        totalQtd += d.qtd || 0;
+        regioes[d.regiao] = (regioes[d.regiao] || 0) + (d.qtd || 0);
+        materiais[d.material] = (materiais[d.material] || 0) + (d.qtd || 0);
+    });
+
+    document.getElementById('distStats').innerHTML =
+        '<div class="card stat" style="background:var(--card2);"><div class="stat-num" style="color:var(--accent);">' + totalQtd.toLocaleString('pt-BR') + '</div><div class="stat-label">Itens Distribuidos</div></div>' +
+        '<div class="card stat" style="background:var(--card2);"><div class="stat-num" style="color:var(--cyan);">' + Object.keys(regioes).length + '</div><div class="stat-label">Regioes Atendidas</div></div>' +
+        '<div class="card stat" style="background:var(--card2);"><div class="stat-num" style="color:var(--green);">' + Object.keys(materiais).length + '</div><div class="stat-label">Tipos de Material</div></div>';
+
+    var html = items.length === 0 ? '<tr><td colspan="6" style="text-align:center;color:var(--text2);padding:30px;">Nenhuma distribuicao registrada</td></tr>' :
+        items.sort(function(a,b) { return (b.data||'').localeCompare(a.data||''); }).map(function(d) {
+            return '<tr>' +
+                '<td><strong>' + esc(d.regiao) + '</strong></td>' +
+                '<td>' + esc(d.material) + '</td>' +
+                '<td style="text-align:right;font-weight:600;">' + (d.qtd||0).toLocaleString('pt-BR') + '</td>' +
+                '<td>' + esc(d.responsavel) + '</td>' +
+                '<td>' + formatDate(d.data) + '</td>' +
+                '<td><button class="btn btn-sm" style="background:var(--accent);color:#fff;" onclick="openModalDistribuicao(' + d.id + ')">Editar</button> <button class="btn btn-sm" style="background:var(--red);color:#fff;" onclick="delDistribuicao(' + d.id + ')">X</button></td>' +
+                '</tr>';
+        }).join('');
+    document.getElementById('distribuicaoBody').innerHTML = html;
 }
 
 // ==================== UTILS ====================
