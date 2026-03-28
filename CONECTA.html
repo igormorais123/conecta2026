@@ -1211,6 +1211,15 @@
             .main-content { margin-left: 0; }
             .menu-toggle { display: block; }
             .dashboard-grid { grid-template-columns: 1fr; }
+            table { display: block; overflow-x: auto; white-space: nowrap; }
+            .section-header { flex-direction: column; gap: 8px; }
+            .section-header input, .section-header select { width: 100%; }
+        }
+        @media (max-width: 480px) {
+            .header { font-size: 0.8rem; padding: 8px 12px; gap: 6px; }
+            .header button { font-size: 0.7rem; padding: 4px 8px; }
+            .stat-card { padding: 12px; }
+            .stat-number { font-size: 1.8rem; }
         }
 
         /* ===== SCROLLBAR ===== */

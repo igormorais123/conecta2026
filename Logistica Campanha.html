@@ -172,8 +172,15 @@ tr:hover td { background:rgba(59,130,246,0.05); }
 @media(max-width:768px) {
     .grid-2,.grid-3,.grid-4 { grid-template-columns:1fr; }
     .countdown-grid { grid-template-columns:repeat(2,1fr); }
-    .nav-links { font-size:.7rem; }
+    .nav-links { font-size:.7rem; flex-wrap:wrap; }
     #salasStatusGrid { grid-template-columns:repeat(3,1fr) !important; }
+    table { display:block; overflow-x:auto; white-space:nowrap; }
+}
+@media(max-width:480px) {
+    .countdown-grid { grid-template-columns:1fr; }
+    .nav-links { gap:4px; }
+    .nav-links button { font-size:.6rem; padding:6px 8px; }
+    .header { flex-wrap:wrap; gap:4px; }
 }
 </style>
 </head>
