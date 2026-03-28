@@ -25,12 +25,17 @@
             _initialized: true,
             basePath: basePath,
             sitePath: existing.sitePath || 'https://inteia.com.br/',
+            fallbackIconPath: existing.fallbackIconPath || 'https://inteia.com.br/brand/escudo-v2-256.png',
             loginPath: existing.loginPath || basePath + 'login.html',
             appPath: existing.appPath || basePath + 'CONECTA.html',
             contaPath: existing.contaPath || basePath + 'conta.html',
             logisticaPath: existing.logisticaPath || basePath + 'Logistica Campanha.html',
             cadastroPublicoPath: existing.cadastroPublicoPath || basePath + 'cadastro-apoiador.html'
         };
+    }
+
+    function isHostedConectaProduction() {
+        return window.location.origin === 'https://inteia.com.br' && window.location.pathname.indexOf('/conecta2026/') === 0;
     }
 
     function dispatchReady() {
@@ -55,6 +60,47 @@
     }
 
     window.CONECTA_CONFIG = createConfig();
+
+    window.CONECTA_APPLY_PWA = function(options) {
+        options = options || {};
+
+        var cfg = window.CONECTA_CONFIG || {};
+        var basePath = cfg.basePath || './';
+        var manifestLink = options.manifestLink || null;
+        var faviconLink = options.faviconLink || null;
+        var appleTouchIcon = options.appleTouchIcon || null;
+        var shouldRegisterServiceWorker = options.registerServiceWorker !== false;
+        var fallbackIconPath = cfg.fallbackIconPath || 'https://inteia.com.br/brand/escudo-v2-256.png';
+        var useHostedFallback = isHostedConectaProduction();
+
+        if (manifestLink) {
+            if (useHostedFallback) {
+                manifestLink.removeAttribute('href');
+                manifestLink.remove();
+            } else {
+                manifestLink.href = basePath + 'manifest.json';
+            }
+        }
+
+        if (faviconLink) {
+            faviconLink.href = useHostedFallback ? fallbackIconPath : basePath + 'icons/favicon.svg';
+            faviconLink.type = useHostedFallback ? 'image/png' : 'image/svg+xml';
+        }
+
+        if (appleTouchIcon) {
+            appleTouchIcon.href = useHostedFallback ? fallbackIconPath : basePath + 'icons/icon-192.png';
+        }
+
+        if (!shouldRegisterServiceWorker || !('serviceWorker' in navigator) || useHostedFallback) {
+            return;
+        }
+
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register(basePath + 'service-worker.js').catch(function(error) {
+                console.warn('Falha ao registrar service worker do CONECTA:', error);
+            });
+        });
+    };
 
     var supabaseUrl = window.CONECTA_SUPABASE_URL || 'https://dvgbqbwipwegkndutvte.supabase.co';
     var supabaseAnonKey = window.CONECTA_SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2Z2JxYndpcHdlZ2tuZHV0dnRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MjY1MTgsImV4cCI6MjA5MDIwMjUxOH0.HM53lLdM4tN-9cndCIp2DgMHQ0BrWcSDnOArIr8XL8w';

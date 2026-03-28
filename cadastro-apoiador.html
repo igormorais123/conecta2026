@@ -4,7 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cadastro de Apoiador - Celina Leão</title>
-    <link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+    <link rel="icon" id="faviconLink" href="icons/favicon.svg" type="image/svg+xml">
+    <script>
+        (function initPublicFavicon() {
+            var faviconLink = document.getElementById('faviconLink');
+            if (!faviconLink) return;
+            if (window.location.origin === 'https://inteia.com.br' && window.location.pathname.indexOf('/conecta2026/') === 0) {
+                faviconLink.href = 'https://inteia.com.br/brand/escudo-v2-256.png';
+                faviconLink.type = 'image/png';
+            }
+        })();
+    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 

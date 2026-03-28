@@ -19,27 +19,11 @@
     <script src="js/conecta-db.js"></script>
     <script>
         (function initPwaAssets() {
-            var cfg = window.CONECTA_CONFIG || {};
-            var basePath = cfg.basePath || './';
-            var manifestLink = document.getElementById('manifestLink');
-            var faviconLink = document.getElementById('faviconLink');
-            var appleTouchIcon = document.getElementById('appleTouchIcon');
-
-            if (manifestLink) {
-                manifestLink.href = basePath + 'manifest.json';
-            }
-            if (faviconLink) {
-                faviconLink.href = basePath + 'icons/favicon.svg';
-            }
-            if (appleTouchIcon) {
-                appleTouchIcon.href = basePath + 'icons/icon-192.png';
-            }
-
-            if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                    navigator.serviceWorker.register(basePath + 'service-worker.js').catch(function(error) {
-                        console.warn('Falha ao registrar service worker do CONECTA:', error);
-                    });
+            if (typeof window.CONECTA_APPLY_PWA === 'function') {
+                window.CONECTA_APPLY_PWA({
+                    manifestLink: document.getElementById('manifestLink'),
+                    faviconLink: document.getElementById('faviconLink'),
+                    appleTouchIcon: document.getElementById('appleTouchIcon')
                 });
             }
         })();

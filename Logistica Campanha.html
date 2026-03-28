@@ -172,9 +172,13 @@ tr:hover td { background:rgba(59,130,246,0.05); }
 @media(max-width:768px) {
     .grid-2,.grid-3,.grid-4 { grid-template-columns:1fr; }
     .countdown-grid { grid-template-columns:repeat(2,1fr); }
-    .nav-links { font-size:.7rem; flex-wrap:wrap; }
+    .nav-links { font-size:.75rem; white-space:nowrap; overflow-x:auto; padding-bottom:8px; display:flex; -webkit-overflow-scrolling:touch; }
     #salasStatusGrid { grid-template-columns:repeat(3,1fr) !important; }
     table { display:block; overflow-x:auto; white-space:nowrap; }
+    .modal { width:95%; padding:16px; margin:20px auto; }
+    .nav { flex-direction:column; align-items:flex-start; height:auto; padding:10px; }
+    .nav > div:last-child { margin-left:0; margin-top:10px; flex-wrap:wrap; }
+    .form-group input, .form-group select { font-size:16px; } 
 }
 @media(max-width:480px) {
     .countdown-grid { grid-template-columns:1fr; }
@@ -203,6 +207,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
         <button onclick="showPage('agendasalas')">Agenda Salas</button>
         <button onclick="showPage('orcamento')">Orçamento</button>
         <button onclick="showPage('distribuicao')">Distribuição</button>
+        <button onclick="showPage('vales')">Vales Combustíveis</button>
     </div>
     <div style="margin-left:auto;display:flex;align-items:center;gap:8px;padding-left:12px;">
         <span id="userName" style="font-size:0.78rem;color:var(--text2);font-weight:600;"></span>
@@ -970,6 +975,42 @@ tr:hover td { background:rgba(59,130,246,0.05); }
     </div>
 </div></div>
 
+<!-- ============ VALES COMBUSTÍVEL ============ -->
+<div class="page" id="page-vales">
+    <div class="card-header" style="margin-bottom:16px;">
+        <div>
+            <div class="card-title" style="font-size:1.2rem;">Vales Combustíveis</div>
+            <div class="card-subtitle">Controle de abastecimento da frota de rua</div>
+        </div>
+        <button class="btn btn-primary" onclick="openModalVale()">+ Emitir Vale</button>
+    </div>
+    <div class="grid-2" id="valesStats" style="margin-bottom:16px;"></div>
+    <div class="card"><table><thead><tr>
+        <th>Placa</th><th>Modelo</th><th>Responsável / Liderança</th><th>Litros</th><th>Valor R$</th><th>Data</th><th>Ações</th>
+    </tr></thead><tbody id="tbVales"></tbody></table></div>
+</div>
+
+<!-- Modal Vales -->
+<div class="modal-overlay" id="modalVale">
+<div class="modal">
+    <div class="modal-title">Emitir Vale Combustível</div>
+    <input type="hidden" id="valeEditId">
+    <div class="grid-2">
+        <div class="form-group"><label>Placa do Veículo</label><input type="text" id="valePlaca" placeholder="Ex: ABC-1234"></div>
+        <div class="form-group"><label>Modelo / Cor</label><input type="text" id="valeModelo" placeholder="Ex: Gol Prata"></div>
+    </div>
+    <div class="form-group"><label>Liderança / Responsável do Veículo</label><input type="text" id="valeMotorista" placeholder="Nome de quem abasteceu"></div>
+    <div class="grid-3">
+        <div class="form-group"><label>Data</label><input type="date" id="valeData"></div>
+        <div class="form-group"><label>Qtd Litros (Opcional)</label><input type="number" id="valeLitros" step="0.1"></div>
+        <div class="form-group"><label>Valor (R$)</label><input type="number" id="valeValor" step="0.01"></div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px;">
+        <button class="btn" style="background:var(--card2);color:var(--text);" onclick="closeModal('modalVale')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveVale()">Salvar Vale</button>
+    </div>
+</div></div>
+
 <script>
 // ==================== DADOS ====================
 var STORAGE_KEY = 'logistica_celina_2026';
@@ -1005,6 +1046,7 @@ function defaultData() {
         agendaSalas: [],
         orcamento: [],
         distribuicao: [],
+        vales_combustivel: [],
         nextId: 1
     };
 }
@@ -1026,7 +1068,7 @@ function showPage(id) {
     document.querySelectorAll('.nav-links button').forEach(function(b) { b.classList.remove('active'); });
     document.getElementById('page-' + id).classList.add('active');
     var btns = document.querySelectorAll('.nav-links button');
-    var pages = ['dashboard','tarefas','materiais','fornecedores','equipe','subcoord','calendario','checklist','eleitorado','agendasalas','orcamento','distribuicao'];
+    var pages = ['dashboard','tarefas','materiais','fornecedores','equipe','subcoord','calendario','checklist','eleitorado','agendasalas','orcamento','distribuicao','vales'];
     var idx = pages.indexOf(id);
     if (idx >= 0 && btns[idx]) btns[idx].classList.add('active');
     if (id === 'dashboard') renderDashboard();
@@ -1038,6 +1080,7 @@ function showPage(id) {
     if (id === 'agendasalas') renderAgendaSalas();
     if (id === 'orcamento') renderOrcamento();
     if (id === 'distribuicao') renderDistribuicao();
+    if (id === 'vales') renderVales();
 }
 
 window.renderCurrentPage = function() {
