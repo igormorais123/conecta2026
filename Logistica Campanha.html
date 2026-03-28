@@ -206,6 +206,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
     </div>
     <div style="margin-left:auto;display:flex;align-items:center;gap:8px;padding-left:12px;">
         <span id="userName" style="font-size:0.78rem;color:var(--text2);font-weight:600;"></span>
+        <button class="btn btn-sm" style="background:var(--accent);color:#fff;" onclick="openInteiaSite()">INTEIA</button>
         <button class="btn btn-sm" style="background:var(--green);color:#fff;" onclick="window.location.href=(window.CONECTA_CONFIG && window.CONECTA_CONFIG.appPath) || 'CONECTA.html'">&#8592; CONECTA</button>
         <button class="btn btn-sm" style="background:var(--card2);color:#fff;" onclick="window.location.href=(window.CONECTA_CONFIG && window.CONECTA_CONFIG.contaPath) || 'conta.html'">Conta</button>
         <button class="btn btn-sm" style="background:var(--red);color:#fff;" onclick="ConectaDB.logout()">Sair</button>
@@ -2471,6 +2472,11 @@ function showQRCode() {
         '</div>';
     overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
     document.body.appendChild(overlay);
+}
+
+function openInteiaSite() {
+    var sitePath = (window.CONECTA_CONFIG && window.CONECTA_CONFIG.sitePath) || 'https://inteia.com.br/';
+    window.open(sitePath, '_blank', 'noopener');
 }
 
 // Click fora do modal fecha

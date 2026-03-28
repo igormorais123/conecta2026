@@ -91,6 +91,18 @@
         }
 
         .login-card h2 { margin-bottom: 20px; font-size: 1.1rem; text-align: center; }
+        .login-links {
+            display: flex;
+            justify-content: center;
+            margin: 4px 0 18px;
+        }
+        .login-links a {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 700;
+        }
+        .login-links a:hover { text-decoration: underline; }
 
         .field { margin-bottom: 16px; }
         .field label {
@@ -201,6 +213,9 @@
 
     <div class="login-card">
         <h2>Acesse o sistema</h2>
+        <div class="login-links">
+            <a id="linkInteia" href="https://inteia.com.br" target="_blank" rel="noopener noreferrer">Voltar ao site da INTEIA</a>
+        </div>
         <div id="message" class="message"></div>
 
         <form id="loginForm" autocomplete="on">
@@ -227,7 +242,7 @@
 
     <div class="footer">
         Sistema de campanha - acesso restrito<br>
-        Implementado por <a href="https://inteia.com.br" target="_blank" style="color:#94a3b8;text-decoration:none;">INTEIA - Inteligencia Estrategica Eleitoral</a><br>
+        Implementado por <a id="footerInteiaLink" href="https://inteia.com.br" target="_blank" rel="noopener noreferrer" style="color:#94a3b8;text-decoration:none;">INTEIA - Inteligencia Estrategica Eleitoral</a><br>
         Sistema desenvolvido por Silvio Morais Vieira
     </div>
 </div>
@@ -235,6 +250,12 @@
 <script>
 (function() {
     'use strict';
+
+    var sitePath = (window.CONECTA_CONFIG && window.CONECTA_CONFIG.sitePath) || 'https://inteia.com.br/';
+    var linkInteia = document.getElementById('linkInteia');
+    var footerInteiaLink = document.getElementById('footerInteiaLink');
+    if (linkInteia) linkInteia.href = sitePath;
+    if (footerInteiaLink) footerInteiaLink.href = sitePath;
 
     async function resolveEmail(client, username) {
         try {

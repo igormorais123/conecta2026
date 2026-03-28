@@ -24,6 +24,7 @@
         return {
             _initialized: true,
             basePath: basePath,
+            sitePath: existing.sitePath || 'https://inteia.com.br/',
             loginPath: existing.loginPath || basePath + 'login.html',
             appPath: existing.appPath || basePath + 'CONECTA.html',
             contaPath: existing.contaPath || basePath + 'conta.html',

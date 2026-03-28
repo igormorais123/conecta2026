@@ -1727,6 +1727,7 @@
         <span class="header-clock" id="clock"></span>
         <span id="userName" style="font-size:0.8rem;color:var(--text-light);font-weight:600;"></span>
         <span id="syncStatusBadge" style="font-size:0.72rem;font-weight:700;padding:6px 10px;border-radius:999px;background:#eceff1;color:#455a64;">Sync local</span>
+        <button class="btn-header" onclick="openInteiaSite()">Site INTEIA</button>
         <button class="btn-header" onclick="window.location.href=(window.CONECTA_CONFIG && window.CONECTA_CONFIG.contaPath) || 'conta.html'">Minha Conta</button>
         <button class="btn-header" onclick="ConectaDB.logout()">Sair</button>
         <button class="btn-header" onclick="syncAgora()">Sincronizar</button>
@@ -4989,6 +4990,11 @@ async function syncAgora() {
         updateSyncBadge(window.ConectaDB.getSyncStatus());
         alert('Nao foi possivel concluir a sincronizacao agora.');
     }
+}
+
+function openInteiaSite() {
+    var sitePath = (window.CONECTA_CONFIG && window.CONECTA_CONFIG.sitePath) || 'https://inteia.com.br/';
+    window.open(sitePath, '_blank', 'noopener');
 }
 
 function triggerImportBackup() {

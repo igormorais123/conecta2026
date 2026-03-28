@@ -116,6 +116,12 @@
             flex-wrap: wrap;
             margin-top: 8px;
         }
+        .secondary-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+        }
         button, a.button-link {
             border: none;
             border-radius: 8px;
@@ -184,11 +190,14 @@
             <a class="button-link secondary" id="linkVoltar" href="CONECTA.html">Voltar ao CONECTA</a>
             <button class="danger" id="logoutButton" type="button">Sair</button>
         </div>
+        <div class="secondary-links">
+            <a class="button-link secondary" id="linkInteia" href="https://inteia.com.br" target="_blank" rel="noopener noreferrer">Abrir site da INTEIA</a>
+        </div>
 
         <div id="message" class="message"></div>
 
         <div class="footer">
-            Implementado por INTEIA - Inteligencia Estrategica Eleitoral<br>
+            Implementado por <a id="footerInteiaLink" href="https://inteia.com.br" target="_blank" rel="noopener noreferrer" style="color:#64748b;text-decoration:none;">INTEIA - Inteligencia Estrategica Eleitoral</a><br>
             Sistema desenvolvido por Silvio Morais Vieira
         </div>
     </div>
@@ -204,6 +213,9 @@
         var emailEl = document.getElementById('profileEmail');
         var newPasswordEl = document.getElementById('newPassword');
         var confirmPasswordEl = document.getElementById('confirmPassword');
+        var linkVoltar = document.getElementById('linkVoltar');
+        var linkInteia = document.getElementById('linkInteia');
+        var footerInteiaLink = document.getElementById('footerInteiaLink');
 
         function showMessage(text, type) {
             messageEl.textContent = text;
@@ -232,6 +244,17 @@
             var profile = await ConectaDB.getUserProfile();
             nameEl.textContent = profile && profile.nome ? profile.nome : user.email;
             emailEl.textContent = user.email || '-';
+        }
+
+        var cfg = window.CONECTA_CONFIG || {};
+        if (linkVoltar) {
+            linkVoltar.href = cfg.appPath || 'CONECTA.html';
+        }
+        if (linkInteia) {
+            linkInteia.href = cfg.sitePath || 'https://inteia.com.br/';
+        }
+        if (footerInteiaLink) {
+            footerInteiaLink.href = cfg.sitePath || 'https://inteia.com.br/';
         }
 
         saveButton.addEventListener('click', async function() {
