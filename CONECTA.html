@@ -5156,8 +5156,15 @@ async function bootstrapApp() {
     if (window.__conectaAppBootstrapped) return;
     window.__conectaAppBootstrapped = true;
 
-    if (!window.CONECTA_SUPABASE || window._conectaSupabaseError) {
-        window.location.href = (window.CONECTA_CONFIG && window.CONECTA_CONFIG.loginPath) || 'login.html';
+    // Se o Supabase nao carregou mas temos dados locais, funcionar offline
+    if (!window.CONECTA_SUPABASE) {
+        if (window._conectaSupabaseError) {
+            console.warn('[CONECTA] Supabase indisponivel, funcionando com dados locais.');
+            init();
+            return;
+        }
+        // Sem Supabase e sem erro = ainda carregando, nao redirecionar
+        window.addEventListener('conecta-supabase-ready', bootstrapApp, { once: true });
         return;
     }
 
@@ -5179,8 +5186,10 @@ async function bootstrapApp() {
             userNameEl.textContent = profile && profile.nome ? profile.nome : (sessionResult.data.session.user.email || '');
         }
     } catch (error) {
-        console.error('Falha ao inicializar sessao do CONECTA:', error);
-        window.location.href = (window.CONECTA_CONFIG && window.CONECTA_CONFIG.loginPath) || 'login.html';
+        console.error('Falha ao verificar sessao do CONECTA:', error);
+        // Se deu erro de rede na verificacao, funcionar com dados locais em vez de redirecionar
+        console.warn('[CONECTA] Erro de sessao, funcionando com dados locais.');
+        init();
         return;
     }
 

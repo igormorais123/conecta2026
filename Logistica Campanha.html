@@ -2855,8 +2855,14 @@ async function bootstrapLogistica() {
     if (window.__logisticaBootstrapped) return;
     window.__logisticaBootstrapped = true;
 
-    if (!window.CONECTA_SUPABASE || window._conectaSupabaseError) {
-        window.location.href = (window.CONECTA_CONFIG && window.CONECTA_CONFIG.loginPath) || 'login.html';
+    if (!window.CONECTA_SUPABASE) {
+        if (window._conectaSupabaseError) {
+            console.warn('[Logistica] Supabase indisponivel, funcionando com dados locais.');
+            renderDashboard();
+            setInterval(updateCountdown, 60000);
+            return;
+        }
+        window.addEventListener('conecta-supabase-ready', bootstrapLogistica, { once: true });
         return;
     }
 
@@ -2878,8 +2884,10 @@ async function bootstrapLogistica() {
             userNameEl.textContent = profile && profile.nome ? profile.nome : (sessionResult.data.session.user.email || '');
         }
     } catch (error) {
-        console.error('Falha ao inicializar a Logistica:', error);
-        window.location.href = (window.CONECTA_CONFIG && window.CONECTA_CONFIG.loginPath) || 'login.html';
+        console.error('Falha ao verificar sessao na Logistica:', error);
+        console.warn('[Logistica] Erro de sessao, funcionando com dados locais.');
+        renderDashboard();
+        setInterval(updateCountdown, 60000);
         return;
     }
 
