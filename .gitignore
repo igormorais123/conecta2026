@@ -3,3 +3,6 @@ screenshot-*.png
 test-browser.js
 setup/CREDENCIAIS.md
 server-http.log
+
+.vercel
+.gstack/
