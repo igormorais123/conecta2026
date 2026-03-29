@@ -28,11 +28,11 @@
 
 ### Visualizacoes Avancadas (Heatmap + War Room)
 
-- [ ] **VIS-01**: Heatmap geografico Leaflet.js com cobertura das RAs do DF
-- [ ] **VIS-02**: Heatmap de gaps (areas nao visitadas) destacadas
-- [ ] **VIS-03**: War Room: feed de atividade em tempo real via Socket.IO
-- [ ] **VIS-04**: War Room: alertas ativos com indicador visual
-- [ ] **VIS-05**: War Room: pulso da campanha (indicador de atividade geral)
+- [x] **VIS-01**: Heatmap geografico Leaflet.js com cobertura das RAs do DF
+- [x] **VIS-02**: Heatmap de gaps (areas nao visitadas) destacadas
+- [x] **VIS-03**: War Room: feed de atividade em tempo real via Socket.IO
+- [x] **VIS-04**: War Room: alertas ativos com indicador visual
+- [x] **VIS-05**: War Room: pulso da campanha (indicador de atividade geral)
 
 ### Operacoes de Campo (Tarefas + Desafios + Social)
 
@@ -79,8 +79,8 @@
 | INFRA-01..04 | Phase 1: Fundacao | Pending |
 | CLIENT-01..04 | Phase 1: Fundacao | Pending |
 | DASH-01..07 | Phase 2: Dashboard Core | Complete |
-| VIS-01..02 | Phase 3: Visualizacoes | Pending |
-| VIS-03..05 | Phase 3: Visualizacoes | Pending |
+| VIS-01..02 | Phase 3: Visualizacoes | Complete |
+| VIS-03..05 | Phase 3: Visualizacoes | Complete |
 | OPS-01..04 | Phase 4: Operacoes | Pending |
 | OPS-05..06 | Phase 4: Operacoes | Pending |
 | OPS-07..08 | Phase 4: Operacoes | Pending |

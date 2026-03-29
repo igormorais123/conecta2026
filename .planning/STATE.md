@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Coordenadores no CONECTA veem em tempo real a performance dos cabos eleitorais
-**Current focus:** Phase 2 — Dashboard Core (completa)
+**Current focus:** Phase 3 — Visualizacoes Avancadas (completa)
 
 ## Current Phase
 
-**Phase:** 2 — Dashboard Core
+**Phase:** 3 — Visualizacoes Avancadas
 **Status:** Complete (3/3 tasks)
 **Current Plan:** 01 (complete)
-**Next action:** Phase 3 — Visualizacoes Avancadas
+**Next action:** Phase 4 — Operacoes de Campo
 
 ## Milestone Progress
 
@@ -20,7 +20,7 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 |-------|------|--------|
 | 1 | Fundacao | In progress (60%) |
 | 2 | Dashboard Core | Complete |
-| 3 | Visualizacoes Avancadas | Not started |
+| 3 | Visualizacoes Avancadas | Complete |
 | 4 | Operacoes de Campo | Not started |
 | 5 | Hardening | Not started |
 
@@ -32,6 +32,12 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 - Grafico usa fallback com distribuicao uniforme dos KPIs quando API nao retorna serie temporal
 - showPage interceptado via wrapper para disparar renderGamificacao automaticamente
 - Leaderboard limitado a 20 cabos no frontend para nao sobrecarregar o DOM
+- Tiles OpenStreetMap gratuitos em vez de Google Maps/Mapbox (sem token)
+- Limite 500 pontos no heatmap (Pitfall 11 performance Leaflet.heat)
+- JWT no auth.token do handshake Socket.IO (nao em query string)
+- Polling fallback REST 30s quando Socket.IO indisponivel
+- _safeText() sanitizador universal para dados externos no DOM (Pitfall 3)
+- Leaflet inicializado lazy (so na primeira abertura, Pitfall 10)
 
 ## Performance Metrics
 
@@ -39,6 +45,7 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 |-----------|----------|-------|-------|------|
 | 01-01 | 5min | 3/5 | 3 | 2026-03-29 |
 | 02-01 | 5min | 3/3 | 2 | 2026-03-29 |
+| 03-01 | 8min | 3/3 | 1 | 2026-03-29 |
 
 ## Blockers
 
@@ -48,8 +55,8 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 
 ## Last Session
 
-**Date:** 2026-03-29T12:53:00Z
-**Stopped at:** Completed 02-PLAN.md (3/3 tasks completas)
+**Date:** 2026-03-29T15:37:00Z
+**Stopped at:** Completed 03-PLAN.md (3/3 tasks completas — Phase 3 done)
 
 ---
-*Last updated: 2026-03-29 (Phase 2 complete)*
+*Last updated: 2026-03-29 (Phase 3 complete)*
