@@ -241,6 +241,72 @@ window.ElexionClient = (() => {
     return request('/analytics/teams/ranking');
   }
 
+  // ---- Operacoes de Campo (Phase 4) ----
+
+  /** GET /api/v1/tasks — lista tarefas de campo paginadas */
+  async function fetchTasks(filters = {}) {
+    const params = new URLSearchParams();
+    if (filters.status) params.set('status', filters.status);
+    if (filters.type) params.set('type', filters.type);
+    params.set('page', '1');
+    params.set('limit', '20');
+    return request('/tasks?' + params.toString());
+  }
+
+  /** GET /api/v1/tasks/:id/reports */
+  async function fetchTaskReports(taskId) {
+    return request('/tasks/' + encodeURIComponent(taskId) + '/reports');
+  }
+
+  /** POST /api/v1/tasks — requer role COORDINATOR */
+  async function createTask(payload) {
+    return request('/tasks', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
+
+  /** POST /api/v1/tasks/:id/assign */
+  async function assignTask(taskId, workerId) {
+    return request('/tasks/' + encodeURIComponent(taskId) + '/assign', {
+      method: 'POST',
+      body: JSON.stringify({ workerId }),
+    });
+  }
+
+  /** GET /api/v1/challenges?status=active */
+  async function fetchChallenges() {
+    return request('/challenges?status=active');
+  }
+
+  /** POST /api/v1/challenges — requer role COORDINATOR */
+  async function createChallenge(payload) {
+    return request('/challenges', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
+
+  /** GET /api/v1/challenges/:id/progress */
+  async function fetchChallengeProgress(challengeId) {
+    return request('/challenges/' + encodeURIComponent(challengeId) + '/progress');
+  }
+
+  /** GET /api/v1/challenges/:id/leaderboard */
+  async function fetchChallengeLeaderboard(challengeId) {
+    return request('/challenges/' + encodeURIComponent(challengeId) + '/leaderboard');
+  }
+
+  /** GET /api/v1/social/team/:teamId/metrics */
+  async function fetchSocialTeamMetrics(teamId) {
+    return request('/social/team/' + encodeURIComponent(teamId) + '/metrics');
+  }
+
+  /** GET /api/v1/social/scorecard/:userId */
+  async function fetchSocialScorecard(userId) {
+    return request('/social/scorecard/' + encodeURIComponent(userId) + '/');
+  }
+
   // ---- API publica ----
 
   return {
@@ -250,7 +316,7 @@ window.ElexionClient = (() => {
     isAuthenticated,
     getCurrentUser,
     request,
-    // Endpoints
+    // Endpoints — Dashboard Core (Phase 2)
     fetchKpis,
     fetchHeatmap,
     fetchHeatmapGaps,
@@ -259,5 +325,16 @@ window.ElexionClient = (() => {
     fetchAlerts,
     fetchLeaderboard,
     fetchTeamsRanking,
+    // Endpoints — Operacoes de Campo (Phase 4)
+    fetchTasks,
+    fetchTaskReports,
+    createTask,
+    assignTask,
+    fetchChallenges,
+    createChallenge,
+    fetchChallengeProgress,
+    fetchChallengeLeaderboard,
+    fetchSocialTeamMetrics,
+    fetchSocialScorecard,
   };
 })();

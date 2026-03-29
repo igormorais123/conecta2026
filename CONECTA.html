@@ -1883,6 +1883,18 @@
             <span>War Room</span>
             <span class="nav-badge" id="badge-war-room" style="background:#ef4444;display:none;">0</span>
         </div>
+        <div class="nav-item" onclick="showPage('tarefas-campo')">
+            <span class="nav-icon">&#9989;</span>
+            <span>Tarefas de Campo</span>
+        </div>
+        <div class="nav-item" onclick="showPage('desafios')">
+            <span class="nav-icon">&#127942;</span>
+            <span>Desafios</span>
+        </div>
+        <div class="nav-item" onclick="showPage('social')">
+            <span class="nav-icon">&#128241;</span>
+            <span>Social</span>
+        </div>
 
         <div class="nav-section">Log&iacute;stica</div>
         <div class="nav-item" onclick="window.location.href='Logistica%20Campanha.html'" style="background:rgba(59,130,246,0.15);border-left:3px solid #3b82f6;">
@@ -2104,6 +2116,94 @@
         </div>
 
     </div><!-- /page-gamificacao -->
+
+    <!-- ========== TAREFAS DE CAMPO ========== -->
+    <div class="page" id="page-tarefas-campo">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+            <div>
+                <h2 style="font-size:1.4rem;font-weight:800;color:var(--primary);margin:0;">&#9989; Tarefas de Campo</h2>
+                <p style="font-size:0.8rem;color:var(--text-light);margin:4px 0 0;">Tarefas gamificadas via Elexion &mdash; separado das tarefas internas do CONECTA</p>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <select id="campo-filtro-status" onchange="renderTarefasCampo()" style="padding:8px 12px;border:2px solid #e0e0e0;border-radius:8px;font-size:0.8rem;font-family:inherit;">
+                    <option value="">Todos os status</option>
+                    <option value="pending">Pendente</option>
+                    <option value="in_progress">Em andamento</option>
+                    <option value="completed">Conclu&iacute;da</option>
+                    <option value="overdue">Atrasada</option>
+                </select>
+                <select id="campo-filtro-tipo" onchange="renderTarefasCampo()" style="padding:8px 12px;border:2px solid #e0e0e0;border-radius:8px;font-size:0.8rem;font-family:inherit;">
+                    <option value="">Todos os tipos</option>
+                    <option value="panfletagem">Panfletagem</option>
+                    <option value="visita_domiciliar">Visita domiciliar</option>
+                    <option value="evento">Evento</option>
+                    <option value="midia_social">M&iacute;dia social</option>
+                </select>
+                <button class="btn btn-primary" onclick="openModal('modalTarefaCampo')" style="font-size:0.8rem;">+ Nova Tarefa</button>
+            </div>
+        </div>
+        <div id="campo-tarefas-lista" style="display:grid;gap:12px;"></div>
+        <div id="campo-tarefas-empty" style="display:none;text-align:center;padding:40px;color:var(--text-light);">
+            <p style="font-size:2rem;">&#9989;</p>
+            <p>Nenhuma tarefa encontrada. Crie a primeira tarefa de campo.</p>
+        </div>
+        <div id="campo-tarefas-offline" style="display:none;text-align:center;padding:40px;background:#fff3e0;border-radius:12px;color:var(--warning);">
+            <p>Elexion indispon&iacute;vel. Reconecte para ver tarefas de campo.</p>
+        </div>
+        <!-- Reports panel (visivel apos clicar em uma tarefa concluida) -->
+        <div id="campo-reports-panel" style="display:none;margin-top:20px;">
+            <h3 style="font-size:1rem;font-weight:700;color:var(--primary);margin-bottom:12px;">Reports da Tarefa</h3>
+            <div id="campo-reports-lista" style="display:grid;gap:10px;"></div>
+        </div>
+    </div><!-- /page-tarefas-campo -->
+
+    <!-- ========== DESAFIOS ========== -->
+    <div class="page" id="page-desafios">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+            <div>
+                <h2 style="font-size:1.4rem;font-weight:800;color:var(--primary);margin:0;">&#127942; Desafios de Campo</h2>
+                <p style="font-size:0.8rem;color:var(--text-light);margin:4px 0 0;">Desafios semanais gamificados para cabos eleitorais</p>
+            </div>
+            <button class="btn btn-primary" onclick="openModal('modalDesafio')" style="font-size:0.8rem;">+ Novo Desafio</button>
+        </div>
+        <div id="desafios-lista" style="display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));"></div>
+        <div id="desafios-empty" style="display:none;text-align:center;padding:40px;color:var(--text-light);">
+            <p style="font-size:2rem;">&#127942;</p>
+            <p>Nenhum desafio ativo. Lance o primeiro desafio para a equipe.</p>
+        </div>
+        <div id="desafios-offline" style="display:none;text-align:center;padding:40px;background:#fff3e0;border-radius:12px;color:var(--warning);">
+            <p>Elexion indispon&iacute;vel. Reconecte para ver desafios.</p>
+        </div>
+        <!-- Leaderboard do desafio selecionado -->
+        <div id="desafio-leaderboard-panel" style="display:none;margin-top:24px;">
+            <h3 id="desafio-lb-titulo" style="font-size:1rem;font-weight:700;color:var(--primary);margin-bottom:12px;">Leaderboard do Desafio</h3>
+            <div id="desafio-lb-lista"></div>
+        </div>
+    </div><!-- /page-desafios -->
+
+    <!-- ========== SOCIAL ========== -->
+    <div class="page" id="page-social">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+            <div>
+                <h2 style="font-size:1.4rem;font-weight:800;color:var(--primary);margin:0;">&#128241; M&eacute;tricas Sociais</h2>
+                <p style="font-size:0.8rem;color:var(--text-light);margin:4px 0 0;">Posts, engajamento e alcance dos cabos por plataforma</p>
+            </div>
+            <span id="social-ultima-atualizacao" style="font-size:0.72rem;color:var(--text-light);"></span>
+        </div>
+        <!-- Cards de metricas agregadas por equipe -->
+        <div id="social-equipes-lista" style="display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));margin-bottom:24px;"></div>
+        <!-- Scorecard individual (expandido ao clicar em cabo no leaderboard da gamificacao) -->
+        <div id="social-scorecard-panel" style="display:none;background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.08);margin-top:8px;">
+            <h3 id="social-scorecard-nome" style="font-size:1rem;font-weight:700;color:var(--primary);margin-bottom:16px;"></h3>
+            <div id="social-scorecard-content" style="display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));"></div>
+        </div>
+        <div id="social-empty" style="display:none;text-align:center;padding:40px;color:var(--text-light);">
+            <p>Configure as equipes e dados sociais no Elexion para ver m&eacute;tricas aqui.</p>
+        </div>
+        <div id="social-offline" style="display:none;text-align:center;padding:40px;background:#fff3e0;border-radius:12px;color:var(--warning);">
+            <p>Elexion indispon&iacute;vel. Reconecte para ver m&eacute;tricas sociais.</p>
+        </div>
+    </div><!-- /page-social -->
 
     <!-- ========== DASHBOARD ========== -->
     <div class="page active" id="page-dashboard">
@@ -2568,6 +2668,87 @@
 </main>
 
 <!-- ===== MODAIS ===== -->
+
+<!-- Modal Tarefa de Campo (Elexion) -->
+<div class="modal-overlay" role="dialog" aria-modal="true" id="modalTarefaCampo" onclick="closeModal('modalTarefaCampo')">
+    <div class="modal" onclick="event.stopPropagation()">
+        <h2>Nova Tarefa de Campo</h2>
+        <div class="form-group">
+            <label>T&iacute;tulo *</label>
+            <input type="text" id="campo-task-titulo" placeholder="Ex: Panfletagem Ceilandia Norte">
+        </div>
+        <div class="form-group">
+            <label>Tipo *</label>
+            <select id="campo-task-tipo">
+                <option value="panfletagem">Panfletagem</option>
+                <option value="visita_domiciliar">Visita domiciliar</option>
+                <option value="evento">Evento</option>
+                <option value="midia_social">M&iacute;dia social</option>
+                <option value="outro">Outro</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Descri&ccedil;&atilde;o</label>
+            <textarea id="campo-task-descricao" placeholder="Detalhes da tarefa para o cabo..."></textarea>
+        </div>
+        <div class="form-group">
+            <label>Localiza&ccedil;&atilde;o</label>
+            <input type="text" id="campo-task-localizacao" placeholder="Ex: Pra&ccedil;a do Povo, Ceilandia">
+        </div>
+        <div class="form-group">
+            <label>Prazo (deadline)</label>
+            <input type="datetime-local" id="campo-task-deadline">
+        </div>
+        <div class="form-group">
+            <label>Recompensa XP</label>
+            <input type="number" id="campo-task-xp" placeholder="Ex: 100" min="0" max="9999">
+        </div>
+        <div class="form-group">
+            <label>Atribuir ao Cabo (ID)</label>
+            <input type="text" id="campo-task-worker-id" placeholder="ID do cabo no Elexion (opcional)">
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-outline" onclick="closeModal('modalTarefaCampo')">Cancelar</button>
+            <button class="btn btn-primary" id="campo-task-btn-salvar" onclick="salvarTarefaCampo()">Criar Tarefa</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Desafio (Elexion) -->
+<div class="modal-overlay" role="dialog" aria-modal="true" id="modalDesafio" onclick="closeModal('modalDesafio')">
+    <div class="modal" onclick="event.stopPropagation()">
+        <h2>Novo Desafio</h2>
+        <div class="form-group">
+            <label>Tipo de Desafio *</label>
+            <select id="desafio-tipo">
+                <option value="tarefas_semana">Mais tarefas na semana</option>
+                <option value="xp_dia">Mais XP em um dia</option>
+                <option value="visitas">Mais visitas domiciliares</option>
+                <option value="posts">Mais posts nas redes</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>M&eacute;trica *</label>
+            <input type="text" id="desafio-metrica" placeholder="Ex: tasks_completed">
+        </div>
+        <div class="form-group">
+            <label>Alvo (meta num&eacute;rica) *</label>
+            <input type="number" id="desafio-alvo" placeholder="Ex: 10" min="1">
+        </div>
+        <div class="form-group">
+            <label>Recompensa XP *</label>
+            <input type="number" id="desafio-xp" placeholder="Ex: 500" min="1">
+        </div>
+        <div class="form-group">
+            <label>Dura&ccedil;&atilde;o (dias) *</label>
+            <input type="number" id="desafio-duracao" placeholder="Ex: 7" min="1" max="30" value="7">
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-outline" onclick="closeModal('modalDesafio')">Cancelar</button>
+            <button class="btn btn-primary" id="desafio-btn-salvar" onclick="salvarDesafio()">Criar Desafio</button>
+        </div>
+    </div>
+</div>
 
 <!-- Modal Evento -->
 <div class="modal-overlay" role="dialog" aria-modal="true" id="modalEvento" onclick="closeModal('modalEvento')">
@@ -3146,6 +3327,9 @@ function showPage(page) {
         materiais: 'Materiais de Campanha',
         lideres: 'Cadastro de L\u00edderes',
         gamificacao: 'Gamifica\u00e7\u00e3o de Campo',
+        'tarefas-campo': 'Tarefas de Campo (Elexion)',
+        desafios: 'Desafios de Campo',
+        social: 'M\u00e9tricas Sociais dos Cabos',
         'mapa-cobertura': 'Mapa de Cobertura das RAs',
         'war-room': 'War Room \u2014 Atividade em Tempo Real'
     };
@@ -6437,6 +6621,315 @@ if (window.CONECTA_SUPABASE || window._conectaSupabaseError) {
     window.addEventListener('conecta-supabase-ready', bootstrapApp, { once: true });
     window.addEventListener('supabase-ready', bootstrapApp, { once: true });
 }
+
+// ===== OPERACOES DE CAMPO (Phase 4) =====
+// NOTA: "Tarefas de Campo" = Elexion API. "Tarefas" existentes = Supabase (nao confundir).
+
+// ---- Tarefas de Campo ----
+
+async function renderTarefasCampo() {
+  const status = document.getElementById('campo-filtro-status')?.value || '';
+  const tipo = document.getElementById('campo-filtro-tipo')?.value || '';
+  const lista = document.getElementById('campo-tarefas-lista');
+  const empty = document.getElementById('campo-tarefas-empty');
+  const offline = document.getElementById('campo-tarefas-offline');
+  if (!lista) return;
+
+  const filters = {};
+  if (status) filters.status = status;
+  if (tipo) filters.type = tipo;
+
+  const res = await ElexionClient.fetchTasks(filters);
+
+  if (res === null) {
+    lista.style.display = 'none';
+    empty.style.display = 'none';
+    offline.style.display = 'block';
+    return;
+  }
+
+  offline.style.display = 'none';
+  const tarefas = Array.isArray(res) ? res : (res.data || []);
+
+  if (tarefas.length === 0) {
+    lista.style.display = 'none';
+    empty.style.display = 'block';
+    return;
+  }
+
+  empty.style.display = 'none';
+  lista.style.display = 'grid';
+
+  const statusLabel = { pending: 'Pendente', in_progress: 'Em andamento', completed: 'Conclu\u00edda', overdue: 'Atrasada' };
+  const statusColor = { pending: 'var(--info)', in_progress: 'var(--warning)', completed: 'var(--success)', overdue: 'var(--danger)' };
+
+  lista.innerHTML = tarefas.map(t => {
+    const s = t.status || 'pending';
+    const deadline = t.deadline ? new Date(t.deadline).toLocaleDateString('pt-BR') : '\u2014';
+    const safeTitle = String(t.title || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const safeLocation = String(t.location || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return `<div style="background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,0.07);border-left:4px solid ${statusColor[s] || '#ccc'}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+        <div style="font-weight:700;font-size:0.9rem;color:var(--primary);">${safeTitle}</div>
+        <span style="font-size:0.7rem;font-weight:700;padding:3px 8px;border-radius:999px;background:${statusColor[s] || '#ccc'};color:#fff;white-space:nowrap;">${statusLabel[s] || s}</span>
+      </div>
+      <div style="margin-top:6px;font-size:0.75rem;color:var(--text-light);">
+        ${safeLocation ? '\uD83D\uDCCD ' + safeLocation + ' &bull; ' : ''}Prazo: ${deadline}
+        ${t.xpReward ? ' &bull; ' + t.xpReward + ' XP' : ''}
+      </div>
+      ${s === 'completed' ? `<button onclick="verReportsTarefa('${String(t.id).replace(/'/g,"\\'")}', '${safeTitle}')" style="margin-top:10px;font-size:0.75rem;padding:5px 10px;background:var(--primary);color:#fff;border:none;border-radius:6px;cursor:pointer;">Ver Reports</button>` : ''}
+    </div>`;
+  }).join('');
+}
+
+async function verReportsTarefa(taskId, taskTitle) {
+  const panel = document.getElementById('campo-reports-panel');
+  const lista = document.getElementById('campo-reports-lista');
+  panel.style.display = 'block';
+  lista.innerHTML = '<p style="color:var(--text-light);font-size:0.85rem;">Carregando reports...</p>';
+  panel.scrollIntoView({ behavior: 'smooth' });
+
+  const reports = await ElexionClient.fetchTaskReports(taskId);
+  if (!reports || reports.length === 0) {
+    lista.innerHTML = '<p style="color:var(--text-light);font-size:0.85rem;">Nenhum report encontrado.</p>';
+    return;
+  }
+  lista.innerHTML = reports.map(r => {
+    const safeResult = String(r.result || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const safeWorker = String(r.workerName || r.workerId || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const completedAt = r.completedAt ? new Date(r.completedAt).toLocaleString('pt-BR') : '\u2014';
+    return `<div style="background:#f8f9fa;border-radius:10px;padding:14px;">
+      <div style="font-size:0.8rem;font-weight:700;color:var(--primary);">${safeWorker}</div>
+      <div style="font-size:0.78rem;color:var(--text);margin-top:4px;">${safeResult}</div>
+      <div style="font-size:0.7rem;color:var(--text-light);margin-top:4px;">${completedAt}</div>
+    </div>`;
+  }).join('');
+}
+
+async function salvarTarefaCampo() {
+  const titulo = document.getElementById('campo-task-titulo')?.value?.trim();
+  const tipo = document.getElementById('campo-task-tipo')?.value;
+  if (!titulo) { alert('T\u00edtulo obrigat\u00f3rio.'); return; }
+
+  const btn = document.getElementById('campo-task-btn-salvar');
+  if (btn) btn.disabled = true;
+
+  const deadline = document.getElementById('campo-task-deadline')?.value;
+  const payload = {
+    title: titulo,
+    type: tipo,
+    description: document.getElementById('campo-task-descricao')?.value?.trim() || undefined,
+    location: document.getElementById('campo-task-localizacao')?.value?.trim() || undefined,
+    deadline: deadline ? new Date(deadline).toISOString() : undefined,
+    xpReward: parseInt(document.getElementById('campo-task-xp')?.value) || undefined,
+  };
+
+  const tarefa = await ElexionClient.createTask(payload);
+  if (!tarefa) {
+    alert('Erro ao criar tarefa. Verifique conexao com Elexion.');
+    if (btn) btn.disabled = false;
+    return;
+  }
+
+  const workerId = document.getElementById('campo-task-worker-id')?.value?.trim();
+  if (workerId && tarefa.id) {
+    await ElexionClient.assignTask(tarefa.id, workerId);
+  }
+
+  closeModal('modalTarefaCampo');
+  ['campo-task-titulo','campo-task-descricao','campo-task-localizacao','campo-task-deadline','campo-task-xp','campo-task-worker-id'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  if (btn) btn.disabled = false;
+  renderTarefasCampo();
+}
+
+// ---- Desafios ----
+
+async function renderDesafios() {
+  const lista = document.getElementById('desafios-lista');
+  const empty = document.getElementById('desafios-empty');
+  const offline = document.getElementById('desafios-offline');
+  if (!lista) return;
+
+  const res = await ElexionClient.fetchChallenges();
+
+  if (res === null) {
+    lista.style.display = 'none';
+    empty.style.display = 'none';
+    offline.style.display = 'block';
+    return;
+  }
+
+  offline.style.display = 'none';
+  const desafios = Array.isArray(res) ? res : [];
+
+  if (desafios.length === 0) {
+    lista.style.display = 'none';
+    empty.style.display = 'block';
+    return;
+  }
+
+  empty.style.display = 'none';
+  lista.style.display = 'grid';
+
+  lista.innerHTML = desafios.map(d => {
+    const safeName = String(d.type || d.name || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const pct = d.progress != null ? Math.min(100, Math.round(d.progress)) : null;
+    const endDate = d.endsAt ? new Date(d.endsAt).toLocaleDateString('pt-BR') : '\u2014';
+    return `<div style="background:#fff;border-radius:12px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,0.07);">
+      <div style="font-weight:700;font-size:0.95rem;color:var(--primary);margin-bottom:6px;">${safeName}</div>
+      <div style="font-size:0.75rem;color:var(--text-light);margin-bottom:10px;">
+        Meta: ${d.target || '\u2014'} &bull; Recompensa: ${d.xpReward || '\u2014'} XP &bull; T\u00e9rmino: ${endDate}
+      </div>
+      ${pct != null ? `<div style="background:#f0f2f5;border-radius:999px;height:8px;overflow:hidden;margin-bottom:10px;">
+        <div style="height:100%;width:${pct}%;background:var(--accent);transition:width 0.4s;"></div>
+      </div>
+      <div style="font-size:0.72rem;color:var(--text-light);margin-bottom:10px;">${pct}% conclu\u00eddo</div>` : ''}
+      <button onclick="verLeaderboardDesafio('${String(d.id).replace(/'/g,"\\'")}', '${safeName}')" style="font-size:0.75rem;padding:5px 10px;background:var(--primary);color:#fff;border:none;border-radius:6px;cursor:pointer;">Ver Leaderboard</button>
+    </div>`;
+  }).join('');
+}
+
+async function verLeaderboardDesafio(challengeId, nome) {
+  const panel = document.getElementById('desafio-leaderboard-panel');
+  const titulo = document.getElementById('desafio-lb-titulo');
+  const listaLb = document.getElementById('desafio-lb-lista');
+  panel.style.display = 'block';
+  titulo.textContent = 'Leaderboard: ' + nome;
+  listaLb.innerHTML = '<p style="color:var(--text-light);font-size:0.85rem;">Carregando...</p>';
+  panel.scrollIntoView({ behavior: 'smooth' });
+
+  const lb = await ElexionClient.fetchChallengeLeaderboard(challengeId);
+  if (!lb || lb.length === 0) {
+    listaLb.innerHTML = '<p style="color:var(--text-light);font-size:0.85rem;">Nenhum participante ainda.</p>';
+    return;
+  }
+  listaLb.innerHTML = '<table class="data-table"><thead><tr><th>#</th><th>Cabo</th><th>XP</th><th>Progresso</th></tr></thead><tbody>' +
+    lb.map((c, i) => {
+      const safeName = String(c.nome || c.name || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return `<tr><td>${i + 1}</td><td>${safeName}</td><td>${c.xp || 0}</td><td>${c.progresso || c.progress || '\u2014'}</td></tr>`;
+    }).join('') + '</tbody></table>';
+}
+
+async function salvarDesafio() {
+  const tipo = document.getElementById('desafio-tipo')?.value;
+  const metrica = document.getElementById('desafio-metrica')?.value?.trim();
+  const alvo = parseInt(document.getElementById('desafio-alvo')?.value);
+  const xp = parseInt(document.getElementById('desafio-xp')?.value);
+  const duracao = parseInt(document.getElementById('desafio-duracao')?.value);
+
+  if (!metrica || !alvo || !xp || !duracao) { alert('Preencha todos os campos obrigat\u00f3rios.'); return; }
+
+  const btn = document.getElementById('desafio-btn-salvar');
+  if (btn) btn.disabled = true;
+
+  const payload = { type: tipo, metric: metrica, target: alvo, xpReward: xp, durationDays: duracao };
+  const desafio = await ElexionClient.createChallenge(payload);
+
+  if (!desafio) {
+    alert('Erro ao criar desafio. Verifique conexao com Elexion.');
+    if (btn) btn.disabled = false;
+    return;
+  }
+
+  closeModal('modalDesafio');
+  ['desafio-metrica','desafio-alvo','desafio-xp'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  if (btn) btn.disabled = false;
+  renderDesafios();
+}
+
+// ---- Social ----
+
+async function renderSocial() {
+  const equipesLista = document.getElementById('social-equipes-lista');
+  const empty = document.getElementById('social-empty');
+  const offline = document.getElementById('social-offline');
+  const tsEl = document.getElementById('social-ultima-atualizacao');
+  if (!equipesLista) return;
+
+  // Buscar ranking de equipes para obter teamIds
+  const ranking = await ElexionClient.fetchTeamsRanking();
+  if (ranking === null) {
+    equipesLista.style.display = 'none';
+    empty.style.display = 'none';
+    offline.style.display = 'block';
+    return;
+  }
+
+  offline.style.display = 'none';
+  const equipes = Array.isArray(ranking) ? ranking : [];
+
+  if (equipes.length === 0) {
+    equipesLista.style.display = 'none';
+    empty.style.display = 'block';
+    return;
+  }
+
+  empty.style.display = 'none';
+  equipesLista.style.display = 'grid';
+  if (tsEl) tsEl.textContent = 'Atualizado: ' + new Date().toLocaleTimeString('pt-BR');
+
+  // Buscar metricas sociais de cada equipe em paralelo (max 5 equipes)
+  const primeiras = equipes.slice(0, 5);
+  const metricas = await Promise.all(
+    primeiras.map(e => ElexionClient.fetchSocialTeamMetrics(e.id || e.equipe))
+  );
+
+  equipesLista.innerHTML = primeiras.map((e, i) => {
+    const m = metricas[i];
+    const safeName = String(e.equipe || e.name || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    if (!m) return `<div style="background:#fff;border-radius:12px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,0.07);">
+      <div style="font-weight:700;color:var(--primary);">${safeName}</div>
+      <div style="font-size:0.75rem;color:var(--text-light);margin-top:8px;">Dados sociais indispon\u00edveis</div>
+    </div>`;
+    return `<div style="background:#fff;border-radius:12px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,0.07);">
+      <div style="font-weight:700;font-size:0.9rem;color:var(--primary);margin-bottom:10px;">${safeName}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;">
+        <div style="background:#f0f2f5;border-radius:8px;padding:8px;">
+          <div style="font-size:1.1rem;font-weight:800;color:var(--accent);">${m.posts || 0}</div>
+          <div style="font-size:0.65rem;color:var(--text-light);">Posts</div>
+        </div>
+        <div style="background:#f0f2f5;border-radius:8px;padding:8px;">
+          <div style="font-size:1.1rem;font-weight:800;color:var(--info);">${m.engagement || 0}</div>
+          <div style="font-size:0.65rem;color:var(--text-light);">Engajamento</div>
+        </div>
+        <div style="background:#f0f2f5;border-radius:8px;padding:8px;">
+          <div style="font-size:1.1rem;font-weight:800;color:var(--success);">${m.reach || 0}</div>
+          <div style="font-size:0.65rem;color:var(--text-light);">Alcance</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ---- Wiring com showPage ----
+// Interceptar showPage para disparar render automatico das 3 novas secoes
+// Padrao identico ao usado para gamificacao (showPage wrapper ja existente na fase 2)
+(function wireCampoPages() {
+  const _origShowPage = window.showPage;
+  if (typeof _origShowPage !== 'function') return;
+  window.showPage = function(page) {
+    _origShowPage(page);
+    if (page === 'tarefas-campo') renderTarefasCampo();
+    if (page === 'desafios') renderDesafios();
+    if (page === 'social') renderSocial();
+  };
+})();
+
+// ---- Polling 60s para as 3 secoes (alem do polling existente de gamificacao) ----
+setInterval(function() {
+  if (typeof currentPage === 'undefined') return;
+  if (currentPage === 'tarefas-campo') renderTarefasCampo();
+  if (currentPage === 'desafios') renderDesafios();
+  if (currentPage === 'social') renderSocial();
+}, 60000);
+// ===== FIM OPERACOES DE CAMPO =====
+
 </script>
 
 </body>
