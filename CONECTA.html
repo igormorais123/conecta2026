@@ -1726,6 +1726,13 @@
             <span>Materiais</span>
         </div>
 
+        <div class="nav-section">Campo</div>
+        <div class="nav-item" onclick="showPage('gamificacao')">
+            <span class="nav-icon">&#127942;</span>
+            <span>Gamifica&ccedil;&atilde;o</span>
+            <span class="nav-badge" id="badge-gamificacao" style="background:var(--accent);display:none;">NOVO</span>
+        </div>
+
         <div class="nav-section">Log&iacute;stica</div>
         <div class="nav-item" onclick="window.location.href='Logistica%20Campanha.html'" style="background:rgba(59,130,246,0.15);border-left:3px solid #3b82f6;">
             <span class="nav-icon">&#9881;</span>
@@ -1759,6 +1766,93 @@
 
 <!-- ===== MAIN ===== -->
 <main class="main-content">
+
+    <!-- ========== GAMIFICACAO ========== -->
+    <div class="page" id="page-gamificacao">
+
+        <!-- Cabecalho da secao -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+            <div>
+                <h2 style="font-size:1.4rem;font-weight:800;color:var(--primary);margin:0;">&#127942; Gamifica&ccedil;&atilde;o de Campo</h2>
+                <p style="font-size:0.8rem;color:var(--text-light);margin:4px 0 0;">Performance dos cabos eleitorais via Elexion</p>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+                <span id="gami-ultima-atualizacao" style="font-size:0.75rem;color:var(--text-light);">Aguardando dados...</span>
+                <button onclick="renderGamificacao()" style="padding:7px 16px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-size:0.8rem;font-weight:600;cursor:pointer;">&#8635; Atualizar</button>
+            </div>
+        </div>
+
+        <!-- Estado de conexao Elexion -->
+        <div id="gami-offline-banner" style="display:none;background:#fff3e0;border:1px solid var(--accent);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:0.85rem;color:#e65100;">
+            &#9888; Elexion indispon&iacute;vel ou conta n&atilde;o vinculada. <a href="conta.html" style="color:var(--accent);font-weight:700;">Vincular conta &rarr;</a>
+        </div>
+
+        <!-- KPIs -->
+        <div class="stats-grid" id="gami-kpis-grid">
+            <div class="stat-card green">
+                <div class="stat-label">Tarefas Conclu&iacute;das</div>
+                <div class="stat-value" id="gami-kpi-tarefas">--</div>
+                <div class="stat-sub">total da campanha</div>
+            </div>
+            <div class="stat-card orange">
+                <div class="stat-label">XP Total Distribu&iacute;do</div>
+                <div class="stat-value" id="gami-kpi-xp">--</div>
+                <div class="stat-sub">pontos de experi&ecirc;ncia</div>
+            </div>
+            <div class="stat-card blue">
+                <div class="stat-label">Cabos Ativos</div>
+                <div class="stat-value" id="gami-kpi-cabos">--</div>
+                <div class="stat-sub">nos &uacute;ltimos 7 dias</div>
+            </div>
+            <div class="stat-card purple">
+                <div class="stat-label">Cobertura DF</div>
+                <div class="stat-value" id="gami-kpi-cobertura">--%</div>
+                <div class="stat-sub">regi&otilde;es administrativas</div>
+            </div>
+        </div>
+
+        <!-- Grid: Grafico + Filtro/Leaderboard -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;">
+
+            <!-- Grafico de performance temporal -->
+            <div style="background:var(--card-bg);border-radius:16px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+                    <h3 style="font-size:1rem;font-weight:700;color:var(--primary);margin:0;">Performance Temporal</h3>
+                    <select id="gami-chart-periodo" onchange="renderGamiChart()" style="padding:4px 10px;border:1px solid #e0e0e0;border-radius:6px;font-size:0.8rem;">
+                        <option value="7">7 dias</option>
+                        <option value="30" selected>30 dias</option>
+                        <option value="90">3 meses</option>
+                    </select>
+                </div>
+                <div style="position:relative;height:220px;">
+                    <canvas id="chart-performance"></canvas>
+                    <div id="gami-chart-empty" style="display:none;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--text-light);font-size:0.85rem;">Sem dados de performance</div>
+                </div>
+            </div>
+
+            <!-- Leaderboard com filtro -->
+            <div style="background:var(--card-bg);border-radius:16px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+                    <h3 style="font-size:1rem;font-weight:700;color:var(--primary);margin:0;">&#127941; Leaderboard</h3>
+                    <select id="gami-filtro-equipe" onchange="renderGamiLeaderboard()" style="padding:4px 10px;border:1px solid #e0e0e0;border-radius:6px;font-size:0.8rem;">
+                        <option value="">Todas as equipes</option>
+                    </select>
+                </div>
+                <div id="gami-leaderboard-lista" style="max-height:220px;overflow-y:auto;">
+                    <p style="color:var(--text-light);font-size:0.85rem;text-align:center;padding:20px 0;">Carregando...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ranking por equipes -->
+        <div style="background:var(--card-bg);border-radius:16px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+            <h3 style="font-size:1rem;font-weight:700;color:var(--primary);margin:0 0 16px;">&#127963; Ranking de Equipes Regionais</h3>
+            <div id="gami-equipes-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;">
+                <p style="color:var(--text-light);font-size:0.85rem;text-align:center;padding:20px 0;grid-column:1/-1;">Carregando...</p>
+            </div>
+        </div>
+
+    </div><!-- /page-gamificacao -->
 
     <!-- ========== DASHBOARD ========== -->
     <div class="page active" id="page-dashboard">
@@ -2796,7 +2890,8 @@ function showPage(page) {
         demandas: 'Demandas Populares',
         juridico: 'Jur\u00eddico / Prazos',
         materiais: 'Materiais de Campanha',
-        lideres: 'Cadastro de L\u00edderes'
+        lideres: 'Cadastro de L\u00edderes',
+        gamificacao: 'Gamifica\u00e7\u00e3o de Campo'
     };
     document.getElementById('pageTitle').textContent = titles[page] || page;
 
