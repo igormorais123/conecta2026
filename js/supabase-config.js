@@ -35,7 +35,9 @@
     }
 
     function isHostedConectaProduction() {
-        return window.location.origin === 'https://inteia.com.br' && window.location.pathname.indexOf('/conecta2026/') === 0;
+        var host = window.location.hostname;
+        var isInteia = host === 'inteia.com.br' || host === 'www.inteia.com.br' || host.endsWith('.inteia.com.br');
+        return isInteia && window.location.pathname.indexOf('/conecta2026/') === 0;
     }
 
     function dispatchReady() {

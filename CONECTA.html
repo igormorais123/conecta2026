@@ -5005,11 +5005,15 @@ async function syncAgora() {
 
     try {
         await window.ConectaDB.syncNow();
-        updateSyncBadge(window.ConectaDB.getSyncStatus());
+        if (typeof window.ConectaDB.getSyncStatus === 'function') {
+            updateSyncBadge(window.ConectaDB.getSyncStatus());
+        }
         alert('Sincronizacao concluida.');
     } catch (error) {
         console.error('Falha ao sincronizar manualmente:', error);
-        updateSyncBadge(window.ConectaDB.getSyncStatus());
+        if (typeof window.ConectaDB.getSyncStatus === 'function') {
+            updateSyncBadge(window.ConectaDB.getSyncStatus());
+        }
         alert('Nao foi possivel concluir a sincronizacao agora.');
     }
 }
@@ -5178,7 +5182,9 @@ async function bootstrapApp() {
         await ConectaDB.init();
         updateRealtimeScope(currentPage);
         refreshStateFromStorage();
-        updateSyncBadge(ConectaDB.getSyncStatus());
+        if (typeof ConectaDB.getSyncStatus === 'function') {
+            updateSyncBadge(ConectaDB.getSyncStatus());
+        }
 
         var profile = await ConectaDB.getUserProfile();
         var userNameEl = document.getElementById('userName');
