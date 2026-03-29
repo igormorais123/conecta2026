@@ -221,6 +221,26 @@ window.ElexionClient = (() => {
     return request('/war-room/alerts');
   }
 
+  /**
+   * GET /api/v1/analytics/leaderboard — ranking de cabos por XP.
+   * @param {string|null} equipeId - Filtrar por equipe (opcional). Null = todos.
+   * @returns {Promise<Array|null>} array de cabos ou null
+   */
+  async function fetchLeaderboard(equipeId = null) {
+    const path = equipeId
+      ? '/analytics/leaderboard?equipe=' + encodeURIComponent(equipeId)
+      : '/analytics/leaderboard';
+    return request(path);
+  }
+
+  /**
+   * GET /api/v1/analytics/teams/ranking — ranking agregado por equipe.
+   * @returns {Promise<Array|null>} array de equipes ou null
+   */
+  async function fetchTeamsRanking() {
+    return request('/analytics/teams/ranking');
+  }
+
   // ---- API publica ----
 
   return {
@@ -237,5 +257,7 @@ window.ElexionClient = (() => {
     fetchGeofences,
     fetchWarRoomFeed,
     fetchAlerts,
+    fetchLeaderboard,
+    fetchTeamsRanking,
   };
 })();
