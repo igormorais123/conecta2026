@@ -17,6 +17,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="js/supabase-config.js"></script>
     <script src="js/conecta-db.js"></script>
+    <script src="js/elexion-client.js"></script>
     <script>
         (function initPwaAssets() {
             if (typeof window.CONECTA_APPLY_PWA === 'function') {
@@ -147,6 +148,39 @@
             font-size: 0.74rem;
             line-height: 1.6;
         }
+        .elexion-section {
+            margin-top: 28px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 24px;
+        }
+        .elexion-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-bottom: 16px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+        }
+        .elexion-status.connected {
+            background: #f0fdf4;
+            border-color: #bbf7d0;
+            color: #15803d;
+        }
+        .elexion-status.disconnected {
+            background: #fef2f2;
+            border-color: #fecaca;
+            color: #dc2626;
+        }
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            flex-shrink: 0;
+        }
     </style>
 </head>
 <body>
@@ -179,6 +213,47 @@
         </div>
 
         <div id="message" class="message"></div>
+
+        <!-- Integracao Elexion -->
+        <div class="elexion-section">
+            <h2 style="font-size:1.1rem;color:#1a237e;margin-bottom:4px;">Integracao Elexion</h2>
+            <p style="color:#64748b;font-size:0.85rem;margin-bottom:14px;">
+                Vincule sua conta do sistema de campo (Elexion) para acessar dados de gamificacao e heatmap.
+            </p>
+
+            <div id="elexionStatus" class="elexion-status disconnected">
+                <span class="dot"></span>
+                <span id="elexionStatusText">Nao conectado ao Elexion</span>
+            </div>
+
+            <div id="elexionLoginForm">
+                <div class="field">
+                    <label class="label" for="elexionEmail">E-mail Elexion</label>
+                    <input type="email" id="elexionEmail" placeholder="coordenador@inteia.com.br" autocomplete="username">
+                </div>
+                <div class="field">
+                    <label class="label" for="elexionPassword">Senha Elexion</label>
+                    <input type="password" id="elexionPassword" placeholder="" autocomplete="current-password">
+                </div>
+                <div class="actions">
+                    <button class="primary" id="elexionLoginBtn">Conectar ao Elexion</button>
+                </div>
+            </div>
+
+            <div id="elexionConnectedInfo" style="display:none;">
+                <div class="panel">
+                    <strong>Conectado como:</strong> <span id="elexionUserName">&mdash;</span><br>
+                    <strong>E-mail:</strong> <span id="elexionUserEmail">&mdash;</span><br>
+                    <strong>Perfil:</strong> <span id="elexionUserRole">&mdash;</span>
+                </div>
+                <div class="actions">
+                    <button class="secondary" id="elexionDisconnectBtn">Desconectar do Elexion</button>
+                    <button class="secondary" id="elexionTestBtn">Testar Conexao</button>
+                </div>
+            </div>
+
+            <div id="elexionMsg" class="message"></div>
+        </div>
 
         <div class="footer">
             Implementado por <a id="footerInteiaLink" href="https://inteia.com.br" target="_blank" rel="noopener noreferrer" style="color:#64748b;text-decoration:none;">INTEIA - Inteligencia Estrategica Eleitoral</a><br>
@@ -295,6 +370,98 @@
             window.addEventListener('supabase-ready', loadProfile, { once: true });
         }
     })();
+    </script>
+    <script>
+    // Integracao Elexion — conta.html
+    (function initElexionUI() {
+        if (typeof ElexionClient === 'undefined') return;
+
+        // Verificar se ja ha sessao ativa
+        if (ElexionClient.isAuthenticated()) {
+            var user = ElexionClient.getCurrentUser();
+            if (user) mostrarConectado(user);
+        }
+
+        // Event listeners
+        var loginBtn = document.getElementById('elexionLoginBtn');
+        if (loginBtn) loginBtn.addEventListener('click', conectarElexion);
+
+        var disconnectBtn = document.getElementById('elexionDisconnectBtn');
+        if (disconnectBtn) disconnectBtn.addEventListener('click', desconectarElexion);
+
+        var testBtn = document.getElementById('elexionTestBtn');
+        if (testBtn) testBtn.addEventListener('click', testarElexion);
+    })();
+
+    function mostrarConectado(user) {
+        document.getElementById('elexionLoginForm').style.display = 'none';
+        document.getElementById('elexionConnectedInfo').style.display = 'block';
+        var statusEl = document.getElementById('elexionStatus');
+        statusEl.className = 'elexion-status connected';
+        document.getElementById('elexionStatusText').textContent = 'Conectado ao Elexion';
+        document.getElementById('elexionUserName').textContent = user.name || '\u2014';
+        document.getElementById('elexionUserEmail').textContent = user.email || '\u2014';
+        document.getElementById('elexionUserRole').textContent = user.role || '\u2014';
+    }
+
+    function mostrarDesconectado() {
+        document.getElementById('elexionLoginForm').style.display = 'block';
+        document.getElementById('elexionConnectedInfo').style.display = 'none';
+        var statusEl = document.getElementById('elexionStatus');
+        statusEl.className = 'elexion-status disconnected';
+        document.getElementById('elexionStatusText').textContent = 'Nao conectado ao Elexion';
+    }
+
+    function mostrarMensagemElexion(texto, tipo) {
+        var msg = document.getElementById('elexionMsg');
+        msg.textContent = texto;
+        msg.className = 'message ' + tipo;
+        setTimeout(function() { msg.className = 'message'; }, 5000);
+    }
+
+    async function conectarElexion() {
+        if (typeof ElexionClient === 'undefined') {
+            mostrarMensagemElexion('ElexionClient nao carregado. Recarregue a pagina.', 'error');
+            return;
+        }
+        var email = document.getElementById('elexionEmail').value.trim();
+        var password = document.getElementById('elexionPassword').value;
+        if (!email || !password) {
+            mostrarMensagemElexion('Informe e-mail e senha do Elexion.', 'error');
+            return;
+        }
+        var btn = document.getElementById('elexionLoginBtn');
+        btn.disabled = true;
+        btn.textContent = 'Conectando...';
+
+        var user = await ElexionClient.login(email, password);
+
+        btn.disabled = false;
+        btn.textContent = 'Conectar ao Elexion';
+
+        if (!user) {
+            mostrarMensagemElexion('Falha na conexao. Verifique e-mail e senha do Elexion.', 'error');
+            return;
+        }
+        mostrarConectado(user);
+        mostrarMensagemElexion('Conta Elexion vinculada com sucesso!', 'success');
+    }
+
+    function desconectarElexion() {
+        if (typeof ElexionClient !== 'undefined') ElexionClient.logout();
+        mostrarDesconectado();
+        mostrarMensagemElexion('Desconectado do Elexion.', 'success');
+    }
+
+    async function testarElexion() {
+        if (typeof ElexionClient === 'undefined') return;
+        var kpis = await ElexionClient.fetchKpis();
+        if (kpis) {
+            mostrarMensagemElexion('Conexao OK - API Elexion respondendo.', 'success');
+        } else {
+            mostrarMensagemElexion('Sem resposta da API Elexion. Token pode ter expirado.', 'error');
+        }
+    }
     </script>
 </body>
 </html>
