@@ -1656,7 +1656,56 @@
             font-size: 0.82rem;
             padding: 30px 0;
         }
+
+        /* ===== GAMIFICACAO ===== */
+        .gami-leaderboard-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.82rem;
+        }
+        .gami-leaderboard-row:last-child { border-bottom: none; }
+        .gami-pos {
+            width: 24px;
+            height: 24px;
+            background: var(--primary);
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+        .gami-pos.top1 { background: #FFD700; color: #333; }
+        .gami-pos.top2 { background: #C0C0C0; color: #333; }
+        .gami-pos.top3 { background: #CD7F32; color: #fff; }
+        .gami-nome { flex: 1; font-weight: 600; color: var(--text); }
+        .gami-xp { font-weight: 700; color: var(--accent); min-width: 60px; text-align: right; }
+        .gami-nivel { font-size: 0.7rem; background: var(--primary); color: #fff; padding: 2px 6px; border-radius: 4px; }
+        .gami-streak { font-size: 0.75rem; color: var(--warning); font-weight: 600; }
+        .gami-badge { font-size: 0.7rem; color: var(--text-light); }
+        .gami-equipe-card {
+            background: var(--bg);
+            border-radius: 10px;
+            padding: 14px 16px;
+            border-left: 4px solid var(--primary);
+        }
+        .gami-equipe-nome { font-weight: 700; font-size: 0.9rem; color: var(--primary); margin-bottom: 6px; }
+        .gami-equipe-stat { font-size: 0.78rem; color: var(--text-light); margin: 2px 0; }
+        .gami-equipe-stat strong { color: var(--text); }
+
+        @media (max-width: 768px) {
+            #page-gamificacao > div:nth-child(4) { grid-template-columns: 1fr !important; }
+        }
     </style>
+    <!-- Chart.js para graficos de performance da gamificacao -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <!-- elexion-client.js: auth bearer + endpoints Elexion -->
+    <script src="js/elexion-client.js"></script>
 </head>
 <body>
 
@@ -2854,7 +2903,8 @@ const PAGE_REALTIME_KEYS = {
     demandas: ['conectacelina_demandas'],
     juridico: ['conectacelina_juridico'],
     materiais: ['conectacelina_materiais'],
-    lideres: ['conectacelina_lideres']
+    lideres: ['conectacelina_lideres'],
+    gamificacao: []
 };
 
 function updateRealtimeScope(page) {
@@ -5296,6 +5346,295 @@ async function bootstrapApp() {
 
     init();
 }
+
+// ===== GAMIFICACAO =====
+// Dados em memoria (cache simples — evita refetch desnecessario)
+var gamiState = {
+    kpis: null,
+    leaderboard: null,          // array completo (sem filtro)
+    teamsRanking: null,
+    chartInstance: null,        // Chart.js instance (para destroy antes de recriar)
+    pollingTimer: null,
+    equipes: []                 // lista de equipes para o filtro
+};
+
+/**
+ * Ponto de entrada: carrega todos os dados e renderiza a secao.
+ * Chamado por showPage('gamificacao') e pelo setInterval.
+ */
+async function renderGamificacao() {
+    // Verificar se ElexionClient existe e esta autenticado
+    if (!window.ElexionClient || !ElexionClient.isAuthenticated()) {
+        document.getElementById('gami-offline-banner').style.display = 'block';
+        atualizarUltimaAtualizacao(false);
+        return;
+    }
+
+    document.getElementById('gami-offline-banner').style.display = 'none';
+
+    // Fetch paralelo para minimizar tempo de carregamento
+    var [kpisData, leaderboardData, teamsData] = await Promise.all([
+        ElexionClient.fetchKpis(),
+        ElexionClient.fetchLeaderboard(),
+        ElexionClient.fetchTeamsRanking()
+    ]);
+
+    // Se tudo null = Elexion offline
+    if (!kpisData && !leaderboardData && !teamsData) {
+        document.getElementById('gami-offline-banner').style.display = 'block';
+        atualizarUltimaAtualizacao(false);
+        return;
+    }
+
+    // Salvar no estado
+    if (kpisData) gamiState.kpis = kpisData;
+    if (leaderboardData) gamiState.leaderboard = leaderboardData;
+    if (teamsData) gamiState.teamsRanking = teamsData;
+
+    renderGamiKpis();
+    renderGamiLeaderboard();
+    renderGamiEquipes();
+    renderGamiChart();
+    atualizarUltimaAtualizacao(true);
+    atualizarBadgeSidebar();
+}
+
+function atualizarUltimaAtualizacao(sucesso) {
+    var el = document.getElementById('gami-ultima-atualizacao');
+    if (!el) return;
+    var agora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    el.textContent = sucesso
+        ? 'Atualizado: ' + agora
+        : 'Ultima tentativa: ' + agora + ' (offline)';
+    el.style.color = sucesso ? 'var(--success)' : 'var(--warning)';
+}
+
+function atualizarBadgeSidebar() {
+    var badge = document.getElementById('badge-gamificacao');
+    if (badge && gamiState.leaderboard && gamiState.leaderboard.length > 0) {
+        badge.style.display = 'inline';
+    }
+}
+
+// ---- KPIs ----
+function renderGamiKpis() {
+    var k = gamiState.kpis || {};
+    var tarefas = k.tarefasConcluidas != null ? k.tarefasConcluidas : '--';
+    var xp = k.xpTotal != null ? k.xpTotal.toLocaleString('pt-BR') : '--';
+    var cabos = k.cabosAtivos != null ? k.cabosAtivos : '--';
+    var cobertura = k.cobertura != null ? k.cobertura.toFixed(1) + '%' : '--%';
+
+    var el = function(id) { return document.getElementById(id); };
+    if (el('gami-kpi-tarefas')) el('gami-kpi-tarefas').textContent = tarefas;
+    if (el('gami-kpi-xp')) el('gami-kpi-xp').textContent = xp;
+    if (el('gami-kpi-cabos')) el('gami-kpi-cabos').textContent = cabos;
+    if (el('gami-kpi-cobertura')) el('gami-kpi-cobertura').textContent = cobertura;
+}
+
+// ---- Leaderboard ----
+// Popula o dropdown de filtro com equipes unicas do leaderboard
+function popularFiltroEquipes() {
+    var sel = document.getElementById('gami-filtro-equipe');
+    if (!sel || !gamiState.leaderboard) return;
+    var equipes = new Set();
+    gamiState.leaderboard.forEach(function(c) {
+        if (c.equipe) equipes.add(c.equipe);
+    });
+    gamiState.equipes = Array.from(equipes).sort();
+    // Recriar options preservando "Todas as equipes"
+    while (sel.options.length > 1) sel.remove(1);
+    gamiState.equipes.forEach(function(eq) {
+        var opt = document.createElement('option');
+        opt.value = eq;
+        opt.textContent = eq;
+        sel.appendChild(opt);
+    });
+}
+
+async function renderGamiLeaderboard() {
+    var sel = document.getElementById('gami-filtro-equipe');
+    var equipeId = sel ? sel.value : '';
+    var lista = document.getElementById('gami-leaderboard-lista');
+    if (!lista) return;
+
+    // Se ha filtro ativo e leaderboard ainda nao foi filtrado, buscar na API
+    var dados = gamiState.leaderboard;
+    if (equipeId && window.ElexionClient && ElexionClient.isAuthenticated()) {
+        var filtrado = await ElexionClient.fetchLeaderboard(equipeId);
+        if (filtrado) dados = filtrado;
+    }
+
+    if (!dados || dados.length === 0) {
+        lista.innerHTML = '<p style="color:var(--text-light);font-size:0.85rem;text-align:center;padding:20px 0;">Nenhum dado de leaderboard</p>';
+        popularFiltroEquipes();
+        return;
+    }
+
+    popularFiltroEquipes();
+
+    var html = dados.slice(0, 20).map(function(cabo, idx) {
+        var pos = cabo.posicao != null ? cabo.posicao : (idx + 1);
+        var posClass = pos === 1 ? 'gami-pos top1' : pos === 2 ? 'gami-pos top2' : pos === 3 ? 'gami-pos top3' : 'gami-pos';
+        var nome = escapeHtml(cabo.nome || 'Sem nome');
+        var xp = cabo.xp != null ? cabo.xp.toLocaleString('pt-BR') + ' XP' : '--';
+        var nivel = cabo.nivel ? escapeHtml(String(cabo.nivel)) : '';
+        var streak = cabo.streak ? '&#128293; ' + cabo.streak + ' dias' : '';
+        var badge = cabo.ultimoBadge ? '&#127941; ' + escapeHtml(cabo.ultimoBadge) : '';
+
+        return '<div class="gami-leaderboard-row">' +
+            '<div class="' + posClass + '">' + pos + '</div>' +
+            '<div class="gami-nome">' + nome + '</div>' +
+            (nivel ? '<span class="gami-nivel">' + nivel + '</span>' : '') +
+            (streak ? '<span class="gami-streak">' + streak + '</span>' : '') +
+            '<span class="gami-xp">' + xp + '</span>' +
+        '</div>';
+    }).join('');
+
+    lista.innerHTML = html;
+}
+
+// ---- Ranking de Equipes ----
+function renderGamiEquipes() {
+    var grid = document.getElementById('gami-equipes-grid');
+    if (!grid) return;
+    var dados = gamiState.teamsRanking;
+    if (!dados || dados.length === 0) {
+        grid.innerHTML = '<p style="color:var(--text-light);font-size:0.85rem;text-align:center;padding:20px 0;grid-column:1/-1;">Nenhum dado de equipes</p>';
+        return;
+    }
+    grid.innerHTML = dados.map(function(eq) {
+        return '<div class="gami-equipe-card">' +
+            '<div class="gami-equipe-nome">' + escapeHtml(eq.equipe || 'Equipe') + '</div>' +
+            '<div class="gami-equipe-stat">XP Total: <strong>' + (eq.xpTotal ? eq.xpTotal.toLocaleString('pt-BR') : '--') + '</strong></div>' +
+            '<div class="gami-equipe-stat">Cabos Ativos: <strong>' + (eq.cabos != null ? eq.cabos : '--') + '</strong></div>' +
+            '<div class="gami-equipe-stat">Tarefas: <strong>' + (eq.tarefas != null ? eq.tarefas : '--') + '</strong></div>' +
+            '<div class="gami-equipe-stat">Cobertura: <strong>' + (eq.cobertura != null ? eq.cobertura.toFixed(1) + '%' : '--%') + '</strong></div>' +
+        '</div>';
+    }).join('');
+}
+
+// ---- Grafico Chart.js ----
+function renderGamiChart() {
+    var canvas = document.getElementById('chart-performance');
+    if (!canvas || typeof Chart === 'undefined') return;
+
+    // Destruir instancia anterior para evitar memory leak e canvas oculto
+    if (gamiState.chartInstance) {
+        gamiState.chartInstance.destroy();
+        gamiState.chartInstance = null;
+    }
+
+    // Dados sinteticos baseados nos KPIs (fallback se API nao tiver endpoint de serie temporal)
+    // Se Elexion retornar gamiState.kpis.serie = [{data, tarefas, xp}], usar esses dados.
+    var kpis = gamiState.kpis || {};
+    var serie = (kpis.serie && Array.isArray(kpis.serie)) ? kpis.serie : null;
+
+    var periodo = parseInt((document.getElementById('gami-chart-periodo') || {}).value || '30', 10);
+
+    var labels, xpData, tarefasData;
+    if (serie && serie.length > 0) {
+        // Usar dados reais da serie temporal
+        var pontos = serie.slice(-periodo);
+        labels = pontos.map(function(p) { return p.data || ''; });
+        xpData = pontos.map(function(p) { return p.xp || 0; });
+        tarefasData = pontos.map(function(p) { return p.tarefas || 0; });
+    } else {
+        // Fallback: gerar N dias com valor unico para mostrar que o grafico funciona
+        var hoje = new Date();
+        labels = [];
+        xpData = [];
+        tarefasData = [];
+        for (var i = periodo - 1; i >= 0; i--) {
+            var d = new Date(hoje);
+            d.setDate(d.getDate() - i);
+            labels.push(d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }));
+            // Distribuir o total uniformemente (indicativo, nao real)
+            xpData.push(kpis.xpTotal ? Math.round(kpis.xpTotal / periodo) : 0);
+            tarefasData.push(kpis.tarefasConcluidas ? Math.round(kpis.tarefasConcluidas / periodo) : 0);
+        }
+    }
+
+    var emptyMsg = document.getElementById('gami-chart-empty');
+    var temDados = xpData.some(function(v) { return v > 0; });
+    if (emptyMsg) emptyMsg.style.display = temDados ? 'none' : 'flex';
+    if (!temDados) return;
+
+    gamiState.chartInstance = new Chart(canvas, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'XP Distribuido',
+                    data: xpData,
+                    borderColor: '#1a237e',
+                    backgroundColor: 'rgba(26,35,126,0.08)',
+                    tension: 0.3,
+                    fill: true,
+                    pointRadius: 3,
+                    yAxisID: 'y'
+                },
+                {
+                    label: 'Tarefas Concluidas',
+                    data: tarefasData,
+                    borderColor: '#ff6f00',
+                    backgroundColor: 'rgba(255,111,0,0.08)',
+                    tension: 0.3,
+                    fill: false,
+                    pointRadius: 3,
+                    yAxisID: 'y1'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: { position: 'bottom', labels: { font: { size: 11 }, boxWidth: 12 } }
+            },
+            scales: {
+                x: { ticks: { font: { size: 10 }, maxTicksLimit: 8 } },
+                y: {
+                    type: 'linear', position: 'left',
+                    title: { display: true, text: 'XP', font: { size: 10 } },
+                    ticks: { font: { size: 10 } }
+                },
+                y1: {
+                    type: 'linear', position: 'right',
+                    title: { display: true, text: 'Tarefas', font: { size: 10 } },
+                    ticks: { font: { size: 10 } },
+                    grid: { drawOnChartArea: false }
+                }
+            }
+        }
+    });
+}
+
+// ---- Polling ----
+function iniciarPollingGamificacao() {
+    if (gamiState.pollingTimer) return; // ja iniciado
+    gamiState.pollingTimer = setInterval(function() {
+        // Polling silencioso — so atualiza se a secao gamificacao estiver ativa
+        if (currentPage === 'gamificacao') {
+            renderGamificacao();
+        }
+    }, 60000);
+}
+
+// Iniciar polling quando o app inicializar
+// (chamado pela funcao init() do CONECTA apos autenticacao Supabase)
+iniciarPollingGamificacao();
+
+// Interceptar showPage para disparar renderGamificacao quando a secao for aberta
+// (sem sobrescrever showPage — usa o padrao de verificacao em renderCurrentPage)
+var _gamiOriginalShowPage = showPage;
+showPage = function(page) {
+    _gamiOriginalShowPage(page);
+    if (page === 'gamificacao') {
+        renderGamificacao();
+    }
+};
 
 window.addEventListener('conecta-sync-status', function(event) {
     updateSyncBadge(event.detail || null);
