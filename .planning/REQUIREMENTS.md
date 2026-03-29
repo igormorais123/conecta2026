@@ -18,13 +18,13 @@
 
 ### Dashboard Core (KPIs + Leaderboard)
 
-- [ ] **DASH-01**: Secao "Gamificacao" na sidebar do CONECTA com badge de notificacao
-- [ ] **DASH-02**: Cards de KPIs: tarefas concluidas, XP total, cabos ativos, cobertura %
-- [ ] **DASH-03**: Leaderboard de cabos: posicao, nome, XP, nivel, streak, badges
-- [ ] **DASH-04**: Filtro de leaderboard por equipe regional
-- [ ] **DASH-05**: Ranking de equipes com metricas agregadas
-- [ ] **DASH-06**: Graficos Chart.js: performance temporal (dia/semana/mes)
-- [ ] **DASH-07**: Polling automatico a cada 60s (setInterval)
+- [x] **DASH-01**: Secao "Gamificacao" na sidebar do CONECTA com badge de notificacao
+- [x] **DASH-02**: Cards de KPIs: tarefas concluidas, XP total, cabos ativos, cobertura %
+- [x] **DASH-03**: Leaderboard de cabos: posicao, nome, XP, nivel, streak, badges
+- [x] **DASH-04**: Filtro de leaderboard por equipe regional
+- [x] **DASH-05**: Ranking de equipes com metricas agregadas
+- [x] **DASH-06**: Graficos Chart.js: performance temporal (dia/semana/mes)
+- [x] **DASH-07**: Polling automatico a cada 60s (setInterval)
 
 ### Visualizacoes Avancadas (Heatmap + War Room)
 
@@ -78,7 +78,7 @@
 |-------------|-------|--------|
 | INFRA-01..04 | Phase 1: Fundacao | Pending |
 | CLIENT-01..04 | Phase 1: Fundacao | Pending |
-| DASH-01..07 | Phase 2: Dashboard Core | Pending |
+| DASH-01..07 | Phase 2: Dashboard Core | Complete |
 | VIS-01..02 | Phase 3: Visualizacoes | Pending |
 | VIS-03..05 | Phase 3: Visualizacoes | Pending |
 | OPS-01..04 | Phase 4: Operacoes | Pending |

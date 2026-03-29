@@ -46,6 +46,10 @@ Plans:
 **Requirements:** DASH-01, DASH-02, DASH-03, DASH-04, DASH-05, DASH-06, DASH-07
 **Estimated effort:** 3-4 dias
 **Depends on:** Phase 1
+**Plans:** 1 plano
+
+Plans:
+- [x] 02-01-PLAN.md — fetchLeaderboard/fetchTeamsRanking + secao gamificacao completa (KPIs, Chart.js, leaderboard, ranking equipes, polling 60s)
 
 ### Tasks
 1. Adicionar secao "Gamificacao" na sidebar do CONECTA.html com icone e badge
@@ -152,7 +156,7 @@ Plans:
 ### Success criteria
 - Token JWT do Elexion nao existe mais no browser (nenhum sessionStorage)
 - Todas as chamadas REST passam pelo proxy Supabase
-- Socket.IO mantem conexao direta (exceção aceita — autenticado com token de curta duracao)
+- Socket.IO mantem conexao direta (excecao aceita — autenticado com token de curta duracao)
 - innerHTML auditado: nenhum dado da API inserido sem sanitizacao
 
 ### Risks
@@ -176,7 +180,7 @@ Fase 5 pode comecar mais cedo se necessario (seguranca prioritaria).
 
 ## Next Step
 
-Run `/gsd:plan-phase 1` to create detailed execution plan for Phase 1: Fundacao.
+Run `/gsd:execute-phase 03` to execute Phase 3: Visualizacoes Avancadas.
 
 ---
-*Last updated: 2026-03-29 after initialization*
+*Last updated: 2026-03-29 — Phase 2 complete*

@@ -6,3 +6,4 @@ server-http.log
 
 .vercel
 .gstack/
+_verify_*.js
