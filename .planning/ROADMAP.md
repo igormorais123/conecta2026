@@ -79,6 +79,10 @@ Plans:
 **Requirements:** VIS-01, VIS-02, VIS-03, VIS-04, VIS-05
 **Estimated effort:** 3-4 dias
 **Depends on:** Phase 1 (CORS + client), Phase 2 (sidebar ja existe)
+**Plans:** 1 plano
+
+Plans:
+- [ ] 03-01-PLAN.md — CDN Leaflet+Socket.IO + secao Mapa de Cobertura (heatmap+gaps+GeoJSON RAs) + secao War Room (feed Socket.IO+alertas+pulso)
 
 ### Tasks
 1. Carregar Leaflet.js + Leaflet.heat via CDN
@@ -109,9 +113,13 @@ Plans:
 ## Phase 4: Operacoes de Campo — Tarefas + Desafios + Social
 
 **Goal:** Coordenadores criam tarefas e desafios, veem metricas sociais dos cabos.
-**Requirements:** OPS-01..08
+**Requirements:** OPS-01, OPS-02, OPS-03, OPS-04, OPS-05, OPS-06, OPS-07, OPS-08
 **Estimated effort:** 3-5 dias
 **Depends on:** Phase 2
+**Plans:** 1 plano
+
+Plans:
+- [x] 04-01-PLAN.md — ElexionClient write methods + secoes Tarefas de Campo / Desafios / Social com modais de criacao, filtros, reports e polling 60s
 
 ### Tasks
 1. Criar secao "Tarefas de Campo" separada das "Tarefas" existentes do CONECTA
@@ -143,6 +151,10 @@ Plans:
 **Requirements:** SEC-01, SEC-02, SEC-03, SEC-04
 **Estimated effort:** 2-3 dias
 **Depends on:** Phases 1-4 funcionando
+**Plans:** 1 plano
+
+Plans:
+- [ ] 05-01-PLAN.md — Edge Function elexion-proxy (Deno) + ElexionClient v2 via proxy + auditoria innerHTML CONECTA.html
 
 ### Tasks
 1. Criar Supabase Edge Function `elexion-proxy` (Deno)
@@ -180,7 +192,7 @@ Fase 5 pode comecar mais cedo se necessario (seguranca prioritaria).
 
 ## Next Step
 
-Run `/gsd:execute-phase 03` to execute Phase 3: Visualizacoes Avancadas.
+Run `/gsd:execute-phase 05` to execute Phase 5: Hardening.
 
 ---
-*Last updated: 2026-03-29 — Phase 2 complete*
+*Last updated: 2026-03-28 — Phase 5 planned*

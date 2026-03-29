@@ -36,14 +36,14 @@
 
 ### Operacoes de Campo (Tarefas + Desafios + Social)
 
-- [ ] **OPS-01**: Lista de tarefas de campo do Elexion (separada das tarefas do CONECTA)
-- [ ] **OPS-02**: Criar tarefa gamificada via CONECTA (POST /tasks) com tipo, local, deadline
-- [ ] **OPS-03**: Atribuir tarefa a cabo eleitoral via CONECTA
-- [ ] **OPS-04**: Ver reports de tarefas concluidas (resultado, fotos)
-- [ ] **OPS-05**: Criar desafio semanal via CONECTA (metrica, alvo, recompensa XP)
-- [ ] **OPS-06**: Acompanhar progresso e leaderboard do desafio
-- [ ] **OPS-07**: Metricas de redes sociais por equipe (posts, engagement, alcance)
-- [ ] **OPS-08**: Scorecard social individual por cabo
+- [x] **OPS-01**: Lista de tarefas de campo do Elexion (separada das tarefas do CONECTA)
+- [x] **OPS-02**: Criar tarefa gamificada via CONECTA (POST /tasks) com tipo, local, deadline
+- [x] **OPS-03**: Atribuir tarefa a cabo eleitoral via CONECTA
+- [x] **OPS-04**: Ver reports de tarefas concluidas (resultado, fotos)
+- [x] **OPS-05**: Criar desafio semanal via CONECTA (metrica, alvo, recompensa XP)
+- [x] **OPS-06**: Acompanhar progresso e leaderboard do desafio
+- [x] **OPS-07**: Metricas de redes sociais por equipe (posts, engagement, alcance)
+- [x] **OPS-08**: Scorecard social individual por cabo
 
 ### Hardening (Seguranca)
 
@@ -81,9 +81,9 @@
 | DASH-01..07 | Phase 2: Dashboard Core | Complete |
 | VIS-01..02 | Phase 3: Visualizacoes | Complete |
 | VIS-03..05 | Phase 3: Visualizacoes | Complete |
-| OPS-01..04 | Phase 4: Operacoes | Pending |
-| OPS-05..06 | Phase 4: Operacoes | Pending |
-| OPS-07..08 | Phase 4: Operacoes | Pending |
+| OPS-01..04 | Phase 4: Operacoes | Complete |
+| OPS-05..06 | Phase 4: Operacoes | Complete |
+| OPS-07..08 | Phase 4: Operacoes | Complete |
 | SEC-01..04 | Phase 5: Hardening | Pending |
 
 ---
