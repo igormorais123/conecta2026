@@ -11,6 +11,10 @@
 **Requirements:** INFRA-01, INFRA-02, INFRA-03, INFRA-04, CLIENT-01, CLIENT-02, CLIENT-03, CLIENT-04
 **Estimated effort:** 3-4 dias
 **Depends on:** Nada (bloqueadora de tudo)
+**Plans:** 1 plano
+
+Plans:
+- [ ] 01-01-PLAN.md — CORS VPS + Seed DF (33 RAs) + elexion-client.js + conta.html UI
 
 ### Tasks
 1. Deploy Docker Elexion na VPS Hostinger (docker-compose.staging.yml)
