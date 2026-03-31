@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Coordenadores no CONECTA veem em tempo real a performance dos cabos eleitorais
-**Current focus:** Phase 5 — Hardening (Seguranca)
+**Current focus:** All phases complete — v1.0 integration done
 
 ## Current Phase
 
 **Phase:** 5 — Hardening
-**Status:** Not started
-**Current Plan:** 01
-**Next action:** Phase 5 — Proxy Supabase Edge Function + sanitizacao
+**Status:** Complete
+**Current Plan:** 01 (done)
+**Next action:** Post-deploy manual actions (SEC-02 token config, SEC-04 CORS removal)
 
 ## Milestone Progress
 
@@ -22,7 +22,7 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 | 2 | Dashboard Core | Complete |
 | 3 | Visualizacoes Avancadas | Complete |
 | 4 | Operacoes de Campo | Complete |
-| 5 | Hardening | Not started |
+| 5 | Hardening | Complete |
 
 ## Decisions
 
@@ -42,6 +42,10 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 - wireCampoPages() encadeia no showPage wrapper (mesmo padrao da gamificacao)
 - Sanitizacao inline replace(/</g,'&lt;') em todo innerHTML de dados da API
 - Max 5 equipes no render social para limitar chamadas paralelas
+- Supabase client global: window.CONECTA_SUPABASE (confirmado no supabase-config.js)
+- isAuthenticated() tornado async — 4 call sites no CONECTA.html atualizados com await
+- renderVeiculos sanitizado com escapeHtml() em todos os 10 campos de dados do usuario
+- ev.sub sanitizado com _safeText(); ev.texto mantido sem dupla sanitizacao (HTML interno)
 
 ## Performance Metrics
 
@@ -51,17 +55,20 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 | 02-01 | 5min | 3/3 | 2 | 2026-03-29 |
 | 03-01 | 8min | 3/3 | 1 | 2026-03-29 |
 | 04-01 | 8min | 3/3 | 2 | 2026-03-28 |
+| 05-01 | 10min | 3/3 | 3 | 2026-03-28 |
 
 ## Blockers
 
 - CORS na VPS: requer SSH na VPS 187.77.53.163 para editar .env e reiniciar container api
 - Push para Elexion remote: SSH key nao configurada (commit local 0a86d8d pendente push)
 - Seed DF: precisa ser executado na VPS apos push e git pull
+- SEC-02: ELEXION_SERVICE_TOKEN precisa ser configurado no Supabase Dashboard
+- SEC-04: Remocao do CORS inteia.com.br no NestJS apos validar proxy
 
 ## Last Session
 
-**Date:** 2026-03-28T23:00:00Z
-**Stopped at:** Completed 04-01-PLAN.md (3/3 tasks completas — Phase 4 done)
+**Date:** 2026-03-28T23:30:00Z
+**Stopped at:** Completed 05-01-PLAN.md (3/3 tasks completas — Phase 5 done)
 
 ---
-*Last updated: 2026-03-28 (Phase 4 complete)*
+*Last updated: 2026-03-28 (Phase 5 complete)*

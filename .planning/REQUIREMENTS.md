@@ -47,10 +47,10 @@
 
 ### Hardening (Seguranca)
 
-- [ ] **SEC-01**: Proxy Supabase Edge Function: token JWT Elexion nunca exposto no browser
-- [ ] **SEC-02**: Service account no Elexion com token de longa duracao para o proxy
-- [ ] **SEC-03**: Sanitizacao sistematica de innerHTML no CONECTA (dados vindos da API)
-- [ ] **SEC-04**: Remover CORS de `inteia.com.br` do Elexion apos migrar para proxy
+- [x] **SEC-01**: Proxy Supabase Edge Function: token JWT Elexion nunca exposto no browser
+- [x] **SEC-02**: Service account no Elexion com token de longa duracao para o proxy
+- [x] **SEC-03**: Sanitizacao sistematica de innerHTML no CONECTA (dados vindos da API)
+- [x] **SEC-04**: Remover CORS de `inteia.com.br` do Elexion apos migrar para proxy
 
 ## v2 Requirements
 
@@ -84,7 +84,7 @@
 | OPS-01..04 | Phase 4: Operacoes | Complete |
 | OPS-05..06 | Phase 4: Operacoes | Complete |
 | OPS-07..08 | Phase 4: Operacoes | Complete |
-| SEC-01..04 | Phase 5: Hardening | Pending |
+| SEC-01..04 | Phase 5: Hardening | Complete |
 
 ---
 *Last updated: 2026-03-29 after initialization*

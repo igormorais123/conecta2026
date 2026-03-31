@@ -1,126 +1,54 @@
 /**
- * elexion-client.js — Cliente HTTP para a API Elexion (modo bearer)
- * Versao: 1.0.0 (Fase 1 — Fundacao)
+ * elexion-client.js — Cliente HTTP para a API Elexion (via Proxy Supabase)
+ * Versao: 2.0.0 (Fase 5 — Proxy Seguro)
+ *
+ * AVISO: Apos validar o proxy em producao, remover inteia.com.br do CORS
+ * do NestJS (main.ts na VPS 187.77.53.163). O proxy elimina a necessidade
+ * de CORS direto. (SEC-04)
+ *
+ * Mudancas vs v1.0.0:
+ *   - Token JWT do Elexion REMOVIDO do browser (SEC-01)
+ *   - Todas as chamadas REST passam pelo proxy Supabase Edge Function
+ *   - Autenticacao via sessao Supabase (window.CONECTA_SUPABASE)
+ *   - Funcoes removidas: login(), saveTokens(), getAccessToken(),
+ *     getRefreshToken(), refreshTokens(), clearTokens()
  *
  * Uso:
  *   <script src="js/elexion-client.js"></script>
- *   const user = await ElexionClient.login('email', 'senha');
  *   const kpis = await ElexionClient.fetchKpis();  // null se offline
  */
 
 window.ElexionClient = (() => {
   'use strict';
 
-  const BASE = 'https://api.elexion.com.br/api/v1';
-  const TOKEN_KEY = 'elexion_access_token';
-  const REFRESH_KEY = 'elexion_refresh_token';
+  // URL da Edge Function proxy (Supabase)
+  const PROXY_URL = 'https://dvgbqbwipwegkndutvte.supabase.co/functions/v1/elexion-proxy';
+
+  // Dados do usuario (nao e token — safe no sessionStorage)
   const USER_KEY = 'elexion_user';
 
-  // ---- Armazenamento (sessionStorage, nunca localStorage) ----
-  // CLIENT-02: token jamais vai para localStorage
+  // ---- Helper: obter cliente Supabase global ----
 
-  function getAccessToken() {
-    return sessionStorage.getItem(TOKEN_KEY);
-  }
-
-  function getRefreshToken() {
-    return sessionStorage.getItem(REFRESH_KEY);
-  }
-
-  function saveTokens(accessToken, refreshToken) {
-    sessionStorage.setItem(TOKEN_KEY, accessToken);
-    sessionStorage.setItem(REFRESH_KEY, refreshToken);
-  }
-
-  function clearTokens() {
-    sessionStorage.removeItem(TOKEN_KEY);
-    sessionStorage.removeItem(REFRESH_KEY);
-    sessionStorage.removeItem(USER_KEY);
+  function getSupabaseClient() {
+    return window.CONECTA_SUPABASE || window._conectaSupabase || null;
   }
 
   // ---- Auth ----
 
   /**
-   * Login no Elexion com email e senha.
-   * Modo bearer: sem x-session-transport: cookie.
-   * @returns {Promise<object|null>} dados do usuario ou null em caso de erro
+   * Retorna true se ha sessao Supabase ativa.
+   * Substituiu a verificacao de token Elexion no sessionStorage.
+   * NOTA: esta funcao e async — chamadores devem usar await.
    */
-  async function login(email, password) {
+  async function isAuthenticated() {
     try {
-      const res = await fetch(BASE + '/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        // SEM x-session-transport: cookie — modo bearer
-        body: JSON.stringify({ email, password }),
-        mode: 'cors',
-      });
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.message || 'Credenciais invalidas (' + res.status + ')');
-      }
-
-      const data = await res.json();
-      // data = { accessToken, refreshToken, user }
-      saveTokens(data.accessToken, data.refreshToken);
-      sessionStorage.setItem(USER_KEY, JSON.stringify(data.user));
-      return data.user;
-
-    } catch (err) {
-      // CLIENT-03: nao propagar erro que quebre o CONECTA
-      console.warn('[ElexionClient] login falhou:', err.message);
-      return null;
-    }
-  }
-
-  /**
-   * Refresh do accessToken usando o refreshToken atual.
-   * CRITICO: refresh token e rotativo — sempre salvar o novo par retornado.
-   * @returns {Promise<string|null>} novo accessToken ou null
-   */
-  async function refreshTokens() {
-    const refreshToken = getRefreshToken();
-    if (!refreshToken) return null;
-
-    try {
-      const res = await fetch(BASE + '/auth/refresh', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ refreshToken }),  // body, NAO cookie
-        mode: 'cors',
-      });
-
-      if (!res.ok) {
-        // Refresh falhou — limpar tokens, usuario deve relogar no Elexion
-        clearTokens();
-        return null;
-      }
-
-      const data = await res.json();
-      // SEMPRE salvar AMBOS os tokens novos (refresh e rotativo)
-      saveTokens(data.accessToken, data.refreshToken);
-      return data.accessToken;
-
+      const client = getSupabaseClient();
+      if (!client) return false;
+      const { data } = await client.auth.getSession();
+      return !!(data?.session?.access_token);
     } catch {
-      clearTokens();
-      return null;
+      return false;
     }
-  }
-
-  /**
-   * Logout do Elexion (apenas local — limpa sessionStorage).
-   * Nao desautentica do CONECTA/Supabase.
-   */
-  function logout() {
-    clearTokens();
-  }
-
-  /**
-   * Retorna true se ha um token de acesso em sessao.
-   * Nao valida expiracao (isso acontece na proxima request).
-   */
-  function isAuthenticated() {
-    return !!getAccessToken();
   }
 
   /**
@@ -135,94 +63,100 @@ window.ElexionClient = (() => {
     }
   }
 
-  // ---- Fetch autenticado com retry em 401 ----
+  /**
+   * Logout — limpa dados do usuario no sessionStorage.
+   * Nao desautentica do Supabase (isso e feito pelo CONECTA).
+   */
+  function logout() {
+    sessionStorage.removeItem(USER_KEY);
+  }
+
+  // ---- Fetch via proxy ----
 
   /**
-   * Fetch para endpoint autenticado do Elexion.
-   * Retry automatico em 401 via refresh token.
-   * CLIENT-03: retorna null (nao throw) quando Elexion indisponivel.
+   * Fetch para endpoint do Elexion via proxy Supabase Edge Function.
+   * CLIENT-03: retorna null (nao throw) quando indisponivel.
    *
    * @param {string} path - Ex: '/analytics/kpis'
    * @param {RequestInit} options - Opcoes adicionais de fetch (method, body, etc)
    * @returns {Promise<any|null>} dados JSON ou null
    */
   async function request(path, options = {}) {
-    const token = getAccessToken();
-    if (!token) return null;
+    // Obter token da sessao Supabase ativa
+    let supabaseToken = null;
+    try {
+      const client = getSupabaseClient();
+      if (client) {
+        const { data } = await client.auth.getSession();
+        supabaseToken = data?.session?.access_token || null;
+      }
+    } catch (e) {
+      console.warn('[ElexionClient] Nao foi possivel obter sessao Supabase:', e.message);
+    }
 
-    const doFetch = async (bearerToken) => {
-      return fetch(BASE + path, {
+    if (!supabaseToken) {
+      console.warn('[ElexionClient] Sem sessao Supabase ativa — proxy nao autenticado');
+      return null;
+    }
+
+    try {
+      const res = await fetch(PROXY_URL + path, {
         ...options,
         headers: {
           'Content-Type': 'application/json',
           ...options.headers,
-          'Authorization': 'Bearer ' + bearerToken,
+          'Authorization': 'Bearer ' + supabaseToken,
         },
-        mode: 'cors',
       });
-    };
-
-    try {
-      let res = await doFetch(token);
-
-      // 401 — tentar refresh uma vez
-      if (res.status === 401) {
-        const newToken = await refreshTokens();
-        if (!newToken) {
-          // Refresh falhou — usuario deve relogar no Elexion (nao afeta CONECTA)
-          return null;
-        }
-        res = await doFetch(newToken);
-      }
 
       if (!res.ok) {
-        console.warn('[ElexionClient] request falhou:', res.status, path);
+        console.warn('[ElexionClient] proxy retornou', res.status, 'para', path);
         return null;
       }
 
       return await res.json();
 
     } catch (err) {
-      // CLIENT-03: Elexion offline nao quebra o CONECTA
-      console.warn('[ElexionClient] Elexion indisponivel:', err.message);
+      // CLIENT-03: proxy indisponivel nao quebra o CONECTA
+      console.warn('[ElexionClient] Proxy indisponivel:', err.message);
       return null;
     }
   }
 
   // ---- Endpoints da API ----
 
-  /** GET /api/v1/analytics/kpis — requer coordenador+ */
+  /** GET /analytics/kpis — requer coordenador+ */
   async function fetchKpis() {
     return request('/analytics/kpis');
   }
 
-  /** GET /api/v1/analytics/heatmap — requer coordenador+ */
+  /** GET /analytics/heatmap — requer coordenador+ */
   async function fetchHeatmap() {
     return request('/analytics/heatmap');
   }
 
-  /** GET /api/v1/analytics/heatmap/gaps — requer coordenador+ */
+  /** GET /analytics/heatmap/gaps — requer coordenador+ */
   async function fetchHeatmapGaps() {
     return request('/analytics/heatmap/gaps');
   }
 
-  /** GET /api/v1/geofences — requer coordenador+ */
+  /** GET /geofences — requer coordenador+ */
   async function fetchGeofences() {
     return request('/geofences');
   }
 
-  /** GET /api/v1/war-room/feed — requer coordenador+ */
+  /** GET /war-room/feed — requer coordenador+ */
   async function fetchWarRoomFeed() {
     return request('/war-room/feed');
   }
 
-  /** GET /api/v1/war-room/alerts — requer coordenador+ */
+  /** GET /war-room/alerts — requer coordenador+ */
   async function fetchAlerts() {
     return request('/war-room/alerts');
   }
 
   /**
-   * GET /api/v1/analytics/leaderboard — ranking de cabos por XP.
+   * GET /analytics/leaderboard — ranking de cabos por XP.
    * @param {string|null} equipeId - Filtrar por equipe (opcional). Null = todos.
    * @returns {Promise<Array|null>} array de cabos ou null
    */
@@ -234,7 +168,7 @@ window.ElexionClient = (() => {
   }
 
   /**
-   * GET /api/v1/analytics/teams/ranking — ranking agregado por equipe.
+   * GET /analytics/teams/ranking — ranking agregado por equipe.
    * @returns {Promise<Array|null>} array de equipes ou null
    */
   async function fetchTeamsRanking() {
@@ -243,7 +177,7 @@ window.ElexionClient = (() => {
 
   // ---- Operacoes de Campo (Phase 4) ----
 
-  /** GET /api/v1/tasks — lista tarefas de campo paginadas */
+  /** GET /tasks — lista tarefas de campo paginadas */
   async function fetchTasks(filters = {}) {
     const params = new URLSearchParams();
     if (filters.status) params.set('status', filters.status);
@@ -253,12 +187,12 @@ window.ElexionClient = (() => {
     return request('/tasks?' + params.toString());
   }
 
-  /** GET /api/v1/tasks/:id/reports */
+  /** GET /tasks/:id/reports */
   async function fetchTaskReports(taskId) {
     return request('/tasks/' + encodeURIComponent(taskId) + '/reports');
   }
 
-  /** POST /api/v1/tasks — requer role COORDINATOR */
+  /** POST /tasks — requer role COORDINATOR */
   async function createTask(payload) {
     return request('/tasks', {
       method: 'POST',
@@ -266,7 +200,7 @@ window.ElexionClient = (() => {
     });
   }
 
-  /** POST /api/v1/tasks/:id/assign */
+  /** POST /tasks/:id/assign */
   async function assignTask(taskId, workerId) {
     return request('/tasks/' + encodeURIComponent(taskId) + '/assign', {
       method: 'POST',
@@ -274,12 +208,12 @@ window.ElexionClient = (() => {
     });
   }
 
-  /** GET /api/v1/challenges?status=active */
+  /** GET /challenges?status=active */
   async function fetchChallenges() {
     return request('/challenges?status=active');
   }
 
-  /** POST /api/v1/challenges — requer role COORDINATOR */
+  /** POST /challenges — requer role COORDINATOR */
   async function createChallenge(payload) {
     return request('/challenges', {
       method: 'POST',
@@ -287,22 +221,22 @@ window.ElexionClient = (() => {
     });
   }
 
-  /** GET /api/v1/challenges/:id/progress */
+  /** GET /challenges/:id/progress */
   async function fetchChallengeProgress(challengeId) {
     return request('/challenges/' + encodeURIComponent(challengeId) + '/progress');
   }
 
-  /** GET /api/v1/challenges/:id/leaderboard */
+  /** GET /challenges/:id/leaderboard */
   async function fetchChallengeLeaderboard(challengeId) {
     return request('/challenges/' + encodeURIComponent(challengeId) + '/leaderboard');
   }
 
-  /** GET /api/v1/social/team/:teamId/metrics */
+  /** GET /social/team/:teamId/metrics */
   async function fetchSocialTeamMetrics(teamId) {
     return request('/social/team/' + encodeURIComponent(teamId) + '/metrics');
   }
 
-  /** GET /api/v1/social/scorecard/:userId */
+  /** GET /social/scorecard/:userId */
   async function fetchSocialScorecard(userId) {
     return request('/social/scorecard/' + encodeURIComponent(userId) + '/');
   }
@@ -310,9 +244,8 @@ window.ElexionClient = (() => {
   // ---- API publica ----
 
   return {
-    login,
+    // Auth (sem login/refreshTokens — token Elexion nao existe mais no browser)
     logout,
-    refreshTokens,
     isAuthenticated,
     getCurrentUser,
     request,

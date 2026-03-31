@@ -154,7 +154,7 @@ Plans:
 **Plans:** 1 plano
 
 Plans:
-- [ ] 05-01-PLAN.md — Edge Function elexion-proxy (Deno) + ElexionClient v2 via proxy + auditoria innerHTML CONECTA.html
+- [x] 05-01-PLAN.md — Edge Function elexion-proxy (Deno) + ElexionClient v2 via proxy + auditoria innerHTML CONECTA.html
 
 ### Tasks
 1. Criar Supabase Edge Function `elexion-proxy` (Deno)
@@ -192,7 +192,7 @@ Fase 5 pode comecar mais cedo se necessario (seguranca prioritaria).
 
 ## Next Step
 
-Run `/gsd:execute-phase 05` to execute Phase 5: Hardening.
+All phases complete. Post-deploy manual actions pending (SEC-02, SEC-04).
 
 ---
-*Last updated: 2026-03-28 — Phase 5 planned*
+*Last updated: 2026-03-28 — Phase 5 complete*

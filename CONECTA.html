@@ -3777,17 +3777,17 @@ function renderVeiculos() {
         grid.innerHTML = veiculos.map(v => `
             <div class="veiculo-card ${v.status}">
                 <div class="veiculo-header">
-                    <span class="veiculo-placa">${v.placa}</span>
+                    <span class="veiculo-placa">${escapeHtml(v.placa || '')}</span>
                     <span class="veiculo-status status-${v.status}">${v.status === 'disponivel' ? 'Dispon\u00edvel' : v.status === 'em-uso' ? 'Em Uso' : 'Manuten\u00e7\u00e3o'}</span>
                 </div>
                 <div class="veiculo-info">
-                    <p><strong>${v.modelo}</strong></p>
-                    <p>Cor: ${v.cor || '--'}</p>
-                    <p>Respons\u00e1vel: ${v.responsavel || '--'}</p>
-                    <p>&#128222; ${v.telefone || '--'}</p>
-                    <p>Uso: ${v.uso || '--'}</p>
-                    <p>Data Sa\u00edda: ${v.dataSaida ? v.dataSaida.split('-').reverse().join('/') : '--'} | Hora: ${v.horaSaida || '--'}</p>
-                    <p>Km Sa\u00edda: ${v.kmSaida || '--'} | Km Chegada: ${v.kmChegada || '--'}</p>
+                    <p><strong>${escapeHtml(v.modelo || '')}</strong></p>
+                    <p>Cor: ${escapeHtml(v.cor || '--')}</p>
+                    <p>Respons\u00e1vel: ${escapeHtml(v.responsavel || '--')}</p>
+                    <p>&#128222; ${escapeHtml(v.telefone || '--')}</p>
+                    <p>Uso: ${escapeHtml(v.uso || '--')}</p>
+                    <p>Data Sa\u00edda: ${v.dataSaida ? escapeHtml(v.dataSaida.split('-').reverse().join('/')) : '--'} | Hora: ${escapeHtml(v.horaSaida || '--')}</p>
+                    <p>Km Sa\u00edda: ${escapeHtml(String(v.kmSaida || '--'))} | Km Chegada: ${escapeHtml(String(v.kmChegada || '--'))}</p>
                 </div>
                 <div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap;">
                     <button class="btn btn-primary" style="padding:5px 10px;font-size:0.65rem;" onclick="editarVeiculo(${v.id})">Editar</button>
@@ -5754,7 +5754,9 @@ var gamiState = {
  */
 async function renderGamificacao() {
     // Verificar se ElexionClient existe e esta autenticado
-    if (!window.ElexionClient || !ElexionClient.isAuthenticated()) {
+    // SEC-04: Apos validar proxy em producao, SSH na VPS 187.77.53.163 e remover
+    // 'https://inteia.com.br' do enableCors() no main.ts do NestJS. Reiniciar container.
+    if (!window.ElexionClient || !(await ElexionClient.isAuthenticated())) {
         document.getElementById('gami-offline-banner').style.display = 'block';
         atualizarUltimaAtualizacao(false);
         return;
@@ -5849,7 +5851,7 @@ async function renderGamiLeaderboard() {
 
     // Se ha filtro ativo e leaderboard ainda nao foi filtrado, buscar na API
     var dados = gamiState.leaderboard;
-    if (equipeId && window.ElexionClient && ElexionClient.isAuthenticated()) {
+    if (equipeId && window.ElexionClient && (await ElexionClient.isAuthenticated())) {
         var filtrado = await ElexionClient.fetchLeaderboard(equipeId);
         if (filtrado) dados = filtrado;
     }
@@ -6043,7 +6045,7 @@ function inicializarLeaflet() {
  * VIS-01, VIS-02
  */
 async function renderMapaCobertura() {
-    if (!window.ElexionClient || !ElexionClient.isAuthenticated()) {
+    if (!window.ElexionClient || !(await ElexionClient.isAuthenticated())) {
         document.getElementById('mapa-offline-banner').style.display = 'block';
         var el = document.getElementById('mapa-ultima-atualizacao');
         if (el) { el.textContent = 'Elexion nao vinculado'; el.style.color = 'var(--warning)'; }
@@ -6247,7 +6249,7 @@ var warRoomState = {
  * VIS-03, VIS-04, VIS-05
  */
 async function iniciarWarRoom() {
-    if (!window.ElexionClient || !ElexionClient.isAuthenticated()) {
+    if (!window.ElexionClient || !(await ElexionClient.isAuthenticated())) {
         document.getElementById('war-room-offline-banner').style.display = 'block';
         atualizarStatusWarRoom(false, 'Elexion nao vinculado');
         return;
@@ -6468,7 +6470,7 @@ function renderWarRoomFeed() {
         // ev.texto ja foi sanitizado por _safeText() no handler
         html += '<div style="font-size:0.82rem;line-height:1.4;">' + (ev.texto || '') + '</div>';
         if (ev.sub) {
-            html += '<div style="font-size:0.74rem;color:var(--text-light);margin-top:2px;">' + ev.sub + '</div>';
+            html += '<div style="font-size:0.74rem;color:var(--text-light);margin-top:2px;">' + _safeText(ev.sub) + '</div>';
         }
         html += '</div>';
         if (hora) {
