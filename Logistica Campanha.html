@@ -211,6 +211,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
         <button onclick="showPage('vales')">Vales Combustíveis</button>
         <button onclick="showPage('reversa')">Ativos na Rua (Reversa)</button>
         <button onclick="showPage('bandeiracos')">Eventos & Bandeiraços</button>
+        <button onclick="showPage('patrimonio')">Patrimônio</button>
     </div>
     <div style="margin-left:auto;display:flex;align-items:center;gap:8px;padding-left:12px;">
         <span id="userName" style="font-size:0.78rem;color:var(--text2);font-weight:600;"></span>
@@ -637,6 +638,44 @@ tr:hover td { background:rgba(59,130,246,0.05); }
     <div class="card"><table><thead><tr>
         <th>Sala</th><th>Data</th><th>Horário</th><th>Pessoa</th><th>Telefone</th><th>Pessoas</th><th>Assunto</th><th>Status</th><th>Ações</th>
     </tr></thead><tbody id="tbAgendaSalas"></tbody></table></div>
+</div>
+
+<!-- ============ PATRIMÔNIO ============ -->
+<div class="page" id="page-patrimonio">
+    <div class="card-header" style="margin-bottom:16px;">
+        <div>
+            <div class="card-title" style="font-size:1.2rem;">Patrimônio do Comitê</div>
+            <div class="card-subtitle">Controle de móveis, equipamentos e demais itens</div>
+        </div>
+        <div style="display:flex;gap:8px;">
+            <select id="filtroPatCategoria" onchange="renderPatrimonio()" style="padding:6px 10px;background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.8rem;">
+                <option value="">Todas as Categorias</option>
+                <option value="Móveis">Móveis</option>
+                <option value="Eletrônicos">Eletrônicos</option>
+                <option value="Informática">Informática</option>
+                <option value="Veículos">Veículos</option>
+                <option value="Decoração">Decoração</option>
+                <option value="Utensílios">Utensílios</option>
+                <option value="Material de Escritório">Material de Escritório</option>
+                <option value="Outros">Outros</option>
+            </select>
+            <select id="filtroPatEstado" onchange="renderPatrimonio()" style="padding:6px 10px;background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.8rem;">
+                <option value="">Todos os Estados</option>
+                <option value="Novo">Novo</option>
+                <option value="Bom">Bom</option>
+                <option value="Regular">Regular</option>
+                <option value="Ruim">Ruim</option>
+                <option value="Inutilizado">Inutilizado</option>
+            </select>
+            <button class="btn btn-primary" onclick="openModalPatrimonio()">+ Novo Item</button>
+        </div>
+    </div>
+    <!-- Cards de resumo -->
+    <div class="grid-4" style="margin-bottom:16px;" id="patStats"></div>
+    <!-- Tabela de patrimônio -->
+    <div class="card"><table><thead><tr>
+        <th>Código</th><th>Item</th><th>Categoria</th><th>Qtd</th><th>Estado</th><th>Localização</th><th>Responsável</th><th>Valor Unit.</th><th>Valor Total</th><th>Ações</th>
+    </tr></thead><tbody id="tbPatrimonio"></tbody></table></div>
 </div>
 
 <!-- DETALHE DRILL-DOWN -->
@@ -1082,6 +1121,52 @@ tr:hover td { background:rgba(59,130,246,0.05); }
     </div>
 </div></div>
 
+<!-- Modal Patrimônio -->
+<div class="modal-overlay" id="modalPatrimonio">
+<div class="modal">
+    <div class="modal-title">Cadastro de Patrimônio</div>
+    <input type="hidden" id="patEditId">
+    <div class="grid-2">
+        <div class="form-group"><label>Nome do Item</label><input type="text" id="patNome" placeholder="Ex: Mesa de reunião, Impressora..."></div>
+        <div class="form-group"><label>Código / Etiqueta</label><input type="text" id="patCodigo" placeholder="Ex: PAT-001"></div>
+    </div>
+    <div class="grid-2">
+        <div class="form-group"><label>Categoria</label>
+            <select id="patCategoria">
+                <option>Móveis</option><option>Eletrônicos</option><option>Informática</option>
+                <option>Veículos</option><option>Decoração</option><option>Utensílios</option>
+                <option>Material de Escritório</option><option>Outros</option>
+            </select>
+        </div>
+        <div class="form-group"><label>Quantidade</label><input type="number" id="patQtd" value="1" min="1"></div>
+    </div>
+    <div class="grid-2">
+        <div class="form-group"><label>Estado de Conservação</label>
+            <select id="patEstado">
+                <option>Novo</option><option>Bom</option><option>Regular</option><option>Ruim</option><option>Inutilizado</option>
+            </select>
+        </div>
+        <div class="form-group"><label>Origem</label>
+            <select id="patOrigem">
+                <option>Comprado</option><option>Doado</option><option>Emprestado</option><option>Alugado</option><option>Próprio</option>
+            </select>
+        </div>
+    </div>
+    <div class="grid-2">
+        <div class="form-group"><label>Localização</label><input type="text" id="patLocal" placeholder="Ex: Sala 5, Depósito, Auditório..."></div>
+        <div class="form-group"><label>Responsável</label><input type="text" id="patResponsavel" placeholder="Nome do responsável pelo item"></div>
+    </div>
+    <div class="grid-2">
+        <div class="form-group"><label>Valor Unitário (R$)</label><input type="number" id="patValor" value="0" min="0" step="0.01"></div>
+        <div class="form-group"><label>Data de Aquisição</label><input type="date" id="patDataAquisicao"></div>
+    </div>
+    <div class="form-group"><label>Observações</label><textarea id="patObs" placeholder="Marca, modelo, número de série, detalhes adicionais..."></textarea></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px;">
+        <button class="btn" style="background:var(--card2);color:var(--text);" onclick="closeModal('modalPatrimonio')">Cancelar</button>
+        <button class="btn btn-primary" onclick="savePatrimonio()">Salvar</button>
+    </div>
+</div></div>
+
 <script>
 // ==================== DADOS ====================
 var STORAGE_KEY = 'logistica_celina_2026';
@@ -1120,6 +1205,7 @@ function defaultData() {
         vales_combustivel: [],
         logistica_reversa: [],
         escala_bandeiracos: [],
+        patrimonio: [],
         nextId: 1
     };
 }
@@ -1141,7 +1227,7 @@ function showPage(id) {
     document.querySelectorAll('.nav-links button').forEach(function(b) { b.classList.remove('active'); });
     document.getElementById('page-' + id).classList.add('active');
     var btns = document.querySelectorAll('.nav-links button');
-    var pages = ['dashboard','tarefas','materiais','fornecedores','equipe','subcoord','calendario','checklist','eleitorado','agendasalas','orcamento','distribuicao','vales','reversa','bandeiracos'];
+    var pages = ['dashboard','tarefas','materiais','fornecedores','equipe','subcoord','calendario','checklist','eleitorado','agendasalas','orcamento','distribuicao','vales','reversa','bandeiracos','patrimonio'];
     var idx = pages.indexOf(id);
     if (idx >= 0 && btns[idx]) btns[idx].classList.add('active');
     if (id === 'dashboard') renderDashboard();
@@ -1156,6 +1242,7 @@ function showPage(id) {
     if (id === 'vales') renderVales();
     if (id === 'reversa') renderReversa();
     if (id === 'bandeiracos') renderBandeiracos();
+    if (id === 'patrimonio') renderPatrimonio();
 }
 
 window.renderCurrentPage = function() {
@@ -1166,6 +1253,7 @@ window.renderCurrentPage = function() {
     if (CURRENT_PAGE === 'equipe') renderEquipe();
     if (CURRENT_PAGE === 'checklist') renderChecklist();
     if (CURRENT_PAGE === 'agendasalas') renderAgendaSalas();
+    if (CURRENT_PAGE === 'patrimonio') renderPatrimonio();
 };
 
 // ==================== COUNTDOWN / DASHBOARD ====================
@@ -2579,6 +2667,127 @@ function renderDistribuicao() {
 }
 
 // ==================== UTILS ====================
+// ==================== PATRIMÔNIO ====================
+function openModalPatrimonio(id) {
+    document.getElementById('patEditId').value = id || '';
+    if (id) {
+        var p = (DATA.patrimonio || []).find(function(x) { return x.id == id; });
+        if (p) {
+            document.getElementById('patNome').value = p.nome || '';
+            document.getElementById('patCodigo').value = p.codigo || '';
+            document.getElementById('patCategoria').value = p.categoria || 'Móveis';
+            document.getElementById('patQtd').value = p.qtd || 1;
+            document.getElementById('patEstado').value = p.estado || 'Bom';
+            document.getElementById('patOrigem').value = p.origem || 'Comprado';
+            document.getElementById('patLocal').value = p.local || '';
+            document.getElementById('patResponsavel').value = p.responsavel || '';
+            document.getElementById('patValor').value = p.valor || 0;
+            document.getElementById('patDataAquisicao').value = p.dataAquisicao || '';
+            document.getElementById('patObs').value = p.obs || '';
+        }
+    } else {
+        document.getElementById('patNome').value = '';
+        document.getElementById('patCodigo').value = '';
+        document.getElementById('patCategoria').value = 'Móveis';
+        document.getElementById('patQtd').value = 1;
+        document.getElementById('patEstado').value = 'Bom';
+        document.getElementById('patOrigem').value = 'Comprado';
+        document.getElementById('patLocal').value = '';
+        document.getElementById('patResponsavel').value = '';
+        document.getElementById('patValor').value = 0;
+        document.getElementById('patDataAquisicao').value = '';
+        document.getElementById('patObs').value = '';
+    }
+    document.getElementById('modalPatrimonio').classList.add('show');
+}
+
+function savePatrimonio() {
+    var nome = document.getElementById('patNome').value.trim();
+    if (!nome) { alert('Informe o nome do item.'); return; }
+    if (!DATA.patrimonio) DATA.patrimonio = [];
+    var editId = document.getElementById('patEditId').value;
+    var item = {
+        id: editId ? parseInt(editId) : genId(),
+        nome: nome,
+        codigo: document.getElementById('patCodigo').value.trim(),
+        categoria: document.getElementById('patCategoria').value,
+        qtd: parseInt(document.getElementById('patQtd').value) || 1,
+        estado: document.getElementById('patEstado').value,
+        origem: document.getElementById('patOrigem').value,
+        local: document.getElementById('patLocal').value.trim(),
+        responsavel: document.getElementById('patResponsavel').value.trim(),
+        valor: parseFloat(document.getElementById('patValor').value) || 0,
+        dataAquisicao: document.getElementById('patDataAquisicao').value,
+        obs: document.getElementById('patObs').value.trim()
+    };
+    if (editId) {
+        var idx = DATA.patrimonio.findIndex(function(x) { return x.id == editId; });
+        if (idx >= 0) DATA.patrimonio[idx] = item;
+    } else {
+        DATA.patrimonio.push(item);
+    }
+    saveData();
+    closeModal('modalPatrimonio');
+    renderPatrimonio();
+}
+
+function deletePatrimonio(id) {
+    if (!confirm('Excluir este item do patrimônio?')) return;
+    DATA.patrimonio = (DATA.patrimonio || []).filter(function(x) { return x.id != id; });
+    saveData();
+    renderPatrimonio();
+}
+
+function renderPatrimonio() {
+    if (!DATA.patrimonio) DATA.patrimonio = [];
+    var itens = DATA.patrimonio;
+
+    // Filtros
+    var filtroCategoria = document.getElementById('filtroPatCategoria').value;
+    var filtroEstado = document.getElementById('filtroPatEstado').value;
+    var filtrados = itens.filter(function(p) {
+        if (filtroCategoria && p.categoria !== filtroCategoria) return false;
+        if (filtroEstado && p.estado !== filtroEstado) return false;
+        return true;
+    });
+
+    // Stats
+    var totalItens = itens.length;
+    var totalQtd = itens.reduce(function(s, p) { return s + (p.qtd || 0); }, 0);
+    var totalValor = itens.reduce(function(s, p) { return s + ((p.valor || 0) * (p.qtd || 1)); }, 0);
+    var categorias = {};
+    itens.forEach(function(p) { categorias[p.categoria] = (categorias[p.categoria] || 0) + 1; });
+    var numCategorias = Object.keys(categorias).length;
+
+    document.getElementById('patStats').innerHTML =
+        '<div class="card stat"><div class="stat-num" style="color:var(--accent);">' + totalItens + '</div><div class="stat-label">Itens Cadastrados</div></div>' +
+        '<div class="card stat"><div class="stat-num" style="color:var(--cyan);">' + totalQtd + '</div><div class="stat-label">Quantidade Total</div></div>' +
+        '<div class="card stat"><div class="stat-num" style="color:var(--green);">R$ ' + totalValor.toLocaleString('pt-BR', {minimumFractionDigits:2}) + '</div><div class="stat-label">Valor Total</div></div>' +
+        '<div class="card stat"><div class="stat-num" style="color:var(--orange);">' + numCategorias + '</div><div class="stat-label">Categorias</div></div>';
+
+    // Tabela
+    var html = '';
+    filtrados.forEach(function(p) {
+        var estadoCor = p.estado === 'Novo' ? 'green' : p.estado === 'Bom' ? 'blue' : p.estado === 'Regular' ? 'orange' : p.estado === 'Ruim' ? 'red' : 'purple';
+        var valorTotal = (p.valor || 0) * (p.qtd || 1);
+        html += '<tr>' +
+            '<td><span style="font-weight:700;color:var(--accent);">' + esc(p.codigo || '-') + '</span></td>' +
+            '<td><div style="font-weight:600;">' + esc(p.nome) + '</div>' +
+                (p.obs ? '<div style="font-size:.72rem;color:var(--text2);">' + esc(p.obs) + '</div>' : '') +
+                '<div style="font-size:.7rem;color:var(--text2);">' + esc(p.origem || '') + (p.dataAquisicao ? ' | ' + formatDate(p.dataAquisicao) : '') + '</div></td>' +
+            '<td><span class="badge badge-cyan">' + esc(p.categoria) + '</span></td>' +
+            '<td style="font-weight:700;text-align:center;">' + (p.qtd || 1) + '</td>' +
+            '<td><span class="badge badge-' + estadoCor + '">' + esc(p.estado) + '</span></td>' +
+            '<td>' + esc(p.local || '-') + '</td>' +
+            '<td>' + esc(p.responsavel || '-') + '</td>' +
+            '<td>R$ ' + (p.valor || 0).toLocaleString('pt-BR', {minimumFractionDigits:2}) + '</td>' +
+            '<td style="font-weight:600;">R$ ' + valorTotal.toLocaleString('pt-BR', {minimumFractionDigits:2}) + '</td>' +
+            '<td><button class="btn btn-sm btn-primary" onclick="openModalPatrimonio(' + p.id + ')">Editar</button> ' +
+            '<button class="btn btn-sm btn-danger" onclick="deletePatrimonio(' + p.id + ')">Excluir</button></td></tr>';
+    });
+    document.getElementById('tbPatrimonio').innerHTML = html || '<tr><td colspan="10" style="text-align:center;color:var(--text2);padding:30px;">Nenhum item cadastrado no patrimônio.</td></tr>';
+}
+
 function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 function esc(s) { var d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
 function formatDate(d) {
