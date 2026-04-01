@@ -17,13 +17,27 @@ Sempre que qualquer arquivo for criado ou alterado neste projeto:
 3. `git push origin main` automaticamente
 4. **Não perguntar antes de fazer push** — o push é sempre automático após qualquer alteração
 
-## Deploy Automático
+## Deploy Automático (push = deploy = site atualizado)
 
 O deploy é contínuo via **Vercel** conectado ao GitHub:
 - Cada `git push origin main` dispara deploy automático no Vercel
 - O site fica disponível em: **https://inteia.com.br/conecta2026/**
 - `vercel.json` contém rewrites de `/conecta2026` → `index.html`
 - **Qualquer alteração pushada aqui vai direto para produção** — não há ambiente de staging
+
+### Fluxo completo: edição → site ao vivo
+```
+Editar arquivo local → git add → git commit → git push origin main → Vercel detecta → deploy automático → inteia.com.br/conecta2026 atualizado
+```
+
+### Tipos de dados no sistema
+1. **Código/HTML** — alterações em arquivos `.html`, `.js`, `.css` vão para o site via git push
+2. **Dados de usuário** — tarefas, materiais, fornecedores, equipe etc. ficam no **Supabase** (banco online)
+   - Supabase URL: `dvgbqbwipwegkndutvte.supabase.co`
+   - Dados da Logística: tabela `configuracoes_app`, chave `logistica_estado` (JSON completo)
+   - Dados do CONECTA: tabelas individuais (`eventos`, `veiculos`, `pessoas`, `pesquisas`, etc.)
+   - Autenticação: 3 usuários (`silvio2026`, `karla2026`, `igor2026`)
+3. **Migração de dados locais** — usar `migrar-dados.html` para enviar dados do localStorage para o Supabase
 
 ## Stack e Convenções
 
