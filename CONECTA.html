@@ -1789,14 +1789,39 @@
             #page-war-room > div:nth-child(3) { grid-template-columns: 1fr !important; }
         }
     </style>
-    <!-- Chart.js para graficos de performance da gamificacao -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
-    <!-- Leaflet.js para heatmap geografico (VIS-01, VIS-02) -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
-    <!-- Socket.IO client para War Room em tempo real (VIS-03, VIS-04, VIS-05) -->
-    <script src="https://cdn.socket.io/4.8.3/socket.io.min.js" crossorigin="anonymous"></script>
+    <!-- Libs carregadas sob demanda para melhorar performance inicial -->
+    <script>
+    // Lazy-load de bibliotecas pesadas (Chart.js, Leaflet, Socket.IO)
+    function loadScript(src, cb) {
+        var s = document.createElement('script');
+        s.src = src;
+        s.crossOrigin = 'anonymous';
+        s.onload = cb || function(){};
+        document.head.appendChild(s);
+    }
+    function loadCSS(href) {
+        var l = document.createElement('link');
+        l.rel = 'stylesheet';
+        l.href = href;
+        l.crossOrigin = '';
+        document.head.appendChild(l);
+    }
+    window._loadChartJs = function(cb) {
+        if (window.Chart) return cb();
+        loadScript('https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js', cb);
+    };
+    window._loadLeaflet = function(cb) {
+        if (window.L) return cb();
+        loadCSS('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');
+        loadScript('https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', function() {
+            loadScript('https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js', cb);
+        });
+    };
+    window._loadSocketIO = function(cb) {
+        if (window.io) return cb();
+        loadScript('https://cdn.socket.io/4.8.3/socket.io.min.js', cb);
+    };
+    </script>
     <!-- elexion-client.js: auth bearer + endpoints Elexion -->
     <script src="js/elexion-client.js"></script>
 </head>
@@ -5908,7 +5933,11 @@ function renderGamiEquipes() {
 // ---- Grafico Chart.js ----
 function renderGamiChart() {
     var canvas = document.getElementById('chart-performance');
-    if (!canvas || typeof Chart === 'undefined') return;
+    if (!canvas) return;
+    if (typeof Chart === 'undefined') {
+        window._loadChartJs(renderGamiChart);
+        return;
+    }
 
     // Destruir instancia anterior para evitar memory leak e canvas oculto
     if (gamiState.chartInstance) {
@@ -6025,6 +6054,11 @@ function inicializarLeaflet() {
 
     var container = document.getElementById('mapa-leaflet');
     if (!container) return;
+
+    if (typeof L === 'undefined') {
+        window._loadLeaflet(inicializarLeaflet);
+        return;
+    }
 
     mapaState.mapa = L.map('mapa-leaflet', {
         center: [-15.78, -47.93],  // Centro do DF
@@ -6289,8 +6323,7 @@ function conectarWarRoomSocket() {
     if (warRoomState.socket && warRoomState.socket.connected) return;
 
     if (typeof io === 'undefined') {
-        console.warn('[WarRoom] Socket.IO nao carregado. Ativando polling fallback.');
-        ativarPollingFallbackWarRoom();
+        window._loadSocketIO(conectarWarRoomSocket);
         return;
     }
 

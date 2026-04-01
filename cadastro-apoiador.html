@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Apoiador - Celina Leão</title>
     <link rel="icon" id="faviconLink" href="icons/favicon.svg" type="image/svg+xml">
     <script>
@@ -121,7 +121,7 @@
         }
 
         label .opcional {
-            color: #999;
+            color: #6b6b6b;
             font-weight: 400;
             font-size: 12px;
             margin-left: 4px;
@@ -392,7 +392,7 @@
     <p>Governadora do Distrito Federal</p>
 </div>
 
-<div class="container">
+<main class="container">
     <!-- FORMULARIO -->
     <div class="form-container" id="formContainer">
         <div class="intro">
@@ -508,7 +508,7 @@
 
         <button class="btn-novo" onclick="novoCadastro()">Fazer novo cadastro</button>
     </div>
-</div>
+</main>
 
 <script>
 // ===== MASCARA DE TELEFONE =====
@@ -700,19 +700,32 @@ function mostrarSucesso(salvoNoServidor) {
         document.getElementById('msgSucesso').textContent = 'Cadastro registrado localmente. Sera enviado automaticamente quando a conexao for restabelecida.';
     }
 
-    // Resumo
+    // Resumo (construção segura via DOM para evitar XSS)
     var resumo = document.getElementById('resumo');
-    var html = '<h3>Seus dados</h3>';
-    html += '<div class="item"><span class="rotulo">Nome</span><span class="valor">' + dadosEnviados.nome + '</span></div>';
-    html += '<div class="item"><span class="rotulo">Telefone</span><span class="valor">' + dadosEnviados.telefone + '</span></div>';
-    if (dadosEnviados.email) {
-        html += '<div class="item"><span class="rotulo">E-mail</span><span class="valor">' + dadosEnviados.email + '</span></div>';
+    resumo.textContent = '';
+    var h3 = document.createElement('h3');
+    h3.textContent = 'Seus dados';
+    resumo.appendChild(h3);
+
+    function addResumoItem(rotulo, valor) {
+        var div = document.createElement('div');
+        div.className = 'item';
+        var spanR = document.createElement('span');
+        spanR.className = 'rotulo';
+        spanR.textContent = rotulo;
+        var spanV = document.createElement('span');
+        spanV.className = 'valor';
+        spanV.textContent = valor;
+        div.appendChild(spanR);
+        div.appendChild(spanV);
+        resumo.appendChild(div);
     }
-    html += '<div class="item"><span class="rotulo">Cidade/RA</span><span class="valor">' + dadosEnviados.cidade + '</span></div>';
-    if (dadosEnviados.instagram) {
-        html += '<div class="item"><span class="rotulo">Instagram</span><span class="valor">' + dadosEnviados.instagram + '</span></div>';
-    }
-    resumo.innerHTML = html;
+
+    addResumoItem('Nome', dadosEnviados.nome);
+    addResumoItem('Telefone', dadosEnviados.telefone);
+    if (dadosEnviados.email) addResumoItem('E-mail', dadosEnviados.email);
+    addResumoItem('Cidade/RA', dadosEnviados.cidade);
+    if (dadosEnviados.instagram) addResumoItem('Instagram', dadosEnviados.instagram);
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
