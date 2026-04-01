@@ -1,86 +1,159 @@
-# CLAUDE.md
+# CLAUDE.md - Instruções para IA (Claude Code / Codex)
 
-Instruções para o Claude Code que trabalha neste repositório.
+> Este arquivo NÃO é documentação humana. É um conjunto de regras que a IA DEVE seguir ao operar neste repositório.
 
-## Projeto
+## Identidade do Projeto
 
-Sistema web da campanha **CONECTA Celina Leão 2026** — páginas HTML standalone para gestão de campanha política no Distrito Federal.
+- Nome: CONECTA Celina Leão 2026
+- Função: Sistema web de gestão de campanha política - Distrito Federal
+- URL Produção: https://inteia.com.br/conecta2026/
+- Repo: github.com/silviomvieira-hub/Conecta-2026
+- Branch: main (único - deploy direto)
+- Dono: Silvio M. Vieira (silviomvieira-hub)
 
-- **Repositório fonte**: https://github.com/silviomvieira-hub/Conecta-2026
-- **Site em produção**: https://inteia.com.br/conecta2026
-- **Branch principal**: main
-- **Criador**: Silvio Morais Vieira
-- **Suporte técnico**: Igor Morais (igormorais123@gmail.com)
+---
 
-## REGRA OBRIGATÓRIA: Publicar Automaticamente
+## REGRAS ABSOLUTAS (NUNCA VIOLAR)
 
-**Sempre que qualquer arquivo for criado ou alterado neste projeto, FAÇA AUTOMATICAMENTE:**
+### 1. Stack Imutável
 
-```
-git add -A
-git commit -m "descrição clara do que mudou em português"
-git push origin main
-```
+HTML5 + CSS3 + JavaScript puro. SEM frameworks. SEM bundlers. SEM build step. SEM TypeScript. SEM React/Vue/Svelte/Tailwind. Cada .html é standalone (CSS e JS inline).
 
-- **NUNCA perguntar** antes de fazer commit ou push — é SEMPRE automático
-- **Mensagens de commit** devem ser em português brasileiro, curtas e claras
-- Exemplo: `"adicionar seção de patrimônio na logística"`, `"corrigir botão de salvar no cadastro"`
-- Após o push, o site em **inteia.com.br/conecta2026** atualiza sozinho em ~5 minutos
+### 2. Arquivos Sagrados - NÃO ALTERAR sem ordem explícita
 
-## Como Funciona o Deploy (não precisa fazer nada)
+- js/supabase-config.js - config central, auth guard, PWA bootstrap
+- js/conecta-db.js - camada de sync localStorage-Supabase (30KB+)
+- js/elexion-client.js - cliente da API Elexion via proxy
+- setup/migration.sql - schema PostgreSQL completo (18 tabelas + RLS)
+- setup/migration_username_login.sql - patch de login por username
 
-1. Silvio edita os arquivos aqui com o Claude Code
-2. O Claude Code faz commit e push automaticamente (regra acima)
-3. Um robô no GitHub detecta as mudanças a cada 15 minutos
-4. O robô copia os arquivos para o servidor da INTEIA
-5. O site atualiza sozinho — **zero ação manual necessária**
+Se precisar modificar algum destes: LER o arquivo inteiro ANTES, entender TODAS as dependências, e explicar a mudança ANTES de executar.
 
-## Stack e Convenções
+### 3. Credenciais - PROTEÇÃO TOTAL
 
-- **HTML5 + CSS3 + JavaScript puro** — sem frameworks, sem bundlers
-- Cada arquivo `.html` é independente (CSS e JS inline, tudo num arquivo só)
-- Fontes via Google Fonts CDN (Inter principal, Segoe UI fallback)
-- Dados salvos no navegador via `localStorage` (prefixo `conectacelina_`)
-- Banco de dados online: Supabase (já configurado em `js/supabase-config.js`)
-- Todos os textos em **português brasileiro**
+NUNCA exibir, logar ou commitar: Supabase URL/anon key, ELEXION_SERVICE_TOKEN, senhas de usuários (silvio2026, karla2026, igor2026), valores de setup/CREDENCIAIS.md.
 
-## Arquivos do Sistema
+### 4. Git - Push Automático
 
-### Página principal: CONECTA.html
-Dashboard completo com sidebar, organograma, equipe de campo, tarefas, gamificação, mapa de cobertura e war room. Paleta azul/laranja (`#1a237e` / `#ff6f00`).
+Após QUALQUER alteração de código: git add (arquivos específicos, NUNCA git add .) -> commit em português -> git push origin main. NÃO perguntar antes do push. NUNCA commitar: .env, CREDENCIAIS.md, node_modules/, screenshots.
 
-### Páginas de cadastro
-- **cadastro-apoiador.html** — formulário para apoiadores (azul/dourado)
-- **Cadastro - lideres 2026.htm** — cadastro de líderes do Valdelino (verde) — candidato separado
+### 5. Idioma
 
-### Páginas operacionais
-- **Logistica Campanha.html** — gestão logística + patrimônio (dark theme azul)
-- **Coordenadores Regionais.html** — cards dos coordenadores regionais
-- **qrcode-cartao.html** — gerador de QR code para cartão de visita
-- **login.html** — tela de login do sistema
-- **conta.html** — gerenciamento de conta do usuário
-- **index.html** — redirecionador para login
+Todo código, comentários, commits, mensagens: PORTUGUÊS BRASILEIRO.
 
-### Configurações (pasta js/)
-- **js/supabase-config.js** — conexão com banco de dados
-- **js/conecta-db.js** — funções de banco de dados
-- **js/elexion-client.js** — integração com plataforma Elexion
+---
 
-## Paletas de Cores (ATENÇÃO ao editar)
+## AMBIENTE LOCAL DO SILVIO
 
-Cada página tem sua própria paleta — **não misturar**:
-- CONECTA.html: azul escuro/laranja (`#1a237e` / `#ff6f00`)
-- cadastro-apoiador.html e qrcode-cartao.html: azul/dourado (`#1B3A5C` / `#D4A843`)
-- Cadastro - lideres 2026.htm: verde (`#1B5E20`) — outro candidato
-- Logistica Campanha.html: dark theme (`#0f172a` / `#3b82f6`)
-- Coordenadores Regionais.html: dark gradient (`#1a1a2e` → `#0f3460`)
+### Pasta de trabalho no PC do Silvio
 
-## Para Testar Localmente
+C:\Users\VAIO\Documents\CAMPANHA\CONECTA\
 
-Basta abrir qualquer arquivo `.html` no navegador (duplo clique). Não precisa de servidor.
+Este é o diretório onde o Silvio edita localmente. É o repositório git clonado. Alterações aqui devem ser commitadas e pushadas para o site atualizar.
 
-## Se Algo Der Errado
+### Arquivo PRIORITÁRIO: Logística Campanha.html
 
-- Se o push falhar: verificar se está conectado à internet e tentar de novo
-- Se o site não atualizar em 20 minutos: avisar Igor (igormorais123@gmail.com)
-- Se der erro no código: o Claude Code pode corrigir, basta descrever o problema
+Este é o arquivo que o Silvio mais usa e atualiza. Quando pedir melhorias, COMEÇAR por este arquivo.
+
+- Local: C:\Users\VAIO\Documents\CAMPANHA\CONECTA\Logistica Campanha.html
+- No repo: Logistica Campanha.html (raiz)
+- Tamanho: ~3115 linhas, standalone (CSS + JS inline)
+- Theme: Dark mode (--bg: #0f172a, --accent: #3b82f6)
+
+#### 16 Módulos de Navegação
+
+| Módulo | Descrição |
+|--------|----------|
+| Dashboard | Estatísticas agregadas + countdown eleição 04/10/2026 |
+| Tarefas | CRUD com fase (pré/campanha/ambas), prioridade, status |
+| Materiais | Inventário: pedido vs estoque vs distribuído vs mínimo |
+| Fornecedores | Cadastro com status |
+| Equipe | Equipes com membros aninhados (array membros[]) |
+| Subcoordenadoras | 6 áreas fixas (HTML hardcoded), só nomes salvos |
+| Calendário | Datas eleitorais (hardcoded) |
+| Checklist | 37 itens hardcoded + customizados |
+| Eleitorado DF | Dados demográficos (2.853.835 eleitores TRE-DF) |
+| Agenda Salas | Reserva com detecção de conflito |
+| Orçamento | Itens de orçamento |
+| Distribuição | Registro por região |
+| Vales Combustíveis | Controle (placa, motorista, litros, valor) |
+| Ativos na Rua | Logística reversa: materiais em campo + devolução |
+| Eventos/Bandeiraços | Escala com detecção de conflito |
+| Patrimônio | Inventário patrimonial completo |
+
+#### localStorage - CHAVE ÚNICA: logistica_celina_2026
+
+JSON blob com estrutura:
+tarefas, materiais, fornecedores, equipe, subcoords, checklist, customChecklist, agendaSalas, orcamento, distribuicao, vales_combustivel, logistica_reversa, escala_bandeiracos, patrimonio, nextId
+
+#### REGRAS para Logística Campanha.html
+
+1. NUNCA quebrar loadData()/saveData()
+2. NUNCA mudar STORAGE_KEY 'logistica_celina_2026'
+3. Novo módulo: array em defaultData() + nav button + render function
+4. Manter dark theme (variáveis CSS existentes)
+5. Novos campos DEVEM ter valor default
+6. Material retornável: saveDistribuicao() auto-cria logistica_reversa
+7. renderReversa() auto-atualiza Atrasado/Perdido
+8. Preservar detecção de conflito em agendaSalas e bandeiraços
+
+#### Fluxo de Atualização
+
+Silvio edita localmente -> Claude Code aplica skill safe-edit -> git add + commit + push -> deploy automático
+
+---
+
+## ARQUITETURA - Mapa do Sistema
+
+### Páginas:
+index.html (redirect) -> login.html -> CONECTA.html, Logistica Campanha.html (PRIORITÁRIO), conta.html, Coordenadores Regionais.html, qrcode-cartao.html
+cadastro-apoiador.html (PÚBLICO)
+
+### Scripts: supabase-config.js, conecta-db.js, elexion-client.js
+
+### Paletas:
+| Contexto | Primária | Accent |
+|----------|----------|--------|
+| CONECTA/login/conta | #1a237e | #ff6f00 |
+| cadastro-apoiador/qrcode | #1B3A5C | #D4A843 |
+| Logística | #0f172a | #3b82f6 |
+| Coordenadores | #1a1a2e | #0f3460 |
+
+### Usuários: silvio2026 (admin), karla2026 (coordenador), igor2026 (admin). Login por USERNAME.
+
+### Deploy Automático (configurado por Igor em 01/04/2026)
+
+O deploy funciona 100% automático — basta fazer push:
+
+1. Silvio (ou Claude Code) faz `git push origin main`
+2. GitHub Action no repo de deploy (`pesquisa-eleitoral-df`) verifica mudanças a cada 15 minutos
+3. Copia os arquivos para `frontend/public/conecta2026/`
+4. Vercel detecta e faz deploy automático em https://inteia.com.br/conecta2026/
+5. **Tempo total**: ~5-20 minutos após o push
+
+**Suporte técnico**: Igor Morais (igormorais123@gmail.com) — se o site não atualizar em 30 minutos, avisar Igor.
+
+---
+
+## PROBLEMAS CONHECIDOS
+
+1. Recursão em conecta-db.js: override de localStorage.setItem() pode causar loop
+2. syncToSupabase() não sincroniza arrays
+3. Chaves órfãs: coordSegmentosSociais e organograma_lista_completa fora do mapeamento
+4. Logística vs schema: algumas chaves não casam com o banco
+5. Fila offline: replay precisa homologação
+
+---
+
+## SKILLS DISPONÍVEIS
+
+Skills em .claude/skills/:
+| Skill | Quando usar |
+|-------|------------|
+| safe-edit | Antes de QUALQUER edição |
+| improve-page | Melhorias visuais/UX/funcionais |
+| deploy-check | Após push, verificar site |
+| new-page | Criar nova página HTML |
+| sync-debug | Problemas de sync |
+| backup-before-change | Snapshot antes de mudanças grandes |
+| supabase-schema | Consultar banco |

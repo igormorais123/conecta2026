@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Migrar Dados — CONECTA 2026</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 20px; }
+.container { max-width: 900px; margin: 0 auto; }
+h1 { color: #3b82f6; font-size: 24px; margin-bottom: 8px; }
+h2 { color: #f59e0b; font-size: 18px; margin: 20px 0 10px; }
+.subtitle { color: #94a3b8; font-size: 14px; margin-bottom: 24px; }
+.card { background: #1e293b; border-radius: 12px; padding: 20px; margin-bottom: 16px; border: 1px solid #334155; }
+.card-title { font-weight: 600; color: #f8fafc; margin-bottom: 12px; font-size: 16px; }
+.status { padding: 8px 16px; border-radius: 8px; margin: 8px 0; font-size: 14px; }
+.status-ok { background: #065f46; color: #6ee7b7; }
+.status-warn { background: #78350f; color: #fbbf24; }
+.status-error { background: #7f1d1d; color: #fca5a5; }
+.status-info { background: #1e3a5f; color: #93c5fd; }
+.data-preview { background: #0f172a; border: 1px solid #475569; border-radius: 8px; padding: 12px; margin: 10px 0; max-height: 300px; overflow-y: auto; font-family: monospace; font-size: 12px; color: #94a3b8; white-space: pre-wrap; word-break: break-all; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin: 12px 0; }
+.stat { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 10px; text-align: center; }
+.stat-number { font-size: 24px; font-weight: 700; color: #3b82f6; }
+.stat-label { font-size: 11px; color: #64748b; margin-top: 4px; }
+button { padding: 10px 20px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; margin: 4px; transition: all 0.2s; }
+.btn-primary { background: #3b82f6; color: white; }
+.btn-primary:hover { background: #2563eb; }
+.btn-primary:disabled { background: #475569; cursor: not-allowed; }
+.btn-success { background: #059669; color: white; }
+.btn-success:hover { background: #047857; }
+.btn-warn { background: #d97706; color: white; }
+.btn-warn:hover { background: #b45309; }
+.btn-danger { background: #dc2626; color: white; }
+.btn-danger:hover { background: #b91c1c; }
+.step { display: flex; align-items: flex-start; gap: 12px; margin: 12px 0; }
+.step-num { background: #3b82f6; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0; }
+.step-text { flex: 1; line-height: 1.6; }
+.log { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 12px; margin: 10px 0; max-height: 400px; overflow-y: auto; font-family: monospace; font-size: 12px; }
+.log-entry { padding: 2px 0; }
+.log-ok { color: #6ee7b7; }
+.log-warn { color: #fbbf24; }
+.log-error { color: #fca5a5; }
+.log-info { color: #93c5fd; }
+input[type="text"], input[type="password"] { background: #0f172a; border: 1px solid #475569; color: #e2e8f0; padding: 8px 12px; border-radius: 6px; font-size: 14px; width: 100%; margin: 4px 0; }
+label { display: block; font-size: 13px; color: #94a3b8; margin-top: 8px; }
+.hidden { display: none; }
+.divider { border-top: 1px solid #334155; margin: 20px 0; }
+textarea { background: #0f172a; border: 1px solid #475569; color: #e2e8f0; padding: 10px; border-radius: 6px; font-family: monospace; font-size: 12px; width: 100%; min-height: 120px; resize: vertical; }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>Migrar Dados para o Site Online</h1>
+    <p class="subtitle">Transfere seus dados do navegador local para o Supabase (inteia.com.br/conecta2026)</p>
+
+    <!-- PASSO 1: Verificar dados locais -->
+    <div class="card">
+        <div class="card-title">Passo 1 — Dados no seu navegador</div>
+        <div id="localStatus"></div>
+        <div id="localStats" class="stats hidden"></div>
+        <div id="localPreview" class="hidden">
+            <button class="btn-primary" onclick="togglePreview()">Ver/Ocultar dados brutos</button>
+            <div id="previewBox" class="data-preview hidden"></div>
+        </div>
+        <div style="margin-top:12px">
+            <button class="btn-primary" onclick="exportJSON()">Exportar dados para arquivo JSON</button>
+        </div>
+    </div>
+
+    <!-- PASSO 2: Login no Supabase -->
+    <div class="card">
+        <div class="card-title">Passo 2 — Conectar ao Supabase</div>
+        <p style="font-size:13px;color:#94a3b8;margin-bottom:10px">Use suas credenciais da campanha para autenticar e enviar os dados.</p>
+        <label>Usuário</label>
+        <input type="text" id="username" placeholder="silvio2026">
+        <label>Senha</label>
+        <input type="password" id="password" placeholder="Sua senha">
+        <div style="margin-top:12px">
+            <button class="btn-primary" onclick="doLogin()" id="btnLogin">Autenticar</button>
+        </div>
+        <div id="authStatus" style="margin-top:8px"></div>
+    </div>
+
+    <!-- PASSO 3: Enviar -->
+    <div class="card">
+        <div class="card-title">Passo 3 — Enviar dados para o servidor</div>
+
+        <h2>Logística</h2>
+        <p style="font-size:13px;color:#94a3b8">Envia o objeto completo da Logística (tarefas, materiais, fornecedores, equipe, etc.)</p>
+        <button class="btn-success" onclick="enviarLogistica()" id="btnLogistica" disabled>Enviar Logística para Supabase</button>
+
+        <h2>CONECTA (dados principais)</h2>
+        <p style="font-size:13px;color:#94a3b8">Envia eventos, veículos, pessoas, pesquisas, demandas, materiais, líderes, etc.</p>
+        <button class="btn-success" onclick="enviarConecta()" id="btnConecta" disabled>Enviar CONECTA para Supabase</button>
+
+        <h2>Ou: Importar de arquivo JSON</h2>
+        <p style="font-size:13px;color:#94a3b8">Se exportou de outro navegador, cole ou carregue aqui.</p>
+        <textarea id="jsonImport" placeholder="Cole o JSON exportado aqui..."></textarea>
+        <button class="btn-warn" onclick="importarJSON()">Importar JSON para localStorage</button>
+
+        <div class="divider"></div>
+        <div id="sendLog" class="log hidden"></div>
+    </div>
+
+    <!-- PASSO 4: Verificar -->
+    <div class="card">
+        <div class="card-title">Passo 4 — Verificar no site</div>
+        <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-text">Abra <a href="https://inteia.com.br/conecta2026/" style="color:#3b82f6" target="_blank">inteia.com.br/conecta2026</a></div>
+        </div>
+        <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-text">Faça login com seu usuário</div>
+        </div>
+        <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-text">Abra a Logística e verifique se suas tarefas aparecem</div>
+        </div>
+    </div>
+</div>
+
+<script>
+var SUPABASE_URL = 'https://dvgbqbwipwegkndutvte.supabase.co';
+var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2Z2JxYndpcHdlZ2tuZHV0dnRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MjY1MTgsImV4cCI6MjA5MDIwMjUxOH0.HM53lLdM4tN-9cndCIp2DgMHQ0BrWcSDnOArIr8XL8w';
+
+var accessToken = null;
+var userId = null;
+
+// Chaves do CONECTA principal
+var CONECTA_KEYS = [
+    'conectacelina_eventos',
+    'conectacelina_veiculos',
+    'conectacelina_pessoas',
+    'conectacelina_pesquisas',
+    'conectacelina_demandas',
+    'conectacelina_juridico',
+    'conectacelina_comunicacao',
+    'conectacelina_materiais',
+    'conectacelina_lideres',
+    'conectacelina_visitas',
+    'conectacelina_atividades',
+    'conectacelina_tarefas_pessoas',
+    'coordSegmentosSociais',
+    'organograma_lista_completa'
+];
+
+// ===== PASSO 1: Verificar dados locais =====
+function checkLocal() {
+    var statusEl = document.getElementById('localStatus');
+    var statsEl = document.getElementById('localStats');
+    var previewEl = document.getElementById('localPreview');
+
+    // Logística
+    var logRaw = localStorage.getItem('logistica_celina_2026');
+    var logData = null;
+    try { logData = JSON.parse(logRaw); } catch(e) {}
+
+    // CONECTA
+    var conectaData = {};
+    CONECTA_KEYS.forEach(function(key) {
+        var raw = localStorage.getItem(key);
+        if (raw) {
+            try { conectaData[key] = JSON.parse(raw); } catch(e) { conectaData[key] = raw; }
+        }
+    });
+
+    var hasLogistica = logData && typeof logData === 'object';
+    var hasConecta = Object.keys(conectaData).length > 0;
+
+    if (!hasLogistica && !hasConecta) {
+        statusEl.innerHTML = '<div class="status status-warn">Nenhum dado encontrado no localStorage deste navegador. Se voce cadastrou dados em outro navegador, use a opcao de importar JSON abaixo.</div>';
+        return;
+    }
+
+    var html = '';
+    if (hasLogistica) {
+        html += '<div class="status status-ok">Dados da Logistica encontrados!</div>';
+        statsEl.classList.remove('hidden');
+        var tarefas = (logData.tarefas || []).length;
+        var materiais = (logData.materiais || []).length;
+        var fornecedores = (logData.fornecedores || []).length;
+        var equipe = (logData.equipe || []).length;
+        var orcamento = (logData.orcamento || []).length;
+        var patrimonio = (logData.patrimonio || []).length;
+        var salas = (logData.agendaSalas || []).length;
+        var distribuicao = (logData.distribuicao || []).length;
+
+        statsEl.innerHTML =
+            stat(tarefas, 'Tarefas') +
+            stat(materiais, 'Materiais') +
+            stat(fornecedores, 'Fornecedores') +
+            stat(equipe, 'Equipes') +
+            stat(orcamento, 'Orcamento') +
+            stat(patrimonio, 'Patrimonio') +
+            stat(salas, 'Agendamentos') +
+            stat(distribuicao, 'Distribuicoes');
+    } else {
+        html += '<div class="status status-warn">Dados da Logistica NAO encontrados neste navegador.</div>';
+    }
+
+    if (hasConecta) {
+        html += '<div class="status status-ok">Dados do CONECTA encontrados: ' + Object.keys(conectaData).length + ' chaves</div>';
+    }
+
+    statusEl.innerHTML = html;
+    previewEl.classList.remove('hidden');
+
+    // Preview
+    var preview = {};
+    if (hasLogistica) preview.logistica = { tarefas: tarefas, materiais: materiais, fornecedores: fornecedores, equipe: equipe, orcamento: orcamento, patrimonio: patrimonio };
+    if (hasConecta) {
+        Object.keys(conectaData).forEach(function(k) {
+            var v = conectaData[k];
+            preview[k] = Array.isArray(v) ? v.length + ' itens' : typeof v;
+        });
+    }
+    document.getElementById('previewBox').textContent = JSON.stringify(preview, null, 2);
+}
+
+function stat(num, label) {
+    return '<div class="stat"><div class="stat-number">' + num + '</div><div class="stat-label">' + label + '</div></div>';
+}
+
+function togglePreview() {
+    var box = document.getElementById('previewBox');
+    box.classList.toggle('hidden');
+}
+
+function exportJSON() {
+    var exportData = {};
+    var logRaw = localStorage.getItem('logistica_celina_2026');
+    if (logRaw) exportData.logistica_celina_2026 = JSON.parse(logRaw);
+
+    CONECTA_KEYS.forEach(function(key) {
+        var raw = localStorage.getItem(key);
+        if (raw) {
+            try { exportData[key] = JSON.parse(raw); } catch(e) { exportData[key] = raw; }
+        }
+    });
+
+    var blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'conecta-backup-' + new Date().toISOString().slice(0,10) + '.json';
+    a.click();
+    log('Arquivo exportado: ' + a.download, 'ok');
+}
+
+// ===== PASSO 2: Login Supabase =====
+async function doLogin() {
+    var username = document.getElementById('username').value.trim();
+    var password = document.getElementById('password').value;
+    var statusEl = document.getElementById('authStatus');
+
+    if (!username || !password) {
+        statusEl.innerHTML = '<div class="status status-error">Preencha usuario e senha</div>';
+        return;
+    }
+
+    statusEl.innerHTML = '<div class="status status-info">Autenticando...</div>';
+
+    try {
+        // Resolver email por username via RPC
+        var rpcRes = await fetch(SUPABASE_URL + '/rest/v1/rpc/resolver_email_por_username', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+            },
+            body: JSON.stringify({ p_username: username })
+        });
+
+        var email = null;
+        if (rpcRes.ok) {
+            email = await rpcRes.json();
+        }
+
+        if (!email) {
+            statusEl.innerHTML = '<div class="status status-error">Usuario nao encontrado</div>';
+            return;
+        }
+
+        // Login com email + senha
+        var authRes = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=password', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'apikey': SUPABASE_ANON_KEY
+            },
+            body: JSON.stringify({ email: email, password: password })
+        });
+
+        if (!authRes.ok) {
+            var errBody = await authRes.json().catch(function() { return {}; });
+            statusEl.innerHTML = '<div class="status status-error">Erro: ' + (errBody.error_description || errBody.msg || 'Senha incorreta') + '</div>';
+            return;
+        }
+
+        var authData = await authRes.json();
+        accessToken = authData.access_token;
+        userId = authData.user.id;
+
+        statusEl.innerHTML = '<div class="status status-ok">Autenticado como ' + username + ' (' + authData.user.email + ')</div>';
+
+        document.getElementById('btnLogistica').disabled = false;
+        document.getElementById('btnConecta').disabled = false;
+
+    } catch (err) {
+        statusEl.innerHTML = '<div class="status status-error">Erro de conexao: ' + err.message + '</div>';
+    }
+}
+
+// ===== PASSO 3: Enviar dados =====
+function log(msg, type) {
+    var logEl = document.getElementById('sendLog');
+    logEl.classList.remove('hidden');
+    var entry = document.createElement('div');
+    entry.className = 'log-entry log-' + (type || 'info');
+    entry.textContent = '[' + new Date().toLocaleTimeString() + '] ' + msg;
+    logEl.appendChild(entry);
+    logEl.scrollTop = logEl.scrollHeight;
+}
+
+async function supabaseRequest(method, path, body) {
+    var res = await fetch(SUPABASE_URL + '/rest/v1/' + path, {
+        method: method,
+        headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': 'Bearer ' + accessToken,
+            'Prefer': method === 'POST' ? 'resolution=merge-duplicates,return=minimal' : 'return=minimal'
+        },
+        body: body ? JSON.stringify(body) : undefined
+    });
+    return res;
+}
+
+async function enviarLogistica() {
+    if (!accessToken) { log('Faca login primeiro!', 'error'); return; }
+
+    var raw = localStorage.getItem('logistica_celina_2026');
+    if (!raw) { log('Nenhum dado de Logistica no localStorage', 'warn'); return; }
+
+    var data;
+    try { data = JSON.parse(raw); } catch(e) { log('Erro ao ler dados: ' + e.message, 'error'); return; }
+
+    log('Enviando Logistica para configuracoes_app...', 'info');
+
+    var payload = {
+        chave: 'logistica_estado',
+        payload: data,
+        atualizado_por: userId,
+        atualizado_em: new Date().toISOString()
+    };
+
+    try {
+        var res = await supabaseRequest('POST', 'configuracoes_app', payload);
+        if (res.ok) {
+            log('Logistica enviada com sucesso! Tarefas: ' + (data.tarefas || []).length + ', Materiais: ' + (data.materiais || []).length + ', Fornecedores: ' + (data.fornecedores || []).length + ', Equipe: ' + (data.equipe || []).length, 'ok');
+        } else {
+            var errText = await res.text();
+            log('Erro ao enviar Logistica: ' + res.status + ' - ' + errText, 'error');
+        }
+    } catch (err) {
+        log('Erro de conexao: ' + err.message, 'error');
+    }
+}
+
+async function enviarConecta() {
+    if (!accessToken) { log('Faca login primeiro!', 'error'); return; }
+
+    var enviados = 0;
+    var erros = 0;
+
+    for (var i = 0; i < CONECTA_KEYS.length; i++) {
+        var key = CONECTA_KEYS[i];
+        var raw = localStorage.getItem(key);
+        if (!raw) continue;
+
+        var data;
+        try { data = JSON.parse(raw); } catch(e) { continue; }
+
+        // Singletons vão para configuracoes_app
+        if (key === 'coordSegmentosSociais' || key === 'organograma_lista_completa') {
+            var configKey = key === 'coordSegmentosSociais' ? 'coord_segmentos_sociais' : 'organograma_lista_completa';
+            log('Enviando ' + key + ' para configuracoes_app...', 'info');
+            try {
+                var res = await supabaseRequest('POST', 'configuracoes_app', {
+                    chave: configKey,
+                    payload: data,
+                    atualizado_por: userId,
+                    atualizado_em: new Date().toISOString()
+                });
+                if (res.ok) { enviados++; log(key + ' — OK', 'ok'); }
+                else { erros++; log(key + ' — ERRO: ' + await res.text(), 'error'); }
+            } catch (err) { erros++; log(key + ' — ERRO: ' + err.message, 'error'); }
+            continue;
+        }
+
+        // Arrays vão para suas tabelas
+        var tableMap = {
+            'conectacelina_eventos': 'eventos',
+            'conectacelina_veiculos': 'veiculos',
+            'conectacelina_pessoas': 'pessoas',
+            'conectacelina_pesquisas': 'pesquisas',
+            'conectacelina_demandas': 'demandas',
+            'conectacelina_juridico': 'juridico',
+            'conectacelina_comunicacao': 'comunicacao',
+            'conectacelina_materiais': 'materiais',
+            'conectacelina_lideres': 'lideres',
+            'conectacelina_visitas': 'visitas',
+            'conectacelina_atividades': 'atividades',
+            'conectacelina_tarefas_pessoas': 'tarefas'
+        };
+
+        var table = tableMap[key];
+        if (!table) continue;
+
+        // Para comunicacao (object), visitas (object) e tarefas_pessoas (grouped)
+        // enviamos como config singleton para simplificar
+        if (key === 'conectacelina_comunicacao' || key === 'conectacelina_visitas' || key === 'conectacelina_tarefas_pessoas') {
+            log('Enviando ' + key + ' para configuracoes_app...', 'info');
+            try {
+                var res2 = await supabaseRequest('POST', 'configuracoes_app', {
+                    chave: key,
+                    payload: data,
+                    atualizado_por: userId,
+                    atualizado_em: new Date().toISOString()
+                });
+                if (res2.ok) { enviados++; log(key + ' — OK', 'ok'); }
+                else { erros++; log(key + ' — ERRO: ' + await res2.text(), 'error'); }
+            } catch (err) { erros++; log(key + ' — ERRO: ' + err.message, 'error'); }
+            continue;
+        }
+
+        // Arrays simples: upsert direto na tabela
+        if (!Array.isArray(data) || data.length === 0) {
+            log(key + ' — vazio, pulando', 'warn');
+            continue;
+        }
+
+        log('Enviando ' + key + ' (' + data.length + ' itens) para tabela ' + table + '...', 'info');
+
+        // Enviar em lotes de 100
+        var batchSize = 100;
+        var batchOk = true;
+        for (var b = 0; b < data.length; b += batchSize) {
+            var batch = data.slice(b, b + batchSize);
+            try {
+                var res3 = await supabaseRequest('POST', table, batch);
+                if (!res3.ok) {
+                    batchOk = false;
+                    log(key + ' lote ' + (b/batchSize+1) + ' — ERRO: ' + await res3.text(), 'error');
+                }
+            } catch (err) {
+                batchOk = false;
+                log(key + ' lote ' + (b/batchSize+1) + ' — ERRO: ' + err.message, 'error');
+            }
+        }
+
+        if (batchOk) { enviados++; log(key + ' — OK (' + data.length + ' itens)', 'ok'); }
+        else { erros++; }
+    }
+
+    log('Concluido: ' + enviados + ' enviados, ' + erros + ' erros', enviados > 0 ? 'ok' : 'error');
+}
+
+function importarJSON() {
+    var text = document.getElementById('jsonImport').value.trim();
+    if (!text) { log('Cole o JSON primeiro', 'warn'); return; }
+
+    var data;
+    try { data = JSON.parse(text); } catch(e) { log('JSON invalido: ' + e.message, 'error'); return; }
+
+    var count = 0;
+    Object.keys(data).forEach(function(key) {
+        localStorage.setItem(key, JSON.stringify(data[key]));
+        count++;
+    });
+
+    log('Importado ' + count + ' chaves para localStorage', 'ok');
+    checkLocal();
+}
+
+// Inicializar
+checkLocal();
+</script>
+</body>
+</html>

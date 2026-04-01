@@ -1,55 +1,21 @@
-# AGENTS.md
+# AGENTS.md - Instruções para Agentes de IA
 
-This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
+> Versão resumida do CLAUDE.md. Para detalhes completos, consulte CLAUDE.md.
 
-## Projeto
+## Regras Essenciais
 
-Sistema web da campanha **CONECTA Celina Leão 2026** — conjunto de páginas HTML standalone para gestão de campanha política no Distrito Federal.
+- **Stack**: HTML5 + CSS3 + JavaScript puro. SEM frameworks, SEM bundlers, SEM build step.
+- **Push automático**: Após qualquer alteração de código -> git add (arquivos específicos) -> commit em português -> git push origin main.
+- **Credenciais protegidas**: NUNCA exibir, logar ou commitar Supabase keys, tokens ou senhas.
+- **Paleta por página**: Cada página tem sua própria paleta de cores. Consultar tabela em CLAUDE.md.
+- **Arquivos sagrados**: js/supabase-config.js, js/conecta-db.js, js/elexion-client.js, setup/migration.sql, setup/migration_username_login.sql. LER inteiro antes de alterar.
+- **Idioma**: Português brasileiro em todo código, comentários, commits e mensagens.
+- **Skills**: Disponíveis em .claude/skills/ - usar safe-edit antes de qualquer edição.
 
-- **Repositório**: https://github.com/silviomvieira-hub/Conecta-2026
-- **Branch principal**: main
+## Arquivo Prioritário
 
-## Regra de Sincronização Automática
+Logistica Campanha.html - Standalone, ~3115 linhas, dark mode. 16 módulos. localStorage key: logistica_celina_2026.
 
-Sempre que qualquer arquivo for criado ou alterado neste projeto:
-1. `git add` dos arquivos modificados
-2. Commit com mensagem descritiva em português
-3. `git push origin main` automaticamente
-4. **Não perguntar antes de fazer push** — o push é sempre automático após qualquer alteração
+## Deploy
 
-## Stack e Convenções
-
-- **HTML5 + CSS3 + JavaScript puro** — sem frameworks, sem bundlers, sem build step
-- Cada arquivo `.html` é uma aplicação standalone (CSS e JS inline, tudo num único arquivo)
-- Fontes via Google Fonts CDN (Inter principal, Segoe UI fallback)
-- Persistência local via `localStorage` (chave prefixada `conectacelina_`)
-- Sem servidor backend — única exceção: `cadastro-apoiador.html` faz `fetch` para `/api/cadastros`
-- Todos os textos em **português brasileiro**
-- Mensagens de commit em **português brasileiro**
-
-## Arquitetura
-
-### Página principal: CONECTA.html (~217KB)
-Aplicação SPA-like com sidebar + múltiplas seções (dashboard, organograma, equipe de campo, tarefas). Usa variáveis CSS em `:root` com paleta `--primary: #1a237e` / `--accent: #ff6f00`. Estado global gerenciado via `localStorage` com prefixo `STORAGE_KEY`.
-
-### Páginas de cadastro
-- **cadastro-apoiador.html** — formulário público mobile-first para apoiadores. Paleta azul/dourado (`--azul: #1B3A5C`, `--dourado: #D4A843`). Envia dados via fetch API.
-- **Cadastro - lideres 2026.htm** — cadastro de líderes para Valdelino Barcelos (candidato separado). Paleta verde (`#1B5E20`). CSS minificado com classes curtas (`.ct`, `.hd`, `.bd`, `.ip`). Usa radio/checkbox nativos sem JS.
-
-### Páginas operacionais
-- **Logistica Campanha.html** — gestão logística com countdown para eleição, fases de campanha, dark theme. Persiste em `localStorage`.
-- **Coordenadores Regionais.html** — grid de cards dos coordenadores regionais.
-- **qrcode-cartao.html** — gerador de QR code para cartão de visita (usa lib `qrcode-generator` via CDN).
-
-### Arquivos não-web
-- **Organograma da Campanha.docx/.pdf** — organograma oficial (documento estático)
-- **Coordenadores Regionais - WhatsApp.txt** — contatos dos coordenadores
-
-## Paletas de Cores (atenção ao editar)
-
-As páginas usam paletas de cores **diferentes** entre si:
-- CONECTA.html: azul escuro/laranja (`#1a237e` / `#ff6f00`)
-- cadastro-apoiador.html e qrcode-cartao.html: azul/dourado (`#1B3A5C` / `#D4A843`)
-- Cadastro - lideres 2026.htm: verde (`#1B5E20` / `#2E7D32`) — este é de outro candidato
-- Logistica Campanha.html: dark theme azul (`#0f172a` / `#3b82f6`)
-- Coordenadores Regionais.html: dark gradient (`#1a1a2e` → `#0f3460`)
+git push origin main -> auto-deploy em https://inteia.com.br/conecta2026/
