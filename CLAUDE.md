@@ -17,6 +17,14 @@ Sempre que qualquer arquivo for criado ou alterado neste projeto:
 3. `git push origin main` automaticamente
 4. **Não perguntar antes de fazer push** — o push é sempre automático após qualquer alteração
 
+## Deploy Automático
+
+O deploy é contínuo via **Vercel** conectado ao GitHub:
+- Cada `git push origin main` dispara deploy automático no Vercel
+- O site fica disponível em: **https://inteia.com.br/conecta2026/**
+- `vercel.json` contém rewrites de `/conecta2026` → `index.html`
+- **Qualquer alteração pushada aqui vai direto para produção** — não há ambiente de staging
+
 ## Stack e Convenções
 
 - **HTML5 + CSS3 + JavaScript puro** — sem frameworks, sem bundlers, sem build step
