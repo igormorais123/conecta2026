@@ -1,10 +1,7 @@
 {
   "rewrites": [
     { "source": "/conecta2026", "destination": "/index.html" },
-    { "source": "/conecta2026/", "destination": "/index.html" },
-    { "source": "/conecta2026/manifest.json", "destination": "/manifest.json" },
-    { "source": "/conecta2026/favicon.ico", "destination": "/favicon.ico" },
-    { "source": "/conecta2026/service-worker.js", "destination": "/service-worker.js" }
+    { "source": "/conecta2026/", "destination": "/index.html" }
   ],
   "headers": [
     {

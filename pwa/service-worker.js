@@ -1,9 +1,9 @@
 const CACHE_NAME = 'conecta2026-static-v1';
 const STATIC_ASSETS = [
-  './manifest.json',
-  './icons/icon-192.png',
-  './icons/icon-512.png',
-  './icons/inteia-logo.svg'
+  '../pwa/manifest.json',
+  '../icons/icon-192.png',
+  '../icons/icon-512.png',
+  '../icons/inteia-logo.svg'
 ];
 
 self.addEventListener('install', event => {
@@ -32,7 +32,10 @@ self.addEventListener('fetch', event => {
 
   const url = new URL(request.url);
   const isSameOrigin = url.origin === self.location.origin;
-  const isStaticAsset = isSameOrigin && STATIC_ASSETS.some(asset => url.pathname.endsWith(asset.replace('./', '/')));
+  const isStaticAsset = isSameOrigin && STATIC_ASSETS.some(asset => {
+    const assetPath = new URL(asset, self.location.href).pathname;
+    return url.pathname === assetPath;
+  });
 
   if (!isStaticAsset) return;
 
