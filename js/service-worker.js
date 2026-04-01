@@ -1,6 +1,6 @@
 const CACHE_NAME = 'conecta2026-static-v1';
 const STATIC_ASSETS = [
-  '../pwa/manifest.json',
+  'manifest.json',
   '../icons/icon-192.png',
   '../icons/icon-512.png',
   '../icons/inteia-logo.svg'

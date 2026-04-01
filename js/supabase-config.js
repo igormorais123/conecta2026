@@ -80,7 +80,7 @@
                 manifestLink.removeAttribute('href');
                 manifestLink.remove();
             } else {
-                manifestLink.href = basePath + 'pwa/manifest.json';
+                manifestLink.href = basePath + 'js/manifest.json';
             }
         }
 
@@ -98,7 +98,7 @@
         }
 
         window.addEventListener('load', function() {
-            navigator.serviceWorker.register(basePath + 'pwa/service-worker.js').catch(function(error) {
+            navigator.serviceWorker.register(basePath + 'js/service-worker.js').catch(function(error) {
                 console.warn('Falha ao registrar service worker do CONECTA:', error);
             });
         });
