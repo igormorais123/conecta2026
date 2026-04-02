@@ -627,6 +627,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
             <div class="card-subtitle">Auditório, S5, S6, S14 e S16</div>
         </div>
         <button class="btn btn-primary" onclick="openModalAgendaSala()">+ Novo Agendamento</button>
+        <button class="btn btn-sm" style="background:#4285f4;color:#fff;margin-left:8px;" onclick="addSalasToGoogle()">Google Agenda</button>
     </div>
 
     <!-- Cards de status das salas -->
@@ -1091,6 +1092,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
             <div class="card-subtitle">Agendamento de equipes para evitar conflitos no mesmo ponto.</div>
         </div>
         <button class="btn btn-primary" onclick="openModalBandeiraco()">+ Agendar Evento</button>
+        <button class="btn btn-sm" style="background:#4285f4;color:#fff;margin-left:8px;" onclick="addBandeiracosToGoogle()">Google Agenda</button>
     </div>
     <div class="grid-3" id="bandeiracosStats" style="margin-bottom:16px;"></div>
     <div class="card"><table><thead><tr>
@@ -3414,6 +3416,75 @@ function gerarResumoWhatsApp() {
 function imprimirRelatorio() {
     showPage('dashboard');
     setTimeout(function() { window.print(); }, 300);
+}
+
+// ==================== GOOGLE CALENDAR ====================
+function buildGCalUrl(titulo, data, horaInicio, horaFim, local, descricao) {
+    var d = data.replace(/-/g, '');
+    var hi = (horaInicio || '08:00').replace(/:/g, '');
+    var hf = (horaFim || '').replace(/:/g, '');
+    if (!hf) {
+        var h = parseInt(hi.substring(0,2)) + 1;
+        hf = String(h).padStart(2,'0') + hi.substring(2);
+    }
+    var params = new URLSearchParams({
+        action: 'TEMPLATE',
+        text: titulo || 'Evento Campanha',
+        dates: d + 'T' + hi + '00/' + d + 'T' + hf + '00',
+        details: (descricao || '') + '\n\nCriado pelo CONECTA - Logistica',
+        location: local || 'Brasilia-DF'
+    });
+    return 'https://calendar.google.com/calendar/render?' + params.toString();
+}
+
+function addBandeiracosToGoogle() {
+    var futuros = DATA.escala_bandeiracos.filter(function(b) { return new Date(b.data) >= new Date(); });
+    if (futuros.length === 0) return showToast('Nenhum evento futuro', 'warn');
+    if (!confirm('Enviar ' + futuros.length + ' eventos para o Google Agenda?')) return;
+    futuros.forEach(function(b, i) {
+        var turno = b.turno === 'manha' ? '08:00' : b.turno === 'tarde' ? '14:00' : '18:00';
+        var fimTurno = b.turno === 'manha' ? '12:00' : b.turno === 'tarde' ? '18:00' : '21:00';
+        setTimeout(function() {
+            window.open(buildGCalUrl(
+                'Bandeiraco: ' + (b.local || b.ra || 'Evento'),
+                b.data, turno, fimTurno,
+                b.local || b.ra || '',
+                'Equipe: ' + (b.equipe || '') + '\nQtd prevista: ' + (b.qtd || '') + '\n' + (b.obs || '')
+            ), '_blank');
+        }, i * 500);
+    });
+    showToast(futuros.length + ' eventos enviados ao Google Agenda');
+}
+
+function addSalasToGoogle() {
+    var futuros = DATA.agendaSalas.filter(function(a) { return new Date(a.data) >= new Date(); });
+    if (futuros.length === 0) return showToast('Nenhum agendamento futuro', 'warn');
+    if (!confirm('Enviar ' + futuros.length + ' agendamentos para o Google Agenda?')) return;
+    futuros.forEach(function(a, i) {
+        setTimeout(function() {
+            window.open(buildGCalUrl(
+                'Sala ' + (a.sala || '') + ': ' + (a.evento || ''),
+                a.data, a.horaInicio, a.horaFim,
+                'Comite - Sala ' + (a.sala || ''),
+                'Responsavel: ' + (a.responsavel || '') + '\n' + (a.obs || '')
+            ), '_blank');
+        }, i * 500);
+    });
+    showToast(futuros.length + ' agendamentos enviados ao Google Agenda');
+}
+
+function addOneBandeiracaoToGoogle(id) {
+    var b = DATA.escala_bandeiracos.find(function(x) { return x.id == id; });
+    if (!b) return;
+    var turno = b.turno === 'manha' ? '08:00' : b.turno === 'tarde' ? '14:00' : '18:00';
+    var fimTurno = b.turno === 'manha' ? '12:00' : b.turno === 'tarde' ? '18:00' : '21:00';
+    window.open(buildGCalUrl(
+        'Bandeiraco: ' + (b.local || b.ra || 'Evento'),
+        b.data, turno, fimTurno,
+        b.local || b.ra || '',
+        'Equipe: ' + (b.equipe || '') + '\nQtd: ' + (b.qtd || '')
+    ), '_blank');
+    showToast('Abrindo Google Agenda...');
 }
 
 // ==================== DETECCAO OFFLINE ====================

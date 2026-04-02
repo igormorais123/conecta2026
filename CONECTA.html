@@ -2318,7 +2318,8 @@
         <div class="org-frame-container">
             <div class="org-frame-header">
                 <h2>Agenda da Celina Le&atilde;o</h2>
-                <div>
+                <div style="display:flex;gap:8px;">
+                    <button class="btn" style="background:#4285f4;color:#fff;" onclick="addAllToGoogleCalendar()">Enviar tudo p/ Google Agenda</button>
                     <button class="btn" style="background:#fff;color:var(--primary);" onclick="document.getElementById('agendaFrame').contentWindow.location.reload()">Recarregar</button>
                 </div>
             </div>
@@ -3671,13 +3672,55 @@ function renderAgenda() {
                     ${e.obs ? '<p style="margin-top:4px;font-style:italic;">' + escapeHtml(e.obs) + '</p>' : ''}
                     <span class="agenda-tag" style="background:${getTypeColor(e.tipo)}">${escapeHtml(e.tipo)}</span>
                 </div>
-                <button class="btn btn-danger" style="padding:6px 10px;font-size:0.7rem;" onclick="deleteEvento(${e.id})">X</button>
+                <div style="display:flex;flex-direction:column;gap:4px;">
+                    <button class="btn btn-primary" style="padding:5px 10px;font-size:0.65rem;background:#4285f4;" onclick="addToGoogleCalendar(${e.id})" title="Adicionar ao Google Agenda">Agenda</button>
+                    <button class="btn btn-danger" style="padding:5px 10px;font-size:0.65rem;" onclick="deleteEvento(${e.id})">X</button>
+                </div>
             </div>
         `).join('');
     }
 
     renderCalendar();
     renderDashboard();
+}
+
+function buildGoogleCalendarUrl(ev) {
+    var data = ev.data.replace(/-/g, '');
+    var hora = (ev.hora || '00:00').replace(/:/g, '');
+    // Evento de 1h por padrao
+    var hInt = parseInt(hora.substring(0,2)) || 0;
+    var mInt = parseInt(hora.substring(2,4)) || 0;
+    var fimH = String(hInt + 1).padStart(2, '0');
+    var fimM = String(mInt).padStart(2, '0');
+    var start = data + 'T' + hora + '00';
+    var end = data + 'T' + fimH + fimM + '00';
+    var params = new URLSearchParams({
+        action: 'TEMPLATE',
+        text: ev.titulo || 'Compromisso Campanha',
+        dates: start + '/' + end,
+        details: (ev.obs || '') + '\n\nTipo: ' + (ev.tipo || '') + '\nCriado pelo CONECTA',
+        location: ev.local || 'Brasilia-DF'
+    });
+    return 'https://calendar.google.com/calendar/render?' + params.toString();
+}
+
+function addToGoogleCalendar(id) {
+    var ev = eventos.find(function(e) { return e.id === id; });
+    if (!ev) return showToast('Evento nao encontrado', 'error');
+    window.open(buildGoogleCalendarUrl(ev), '_blank');
+    showToast('Abrindo Google Agenda...');
+}
+
+function addAllToGoogleCalendar() {
+    var futuros = eventos.filter(function(e) { return new Date(e.data) >= new Date(); });
+    if (futuros.length === 0) return showToast('Nenhum evento futuro', 'warn');
+    if (!confirm('Abrir ' + futuros.length + ' eventos no Google Agenda? (uma aba por evento)')) return;
+    futuros.forEach(function(ev, i) {
+        setTimeout(function() {
+            window.open(buildGoogleCalendarUrl(ev), '_blank');
+        }, i * 500); // 500ms entre cada para nao bloquear popup
+    });
+    showToast(futuros.length + ' eventos abertos no Google Agenda');
 }
 
 function deleteEvento(id) {
