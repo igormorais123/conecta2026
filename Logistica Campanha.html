@@ -216,6 +216,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
     <div style="margin-left:auto;display:flex;align-items:center;gap:8px;padding-left:12px;">
         <span id="userName" style="font-size:0.78rem;color:var(--text2);font-weight:600;"></span>
         <button class="btn btn-sm" style="background:#0277bd;color:#fff;" onclick="quickExportJSON()" title="Ctrl+E">Backup</button>
+        <button class="btn btn-sm" style="background:#455a64;color:#fff;" onclick="quickImportJSON()" title="Restaurar backup">Restaurar</button>
         <button class="btn btn-sm" style="background:var(--accent);color:#fff;" onclick="openInteiaSite()">INTEIA</button>
         <button class="btn btn-sm" style="background:var(--green);color:#fff;" onclick="window.location.href=(window.CONECTA_CONFIG && window.CONECTA_CONFIG.appPath) || 'CONECTA.html'">&#8592; CONECTA</button>
         <button class="btn btn-sm" style="background:var(--card2);color:#fff;" onclick="window.location.href=(window.CONECTA_CONFIG && window.CONECTA_CONFIG.contaPath) || 'conta.html'">Conta</button>
@@ -266,6 +267,9 @@ tr:hover td { background:rgba(59,130,246,0.05); }
         </div>
     </div>
 
+    <!-- STATUS DO SISTEMA -->
+    <div id="sistemaStatus" class="card" style="margin-bottom:16px;padding:10px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:0.78rem;"></div>
+
     <!-- PROXIMAS TAREFAS + ENTREGAS -->
     <div class="grid-2">
         <div class="card">
@@ -308,6 +312,8 @@ tr:hover td { background:rgba(59,130,246,0.05); }
                 <option value="__sem__">Sem responsável</option>
             </select>
             <button class="btn btn-primary" onclick="openModalTarefa()">+ Nova Tarefa</button>
+            <button class="btn btn-sm" style="background:#0277bd;color:#fff;margin-left:8px;" onclick="exportTarefasCSV()">CSV</button>
+            <button class="btn btn-sm" style="background:#455a64;color:#fff;" onclick="importTarefasCSV()">Importar CSV</button>
         </div>
     </div>
     <div class="card"><table><thead><tr>
@@ -1330,6 +1336,7 @@ function updateCountdown() {
 
 function renderDashboard() {
     updateCountdown();
+    if (typeof renderSistemaStatus === 'function') renderSistemaStatus();
 
     var hoje = new Date().toISOString().slice(0,10);
     var tarefasHoje = DATA.tarefas.filter(function(t) { return t.prazo === hoje && t.status !== 'concluida'; });
@@ -3131,6 +3138,49 @@ if (window.CONECTA_SUPABASE || window._conectaSupabaseError) {
     window.addEventListener('conecta-supabase-ready', bootstrapLogistica, { once: true });
     window.addEventListener('supabase-ready', bootstrapLogistica, { once: true });
 }
+// ==================== STATUS DO SISTEMA ====================
+function renderSistemaStatus() {
+    var el = document.getElementById('sistemaStatus');
+    if (!el) return;
+
+    // Calcular uso do localStorage
+    var dataStr = localStorage.getItem(STORAGE_KEY) || '';
+    var usedKB = Math.round(dataStr.length / 1024);
+    var maxKB = 5120; // 5MB
+    var pct = Math.round(usedKB / maxKB * 100);
+    var corBarra = pct > 80 ? 'var(--red)' : pct > 50 ? 'var(--orange)' : 'var(--green)';
+
+    // Contadores rapidos
+    var nTarefas = DATA.tarefas.length;
+    var nMateriais = DATA.materiais.length;
+    var nFornecedores = DATA.fornecedores.length;
+    var nEquipe = DATA.equipe.length;
+    var nPatrimonio = (DATA.patrimonio || []).length;
+
+    // Ultimo backup
+    var lastBackup = localStorage.getItem('logistica_ultimo_backup');
+    var diasSemBackup = lastBackup ? Math.floor((Date.now() - parseInt(lastBackup)) / 86400000) : 999;
+    var backupMsg = diasSemBackup > 7
+        ? '<span style="color:var(--red);font-weight:700;">Sem backup ha ' + diasSemBackup + ' dias!</span> <button onclick="quickExportJSON()" style="background:var(--red);color:#fff;border:none;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:0.72rem;">Fazer agora</button>'
+        : diasSemBackup === 999
+        ? '<span style="color:var(--orange);">Nenhum backup feito</span> <button onclick="quickExportJSON()" style="background:var(--orange);color:#fff;border:none;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:0.72rem;">Fazer agora</button>'
+        : '<span style="color:var(--green);">Backup: ' + diasSemBackup + 'd atras</span>';
+
+    el.innerHTML =
+        '<div style="display:flex;align-items:center;gap:6px;" title="' + usedKB + 'KB de ' + maxKB + 'KB">' +
+            '<span style="color:var(--text2);">Armazenamento:</span>' +
+            '<div style="width:80px;height:8px;background:#1e293b;border-radius:4px;overflow:hidden;">' +
+                '<div style="width:' + pct + '%;height:100%;background:' + corBarra + ';border-radius:4px;transition:width 0.3s;"></div>' +
+            '</div>' +
+            '<span style="color:var(--text2);">' + usedKB + 'KB (' + pct + '%)</span>' +
+        '</div>' +
+        '<span style="color:var(--text2);">' + nTarefas + ' tarefas | ' + nMateriais + ' materiais | ' + nFornecedores + ' fornecedores | ' + nEquipe + ' equipe | ' + nPatrimonio + ' patrimonio</span>' +
+        '<div style="margin-left:auto;">' + backupMsg + '</div>';
+}
+
+// Registrar timestamp do ultimo backup
+var _origQuickExport = typeof quickExportJSON === 'function' ? quickExportJSON : null;
+
 // ==================== TOAST NOTIFICATIONS ====================
 (function() {
     var toastEl = document.createElement('div');
@@ -3158,7 +3208,9 @@ function quickExportJSON() {
     link.download = 'logistica-backup-' + new Date().toISOString().split('T')[0] + '.json';
     link.click();
     URL.revokeObjectURL(url);
+    localStorage.setItem('logistica_ultimo_backup', String(Date.now()));
     showToast('Backup exportado: ' + link.download);
+    renderSistemaStatus();
 }
 
 // ==================== ATALHOS DE TECLADO ====================
@@ -3173,6 +3225,97 @@ document.addEventListener('keydown', function(e) {
         quickExportJSON();
     }
 });
+
+// ==================== IMPORTAR BACKUP ====================
+function quickImportJSON() {
+    var input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = function() {
+        if (!input.files || !input.files[0]) return;
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                var imported = JSON.parse(e.target.result);
+                if (!imported.tarefas && !imported.materiais) {
+                    showToast('Arquivo invalido: nao parece ser um backup da Logistica', 'error');
+                    return;
+                }
+                if (!confirm('Isso vai SUBSTITUIR todos os dados atuais pelo backup. Continuar?')) return;
+                DATA = imported;
+                saveData();
+                renderDashboard();
+                showPage('dashboard');
+                showToast('Backup restaurado com sucesso!');
+            } catch(err) {
+                showToast('Erro ao ler arquivo: ' + err.message, 'error');
+            }
+        };
+        reader.readAsText(input.files[0]);
+    };
+    input.click();
+}
+
+// ==================== IMPORT DE CSV DE TAREFAS ====================
+function importTarefasCSV() {
+    var input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.csv';
+    input.onchange = function() {
+        if (!input.files || !input.files[0]) return;
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                var lines = e.target.result.split('\n').filter(function(l) { return l.trim(); });
+                if (lines.length < 2) { showToast('CSV vazio', 'warn'); return; }
+                var header = lines[0].split(',').map(function(h) { return h.trim().replace(/"/g, '').toLowerCase(); });
+                var count = 0;
+                for (var i = 1; i < lines.length; i++) {
+                    var cols = lines[i].split(',').map(function(c) { return c.trim().replace(/^"|"$/g, ''); });
+                    var obj = {};
+                    header.forEach(function(h, idx) { obj[h] = cols[idx] || ''; });
+                    DATA.tarefas.push({
+                        id: genId(),
+                        titulo: obj.titulo || obj.tarefa || obj.nome || 'Tarefa importada',
+                        responsavel: obj.responsavel || '',
+                        status: obj.status || 'pendente',
+                        prazo: obj.prazo || obj.data || '',
+                        prioridade: obj.prioridade || 'media',
+                        fase: obj.fase || 'ambas',
+                        obs: obj.obs || obj.observacao || ''
+                    });
+                    count++;
+                }
+                saveData();
+                showPage('tarefas');
+                showToast(count + ' tarefas importadas do CSV');
+            } catch(err) {
+                showToast('Erro no CSV: ' + err.message, 'error');
+            }
+        };
+        reader.readAsText(input.files[0]);
+    };
+    input.click();
+}
+
+// ==================== EXPORT CSV TAREFAS ====================
+function exportTarefasCSV() {
+    var csv = 'ID,Titulo,Responsavel,Status,Prazo,Prioridade,Fase,Obs\n';
+    DATA.tarefas.forEach(function(t) {
+        csv += '"' + t.id + '","' + (t.titulo || '').replace(/"/g, '""') + '","' +
+            (t.responsavel || '') + '","' + (t.status || '') + '","' +
+            (t.prazo || '') + '","' + (t.prioridade || '') + '","' +
+            (t.fase || '') + '","' + (t.obs || '').replace(/"/g, '""') + '"\n';
+    });
+    var blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement('a');
+    link.href = url;
+    link.download = 'tarefas-' + new Date().toISOString().split('T')[0] + '.csv';
+    link.click();
+    URL.revokeObjectURL(url);
+    showToast('CSV exportado: ' + link.download);
+}
 </script>
 </body>
 </html>
