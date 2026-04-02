@@ -325,6 +325,10 @@
                 showMessage('A nova senha precisa ter pelo menos 8 caracteres.', 'error');
                 return;
             }
+            if (!/[A-Z]/.test(newPassword) || !/[0-9]/.test(newPassword)) {
+                showMessage('A senha precisa ter pelo menos 1 letra maiuscula e 1 numero.', 'error');
+                return;
+            }
             if (newPassword !== confirmPassword) {
                 showMessage('As senhas nao conferem.', 'error');
                 return;

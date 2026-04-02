@@ -3207,6 +3207,16 @@ function getData(key, fallback) {
         return d ? JSON.parse(d) : fallback;
     } catch { return fallback; }
 }
+function debounce(fn, delay) {
+    var timer;
+    return function() {
+        var args = arguments;
+        var ctx = this;
+        clearTimeout(timer);
+        timer = setTimeout(function() { fn.apply(ctx, args); }, delay);
+    };
+}
+
 function setData(key, value) {
     try {
         localStorage.setItem(STORAGE_KEY + key, JSON.stringify(value));
@@ -3942,6 +3952,7 @@ function savePessoa() {
     }
 
     setData('pessoas', pessoas);
+    invalidateOrganogramaCache();
     closeModal('modalPessoa');
     renderPessoas();
     pessoaFotoTemp = '';
@@ -4018,12 +4029,13 @@ function adicionarFotoPessoa(id) {
     input.click();
 }
 
-function filterPessoas(val) { renderPessoas(val); }
+var filterPessoas = debounce(function(val) { renderPessoas(val); }, 250);
 
 function deletePessoa(id) {
     if (!confirm('Remover esta pessoa?')) return;
     pessoas = pessoas.filter(function(p) { return p.id !== id; });
     setData('pessoas', pessoas);
+    invalidateOrganogramaCache();
     renderPessoas();
 }
 
@@ -4896,11 +4908,17 @@ function getOrganogramaPeopleCount() {
     return getOrganogramaPeople().length;
 }
 
+var _organogramaPeopleCache = null;
+function invalidateOrganogramaCache() { _organogramaPeopleCache = null; }
+
 function getOrganogramaPeople() {
+    if (_organogramaPeopleCache) return _organogramaPeopleCache;
+
     // Se tiver lista atualizada pelo organograma via postMessage, usar ela
     try {
         var listaCompleta = JSON.parse(localStorage.getItem('organograma_lista_completa'));
         if (listaCompleta && Array.isArray(listaCompleta) && listaCompleta.length > 0) {
+            _organogramaPeopleCache = listaCompleta;
             return listaCompleta;
         }
     } catch(e) {}
@@ -4948,6 +4966,7 @@ function getOrganogramaPeople() {
         });
     });
 
+    _organogramaPeopleCache = result;
     return result;
 }
 
@@ -4975,9 +4994,9 @@ function setPcampFilter(btn, filter) {
     renderPessoasCampanhaList();
 }
 
-function filterPessoasCampanha() {
+var filterPessoasCampanha = debounce(function() {
     renderPessoasCampanhaList();
-}
+}, 250);
 
 function renderPessoasCampanhaList() {
     var all = getOrganogramaPeople();
@@ -5478,7 +5497,7 @@ function renderLideres() {
     renderDashboard();
 }
 
-function filterLideres(val) { renderLideres(); }
+var filterLideres = debounce(function(val) { renderLideres(); }, 250);
 function filterLideresTipo(val) { renderLideres(); }
 function filterLideresStatus(val) { renderLideres(); }
 
@@ -5686,6 +5705,7 @@ window.addEventListener('message', function(e) {
         try {
             localStorage.setItem('organograma_lista_completa', JSON.stringify(e.data.listaCompleta));
         } catch(err) {}
+        invalidateOrganogramaCache();
         renderDashboard();
     }
 });
