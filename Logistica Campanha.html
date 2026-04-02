@@ -1214,7 +1214,16 @@ function loadData() {
     try { var d = JSON.parse(localStorage.getItem(STORAGE_KEY)); return d || defaultData(); }
     catch(e) { return defaultData(); }
 }
-function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA)); }
+function saveData() {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+    } catch(e) {
+        console.error('[Logistica] Erro ao salvar:', e.name);
+        if (e.name === 'QuotaExceededError') {
+            alert('Espaco de armazenamento cheio! Exporte seus dados antes que sejam perdidos.');
+        }
+    }
+}
 var DATA = loadData();
 
 function genId() { var id = DATA.nextId || 1; DATA.nextId = id + 1; saveData(); return id; }

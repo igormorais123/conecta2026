@@ -3208,7 +3208,14 @@ function getData(key, fallback) {
     } catch { return fallback; }
 }
 function setData(key, value) {
-    localStorage.setItem(STORAGE_KEY + key, JSON.stringify(value));
+    try {
+        localStorage.setItem(STORAGE_KEY + key, JSON.stringify(value));
+    } catch(e) {
+        console.error('[CONECTA] Erro ao salvar dados (' + key + '):', e.name);
+        if (e.name === 'QuotaExceededError') {
+            alert('Espaco de armazenamento cheio. Exporte seus dados (botao Exportar Dados) e limpe o historico do navegador.');
+        }
+    }
 }
 
 // Dados
@@ -3560,11 +3567,11 @@ function renderDashboard() {
     } else {
         dash.innerHTML = upcoming.map(e => `
             <div class="agenda-item">
-                <div class="agenda-time">${e.hora}</div>
+                <div class="agenda-time">${escapeHtml(e.hora)}</div>
                 <div class="agenda-info">
-                    <h4>${e.titulo}</h4>
-                    <p>${e.local} - ${formatDate(e.data)}</p>
-                    <span class="agenda-tag ${e.tipo}" style="background:${getTypeColor(e.tipo)}">${e.tipo}</span>
+                    <h4>${escapeHtml(e.titulo)}</h4>
+                    <p>${escapeHtml(e.local)} - ${formatDate(e.data)}</p>
+                    <span class="agenda-tag ${escapeHtml(e.tipo)}" style="background:${getTypeColor(e.tipo)}">${escapeHtml(e.tipo)}</span>
                 </div>
             </div>
         `).join('');
@@ -3579,7 +3586,7 @@ function renderDashboard() {
             <div class="atividade-item">
                 <div class="atividade-dot" style="background:var(--primary);"></div>
                 <div>
-                    <div class="atividade-text">${a.text}</div>
+                    <div class="atividade-text">${escapeHtml(a.text)}</div>
                     <div class="atividade-time">${timeAgo(a.time)}</div>
                 </div>
             </div>
@@ -3639,12 +3646,12 @@ function renderAgenda() {
     } else {
         list.innerHTML = sorted.map(e => `
             <div class="agenda-item">
-                <div class="agenda-time">${e.hora || '--:--'}<br><small style="color:var(--text-light)">${formatDate(e.data)}</small></div>
+                <div class="agenda-time">${escapeHtml(e.hora || '--:--')}<br><small style="color:var(--text-light)">${formatDate(e.data)}</small></div>
                 <div class="agenda-info" style="flex:1;">
-                    <h4>${e.titulo}</h4>
-                    <p>${e.local || 'Local nao definido'}</p>
-                    ${e.obs ? '<p style="margin-top:4px;font-style:italic;">' + e.obs + '</p>' : ''}
-                    <span class="agenda-tag" style="background:${getTypeColor(e.tipo)}">${e.tipo}</span>
+                    <h4>${escapeHtml(e.titulo)}</h4>
+                    <p>${escapeHtml(e.local || 'Local nao definido')}</p>
+                    ${e.obs ? '<p style="margin-top:4px;font-style:italic;">' + escapeHtml(e.obs) + '</p>' : ''}
+                    <span class="agenda-tag" style="background:${getTypeColor(e.tipo)}">${escapeHtml(e.tipo)}</span>
                 </div>
                 <button class="btn btn-danger" style="padding:6px 10px;font-size:0.7rem;" onclick="deleteEvento(${e.id})">X</button>
             </div>
@@ -4237,9 +4244,9 @@ function renderDemandas(filter = 'todas') {
             <div class="demanda-item">
                 <div class="demanda-prioridade prioridade-${d.prioridade}"></div>
                 <div class="demanda-info">
-                    <h4>${d.titulo}</h4>
-                    <p>${d.regiao || ''} | ${d.categoria} | ${d.solicitante ? 'Solicitante: ' + d.solicitante : ''}</p>
-                    ${d.desc ? '<p style="margin-top:4px;">' + d.desc + '</p>' : ''}
+                    <h4>${escapeHtml(d.titulo)}</h4>
+                    <p>${escapeHtml(d.regiao || '')} | ${escapeHtml(d.categoria)} | ${d.solicitante ? 'Solicitante: ' + escapeHtml(d.solicitante) : ''}</p>
+                    ${d.desc ? '<p style="margin-top:4px;">' + escapeHtml(d.desc) + '</p>' : ''}
                     <p style="font-size:0.65rem;margin-top:4px;">Criada em ${formatDate(d.data)}</p>
                 </div>
                 <div style="display:flex;flex-direction:column;gap:4px;">
