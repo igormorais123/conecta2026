@@ -262,6 +262,7 @@
             gap: 14px;
             animation: alertaBlink 1.2s ease-in-out infinite;
             box-shadow: 0 4px 15px rgba(255,111,0,0.15);
+            will-change: box-shadow, border-color;
         }
         .alerta-eleitoral.alerta-hoje {
             background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
@@ -3878,6 +3879,10 @@ function previewFotoPessoa(input) {
                 pessoaFotoTemp = canvas.toDataURL('image/jpeg', 0.7);
                 preview.innerHTML = '<img src="' + pessoaFotoTemp + '" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid #e0e0e0;">';
             };
+            img.onerror = function() {
+                preview.innerHTML = '<span style="color:#c62828;font-size:0.75rem;">Imagem invalida</span>';
+                pessoaFotoTemp = '';
+            };
             img.src = e.target.result;
         };
         reader.readAsDataURL(input.files[0]);
@@ -4021,6 +4026,7 @@ function adicionarFotoPessoa(id) {
                         renderPessoas();
                     }
                 };
+                img.onerror = function() { alert('Imagem invalida ou corrompida.'); };
                 img.src = e.target.result;
             };
             reader.readAsDataURL(input.files[0]);

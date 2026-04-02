@@ -1380,10 +1380,12 @@ function populateResponsavelSelect(selectedValue) {
         if (t.responsavel && nomes.indexOf(t.responsavel) === -1) { nomes.push(t.responsavel); }
     });
     nomes.sort();
+    var html = sel.innerHTML;
     nomes.forEach(function(n) {
-        sel.innerHTML += '<option value="' + esc(n) + '">' + esc(n) + '</option>';
+        html += '<option value="' + esc(n) + '">' + esc(n) + '</option>';
     });
-    sel.innerHTML += '<option value="__outro__">Outro (digitar nome)</option>';
+    html += '<option value="__outro__">Outro (digitar nome)</option>';
+    sel.innerHTML = html;
     // Definir valor selecionado
     if (current && nomes.indexOf(current) === -1 && current !== '__outro__') {
         sel.innerHTML = sel.innerHTML.replace('</option><option value="__outro__">',
@@ -1409,9 +1411,11 @@ function populateFiltroResponsavel() {
         if (t.responsavel && nomes.indexOf(t.responsavel) === -1) { nomes.push(t.responsavel); }
     });
     nomes.sort();
+    var html = sel.innerHTML;
     nomes.forEach(function(n) {
-        sel.innerHTML += '<option value="' + esc(n) + '">' + esc(n) + '</option>';
+        html += '<option value="' + esc(n) + '">' + esc(n) + '</option>';
     });
+    sel.innerHTML = html;
     sel.value = current || '';
 }
 
