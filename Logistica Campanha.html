@@ -3415,6 +3415,14 @@ function imprimirRelatorio() {
     showPage('dashboard');
     setTimeout(function() { window.print(); }, 300);
 }
+
+// ==================== DETECCAO OFFLINE ====================
+window.addEventListener('offline', function() {
+    showToast('Sem internet! Dados ficam salvos localmente.', 'warn');
+});
+window.addEventListener('online', function() {
+    showToast('Conexao restaurada');
+});
 </script>
 </body>
 </html>

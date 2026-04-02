@@ -2274,6 +2274,13 @@
             </div>
         </div>
 
+        <!-- ACOES RAPIDAS -->
+        <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+            <button class="btn btn-primary" style="background:#25d366;padding:8px 16px;font-size:0.8rem;" onclick="gerarResumoConecta()">Resumo WhatsApp</button>
+            <button class="btn btn-primary" style="background:#0277bd;padding:8px 16px;font-size:0.8rem;" onclick="exportPessoasCSV()">Pessoas CSV</button>
+            <button class="btn btn-primary" style="background:#0277bd;padding:8px 16px;font-size:0.8rem;" onclick="exportLideresCSV()">Lideres CSV</button>
+        </div>
+
         <div class="dashboard-grid">
             <div class="panel">
                 <div class="panel-title">Pr&oacute;ximos Compromissos</div>
@@ -7027,6 +7034,107 @@ document.addEventListener('keydown', function(e) {
         exportData();
         showToast('Dados exportados');
     }
+});
+
+// ===== RESUMO WHATSAPP CONECTA =====
+function gerarResumoConecta() {
+    var hoje = new Date();
+    var hojeStr = hoje.toLocaleDateString('pt-BR');
+    var eleicao = new Date('2026-10-04');
+    var diasEleicao = Math.ceil((eleicao - hoje) / 86400000);
+
+    var nPessoas = getOrganogramaPeopleCount();
+    var nEventos = eventos.filter(function(e) {
+        var d = new Date(e.data);
+        return d >= hoje;
+    }).length;
+    var nDemandas = demandas.filter(function(d) { return d.status === 'Aberta'; }).length;
+    var nLideres = (getData('lideres', [])).filter(function(l) { return l.status === 'Ativo'; }).length;
+    var nVeiculos = (getData('veiculos', [])).length;
+
+    var texto = '*CONECTA CELINA LEAO 2026*\n';
+    texto += 'Relatorio ' + hojeStr + '\n';
+    texto += '_' + diasEleicao + ' dias para a eleicao_\n\n';
+    texto += '*Pessoas:* ' + nPessoas + ' no organograma\n';
+    texto += '*Eventos:* ' + nEventos + ' agendados\n';
+    texto += '*Demandas:* ' + nDemandas + ' abertas\n';
+    texto += '*Lideres:* ' + nLideres + ' ativos\n';
+    texto += '*Veiculos:* ' + nVeiculos + ' na frota\n';
+
+    var prox = eventos
+        .filter(function(e) { return new Date(e.data) >= hoje; })
+        .sort(function(a,b) { return a.data.localeCompare(b.data); })
+        .slice(0, 5);
+
+    if (prox.length > 0) {
+        texto += '\n*Proximos compromissos:*\n';
+        prox.forEach(function(e) {
+            texto += '- ' + e.titulo + ' (' + e.data.split('-').reverse().join('/') + ' ' + (e.hora || '') + ')\n';
+        });
+    }
+
+    texto += '\n_Gerado pelo CONECTA_';
+
+    navigator.clipboard.writeText(texto).then(function() {
+        showToast('Resumo copiado! Cole no WhatsApp');
+    }).catch(function() {
+        var ta = document.createElement('textarea');
+        ta.value = texto;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('Resumo copiado! Cole no WhatsApp');
+    });
+}
+
+// ===== EXPORT PESSOAS CSV =====
+function exportPessoasCSV() {
+    var lista = getOrganogramaPeople();
+    var csv = 'Nome,Cargo,Regiao,Telefone,Email,Nivel\n';
+    lista.forEach(function(p) {
+        csv += '"' + (p.nome || '').replace(/"/g, '""') + '","' +
+            (p.cargo || '') + '","' + (p.regiao || '') + '","' +
+            (p.tel || '') + '","' + (p.email || '') + '","' +
+            (p.nivel || '') + '"\n';
+    });
+    var blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement('a');
+    link.href = url;
+    link.download = 'pessoas-campanha-' + new Date().toISOString().split('T')[0] + '.csv';
+    link.click();
+    URL.revokeObjectURL(url);
+    showToast(lista.length + ' pessoas exportadas');
+}
+
+// ===== EXPORT LIDERES CSV =====
+function exportLideresCSV() {
+    var lideres = getData('lideres', []);
+    var csv = 'Nome,Regiao,Telefone,Status,Tipo,Areas,Alcance,DataCadastro\n';
+    lideres.forEach(function(l) {
+        csv += '"' + (l.nome || '').replace(/"/g, '""') + '","' +
+            (l.regiao || '') + '","' + (l.telefone || '') + '","' +
+            (l.status || '') + '","' + (l.tipo || '') + '","' +
+            (l.areas ? l.areas.join('; ') : '') + '",' +
+            (l.alcance || 0) + ',"' + (l.dataCadastro || '') + '"\n';
+    });
+    var blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement('a');
+    link.href = url;
+    link.download = 'lideres-' + new Date().toISOString().split('T')[0] + '.csv';
+    link.click();
+    URL.revokeObjectURL(url);
+    showToast(lideres.length + ' lideres exportados');
+}
+
+// ===== DETECCAO OFFLINE =====
+window.addEventListener('offline', function() {
+    showToast('Sem internet! Dados ficam salvos localmente.', 'warn');
+});
+window.addEventListener('online', function() {
+    showToast('Conexao restaurada');
 });
 
 </script>
