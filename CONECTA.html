@@ -6998,6 +6998,37 @@ setInterval(function() {
 }, 60000);
 // ===== FIM OPERACOES DE CAMPO =====
 
+// ===== TOAST NOTIFICATIONS =====
+(function() {
+    var toastEl = document.createElement('div');
+    toastEl.id = 'toast';
+    toastEl.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#1a237e;color:#fff;padding:14px 22px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.3);z-index:9999;opacity:0;transition:opacity 0.3s;max-width:320px;font-size:0.85rem;pointer-events:none;';
+    document.body.appendChild(toastEl);
+})();
+
+function showToast(msg, type) {
+    var t = document.getElementById('toast');
+    if (!t) return;
+    t.textContent = msg;
+    t.style.background = type === 'error' ? '#c62828' : type === 'warn' ? '#f57f17' : '#1a237e';
+    t.style.opacity = '1';
+    clearTimeout(t._timer);
+    t._timer = setTimeout(function() { t.style.opacity = '0'; }, 2500);
+}
+
+// ===== ATALHOS DE TECLADO =====
+document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        showToast('Dados salvos');
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+        e.preventDefault();
+        exportData();
+        showToast('Dados exportados');
+    }
+});
+
 </script>
 
 </body>

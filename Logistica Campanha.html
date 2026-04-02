@@ -215,6 +215,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
     </div>
     <div style="margin-left:auto;display:flex;align-items:center;gap:8px;padding-left:12px;">
         <span id="userName" style="font-size:0.78rem;color:var(--text2);font-weight:600;"></span>
+        <button class="btn btn-sm" style="background:#0277bd;color:#fff;" onclick="quickExportJSON()" title="Ctrl+E">Backup</button>
         <button class="btn btn-sm" style="background:var(--accent);color:#fff;" onclick="openInteiaSite()">INTEIA</button>
         <button class="btn btn-sm" style="background:var(--green);color:#fff;" onclick="window.location.href=(window.CONECTA_CONFIG && window.CONECTA_CONFIG.appPath) || 'CONECTA.html'">&#8592; CONECTA</button>
         <button class="btn btn-sm" style="background:var(--card2);color:#fff;" onclick="window.location.href=(window.CONECTA_CONFIG && window.CONECTA_CONFIG.contaPath) || 'conta.html'">Conta</button>
@@ -1214,13 +1215,20 @@ function loadData() {
     try { var d = JSON.parse(localStorage.getItem(STORAGE_KEY)); return d || defaultData(); }
     catch(e) { return defaultData(); }
 }
+var _saveToastTimer = null;
 function saveData() {
     try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+        // Toast discreto (debounced para não spammar)
+        clearTimeout(_saveToastTimer);
+        _saveToastTimer = setTimeout(function() {
+            if (typeof showToast === 'function') showToast('Salvo');
+        }, 500);
     } catch(e) {
         console.error('[Logistica] Erro ao salvar:', e.name);
         if (e.name === 'QuotaExceededError') {
-            alert('Espaco de armazenamento cheio! Exporte seus dados antes que sejam perdidos.');
+            if (typeof showToast === 'function') showToast('Espaco cheio! Use o botao Backup para exportar.', 'error');
+            else alert('Espaco de armazenamento cheio! Exporte seus dados.');
         }
     }
 }
@@ -3123,6 +3131,48 @@ if (window.CONECTA_SUPABASE || window._conectaSupabaseError) {
     window.addEventListener('conecta-supabase-ready', bootstrapLogistica, { once: true });
     window.addEventListener('supabase-ready', bootstrapLogistica, { once: true });
 }
+// ==================== TOAST NOTIFICATIONS ====================
+(function() {
+    var toastEl = document.createElement('div');
+    toastEl.id = 'toast';
+    toastEl.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#2e7d32;color:#fff;padding:14px 22px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.4);z-index:9999;opacity:0;transition:opacity 0.3s;max-width:320px;font-size:0.85rem;pointer-events:none;';
+    document.body.appendChild(toastEl);
+})();
+
+function showToast(msg, type) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.background = type === 'error' ? '#c62828' : type === 'warn' ? '#f57f17' : '#2e7d32';
+    t.style.opacity = '1';
+    clearTimeout(t._timer);
+    t._timer = setTimeout(function() { t.style.opacity = '0'; }, 2500);
+}
+
+// ==================== EXPORT RAPIDO ====================
+function quickExportJSON() {
+    var dataStr = JSON.stringify(DATA, null, 2);
+    var blob = new Blob([dataStr], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement('a');
+    link.href = url;
+    link.download = 'logistica-backup-' + new Date().toISOString().split('T')[0] + '.json';
+    link.click();
+    URL.revokeObjectURL(url);
+    showToast('Backup exportado: ' + link.download);
+}
+
+// ==================== ATALHOS DE TECLADO ====================
+document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        saveData();
+        showToast('Dados salvos manualmente');
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+        e.preventDefault();
+        quickExportJSON();
+    }
+});
 </script>
 </body>
 </html>
