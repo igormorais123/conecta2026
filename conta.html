@@ -321,12 +321,8 @@
             var newPassword = newPasswordEl.value;
             var confirmPassword = confirmPasswordEl.value;
 
-            if (newPassword.length < 8) {
-                showMessage('A nova senha precisa ter pelo menos 8 caracteres.', 'error');
-                return;
-            }
-            if (!/[A-Z]/.test(newPassword) || !/[0-9]/.test(newPassword)) {
-                showMessage('A senha precisa ter pelo menos 1 letra maiuscula e 1 numero.', 'error');
+            if (newPassword.length < 6) {
+                showMessage('A nova senha precisa ter pelo menos 6 caracteres.', 'error');
                 return;
             }
             if (newPassword !== confirmPassword) {
