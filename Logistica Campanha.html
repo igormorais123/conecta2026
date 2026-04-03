@@ -3467,21 +3467,21 @@ function coletarContextoCampanha() {
     var eleicao = new Date('2026-10-04');
     var diasEleicao = Math.ceil((eleicao - new Date()) / 86400000);
 
-    var tarefasPend = DATA.tarefas.filter(function(t) { return t.status !== 'concluida'; });
+    var tarefasPend = (DATA.tarefas || []).filter(function(t) { return t.status !== 'concluida'; });
     var tarefasHoje = tarefasPend.filter(function(t) { return t.prazo === hoje; });
     var tarefasAtrasadas = tarefasPend.filter(function(t) { return t.prazo && t.prazo < hoje; });
     var tarefasAlta = tarefasPend.filter(function(t) { return t.prioridade === 'alta'; });
 
-    var matAlerta = DATA.materiais.filter(function(m) { return m.estoque <= m.minimo && m.minimo > 0; });
-    var matTotal = DATA.materiais.reduce(function(s,m) { return s + (m.estoque || 0); }, 0);
+    var matAlerta = (DATA.materiais || []).filter(function(m) { return m.estoque <= m.minimo && m.minimo > 0; });
+    var matTotal = (DATA.materiais || []).reduce(function(s,m) { return s + (m.estoque || 0); }, 0);
 
-    var proxEventos = DATA.escala_bandeiracos.filter(function(b) {
+    var proxEventos = (DATA.escala_bandeiracos || []).filter(function(b) {
         var d = new Date(b.data);
         var diff = Math.ceil((d - new Date()) / 86400000);
         return diff >= 0 && diff <= 7;
     });
 
-    var valesTotal = DATA.vales_combustivel.reduce(function(s,v) { return s + (v.valor || 0); }, 0);
+    var valesTotal = (DATA.vales_combustivel || []).reduce(function(s,v) { return s + (v.valor || 0); }, 0);
     var patTotal = (DATA.patrimonio || []).reduce(function(s,p) { return s + ((p.valor || 0) * (p.qtd || 1)); }, 0);
 
     return 'Data: ' + hoje + '. Faltam ' + diasEleicao + ' dias para a eleicao (04/10/2026).\n' +
@@ -3491,12 +3491,12 @@ function coletarContextoCampanha() {
         (tarefasAlta.length > 0 ? 'Alta prioridade: ' + tarefasAlta.map(function(t) { return t.titulo + (t.responsavel ? ' @' + t.responsavel : ''); }).join('; ') + '\n' : '') +
         'MATERIAIS: ' + matTotal + ' em estoque. ' + matAlerta.length + ' com estoque critico.\n' +
         (matAlerta.length > 0 ? 'Criticos: ' + matAlerta.map(function(m) { return m.nome + ' (' + m.estoque + '/' + m.minimo + ')'; }).join(', ') + '\n' : '') +
-        'EQUIPE: ' + DATA.equipe.length + ' membros.\n' +
+        'EQUIPE: ' + (DATA.equipe || []).length + ' membros.\n' +
         'EVENTOS PROXIMOS (7 dias): ' + proxEventos.length + '.\n' +
         (proxEventos.length > 0 ? proxEventos.map(function(e) { return e.data + ' - ' + (e.local || e.ra || 'local?') + ' (' + (e.turno || '') + ')'; }).join('; ') + '\n' : '') +
         'VALES COMBUSTIVEL: R$ ' + valesTotal.toFixed(2) + '.\n' +
         'PATRIMONIO: R$ ' + patTotal.toFixed(2) + '.\n' +
-        'FORNECEDORES: ' + DATA.fornecedores.length + '.\n' +
+        'FORNECEDORES: ' + (DATA.fornecedores || []).length + '.\n' +
         'CHECKLIST: ' + (function() { var ks = Object.keys(DATA.checklist || {}); return ks.filter(function(k) { return DATA.checklist[k]; }).length + '/' + ks.length; })() + ' completo.';
 }
 
