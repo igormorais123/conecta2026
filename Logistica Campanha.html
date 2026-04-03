@@ -272,10 +272,21 @@ tr:hover td { background:rgba(59,130,246,0.05); }
 
     <!-- ACOES RAPIDAS -->
     <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+        <button class="btn btn-sm" style="background:#7c3aed;color:#fff;padding:8px 16px;" onclick="gerarBriefingIA()">Briefing IA</button>
         <button class="btn btn-sm" style="background:#25d366;color:#fff;padding:8px 16px;" onclick="gerarResumoWhatsApp()">Resumo WhatsApp</button>
         <button class="btn btn-sm" style="background:var(--card2);color:#fff;padding:8px 16px;" onclick="imprimirRelatorio()">Imprimir</button>
         <button class="btn btn-sm" style="background:#0277bd;color:#fff;padding:8px 16px;" onclick="exportTarefasCSV()">Tarefas CSV</button>
         <button class="btn btn-sm" style="background:#0277bd;color:#fff;padding:8px 16px;" onclick="exportMateriaisCSV()">Materiais CSV</button>
+    </div>
+
+    <!-- BRIEFING IA -->
+    <div class="card" id="briefingIA" style="margin-bottom:16px;border-left:4px solid #7c3aed;display:none;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+            <span style="font-size:1.2rem;">🤖</span>
+            <strong style="color:#a78bfa;">Briefing IA do Dia</strong>
+            <button class="btn btn-sm" style="background:#7c3aed;color:#fff;margin-left:auto;padding:4px 12px;font-size:.72rem;" onclick="gerarBriefingIA()">Atualizar</button>
+        </div>
+        <div id="briefingConteudo" style="font-size:.85rem;line-height:1.6;color:var(--text);white-space:pre-wrap;"></div>
     </div>
 
     <!-- PROXIMAS TAREFAS + ENTREGAS -->
@@ -3430,6 +3441,130 @@ function imprimirRelatorio() {
     showPage('dashboard');
     setTimeout(function() { window.print(); }, 300);
 }
+
+// ==================== BRIEFING IA ====================
+var BRIEFING_API_URL = 'https://omniroute.srv1354997.hstgr.cloud/v1/chat/completions';
+var BRIEFING_API_KEY = localStorage.getItem('conecta_ia_key') || '';
+
+function configurarChaveIA() {
+    var key = prompt('Cole a chave da IA (OmniRoute API Key).\nPergunta ao Igor se nao tiver:');
+    if (key && key.trim()) {
+        localStorage.setItem('conecta_ia_key', key.trim());
+        BRIEFING_API_KEY = key.trim();
+        showToast('Chave IA configurada');
+        gerarBriefingIA();
+    }
+}
+
+function coletarContextoCampanha() {
+    var hoje = new Date().toISOString().slice(0,10);
+    var eleicao = new Date('2026-10-04');
+    var diasEleicao = Math.ceil((eleicao - new Date()) / 86400000);
+
+    var tarefasPend = DATA.tarefas.filter(function(t) { return t.status !== 'concluida'; });
+    var tarefasHoje = tarefasPend.filter(function(t) { return t.prazo === hoje; });
+    var tarefasAtrasadas = tarefasPend.filter(function(t) { return t.prazo && t.prazo < hoje; });
+    var tarefasAlta = tarefasPend.filter(function(t) { return t.prioridade === 'alta'; });
+
+    var matAlerta = DATA.materiais.filter(function(m) { return m.estoque <= m.minimo && m.minimo > 0; });
+    var matTotal = DATA.materiais.reduce(function(s,m) { return s + (m.estoque || 0); }, 0);
+
+    var proxEventos = DATA.escala_bandeiracos.filter(function(b) {
+        var d = new Date(b.data);
+        var diff = Math.ceil((d - new Date()) / 86400000);
+        return diff >= 0 && diff <= 7;
+    });
+
+    var valesTotal = DATA.vales_combustivel.reduce(function(s,v) { return s + (v.valor || 0); }, 0);
+    var patTotal = (DATA.patrimonio || []).reduce(function(s,p) { return s + ((p.valor || 0) * (p.qtd || 1)); }, 0);
+
+    return 'Data: ' + hoje + '. Faltam ' + diasEleicao + ' dias para a eleicao (04/10/2026).\n' +
+        'TAREFAS: ' + tarefasPend.length + ' pendentes, ' + tarefasHoje.length + ' para hoje, ' +
+        tarefasAtrasadas.length + ' atrasadas, ' + tarefasAlta.length + ' prioridade alta.\n' +
+        (tarefasAtrasadas.length > 0 ? 'Atrasadas: ' + tarefasAtrasadas.map(function(t) { return t.titulo + ' (prazo ' + t.prazo + ', resp: ' + (t.responsavel || 'ninguem') + ')'; }).join('; ') + '\n' : '') +
+        (tarefasAlta.length > 0 ? 'Alta prioridade: ' + tarefasAlta.map(function(t) { return t.titulo + (t.responsavel ? ' @' + t.responsavel : ''); }).join('; ') + '\n' : '') +
+        'MATERIAIS: ' + matTotal + ' em estoque. ' + matAlerta.length + ' com estoque critico.\n' +
+        (matAlerta.length > 0 ? 'Criticos: ' + matAlerta.map(function(m) { return m.nome + ' (' + m.estoque + '/' + m.minimo + ')'; }).join(', ') + '\n' : '') +
+        'EQUIPE: ' + DATA.equipe.length + ' membros.\n' +
+        'EVENTOS PROXIMOS (7 dias): ' + proxEventos.length + '.\n' +
+        (proxEventos.length > 0 ? proxEventos.map(function(e) { return e.data + ' - ' + (e.local || e.ra || 'local?') + ' (' + (e.turno || '') + ')'; }).join('; ') + '\n' : '') +
+        'VALES COMBUSTIVEL: R$ ' + valesTotal.toFixed(2) + '.\n' +
+        'PATRIMONIO: R$ ' + patTotal.toFixed(2) + '.\n' +
+        'FORNECEDORES: ' + DATA.fornecedores.length + '.\n' +
+        'CHECKLIST: ' + DATA.checklist.filter(function(c) { return c.done; }).length + '/' + DATA.checklist.length + ' completo.';
+}
+
+async function gerarBriefingIA() {
+    var container = document.getElementById('briefingIA');
+    var conteudo = document.getElementById('briefingConteudo');
+
+    if (!BRIEFING_API_KEY) {
+        configurarChaveIA();
+        return;
+    }
+
+    container.style.display = 'block';
+    conteudo.textContent = 'Analisando dados da campanha...';
+
+    var contexto = coletarContextoCampanha();
+
+    try {
+        var response = await fetch(BRIEFING_API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + BRIEFING_API_KEY
+            },
+            body: JSON.stringify({
+                model: 'anthropic/claude-haiku',
+                max_tokens: 600,
+                messages: [
+                    {
+                        role: 'system',
+                        content: 'Voce e o assistente de logistica da campanha Celina Leao 2026 (Governadora do DF). Gere um briefing CURTO e ACIONAVEL para o coordenador de logistica. Maximo 8 linhas. Use emojis. Foque em: (1) o que precisa de atencao HOJE, (2) riscos/alertas, (3) uma sugestao pratica. Sem introducao, direto ao ponto. Portugues brasileiro.'
+                    },
+                    {
+                        role: 'user',
+                        content: 'Gere o briefing do dia com estes dados:\n\n' + contexto
+                    }
+                ]
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Erro ' + response.status);
+        }
+
+        var data = await response.json();
+        var texto = data.choices && data.choices[0] && data.choices[0].message
+            ? data.choices[0].message.content
+            : 'Sem resposta da IA';
+
+        conteudo.textContent = texto;
+
+        // Cache por 4 horas
+        localStorage.setItem('conecta_briefing_cache', JSON.stringify({
+            texto: texto,
+            timestamp: Date.now()
+        }));
+
+        showToast('Briefing atualizado');
+    } catch(err) {
+        conteudo.textContent = 'Erro ao gerar briefing: ' + err.message + '\nVerifique a chave IA ou tente novamente.';
+        showToast('Erro no briefing: ' + err.message, 'error');
+    }
+}
+
+// Carregar briefing do cache ao abrir
+(function() {
+    try {
+        var cache = JSON.parse(localStorage.getItem('conecta_briefing_cache') || 'null');
+        if (cache && cache.texto && (Date.now() - cache.timestamp) < 14400000) { // 4 horas
+            document.getElementById('briefingIA').style.display = 'block';
+            document.getElementById('briefingConteudo').textContent = cache.texto;
+        }
+    } catch(e) {}
+})();
 
 // ==================== GOOGLE CALENDAR ====================
 function buildGCalUrl(titulo, data, horaInicio, horaFim, local, descricao) {
