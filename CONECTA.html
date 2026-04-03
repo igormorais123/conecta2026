@@ -6190,9 +6190,9 @@ async function renderMapaCobertura() {
 
     // Fetch paralelo: heatmap + gaps + geofences
     var [heatData, gapsData, geofencesData] = await Promise.all([
-        ElexionClient.fetchHeatmap(),
-        ElexionClient.fetchHeatmapGaps(),
-        ElexionClient.fetchGeofences()
+        ElexionClient.fetchHeatmap().catch(function() { return null; }),
+        ElexionClient.fetchHeatmapGaps().catch(function() { return null; }),
+        ElexionClient.fetchGeofences().catch(function() { return null; })
     ]);
 
     if (!heatData && !gapsData) {
@@ -6389,21 +6389,26 @@ async function iniciarWarRoom() {
     document.getElementById('war-room-offline-banner').style.display = 'none';
 
     // Carregar snapshot inicial via REST (feed + alertas)
-    var [feedData, alertsData] = await Promise.all([
-        ElexionClient.fetchWarRoomFeed(),
-        ElexionClient.fetchAlerts()
-    ]);
+    try {
+        var [feedData, alertsData] = await Promise.all([
+            ElexionClient.fetchWarRoomFeed().catch(function() { return null; }),
+            ElexionClient.fetchAlerts().catch(function() { return null; })
+        ]);
 
-    if (feedData) {
-        var items = Array.isArray(feedData) ? feedData : (feedData.items || []);
-        warRoomState.eventos = items.slice(0, 50);
-        renderWarRoomFeed();
-    }
+        if (feedData) {
+            var items = Array.isArray(feedData) ? feedData : (feedData.items || []);
+            warRoomState.eventos = items.slice(0, 50);
+            renderWarRoomFeed();
+        }
 
-    if (alertsData) {
-        var alertsList = Array.isArray(alertsData) ? alertsData : (alertsData.alerts || []);
-        warRoomState.alertas = alertsList;
-        renderWarRoomAlertas();
+        if (alertsData) {
+            var alertsList = Array.isArray(alertsData) ? alertsData : (alertsData.alerts || []);
+            warRoomState.alertas = alertsList;
+            renderWarRoomAlertas();
+        }
+    } catch (e) {
+        console.warn('[War Room] Falha ao carregar dados REST:', e.message);
+        atualizarStatusWarRoom(false, 'Dados indisponíveis');
     }
 
     // Conectar Socket.IO (apenas se ainda nao conectado)
@@ -6545,8 +6550,8 @@ function ativarPollingFallbackWarRoom() {
     warRoomState.pollingFallback = setInterval(async function() {
         if (currentPage !== 'war-room') return;
         var [feedData, alertsData] = await Promise.all([
-            ElexionClient.fetchWarRoomFeed(),
-            ElexionClient.fetchAlerts()
+            ElexionClient.fetchWarRoomFeed().catch(function() { return null; }),
+            ElexionClient.fetchAlerts().catch(function() { return null; })
         ]);
         if (feedData) {
             var items = Array.isArray(feedData) ? feedData : (feedData.items || []);
