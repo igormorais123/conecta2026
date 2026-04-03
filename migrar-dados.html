@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://*.supabase.co wss://*.supabase.co; img-src 'self' data: https:; frame-ancestors 'none';">
+<meta http-equiv="X-Frame-Options" content="DENY">
 <title>Migrar Dados — CONECTA 2026</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -122,8 +124,9 @@ textarea { background: #0f172a; border: 1px solid #475569; color: #e2e8f0; paddi
 </div>
 
 <script>
-var SUPABASE_URL = 'https://dvgbqbwipwegkndutvte.supabase.co';
-var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2Z2JxYndpcHdlZ2tuZHV0dnRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MjY1MTgsImV4cCI6MjA5MDIwMjUxOH0.HM53lLdM4tN-9cndCIp2DgMHQ0BrWcSDnOArIr8XL8w';
+// Usar credenciais centralizadas se disponiveis, senao fallback
+var SUPABASE_URL = (window.CONECTA_SUPABASE_URL) || 'https://dvgbqbwipwegkndutvte.supabase.co';
+var SUPABASE_ANON_KEY = (window.CONECTA_SUPABASE_KEY) || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2Z2JxYndpcHdlZ2tuZHV0dnRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MjY1MTgsImV4cCI6MjA5MDIwMjUxOH0.HM53lLdM4tN-9cndCIp2DgMHQ0BrWcSDnOArIr8XL8w';
 
 var accessToken = null;
 var userId = null;
@@ -170,13 +173,13 @@ function checkLocal() {
     var hasConecta = Object.keys(conectaData).length > 0;
 
     if (!hasLogistica && !hasConecta) {
-        statusEl.innerHTML = '<div class="status status-warn">Nenhum dado encontrado no localStorage deste navegador. Se voce cadastrou dados em outro navegador, use a opcao de importar JSON abaixo.</div>';
+        statusEl.innerHTML = '<div class="status status-warn">Nenhum dado encontrado no localStorage deste navegador. Se você cadastrou dados em outro navegador, use a opção de importar JSON abaixo.</div>';
         return;
     }
 
     var html = '';
     if (hasLogistica) {
-        html += '<div class="status status-ok">Dados da Logistica encontrados!</div>';
+        html += '<div class="status status-ok">Dados da Logística encontrados!</div>';
         statsEl.classList.remove('hidden');
         var tarefas = (logData.tarefas || []).length;
         var materiais = (logData.materiais || []).length;
@@ -197,7 +200,7 @@ function checkLocal() {
             stat(salas, 'Agendamentos') +
             stat(distribuicao, 'Distribuicoes');
     } else {
-        html += '<div class="status status-warn">Dados da Logistica NAO encontrados neste navegador.</div>';
+        html += '<div class="status status-warn">Dados da Logística NÃO encontrados neste navegador.</div>';
     }
 
     if (hasConecta) {
@@ -255,7 +258,7 @@ async function doLogin() {
     var statusEl = document.getElementById('authStatus');
 
     if (!username || !password) {
-        statusEl.innerHTML = '<div class="status status-error">Preencha usuario e senha</div>';
+        statusEl.innerHTML = '<div class="status status-error">Preencha usuário e senha</div>';
         return;
     }
 
@@ -295,7 +298,11 @@ async function doLogin() {
 
         if (!authRes.ok) {
             var errBody = await authRes.json().catch(function() { return {}; });
-            statusEl.innerHTML = '<div class="status status-error">Erro: ' + (errBody.error_description || errBody.msg || 'Senha incorreta') + '</div>';
+            var errDiv = document.createElement('div');
+            errDiv.className = 'status status-error';
+            errDiv.textContent = 'Erro: ' + (errBody.error_description || errBody.msg || 'Senha incorreta');
+            statusEl.innerHTML = '';
+            statusEl.appendChild(errDiv);
             return;
         }
 
@@ -303,13 +310,17 @@ async function doLogin() {
         accessToken = authData.access_token;
         userId = authData.user.id;
 
-        statusEl.innerHTML = '<div class="status status-ok">Autenticado como ' + username + ' (' + authData.user.email + ')</div>';
+        var okDiv = document.createElement('div');
+        okDiv.className = 'status status-ok';
+        okDiv.textContent = 'Autenticado como ' + username + ' (' + authData.user.email + ')';
+        statusEl.innerHTML = '';
+        statusEl.appendChild(okDiv);
 
         document.getElementById('btnLogistica').disabled = false;
         document.getElementById('btnConecta').disabled = false;
 
     } catch (err) {
-        statusEl.innerHTML = '<div class="status status-error">Erro de conexao: ' + err.message + '</div>';
+        statusEl.innerHTML = '<div class="status status-error">Erro de conexão: ' + err.message + '</div>';
     }
 }
 
@@ -365,7 +376,7 @@ async function enviarLogistica() {
             log('Erro ao enviar Logistica: ' + res.status + ' - ' + errText, 'error');
         }
     } catch (err) {
-        log('Erro de conexao: ' + err.message, 'error');
+        log('Erro de conexão: ' + err.message, 'error');
     }
 }
 

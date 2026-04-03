@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.socket.io https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src https://fonts.gstatic.com; connect-src https://*.supabase.co wss://*.supabase.co https://api.qrserver.com; img-src 'self' data: https:; frame-ancestors 'none';">
+    <meta http-equiv="X-Frame-Options" content="DENY">
     <title>CONECTA CELINA LEAO - Sistema de Campanha</title>
     <link rel="icon" id="faviconLink" href="icons/favicon.svg" type="image/svg+xml">
-    <script src="js/supabase-config.js"></script>
-    <script src="js/conecta-db.js"></script>
+    <script src="js/supabase-config.js" defer></script>
+    <script src="js/conecta-db.js" defer></script>
     <script>
         (function initHeadAssets() {
             if (typeof window.CONECTA_APPLY_PWA === 'function') {
@@ -17,9 +19,8 @@
             }
         })();
     </script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
@@ -92,7 +93,7 @@
             font-size: 0.6rem;
             text-transform: uppercase;
             letter-spacing: 2px;
-            color: rgba(255,255,255,0.4);
+            color: rgba(255,255,255,0.65);
             font-weight: 700;
         }
 
@@ -139,7 +140,7 @@
             text-align: center;
         }
         .sidebar-footer span {
-            color: rgba(255,255,255,0.4);
+            color: rgba(255,255,255,0.65);
             font-size: 0.65rem;
         }
 
@@ -1789,6 +1790,9 @@
             #page-mapa-cobertura > div:nth-child(3),
             #page-war-room > div:nth-child(3) { grid-template-columns: 1fr !important; }
         }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+        }
     </style>
     <!-- Libs carregadas sob demanda para melhorar performance inicial -->
     <script>
@@ -1824,7 +1828,7 @@
     };
     </script>
     <!-- elexion-client.js: auth bearer + endpoints Elexion -->
-    <script src="js/elexion-client.js"></script>
+    <script src="js/elexion-client.js" defer></script>
 </head>
 <body>
 
@@ -1837,93 +1841,93 @@
     </div>
     <nav class="sidebar-nav">
         <div class="nav-section">Principal</div>
-        <div class="nav-item active" onclick="showPage('dashboard')">
+        <div class="nav-item active" role="button" tabindex="0" onclick="showPage('dashboard')">
             <span class="nav-icon">&#9776;</span>
             <span>Dashboard</span>
         </div>
-        <div class="nav-item" onclick="showPage('organograma')">
+        <div class="nav-item" role="button" tabindex="0" onclick="showPage('organograma')">
             <span class="nav-icon">&#9733;</span>
             <span>Organograma</span>
         </div>
 
         <div class="nav-section">Operacional</div>
-        <div class="nav-item" onclick="showPage('agenda')">
+        <div class="nav-item" role="button" tabindex="0" onclick="showPage('agenda')">
             <span class="nav-icon">&#128197;</span>
             <span>Agenda da Celina</span>
         </div>
-        <div class="nav-item" onclick="showPage('veiculos')">
+        <div class="nav-item" role="button" tabindex="0" onclick="showPage('veiculos')">
             <span class="nav-icon">&#128663;</span>
             <span>Controle de Ve&iacute;culos</span>
         </div>
-        <div class="nav-item" onclick="showPage('quemequem')">
+        <div class="nav-item" role="button" tabindex="0" onclick="showPage('quemequem')">
             <span class="nav-icon">&#128101;</span>
             <span>Quem &eacute; Quem</span>
         </div>
-        <div class="nav-item" onclick="showPage('lideres')">
+        <div class="nav-item" role="button" tabindex="0" onclick="showPage('lideres')">
             <span class="nav-icon">&#127942;</span>
             <span>Cadastro de L&iacute;deres</span>
             <span class="nav-badge">NOVO</span>
         </div>
-        <div class="nav-item" onclick="showPage('mapa')">
+        <div class="nav-item" role="button" tabindex="0" onclick="showPage('mapa')">
             <span class="nav-icon">&#127758;</span>
             <span>Mapa do DF</span>
             <span class="nav-badge">NOVO</span>
         </div>
 
         <div class="nav-section">Estrat&eacute;gico</div>
-        <div class="nav-item" onclick="showPage('pesquisas')">
+        <div class="nav-item" role="button" tabindex="0" onclick="showPage('pesquisas')">
             <span class="nav-icon">&#128200;</span>
             <span>Pesquisas Eleitorais</span>
         </div>
-        <div class="nav-item" onclick="showPage('comunicacao')">
+        <div class="nav-item" role="button" tabindex="0" onclick="showPage('comunicacao')">
             <span class="nav-icon">&#128225;</span>
             <span>Comunica&ccedil;&atilde;o</span>
         </div>
-        <div class="nav-item" onclick="showPage('demandas')">
+        <div class="nav-item" role="button" tabindex="0" onclick="showPage('demandas')">
             <span class="nav-icon">&#128221;</span>
             <span>Demandas Populares</span>
         </div>
 
         <div class="nav-section">Administrativo</div>
-        <div class="nav-item" onclick="showPage('juridico')">
+        <div class="nav-item" role="button" tabindex="0" onclick="showPage('juridico')">
             <span class="nav-icon">&#9878;</span>
             <span>Jur&iacute;dico / Prazos</span>
         </div>
-        <div class="nav-item" onclick="showPage('materiais')">
+        <div class="nav-item" role="button" tabindex="0" onclick="showPage('materiais')">
             <span class="nav-icon">&#128230;</span>
             <span>Materiais</span>
         </div>
 
         <div class="nav-section">Campo</div>
-        <div class="nav-item" onclick="showPage('gamificacao')">
+        <div class="nav-item" role="button" tabindex="0" onclick="showPage('gamificacao')">
             <span class="nav-icon">&#127942;</span>
             <span>Gamifica&ccedil;&atilde;o</span>
             <span class="nav-badge" id="badge-gamificacao" style="background:var(--accent);display:none;">NOVO</span>
         </div>
-        <div class="nav-item" onclick="showPage('mapa-cobertura')">
+        <div class="nav-item" role="button" tabindex="0" onclick="showPage('mapa-cobertura')">
             <span class="nav-icon">&#128506;</span>
             <span>Mapa de Cobertura</span>
         </div>
-        <div class="nav-item" onclick="showPage('war-room')">
+        <div class="nav-item" role="button" tabindex="0" onclick="showPage('war-room')">
             <span class="nav-icon">&#128312;</span>
             <span>War Room</span>
             <span class="nav-badge" id="badge-war-room" style="background:#ef4444;display:none;">0</span>
         </div>
-        <div class="nav-item" onclick="showPage('tarefas-campo')">
+        <div class="nav-item" role="button" tabindex="0" onclick="showPage('tarefas-campo')">
             <span class="nav-icon">&#9989;</span>
             <span>Tarefas de Campo</span>
         </div>
-        <div class="nav-item" onclick="showPage('desafios')">
+        <div class="nav-item" role="button" tabindex="0" onclick="showPage('desafios')">
             <span class="nav-icon">&#127942;</span>
             <span>Desafios</span>
         </div>
-        <div class="nav-item" onclick="showPage('social')">
+        <div class="nav-item" role="button" tabindex="0" onclick="showPage('social')">
             <span class="nav-icon">&#128241;</span>
             <span>Social</span>
         </div>
 
         <div class="nav-section">Log&iacute;stica</div>
-        <div class="nav-item" onclick="window.location.href='Logistica%20Campanha.html'" style="background:rgba(59,130,246,0.15);border-left:3px solid #3b82f6;">
+        <div class="nav-item" role="button" tabindex="0" onclick="window.location.href='Logistica%20Campanha.html'" style="background:rgba(59,130,246,0.15);border-left:3px solid #3b82f6;">
             <span class="nav-icon">&#9881;</span>
             <span>Painel de Log&iacute;stica</span>
             <span class="nav-badge" style="background:#3b82f6;">12</span>
@@ -3209,6 +3213,8 @@
 <script>
 // ===== ESTADO GLOBAL (localStorage) =====
 const STORAGE_KEY = 'conectacelina_';
+// ID unico: timestamp + random para evitar colisoes
+function gerarId() { return Date.now() + Math.floor(Math.random() * 100000); }
 
 function getData(key, fallback) {
     try {
@@ -3637,7 +3643,7 @@ function timeAgo(iso) {
 // ===== AGENDA =====
 function saveEvento() {
     const evt = {
-        id: Date.now(),
+        id: gerarId(),
         data: document.getElementById('evtData').value,
         hora: document.getElementById('evtHora').value,
         titulo: document.getElementById('evtTitulo').value,
@@ -3852,7 +3858,7 @@ function saveVeiculo() {
             addAtividade('Ve\u00edculo editado: ' + dados.modelo + ' (' + dados.placa + ')');
         }
     } else {
-        var v = Object.assign({ id: Date.now() }, dados);
+        var v = Object.assign({ id: gerarId() }, dados);
         veiculos.push(v);
         addAtividade('Ve\u00edculo adicionado: ' + dados.modelo + ' (' + dados.placa + ')');
     }
@@ -3994,7 +4000,7 @@ function savePessoa() {
     } else {
         // Nova pessoa
         var p = {
-            id: Date.now(),
+            id: gerarId(),
             nome: nome,
             tel: tel,
             regiao: regiao,
@@ -4116,7 +4122,7 @@ function importarPessoasCampanha() {
         nomesExistentes[nomeNorm] = true;
 
         pessoas.push({
-            id: Date.now() + Math.floor(Math.random() * 100000) + importados,
+            id: gerarId() + importados,
             nome: pc.nome,
             tel: pc.tel || '',
             regiao: pc.regiao || '',
@@ -4214,7 +4220,7 @@ function saveVisita() {
 // ===== PESQUISAS =====
 function savePesquisa() {
     const p = {
-        id: Date.now(),
+        id: gerarId(),
         data: document.getElementById('pesqData').value,
         instituto: document.getElementById('pesqInst').value,
         celina: parseFloat(document.getElementById('pesqCelina').value) || 0,
@@ -4282,7 +4288,7 @@ function renderPesquisas() {
 // ===== DEMANDAS =====
 function saveDemanda() {
     const d = {
-        id: Date.now(),
+        id: gerarId(),
         titulo: document.getElementById('demTitulo').value,
         regiao: document.getElementById('demRegiao').value,
         categoria: document.getElementById('demCategoria').value,
@@ -4349,7 +4355,7 @@ function deleteDemanda(id) {
 // ===== JURIDICO =====
 function saveJuridico() {
     const j = {
-        id: Date.now(),
+        id: gerarId(),
         data: document.getElementById('jurData').value,
         titulo: document.getElementById('jurTitulo').value,
         desc: document.getElementById('jurDesc').value,
@@ -5180,7 +5186,7 @@ function addTarefaPessoa() {
     var data = getTarefasPessoas();
     if (!data[tarefaPessoaIdAtual]) data[tarefaPessoaIdAtual] = [];
     data[tarefaPessoaIdAtual].push({
-        id: Date.now(),
+        id: gerarId(),
         titulo: titulo,
         descricao: desc,
         prazo: prazo,
@@ -5421,7 +5427,7 @@ function cadSalvarLocal() {
     if (d.areas.length > 0) tipo = d.areas[0];
 
     var l = {
-        id: Date.now(),
+        id: gerarId(),
         nome: d.nome,
         telefone: d.telefone,
         aniversario: d.aniversario,
@@ -7052,6 +7058,8 @@ setInterval(function() {
 (function() {
     var toastEl = document.createElement('div');
     toastEl.id = 'toast';
+    toastEl.setAttribute('role', 'status');
+    toastEl.setAttribute('aria-live', 'polite');
     toastEl.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#1a237e;color:#fff;padding:14px 22px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.3);z-index:9999;opacity:0;transition:opacity 0.3s;max-width:320px;font-size:0.85rem;pointer-events:none;';
     document.body.appendChild(toastEl);
 })();
@@ -7070,7 +7078,11 @@ function showToast(msg, type) {
 document.addEventListener('keydown', function(e) {
     if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         e.preventDefault();
-        showToast('Dados salvos');
+        if (typeof ConectaDB !== 'undefined' && ConectaDB.syncNow) {
+            ConectaDB.syncNow().then(function() { showToast('Dados sincronizados'); }).catch(function() { showToast('Erro ao sincronizar', 'error'); });
+        } else {
+            showToast('Dados salvos localmente');
+        }
     }
     if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
         e.preventDefault();
@@ -7178,6 +7190,14 @@ window.addEventListener('offline', function() {
 });
 window.addEventListener('online', function() {
     showToast('Conexao restaurada');
+});
+
+// Acessibilidade: ativar nav-items por teclado (Enter/Space)
+document.addEventListener('keydown', function(ev) {
+    if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.classList.contains('nav-item')) {
+        ev.preventDefault();
+        ev.target.click();
+    }
 });
 
 </script>

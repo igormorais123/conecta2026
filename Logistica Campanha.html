@@ -3,14 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.socket.io https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src https://fonts.gstatic.com; connect-src https://*.supabase.co wss://*.supabase.co https://api.qrserver.com; img-src 'self' data: https:; frame-ancestors 'none';">
+<meta http-equiv="X-Frame-Options" content="DENY">
 <title>Logística Campanha Celina Leão 2026</title>
-<script src="js/supabase-config.js"></script>
-<script src="js/conecta-db.js"></script>
+<script src="js/supabase-config.js" defer></script>
+<script src="js/conecta-db.js" defer></script>
 <style>
 :root {
     --bg: #0f172a; --card: #1e293b; --card2: #334155; --accent: #3b82f6;
     --accent2: #8b5cf6; --green: #10b981; --orange: #f59e0b; --red: #ef4444;
-    --cyan: #06b6d4; --pink: #ec4899; --text: #f1f5f9; --text2: #94a3b8;
+    --cyan: #06b6d4; --pink: #ec4899; --text: #f1f5f9; --text2: #b8c9db;
     --border: #475569; --input-bg: #0f172a;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -99,7 +101,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
 .btn-primary:hover { background:#2563eb; }
 .btn-success { background:var(--green); color:#fff; }
 .btn-danger { background:var(--red); color:#fff; }
-.btn-sm { padding:5px 12px; font-size:0.75rem; }
+.btn-sm { padding:10px 16px; font-size:0.75rem; min-height:44px; }
 
 /* FORM */
 .form-group { margin-bottom:12px; }
@@ -184,7 +186,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
 @media(max-width:480px) {
     .countdown-grid { grid-template-columns:1fr; }
     .nav-links { gap:4px; }
-    .nav-links button { font-size:.6rem; padding:6px 8px; }
+    .nav-links button { font-size:.7rem; padding:8px 12px; min-height:44px; }
     .header { flex-wrap:wrap; gap:4px; }
 }
 </style>
@@ -707,7 +709,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
 </div>
 
 <!-- DETALHE DRILL-DOWN -->
-<div class="detalhe-overlay" id="detalheOverlay" onclick="if(event.target===this)fecharDetalhe()">
+<div class="detalhe-overlay" id="detalheOverlay" role="dialog" aria-modal="true" onclick="if(event.target===this)fecharDetalhe()">
     <div class="detalhe-panel">
         <div class="detalhe-header">
             <h3><span id="detalheIcone"></span> <span id="detalheTitulo"></span> <span class="detalhe-count" id="detalheCount">0</span></h3>
@@ -1262,7 +1264,7 @@ function saveData() {
 }
 var DATA = loadData();
 
-function genId() { var id = DATA.nextId || 1; DATA.nextId = id + 1; saveData(); return id; }
+function genId() { var id = DATA.nextId || 1; DATA.nextId = id + 1; return id; }
 
 // ==================== NAVEGAÇÃO ====================
 function showPage(id) {
@@ -2902,12 +2904,12 @@ function renderVales() {
     var sorted = vales.slice().sort(function(a,b) { return new Date(b.data||'') - new Date(a.data||''); });
     sorted.forEach(function(v) {
         totalCota += (v.valor || 0);
-        html += '<tr><td><strong>' + (v.placa || '') + '</strong></td>' +
-            '<td>' + (v.modelo || '') + '</td>' +
-            '<td>' + (v.motorista || '') + '</td>' +
+        html += '<tr><td><strong>' + esc(v.placa || '') + '</strong></td>' +
+            '<td>' + esc(v.modelo || '') + '</td>' +
+            '<td>' + esc(v.motorista || '') + '</td>' +
             '<td>' + (v.litros || 0) + ' L</td>' +
             '<td>R$ ' + (v.valor || 0).toLocaleString('pt-BR',{minimumFractionDigits:2}) + '</td>' +
-            '<td>' + (v.data||'').slice(0,10).split('-').reverse().join('/') + '</td>' +
+            '<td>' + esc((v.data||'').slice(0,10).split('-').reverse().join('/')) + '</td>' +
             '<td><button class="btn btn-sm btn-primary" onclick="openModalVale(' + v.id + ')">Editar</button> ' +
             '<button class="btn btn-sm" style="background:var(--red);color:#fff;" onclick="delVale(' + v.id + ')">X</button></td></tr>';
     });
@@ -3219,6 +3221,8 @@ var _origQuickExport = typeof quickExportJSON === 'function' ? quickExportJSON :
 (function() {
     var toastEl = document.createElement('div');
     toastEl.id = 'toast';
+    toastEl.setAttribute('role', 'status');
+    toastEl.setAttribute('aria-live', 'polite');
     toastEl.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#2e7d32;color:#fff;padding:14px 22px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.4);z-index:9999;opacity:0;transition:opacity 0.3s;max-width:320px;font-size:0.85rem;pointer-events:none;';
     document.body.appendChild(toastEl);
 })();

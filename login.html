@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.socket.io https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src https://fonts.gstatic.com; connect-src https://*.supabase.co wss://*.supabase.co https://api.qrserver.com; img-src 'self' data: https:; frame-ancestors 'none';">
+    <meta http-equiv="X-Frame-Options" content="DENY">
     <title>Login - CONECTA Celina Leao 2026</title>
     <link rel="manifest" id="manifestLink" href="js/manifest.json">
     <link rel="icon" id="faviconLink" href="icons/favicon.svg" type="image/svg+xml">
@@ -15,7 +17,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="js/supabase-config.js"></script>
+    <script src="js/supabase-config.js" defer></script>
     <script>
         (function initPwaAssets() {
             if (typeof window.CONECTA_APPLY_PWA === 'function') {
@@ -204,8 +206,8 @@
 
         <form id="loginForm" autocomplete="on">
             <div class="field">
-                <label for="username">Usuario</label>
-                <input type="text" id="username" name="username" placeholder="Digite seu usuario" autocomplete="username" required>
+                <label for="username">Usuário</label>
+                <input type="text" id="username" name="username" placeholder="Digite seu usuário" autocomplete="username" required>
             </div>
 
             <div class="field">
@@ -220,7 +222,7 @@
         </form>
 
         <div class="helper">
-            Use seu usuario da campanha para acessar o sistema.
+            Use seu usuário da campanha para acessar o sistema.
         </div>
     </div>
 
@@ -308,7 +310,7 @@
         var password = passwordEl.value;
 
         if (!username || !password) {
-            showMessage('Preencha usuario e senha.', 'error');
+            showMessage('Preencha usuário e senha.', 'error');
             return;
         }
 
@@ -323,13 +325,13 @@
         try {
             var email = await resolveEmail(client, username);
             if (!email) {
-                showMessage('Usuario ou senha invalidos.', 'error');
+                showMessage('Usuário ou senha inválidos.', 'error');
                 return;
             }
 
             var result = await client.auth.signInWithPassword({ email: email, password: password });
             if (result.error) {
-                showMessage('Usuario ou senha invalidos.', 'error');
+                showMessage('Usuário ou senha inválidos.', 'error');
                 return;
             }
 

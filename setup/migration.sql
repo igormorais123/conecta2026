@@ -446,7 +446,14 @@ COMMENT ON FUNCTION public.usuario_eh_gestor IS 'Retorna true se o usuário loga
 -- PERFIS
 CREATE POLICY "perfis_select" ON perfis FOR SELECT TO authenticated USING (TRUE);
 CREATE POLICY "perfis_insert" ON perfis FOR INSERT TO authenticated WITH CHECK (usuario_eh_gestor() OR id = auth.uid());
-CREATE POLICY "perfis_update" ON perfis FOR UPDATE TO authenticated USING (usuario_eh_gestor() OR id = auth.uid());
+-- Usuarios comuns podem atualizar apenas nome e avatar do proprio perfil.
+-- O campo 'papel' so pode ser alterado por gestores (admin/coordenador).
+CREATE POLICY "perfis_update" ON perfis FOR UPDATE TO authenticated
+    USING (usuario_eh_gestor() OR id = auth.uid())
+    WITH CHECK (
+        usuario_eh_gestor()
+        OR (id = auth.uid() AND papel = (SELECT papel FROM perfis WHERE id = auth.uid()))
+    );
 CREATE POLICY "perfis_delete" ON perfis FOR DELETE TO authenticated USING (usuario_eh_gestor());
 
 -- EVENTOS
@@ -660,6 +667,7 @@ $$;
 CREATE TABLE IF NOT EXISTS configuracoes_app (
   chave         TEXT PRIMARY KEY,
   payload       JSONB NOT NULL DEFAULT '{}'::jsonb,
+  versao        INTEGER NOT NULL DEFAULT 0,
   atualizado_por UUID REFERENCES perfis(id),
   atualizado_em TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -722,6 +730,17 @@ GRANT EXECUTE ON FUNCTION public.resolver_email_por_username(TEXT) TO authentica
 -- UPDATE perfis SET papel = 'coordenador' WHERE email = 'karla2026@conecta.interno';
 -- UPDATE perfis SET papel = 'admin' WHERE email = 'igor2026@conecta.interno';
 
+
+-- ============================================================
+-- ÍNDICES PARA CONSULTAS FREQUENTES
+-- ============================================================
+
+CREATE INDEX IF NOT EXISTS idx_eventos_data ON eventos(data);
+CREATE INDEX IF NOT EXISTS idx_tarefas_pessoa_id ON tarefas(pessoa_id);
+CREATE INDEX IF NOT EXISTS idx_demandas_status ON demandas(status);
+CREATE INDEX IF NOT EXISTS idx_lideres_status ON lideres(status);
+CREATE INDEX IF NOT EXISTS idx_apoiadores_telefone ON apoiadores(telefone_numeros);
+CREATE INDEX IF NOT EXISTS idx_perfis_username ON perfis(username);
 
 -- ============================================================
 -- FIM DA MIGRAÇÃO

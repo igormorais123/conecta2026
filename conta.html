@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.socket.io https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src https://fonts.gstatic.com; connect-src https://*.supabase.co wss://*.supabase.co https://api.qrserver.com; img-src 'self' data: https:; frame-ancestors 'none';">
+    <meta http-equiv="X-Frame-Options" content="DENY">
     <title>Minha Conta - CONECTA 2026</title>
     <link rel="manifest" id="manifestLink" href="js/manifest.json">
     <link rel="icon" id="faviconLink" href="icons/favicon.svg" type="image/svg+xml">
@@ -15,9 +17,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="js/supabase-config.js"></script>
-    <script src="js/conecta-db.js"></script>
-    <script src="js/elexion-client.js"></script>
+    <script src="js/supabase-config.js" defer></script>
+    <script src="js/conecta-db.js" defer></script>
+    <script src="js/elexion-client.js" defer></script>
     <script>
         (function initPwaAssets() {
             if (typeof window.CONECTA_APPLY_PWA === 'function') {
@@ -186,7 +188,7 @@
 <body>
     <div class="card">
         <h1>Minha Conta</h1>
-        <div class="subtitle">Atualize sua senha e gerencie sua sessao.</div>
+        <div class="subtitle">Atualize sua senha e gerencie sua sessão.</div>
 
         <div class="panel">
             <strong>Usuario logado:</strong> <span id="profileName">Carregando...</span><br>
@@ -321,17 +323,21 @@
             var newPassword = newPasswordEl.value;
             var confirmPassword = confirmPasswordEl.value;
 
-            if (newPassword.length < 6) {
-                showMessage('A nova senha precisa ter pelo menos 6 caracteres.', 'error');
+            if (newPassword.length < 8) {
+                showMessage('A nova senha precisa ter pelo menos 8 caracteres.', 'error');
+                return;
+            }
+            if (!/[A-Z]/.test(newPassword) || !/[0-9]/.test(newPassword)) {
+                showMessage('A senha precisa ter pelo menos 1 letra maiúscula e 1 número.', 'error');
                 return;
             }
             if (newPassword !== confirmPassword) {
-                showMessage('As senhas nao conferem.', 'error');
+                showMessage('As senhas não conferem.', 'error');
                 return;
             }
 
             if (!window.CONECTA_SUPABASE) {
-                showMessage('Supabase nao configurado.', 'error');
+                showMessage('Supabase não configurado.', 'error');
                 return;
             }
 
@@ -348,7 +354,7 @@
                 confirmPasswordEl.value = '';
                 showMessage('Senha alterada com sucesso.', 'success');
             } catch (error) {
-                showMessage('Nao foi possivel alterar a senha.', 'error');
+                showMessage('Não foi possível alterar a senha.', 'error');
             } finally {
                 saveButton.disabled = false;
                 saveButton.textContent = 'Alterar senha';
@@ -360,9 +366,7 @@
         });
 
         // Ajustar link de volta
-        var cfg = window.CONECTA_CONFIG || {};
-        var linkVoltar = document.getElementById('linkVoltar');
-        if (linkVoltar && cfg.appPath) linkVoltar.href = cfg.appPath;
+        if (linkVoltar && (window.CONECTA_CONFIG || {}).appPath) linkVoltar.href = window.CONECTA_CONFIG.appPath;
 
         if (window.CONECTA_SUPABASE || window._conectaSupabaseError) {
             loadProfile();
@@ -377,10 +381,12 @@
         if (typeof ElexionClient === 'undefined') return;
 
         // Verificar se ja ha sessao ativa
-        if (ElexionClient.isAuthenticated()) {
-            var user = ElexionClient.getCurrentUser();
-            if (user) mostrarConectado(user);
-        }
+        ElexionClient.isAuthenticated().then(function(authed) {
+            if (authed) {
+                var user = ElexionClient.getCurrentUser();
+                if (user) mostrarConectado(user);
+            }
+        });
 
         // Event listeners
         var loginBtn = document.getElementById('elexionLoginBtn');
@@ -434,17 +440,10 @@
         btn.disabled = true;
         btn.textContent = 'Conectando...';
 
-        var user = await ElexionClient.login(email, password);
-
+        // ElexionClient.login() foi removido na v2.0 — autenticacao agora e via proxy Supabase
         btn.disabled = false;
         btn.textContent = 'Conectar ao Elexion';
-
-        if (!user) {
-            mostrarMensagemElexion('Falha na conexao. Verifique e-mail e senha do Elexion.', 'error');
-            return;
-        }
-        mostrarConectado(user);
-        mostrarMensagemElexion('Conta Elexion vinculada com sucesso!', 'success');
+        mostrarMensagemElexion('Login Elexion desabilitado — use a autenticacao via Supabase.', 'error');
     }
 
     function desconectarElexion() {

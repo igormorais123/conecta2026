@@ -61,7 +61,17 @@ var ConectaDB = (function() {
 
     function writeLocal(key, value) {
         var raw = typeof value === 'string' ? value : JSON.stringify(value);
-        STORAGE.setItem(key, raw);
+        try {
+            STORAGE.setItem(key, raw);
+        } catch(e) {
+            if (e.name === 'QuotaExceededError' || e.code === 22) {
+                console.error('ConectaDB: localStorage cheio para chave ' + key);
+                if (typeof window.showToast === 'function') {
+                    window.showToast('Armazenamento local cheio! Exporte seus dados.', 'error');
+                }
+            }
+            throw e;
+        }
     }
 
     function getPendingQueue() {
@@ -258,8 +268,8 @@ var ConectaDB = (function() {
                 id: item.id,
                 nome: item.nome || '',
                 telefone: item.telefone || '',
-                aniversario_dia: sanitizeNumber(item.aniversarioDia || item.aniversario_dia),
-                aniversario_mes: item.aniversarioMes || item.aniversario_mes || '',
+                aniversario_dia: sanitizeNumber(item.aniversarioDia || item.aniversario_dia || (typeof item.aniversario === 'string' && item.aniversario.match(/^(\d{1,2})\//) ? item.aniversario.split('/')[0] : null)),
+                aniversario_mes: item.aniversarioMes || item.aniversario_mes || (typeof item.aniversario === 'string' && item.aniversario.match(/\/(\d{1,2})$/) ? item.aniversario.split('/')[1] : ''),
                 regiao: item.regiao || '',
                 endereco: item.endereco || '',
                 tipo: item.tipo || '',
@@ -268,7 +278,7 @@ var ConectaDB = (function() {
                 chegou: item.chegou || '',
                 alcance: sanitizeNumber(item.alcance) || 0,
                 obs: item.obs || '',
-                lgpd: item.lgpd !== false,
+                lgpd: item.lgpd === true,
                 status: item.status || 'Ativo'
             };
         } else if (table === 'atividades') {
@@ -575,30 +585,22 @@ var ConectaDB = (function() {
     }
 
     async function syncArrayRows(config, rows) {
-        var remoteIdsResult = await supabase.from(config.table).select('id');
-        if (remoteIdsResult.error) throw remoteIdsResult.error;
-
         var normalizedRows = rows.map(function(item) {
             return normalizeArrayItem(config.table, item);
         }).filter(Boolean);
         var batchSize = 200;
 
+        // Upsert local rows to remote (merge, nao replace)
         for (var index = 0; index < normalizedRows.length; index += batchSize) {
             var batch = normalizedRows.slice(index, index + batchSize);
             var upsertResult = await supabase.from(config.table).upsert(batch, buildUpsertOptions(config));
             if (upsertResult.error) throw upsertResult.error;
         }
 
-        var currentIds = normalizedRows.map(function(item) { return item.id; });
-        var staleIds = (remoteIdsResult.data || []).map(function(item) { return item.id; }).filter(function(id) {
-            return currentIds.indexOf(id) === -1;
-        });
-
-        for (var deleteIndex = 0; deleteIndex < staleIds.length; deleteIndex += batchSize) {
-            var deleteBatch = staleIds.slice(deleteIndex, deleteIndex + batchSize);
-            var deleteResult = await supabase.from(config.table).delete().in('id', deleteBatch);
-            if (deleteResult.error) throw deleteResult.error;
-        }
+        // NAO deletar IDs remotos que nao existem localmente.
+        // Motivo: em uso multiusuario, outro usuario pode ter adicionado
+        // itens que este cliente ainda nao recebeu via realtime.
+        // A reconciliacao acontece via pull no init() e via realtime.
     }
 
     async function syncToSupabase(key, data) {
@@ -650,9 +652,17 @@ var ConectaDB = (function() {
         }
 
         if (config.type === 'config-singleton') {
+            // Lock otimista: incrementar versao para detectar conflitos
+            var currentResult = await supabase.from(config.table)
+                .select('versao')
+                .eq('chave', config.configKey)
+                .maybeSingle();
+            var currentVersion = (currentResult.data && currentResult.data.versao) || 0;
+
             var singletonResult = await supabase.from(config.table).upsert({
                 chave: config.configKey,
                 payload: data,
+                versao: currentVersion + 1,
                 atualizado_por: currentUser ? currentUser.id : null,
                 atualizado_em: new Date().toISOString()
             }, buildUpsertOptions(config));
@@ -747,6 +757,13 @@ var ConectaDB = (function() {
             await supabase.auth.signOut();
         }
         currentUser = null;
+        // Limpar dados sensiveis do localStorage no logout
+        var managedKeys = Object.keys(TABLES);
+        managedKeys.forEach(function(key) {
+            try { STORAGE.removeItem(key); } catch(e) {}
+        });
+        try { STORAGE.removeItem('conectacelina_sync_queue'); } catch(e) {}
+        cache = {};
         window.location.href = (window.CONECTA_CONFIG && window.CONECTA_CONFIG.loginPath) || 'login.html';
     }
 
@@ -836,17 +853,20 @@ var ConectaDB = (function() {
     var originalGetItem = localStorage.getItem.bind(localStorage);
     var originalSetItem = localStorage.setItem.bind(localStorage);
     var originalRemoveItem = localStorage.removeItem.bind(localStorage);
+    var _reentryGuard = false;
 
     localStorage.getItem = function(key) {
-        if (ConectaDB.isReady() && managedKeys.indexOf(key) !== -1) {
+        if (!_reentryGuard && ConectaDB.isReady() && managedKeys.indexOf(key) !== -1) {
             return ConectaDB.get(key);
         }
         return originalGetItem(key);
     };
 
     localStorage.setItem = function(key, value) {
+        if (_reentryGuard) { originalSetItem(key, value); return; }
         if (ConectaDB.isReady() && managedKeys.indexOf(key) !== -1) {
-            ConectaDB.set(key, value);
+            _reentryGuard = true;
+            try { ConectaDB.set(key, value); } finally { _reentryGuard = false; }
             return;
         }
         originalSetItem(key, value);

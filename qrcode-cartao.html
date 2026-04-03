@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.socket.io https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src https://fonts.gstatic.com; connect-src https://*.supabase.co wss://*.supabase.co https://api.qrserver.com; img-src 'self' data: https:; frame-ancestors 'none';">
+    <meta http-equiv="X-Frame-Options" content="DENY">
     <title>QR Code - Cartão de Visita | Celina Leão</title>
     <!-- PWA Meta Tags -->
     <link rel="manifest" id="manifestLink" href="js/manifest.json">
@@ -14,7 +16,7 @@
     <meta name="apple-mobile-web-app-title" content="CONECTA">
     <link rel="apple-touch-icon" id="appleTouchIcon" href="icons/icon-192.png">
 
-    <script src="js/supabase-config.js"></script>
+    <script src="js/supabase-config.js" defer></script>
     <script>
         (function initProtectedPaths() {
             var cfg = window.CONECTA_CONFIG || {};
@@ -37,10 +39,9 @@
             });
         })();
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js" integrity="sha384-mZT2gIty7ZDdOGkxfP6joZcYdMW1Jvj9dRlfpTmaJAKKXTqzygtB22k7FLe+KZC1" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js" integrity="sha384-mZT2gIty7ZDdOGkxfP6joZcYdMW1Jvj9dRlfpTmaJAKKXTqzygtB22k7FLe+KZC1" crossorigin="anonymous" defer></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
@@ -394,7 +395,7 @@
 <footer style="text-align:center;padding:20px;font-size:0.7rem;color:#AAA;margin-top:40px;">
     <div style="margin-bottom:4px;">
         <img src="icons/inteia-logo.svg" alt="INTEIA" style="height:24px;vertical-align:middle;margin-right:6px;">
-        Implementado por <a href="https://inteia.com.br" target="_blank" style="color:#94a3b8;text-decoration:none;"><strong>INTEIA &mdash; Inteligência Estratégica Eleitoral</strong>
+        Implementado por <a href="https://inteia.com.br" target="_blank" style="color:#94a3b8;text-decoration:none;"><strong>INTEIA &mdash; Inteligência Estratégica Eleitoral</strong></a>
     </div>
     <div>Sistema desenvolvido por <strong>Silvio Morais Vieira</strong></div>
 </footer>

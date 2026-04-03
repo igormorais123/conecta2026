@@ -76,12 +76,7 @@
         var useHostedFallback = isHostedConectaProduction();
 
         if (manifestLink) {
-            if (useHostedFallback) {
-                manifestLink.removeAttribute('href');
-                manifestLink.remove();
-            } else {
-                manifestLink.href = basePath + 'js/manifest.json';
-            }
+            manifestLink.href = basePath + 'js/manifest.json';
         }
 
         if (faviconLink) {
@@ -93,7 +88,7 @@
             appleTouchIcon.href = useHostedFallback ? fallbackIconPath : basePath + 'icons/icon-192.png';
         }
 
-        if (!shouldRegisterServiceWorker || !('serviceWorker' in navigator) || useHostedFallback) {
+        if (!shouldRegisterServiceWorker || !('serviceWorker' in navigator)) {
             return;
         }
 
@@ -129,6 +124,8 @@
 
     var script = document.createElement('script');
     script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
+    script.integrity = 'sha384-0VpB0wAYDdhWCEv3+IjT0Z9Kgpvszkf70RFX3ro7l4QR5nywxsMaOpmvZKsfRF8I';
+    script.crossOrigin = 'anonymous';
     script.async = true;
     script.onload = function() {
         window.CONECTA_SUPABASE_LIB = window.supabase;
