@@ -3497,7 +3497,7 @@ function coletarContextoCampanha() {
         'VALES COMBUSTIVEL: R$ ' + valesTotal.toFixed(2) + '.\n' +
         'PATRIMONIO: R$ ' + patTotal.toFixed(2) + '.\n' +
         'FORNECEDORES: ' + DATA.fornecedores.length + '.\n' +
-        'CHECKLIST: ' + DATA.checklist.filter(function(c) { return c.done; }).length + '/' + DATA.checklist.length + ' completo.';
+        'CHECKLIST: ' + (function() { var ks = Object.keys(DATA.checklist || {}); return ks.filter(function(k) { return DATA.checklist[k]; }).length + '/' + ks.length; })() + ' completo.';
 }
 
 async function gerarBriefingIA() {

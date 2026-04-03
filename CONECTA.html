@@ -6803,8 +6803,8 @@ async function renderTarefasCampo() {
   lista.innerHTML = tarefas.map(t => {
     const s = t.status || 'pending';
     const deadline = t.deadline ? new Date(t.deadline).toLocaleDateString('pt-BR') : '\u2014';
-    const safeTitle = String(t.title || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    const safeLocation = String(t.location || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const safeTitle = String(t.title || '').replace(/&/g,'&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/'/g, '&#39;').replace(/"/g, '&quot;');
+    const safeLocation = String(t.location || '').replace(/&/g,'&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     return `<div style="background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,0.07);border-left:4px solid ${statusColor[s] || '#ccc'}">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
         <div style="font-weight:700;font-size:0.9rem;color:var(--primary);">${safeTitle}</div>
@@ -6912,7 +6912,7 @@ async function renderDesafios() {
   lista.style.display = 'grid';
 
   lista.innerHTML = desafios.map(d => {
-    const safeName = String(d.type || d.name || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const safeName = String(d.type || d.name || '').replace(/&/g,'&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/'/g, '&#39;').replace(/"/g, '&quot;');
     const pct = d.progress != null ? Math.min(100, Math.round(d.progress)) : null;
     const endDate = d.endsAt ? new Date(d.endsAt).toLocaleDateString('pt-BR') : '\u2014';
     return `<div style="background:#fff;border-radius:12px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,0.07);">

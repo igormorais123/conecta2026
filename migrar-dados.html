@@ -321,7 +321,11 @@ async function doLogin() {
         document.getElementById('btnConecta').disabled = false;
 
     } catch (err) {
-        statusEl.innerHTML = '<div class="status status-error">Erro de conexão: ' + err.message + '</div>';
+        var errDiv = document.createElement('div');
+        errDiv.className = 'status status-error';
+        errDiv.textContent = 'Erro de conexão: ' + err.message;
+        statusEl.innerHTML = '';
+        statusEl.appendChild(errDiv);
     }
 }
 
