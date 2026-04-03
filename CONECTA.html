@@ -168,6 +168,7 @@
             display: flex;
             align-items: center;
             gap: 15px;
+            flex-wrap: wrap;
         }
         .header-clock {
             font-size: 0.85rem;
@@ -1032,7 +1033,7 @@
         .cad-btn-sv { background: #5E35B1; }
         .cad-btn-save { background: var(--primary); }
         .cad-footer { background: #f5f5f5; text-align: center; padding: 10px; font-size: 11px; color: #999; border-top: 1px solid #eee; }
-        .cad-toast { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; z-index: 9999; display: none; max-width: 90%; text-align: center; }
+        .cad-toast { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; z-index: 10001; display: none; max-width: 90%; text-align: center; }
         .cad-toggle-btn {
             display: flex;
             align-items: center;
@@ -1237,10 +1238,7 @@
             .section-header input, .section-header select { width: 100%; }
         }
         @media (max-width: 480px) {
-            .header { font-size: 0.8rem; padding: 8px 12px; gap: 6px; }
-            .header button { font-size: 0.7rem; padding: 4px 8px; }
-            .stat-card { padding: 12px; }
-            .stat-number { font-size: 1.8rem; }
+            .mat-grid-2, .mat-grid-3 { grid-template-columns: 1fr; }
         }
 
         /* ===== SCROLLBAR ===== */
@@ -7073,7 +7071,7 @@ setInterval(function() {
     toastEl.id = 'toast';
     toastEl.setAttribute('role', 'status');
     toastEl.setAttribute('aria-live', 'polite');
-    toastEl.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#1a237e;color:#fff;padding:14px 22px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.3);z-index:9999;opacity:0;transition:opacity 0.3s;max-width:320px;font-size:0.85rem;pointer-events:none;';
+    toastEl.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#1a237e;color:#fff;padding:14px 22px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.3);z-index:10001;opacity:0;transition:opacity 0.3s;max-width:320px;font-size:0.85rem;pointer-events:none;';
     document.body.appendChild(toastEl);
 })();
 
