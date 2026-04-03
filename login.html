@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.socket.io https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src https://fonts.gstatic.com; connect-src https://*.supabase.co wss://*.supabase.co https://api.qrserver.com; img-src 'self' data: https:; frame-ancestors 'none';">
     <meta http-equiv="X-Frame-Options" content="DENY">
-    <title>Login - CONECTA Celina Leao 2026</title>
+    <title>Login - CONECTA Celina Leão 2026</title>
     <link rel="manifest" id="manifestLink" href="js/manifest.json">
     <link rel="icon" id="faviconLink" href="icons/favicon.svg" type="image/svg+xml">
     <meta name="theme-color" content="#1a237e">
@@ -228,7 +228,7 @@
 
     <div class="footer">
         Sistema de campanha - acesso restrito<br>
-        Implementado por <a id="footerInteiaLink" href="https://inteia.com.br" target="_blank" rel="noopener noreferrer" style="color:#94a3b8;text-decoration:none;">INTEIA - Inteligencia Estrategica Eleitoral</a><br>
+        Implementado por <a id="footerInteiaLink" href="https://inteia.com.br" target="_blank" rel="noopener noreferrer" style="color:#94a3b8;text-decoration:none;">INTEIA - Inteligência Estratégica Eleitoral</a><br>
         Sistema desenvolvido por Silvio Morais Vieira
     </div>
 </div>
@@ -292,7 +292,7 @@
     async function checkExistingSession() {
         var client = await getClient();
         if (!client) {
-            showMessage('Supabase nao configurado. Ajuste js/supabase-config.js.', 'error');
+            showMessage('Supabase não configurado. Ajuste js/supabase-config.js.', 'error');
             return;
         }
 
@@ -316,7 +316,7 @@
 
         var client = await getClient();
         if (!client) {
-            showMessage('Supabase nao configurado. Ajuste js/supabase-config.js.', 'error');
+            showMessage('Supabase não configurado. Ajuste js/supabase-config.js.', 'error');
             return;
         }
 
@@ -337,7 +337,7 @@
 
             window.location.href = (window.CONECTA_CONFIG && window.CONECTA_CONFIG.appPath) || 'CONECTA.html';
         } catch (error) {
-            showMessage('Erro de conexao. Tente novamente.', 'error');
+            showMessage('Erro de conexão. Tente novamente.', 'error');
         } finally {
             setLoading(false);
         }

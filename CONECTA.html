@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.socket.io https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src https://fonts.gstatic.com; connect-src https://*.supabase.co wss://*.supabase.co https://api.qrserver.com; img-src 'self' data: https:; frame-ancestors 'none';">
     <meta http-equiv="X-Frame-Options" content="DENY">
-    <title>CONECTA CELINA LEAO - Sistema de Campanha</title>
+    <title>CONECTA CELINA LEÃO - Sistema de Campanha</title>
     <link rel="icon" id="faviconLink" href="icons/favicon.svg" type="image/svg+xml">
     <script src="js/supabase-config.js" defer></script>
     <script src="js/conecta-db.js" defer></script>
@@ -1934,7 +1934,7 @@
     </nav>
     <div class="sidebar-footer">
         <span>Conecta Celina Le&atilde;o 2026</span>
-        <br><a href="https://inteia.com.br" target="_blank" style="color:#94a3b8;font-size:10px;text-decoration:none;">INTEIA &mdash; Inteligencia Estrategica</a>
+        <br><a href="https://inteia.com.br" target="_blank" style="color:#94a3b8;font-size:10px;text-decoration:none;">INTEIA &mdash; Inteligência Estratégica</a>
     </div>
 </aside>
 
@@ -3680,7 +3680,7 @@ function renderAgenda() {
                 <div class="agenda-time">${escapeHtml(e.hora || '--:--')}<br><small style="color:var(--text-light)">${formatDate(e.data)}</small></div>
                 <div class="agenda-info" style="flex:1;">
                     <h4>${escapeHtml(e.titulo)}</h4>
-                    <p>${escapeHtml(e.local || 'Local nao definido')}</p>
+                    <p>${escapeHtml(e.local || 'Local não definido')}</p>
                     ${e.obs ? '<p style="margin-top:4px;font-style:italic;">' + escapeHtml(e.obs) + '</p>' : ''}
                     <span class="agenda-tag" style="background:${getTypeColor(e.tipo)}">${escapeHtml(e.tipo)}</span>
                 </div>
@@ -3718,7 +3718,7 @@ function buildGoogleCalendarUrl(ev) {
 
 function addToGoogleCalendar(id) {
     var ev = eventos.find(function(e) { return e.id === id; });
-    if (!ev) return showToast('Evento nao encontrado', 'error');
+    if (!ev) return showToast('Evento não encontrado', 'error');
     window.open(buildGoogleCalendarUrl(ev), '_blank');
     showToast('Abrindo Google Agenda...');
 }
@@ -5668,7 +5668,7 @@ async function syncAgora() {
         if (typeof window.ConectaDB.getSyncStatus === 'function') {
             updateSyncBadge(window.ConectaDB.getSyncStatus());
         }
-        alert('Nao foi possivel concluir a sincronizacao agora.');
+        alert('Não foi possível concluir a sincronização agora.');
     }
 }
 
@@ -5713,7 +5713,7 @@ function handleImportBackup(event) {
             alert('Backup importado com sucesso.');
         } catch (error) {
             console.error('Falha ao importar backup:', error);
-            alert('Nao foi possivel importar o arquivo. Verifique se o JSON e valido.');
+            alert('Não foi possível importar o arquivo. Verifique se o JSON é válido.');
         } finally {
             if (event && event.target) event.target.value = '';
         }
@@ -6177,7 +6177,7 @@ async function renderMapaCobertura() {
     if (!window.ElexionClient || !(await ElexionClient.isAuthenticated())) {
         document.getElementById('mapa-offline-banner').style.display = 'block';
         var el = document.getElementById('mapa-ultima-atualizacao');
-        if (el) { el.textContent = 'Elexion nao vinculado'; el.style.color = 'var(--warning)'; }
+        if (el) { el.textContent = 'Elexion não vinculado'; el.style.color = 'var(--warning)'; }
         return;
     }
 
@@ -6380,7 +6380,7 @@ var warRoomState = {
 async function iniciarWarRoom() {
     if (!window.ElexionClient || !(await ElexionClient.isAuthenticated())) {
         document.getElementById('war-room-offline-banner').style.display = 'block';
-        atualizarStatusWarRoom(false, 'Elexion nao vinculado');
+        atualizarStatusWarRoom(false, 'Elexion não vinculado');
         return;
     }
 
@@ -6474,7 +6474,7 @@ function conectarWarRoomSocket() {
 
         warRoomState.socket.on('connect_error', function(err) {
             console.warn('[WarRoom] Socket.IO connect_error:', err.message);
-            atualizarStatusWarRoom(false, 'Erro de conexao');
+            atualizarStatusWarRoom(false, 'Erro de conexão');
             // Apos 5 tentativas falhas, Socket.IO para. Ativar polling.
         });
 
@@ -6861,7 +6861,7 @@ async function salvarTarefaCampo() {
 
   const tarefa = await ElexionClient.createTask(payload);
   if (!tarefa) {
-    alert('Erro ao criar tarefa. Verifique conexao com Elexion.');
+    alert('Erro ao criar tarefa. Verifique conexão com Elexion.');
     if (btn) btn.disabled = false;
     return;
   }
@@ -6964,7 +6964,7 @@ async function salvarDesafio() {
   const desafio = await ElexionClient.createChallenge(payload);
 
   if (!desafio) {
-    alert('Erro ao criar desafio. Verifique conexao com Elexion.');
+    alert('Erro ao criar desafio. Verifique conexão com Elexion.');
     if (btn) btn.disabled = false;
     return;
   }

@@ -218,14 +218,14 @@
 
         <!-- Integracao Elexion -->
         <div class="elexion-section">
-            <h2 style="font-size:1.1rem;color:#1a237e;margin-bottom:4px;">Integracao Elexion</h2>
+            <h2 style="font-size:1.1rem;color:#1a237e;margin-bottom:4px;">Integração Elexion</h2>
             <p style="color:#64748b;font-size:0.85rem;margin-bottom:14px;">
-                Vincule sua conta do sistema de campo (Elexion) para acessar dados de gamificacao e heatmap.
+                Vincule sua conta do sistema de campo (Elexion) para acessar dados de gamificação e heatmap.
             </p>
 
             <div id="elexionStatus" class="elexion-status disconnected">
                 <span class="dot"></span>
-                <span id="elexionStatusText">Nao conectado ao Elexion</span>
+                <span id="elexionStatusText">Não conectado ao Elexion</span>
             </div>
 
             <div id="elexionLoginForm">
@@ -250,7 +250,7 @@
                 </div>
                 <div class="actions">
                     <button class="secondary" id="elexionDisconnectBtn">Desconectar do Elexion</button>
-                    <button class="secondary" id="elexionTestBtn">Testar Conexao</button>
+                    <button class="secondary" id="elexionTestBtn">Testar Conexão</button>
                 </div>
             </div>
 
@@ -258,7 +258,7 @@
         </div>
 
         <div class="footer">
-            Implementado por <a id="footerInteiaLink" href="https://inteia.com.br" target="_blank" rel="noopener noreferrer" style="color:#64748b;text-decoration:none;">INTEIA - Inteligencia Estrategica Eleitoral</a><br>
+            Implementado por <a id="footerInteiaLink" href="https://inteia.com.br" target="_blank" rel="noopener noreferrer" style="color:#64748b;text-decoration:none;">INTEIA - Inteligência Estratégica Eleitoral</a><br>
             Sistema desenvolvido por Silvio Morais Vieira
         </div>
     </div>
@@ -415,7 +415,7 @@
         document.getElementById('elexionConnectedInfo').style.display = 'none';
         var statusEl = document.getElementById('elexionStatus');
         statusEl.className = 'elexion-status disconnected';
-        document.getElementById('elexionStatusText').textContent = 'Nao conectado ao Elexion';
+        document.getElementById('elexionStatusText').textContent = 'Não conectado ao Elexion';
     }
 
     function mostrarMensagemElexion(texto, tipo) {
@@ -427,7 +427,7 @@
 
     async function conectarElexion() {
         if (typeof ElexionClient === 'undefined') {
-            mostrarMensagemElexion('ElexionClient nao carregado. Recarregue a pagina.', 'error');
+            mostrarMensagemElexion('ElexionClient não carregado. Recarregue a página.', 'error');
             return;
         }
         var email = document.getElementById('elexionEmail').value.trim();

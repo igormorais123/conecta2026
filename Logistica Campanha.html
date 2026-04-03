@@ -972,9 +972,9 @@ tr:hover td { background:rgba(59,130,246,0.05); }
             <select id="orcCategoria">
                 <option value="Grafica">Grafica / Impressao</option>
                 <option value="Transporte">Transporte / Combustivel</option>
-                <option value="Alimentacao">Alimentacao / Eventos</option>
+                <option value="Alimentacao">Alimentação / Eventos</option>
                 <option value="Equipamentos">Equipamentos / Aluguel</option>
-                <option value="Comunicacao">Comunicacao / Midia</option>
+                <option value="Comunicacao">Comunicação / Mídia</option>
                 <option value="Pessoal">Pessoal / Diarias</option>
                 <option value="Juridico">Juridico / Contabil</option>
                 <option value="Outros">Outros</option>
@@ -3280,7 +3280,7 @@ function quickImportJSON() {
             try {
                 var imported = JSON.parse(e.target.result);
                 if (!imported.tarefas && !imported.materiais) {
-                    showToast('Arquivo invalido: nao parece ser um backup da Logistica', 'error');
+                    showToast('Arquivo inválido: não parece ser um backup da Logística', 'error');
                     return;
                 }
                 if (!confirm('Isso vai SUBSTITUIR todos os dados atuais pelo backup. Continuar?')) return;
@@ -3455,7 +3455,7 @@ var BRIEFING_API_URL = 'https://omniroute.srv1354997.hstgr.cloud/v1/chat/complet
 var BRIEFING_API_KEY = localStorage.getItem('conecta_ia_key') || '';
 
 function configurarChaveIA() {
-    var key = prompt('Cole a chave da IA (OmniRoute API Key).\nPergunta ao Igor se nao tiver:');
+    var key = prompt('Cole a chave da IA (OmniRoute API Key).\nPergunta ao Igor se não tiver:');
     if (key && key.trim()) {
         localStorage.setItem('conecta_ia_key', key.trim());
         BRIEFING_API_KEY = key.trim();
@@ -3650,7 +3650,7 @@ function addTarefaToGoogle(id) {
         'Tarefa: ' + (t.titulo || ''),
         t.prazo, '09:00', '10:00',
         'Comite de Campanha',
-        'Responsavel: ' + (t.responsavel || 'nao definido') + '\nPrioridade: ' + (t.prioridade || '') + '\nCategoria: ' + (t.categoria || '') + '\n' + (t.desc || '')
+        'Responsável: ' + (t.responsavel || 'não definido') + '\nPrioridade: ' + (t.prioridade || '') + '\nCategoria: ' + (t.categoria || '') + '\n' + (t.desc || '')
     ), '_blank');
     showToast('Tarefa enviada ao Google Agenda');
 }
