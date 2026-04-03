@@ -1831,6 +1831,7 @@
     <script src="js/elexion-client.js" defer></script>
 </head>
 <body>
+<a href="#mainContent" class="skip-link" style="position:absolute;left:-9999px;top:0;z-index:9999;padding:8px 16px;background:#1a237e;color:#fff;font-size:14px;text-decoration:none;" onfocus="this.style.left='0'" onblur="this.style.left='-9999px'">Pular para o conteúdo</a>
 
 <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
 <!-- ===== SIDEBAR ===== -->
@@ -1941,7 +1942,7 @@
 
 <!-- ===== HEADER ===== -->
 <header class="header">
-    <button class="menu-toggle" onclick="toggleSidebar()">&#9776;</button>
+    <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Abrir menu de navegação">&#9776;</button>
     <div class="header-title" id="pageTitle">Dashboard</div>
     <div class="header-actions">
         <span class="header-clock" id="clock"></span>
@@ -1958,7 +1959,7 @@
 </header>
 
 <!-- ===== MAIN ===== -->
-<main class="main-content">
+<main class="main-content" id="mainContent">
 
     <!-- ========== MAPA DE COBERTURA ========== -->
     <div class="page" id="page-mapa-cobertura">
@@ -3174,7 +3175,7 @@
         <div class="pcamp-header">
             <h2>Pessoas na Campanha</h2>
             <span class="pcamp-count" id="pcampCount">0 pessoas</span>
-            <button class="pcamp-close" onclick="closePessoasCampanhaModal()">&times;</button>
+            <button class="pcamp-close" onclick="closePessoasCampanhaModal()" aria-label="Fechar">&times;</button>
         </div>
         <div class="pcamp-toolbar">
             <input type="text" class="pcamp-search" id="pcampSearch" placeholder="Buscar por nome, cargo ou cidade..." oninput="filterPessoasCampanha()">
@@ -3195,7 +3196,7 @@
     <div class="tarefas-modal" onclick="event.stopPropagation()">
         <div class="tarefas-header">
             <h3 id="tarefasNomePessoa">Tarefas</h3>
-            <button class="tarefas-close" onclick="closeTarefasPessoa()">&times;</button>
+            <button class="tarefas-close" onclick="closeTarefasPessoa()" aria-label="Fechar">&times;</button>
         </div>
         <div class="tarefas-form">
             <input type="text" id="tarefaTitulo" placeholder="T&iacute;tulo da tarefa...">
@@ -3422,6 +3423,13 @@ function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('open');
     document.getElementById('sidebarBackdrop').classList.toggle('show');
 }
+
+// ===== ACESSIBILIDADE: nav-items com keyboard =====
+document.querySelectorAll('.nav-item[role="button"]').forEach(function(el) {
+    el.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); }
+    });
+});
 
 // ===== RELOGIO =====
 function updateClock() {
@@ -4032,7 +4040,7 @@ function renderPessoas(filter) {
     } else {
         grid.innerHTML = filtered.map(function(p) {
             var initials = p.nome.split(' ').filter(function(n){return n;}).map(function(n){return n[0];}).slice(0,2).join('').toUpperCase();
-            var avatarContent = p.foto ? '<img src="' + p.foto + '">' : initials;
+            var avatarContent = p.foto ? '<img src="' + p.foto + '" alt="Foto de ' + (p.nome || '').replace(/"/g, '') + '">' : initials;
             var avatarStyle = p.foto ? '' : '';
 
             var tarefas = tarefasData[p.id] || [];
