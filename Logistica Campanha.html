@@ -322,6 +322,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
             <button class="btn btn-primary" onclick="openModalTarefa()">+ Nova Tarefa</button>
             <button class="btn btn-sm" style="background:#0277bd;color:#fff;margin-left:8px;" onclick="exportTarefasCSV()">CSV</button>
             <button class="btn btn-sm" style="background:#455a64;color:#fff;" onclick="importTarefasCSV()">Importar CSV</button>
+            <button class="btn btn-sm" style="background:#4285f4;color:#fff;" onclick="addTarefasPendentesToGoogle()">Google Agenda</button>
         </div>
     </div>
     <div class="card"><table><thead><tr>
@@ -1517,16 +1518,28 @@ function renderTarefas() {
         var respHtml = t.responsavel ? '<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(99,102,241,.15);color:#818cf8;padding:2px 8px;border-radius:10px;font-size:.75rem;font-weight:600;">' +
             '<span style="width:18px;height:18px;border-radius:50%;background:#818cf8;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.65rem;">' + esc(t.responsavel.charAt(0).toUpperCase()) + '</span>' +
             esc(t.responsavel) + '</span>' : '<span style="color:var(--text2);font-size:.75rem;font-style:italic;">—</span>';
+        // Destaque de prazo vencendo
+        var hoje = new Date().toISOString().slice(0,10);
+        var amanha = new Date(Date.now() + 86400000).toISOString().slice(0,10);
+        var prazoStyle = '';
+        var prazoIcon = '';
+        if (t.prazo && t.status !== 'concluida') {
+            if (t.prazo < hoje) { prazoStyle = 'color:var(--red);font-weight:700;'; prazoIcon = ' ⚠'; }
+            else if (t.prazo === hoje) { prazoStyle = 'color:var(--orange);font-weight:700;'; prazoIcon = ' HOJE'; }
+            else if (t.prazo === amanha) { prazoStyle = 'color:#fbbf24;'; prazoIcon = ' amanha'; }
+        }
+        var gcalBtn = t.prazo && t.status !== 'concluida' ? ' <button class="btn btn-sm" style="background:#4285f4;color:#fff;padding:2px 6px;font-size:.6rem;" onclick="addTarefaToGoogle(' + t.id + ')" title="Google Agenda">Agenda</button>' : '';
         html += '<tr' + (t.status==='concluida'?' style="opacity:.5;"':'') + '>' +
             '<td><input type="checkbox" ' + checked + ' onchange="toggleTarefa(' + t.id + ')"></td>' +
             '<td><strong>' + esc(t.titulo) + '</strong>' + (t.desc ? '<br><span style="font-size:.75rem;color:var(--text2);">' + esc(t.desc).substring(0,60) + '</span>' : '') + '</td>' +
             '<td>' + respHtml + '</td>' +
             '<td>' + esc(t.categoria) + '</td>' +
             '<td><span class="badge badge-' + (t.fase==='pre'?'orange':'green') + '">' + faseLabel + '</span></td>' +
-            '<td>' + formatDate(t.prazo) + '</td>' +
+            '<td style="' + prazoStyle + '">' + formatDate(t.prazo) + prazoIcon + '</td>' +
             '<td><span class="badge badge-' + prioCor + '">' + t.prioridade + '</span></td>' +
             '<td><span class="badge badge-' + stCor + '">' + stLabel + '</span></td>' +
             '<td><button class="btn btn-sm btn-primary" onclick="openModalTarefa(' + t.id + ')">Editar</button> ' +
+            gcalBtn +
             '<button class="btn btn-sm btn-danger" onclick="delTarefa(' + t.id + ')">X</button></td></tr>';
     });
     document.getElementById('tbTarefas').innerHTML = html || '<tr><td colspan="9" style="text-align:center;color:var(--text2);">Nenhuma tarefa.</td></tr>';
@@ -3485,6 +3498,35 @@ function addOneBandeiracaoToGoogle(id) {
         'Equipe: ' + (b.equipe || '') + '\nQtd: ' + (b.qtd || '')
     ), '_blank');
     showToast('Abrindo Google Agenda...');
+}
+
+function addTarefaToGoogle(id) {
+    var t = DATA.tarefas.find(function(x) { return x.id == id; });
+    if (!t || !t.prazo) return;
+    window.open(buildGCalUrl(
+        'Tarefa: ' + (t.titulo || ''),
+        t.prazo, '09:00', '10:00',
+        'Comite de Campanha',
+        'Responsavel: ' + (t.responsavel || 'nao definido') + '\nPrioridade: ' + (t.prioridade || '') + '\nCategoria: ' + (t.categoria || '') + '\n' + (t.desc || '')
+    ), '_blank');
+    showToast('Tarefa enviada ao Google Agenda');
+}
+
+function addTarefasPendentesToGoogle() {
+    var pendentes = DATA.tarefas.filter(function(t) { return t.status !== 'concluida' && t.prazo; });
+    if (pendentes.length === 0) return showToast('Nenhuma tarefa pendente com prazo', 'warn');
+    if (!confirm('Enviar ' + pendentes.length + ' tarefas para o Google Agenda?')) return;
+    pendentes.forEach(function(t, i) {
+        setTimeout(function() {
+            window.open(buildGCalUrl(
+                'Tarefa: ' + (t.titulo || ''),
+                t.prazo, '09:00', '10:00',
+                'Comite de Campanha',
+                'Responsavel: ' + (t.responsavel || '') + '\nPrioridade: ' + (t.prioridade || '')
+            ), '_blank');
+        }, i * 500);
+    });
+    showToast(pendentes.length + ' tarefas enviadas ao Google Agenda');
 }
 
 // ==================== DETECCAO OFFLINE ====================
