@@ -20,10 +20,11 @@
 body { font-family:'Segoe UI',Tahoma,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
 
 /* NAV */
-.nav { background:var(--card); border-bottom:2px solid var(--accent); display:flex; align-items:center; padding:0 20px; height:56px; position:sticky; top:0; z-index:100; }
-.nav-brand { font-weight:800; font-size:1.1rem; color:var(--accent); margin-right:30px; white-space:nowrap; }
-.nav-links { display:flex; gap:4px; overflow-x:auto; }
-.nav-links button { background:none; border:none; color:var(--text2); padding:8px 14px; cursor:pointer; border-radius:6px; font-size:0.82rem; white-space:nowrap; transition:all .2s; }
+.nav { background:var(--card); border-bottom:2px solid var(--accent); display:flex; flex-wrap:wrap; align-items:center; padding:8px 20px; position:sticky; top:0; z-index:100; gap:6px; }
+.nav-top-row { display:flex; align-items:center; width:100%; gap:10px; }
+.nav-brand { font-weight:800; font-size:1.1rem; color:var(--accent); white-space:nowrap; }
+.nav-links { display:flex; flex-wrap:wrap; gap:4px; width:100%; padding-top:6px; border-top:1px solid var(--border); }
+.nav-links button { background:none; border:none; color:var(--text2); padding:6px 12px; cursor:pointer; border-radius:6px; font-size:0.8rem; white-space:nowrap; transition:all .2s; }
 .nav-links button:hover, .nav-links button.active { background:var(--accent); color:#fff; }
 
 /* LAYOUT */
@@ -176,19 +177,19 @@ tr:hover td { background:rgba(59,130,246,0.05); }
     .grid-2,.grid-3,.grid-4 { grid-template-columns:1fr; }
     .add-membro-row { grid-template-columns:1fr 1fr; }
     .countdown-grid { grid-template-columns:repeat(2,1fr); }
-    .nav-links { font-size:.75rem; white-space:nowrap; overflow-x:auto; padding-bottom:8px; display:flex; -webkit-overflow-scrolling:touch; scrollbar-width:none; mask-image:linear-gradient(to right, black 90%, transparent); -webkit-mask-image:linear-gradient(to right, black 90%, transparent); }
-    .nav-links::-webkit-scrollbar { display:none; }
+    .nav-links { gap:3px; }
+    .nav-links button { font-size:.73rem; padding:5px 10px; min-height:36px; }
     #salasStatusGrid { grid-template-columns:repeat(3,1fr) !important; }
     table { display:block; overflow-x:auto; white-space:nowrap; }
     .modal { width:95%; padding:16px; margin:20px auto; }
-    .nav { flex-direction:column; align-items:flex-start; height:auto; padding:10px; }
-    .nav > div:last-child { margin-left:0; margin-top:10px; flex-wrap:wrap; }
+    .nav { padding:8px 10px; }
+    .nav-top-row { flex-wrap:wrap; gap:6px; }
     .form-group input, .form-group select { font-size:16px; }
 }
 @media(max-width:480px) {
     .countdown-grid { grid-template-columns:1fr; }
-    .nav-links { gap:4px; }
-    .nav-links button { font-size:.7rem; padding:8px 12px; min-height:44px; }
+    .nav-links { gap:3px; }
+    .nav-links button { font-size:.68rem; padding:5px 8px; min-height:38px; }
     .header { flex-wrap:wrap; gap:4px; }
     .add-membro-row { grid-template-columns:1fr; }
 }
@@ -199,8 +200,19 @@ tr:hover td { background:rgba(59,130,246,0.05); }
 
 <!-- NAV -->
 <div class="nav">
-    <div class="nav-brand">&#9881; LOGISTICA CELINA 2026</div>
-    <button class="btn btn-sm" style="background:var(--accent2);color:#fff;margin-right:12px;" onclick="showQRCode()">QR Code Celular</button>
+    <div class="nav-top-row">
+        <div class="nav-brand">&#9881; LOGISTICA CELINA 2026</div>
+        <button class="btn btn-sm" style="background:var(--accent2);color:#fff;" onclick="showQRCode()">QR Code Celular</button>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+            <span id="userName" style="font-size:0.78rem;color:var(--text2);font-weight:600;"></span>
+            <button class="btn btn-sm" style="background:#0277bd;color:#fff;" onclick="quickExportJSON()" title="Ctrl+E">Backup</button>
+            <button class="btn btn-sm" style="background:#455a64;color:#fff;" onclick="quickImportJSON()" title="Restaurar backup">Restaurar</button>
+            <button class="btn btn-sm" style="background:var(--accent);color:#fff;" onclick="openInteiaSite()">INTEIA</button>
+            <button class="btn btn-sm" style="background:var(--green);color:#fff;" onclick="window.location.href=(window.CONECTA_CONFIG && window.CONECTA_CONFIG.appPath) || 'CONECTA.html'">&#8592; CONECTA</button>
+            <button class="btn btn-sm" style="background:var(--card2);color:#fff;" onclick="window.location.href=(window.CONECTA_CONFIG && window.CONECTA_CONFIG.contaPath) || 'conta.html'">Conta</button>
+            <button class="btn btn-sm" style="background:var(--red);color:#fff;" onclick="ConectaDB.logout()">Sair</button>
+        </div>
+    </div>
     <div class="nav-links">
         <button class="active" onclick="showPage('dashboard')">Dashboard</button>
         <button onclick="showPage('tarefas')">Tarefas</button>
@@ -215,18 +227,9 @@ tr:hover td { background:rgba(59,130,246,0.05); }
         <button onclick="showPage('orcamento')">Orçamento</button>
         <button onclick="showPage('distribuicao')">Distribuição</button>
         <button onclick="showPage('vales')">Vales Combustíveis</button>
-        <button onclick="showPage('reversa')">Ativos na Rua (Reversa)</button>
+        <button onclick="showPage('reversa')">Ativos na Rua</button>
         <button onclick="showPage('bandeiracos')">Eventos & Bandeiraços</button>
         <button onclick="showPage('patrimonio')">Patrimônio</button>
-    </div>
-    <div style="margin-left:auto;display:flex;align-items:center;gap:8px;padding-left:12px;">
-        <span id="userName" style="font-size:0.78rem;color:var(--text2);font-weight:600;"></span>
-        <button class="btn btn-sm" style="background:#0277bd;color:#fff;" onclick="quickExportJSON()" title="Ctrl+E">Backup</button>
-        <button class="btn btn-sm" style="background:#455a64;color:#fff;" onclick="quickImportJSON()" title="Restaurar backup">Restaurar</button>
-        <button class="btn btn-sm" style="background:var(--accent);color:#fff;" onclick="openInteiaSite()">INTEIA</button>
-        <button class="btn btn-sm" style="background:var(--green);color:#fff;" onclick="window.location.href=(window.CONECTA_CONFIG && window.CONECTA_CONFIG.appPath) || 'CONECTA.html'">&#8592; CONECTA</button>
-        <button class="btn btn-sm" style="background:var(--card2);color:#fff;" onclick="window.location.href=(window.CONECTA_CONFIG && window.CONECTA_CONFIG.contaPath) || 'conta.html'">Conta</button>
-        <button class="btn btn-sm" style="background:var(--red);color:#fff;" onclick="ConectaDB.logout()">Sair</button>
     </div>
 </div>
 
