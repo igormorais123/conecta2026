@@ -764,6 +764,240 @@
             letter-spacing: 1px;
         }
 
+        /* ===== MISSAO BANNER ===== */
+        .missao-banner {
+            background: linear-gradient(135deg, #1a1a36 0%, #0d1a2e 50%, #1a0d2e 100%);
+            border: 2px solid var(--gold);
+            border-radius: var(--radius);
+            padding: 24px 28px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .missao-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle at 70% 30%, rgba(255,214,0,0.06) 0%, transparent 50%);
+            animation: spin 25s linear infinite;
+        }
+        .missao-banner .missao-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            position: relative;
+        }
+        .missao-banner .missao-slogan {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: var(--gold);
+            text-shadow: 0 0 20px var(--gold-glow);
+            animation: neonPulse 2.5s ease-in-out infinite;
+        }
+        .missao-banner .missao-sub {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+
+        /* ===== TAREFA DO DIA ===== */
+        .tarefa-dia-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,214,0,0.15);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 14px;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .tarefa-dia-card:hover {
+            border-color: rgba(255,214,0,0.3);
+            box-shadow: 0 0 20px rgba(255,214,0,0.08);
+        }
+        .tarefa-dia-card.concluida {
+            border-color: var(--green);
+            background: rgba(0,230,118,0.03);
+        }
+        .tarefa-dia-card.atrasada {
+            border-color: var(--red);
+            background: rgba(255,23,68,0.03);
+        }
+        .tarefa-dia-card .tarefa-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .tarefa-dia-card .tarefa-titulo {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #fff;
+        }
+        .tarefa-dia-card .tarefa-xp {
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            color: #000;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        .tarefa-dia-card .tarefa-desc {
+            font-size: 0.78rem;
+            color: var(--text-dim);
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        .tarefa-dia-card .tarefa-meta {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            font-size: 0.72rem;
+            color: var(--text-dim);
+            margin-bottom: 12px;
+        }
+        .tarefa-dia-card .tarefa-meta span { display: flex; align-items: center; gap: 4px; }
+        .tarefa-progresso {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 10px;
+        }
+        .tarefa-progresso .pessoa-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-dim);
+            transition: all 0.3s;
+        }
+        .tarefa-progresso .pessoa-chip.done {
+            background: rgba(0,230,118,0.15);
+            border-color: var(--green);
+            color: var(--green);
+        }
+        .tarefa-progresso .pessoa-chip.pendente {
+            background: rgba(255,255,255,0.03);
+        }
+        .tarefa-progresso .pessoa-chip .chip-check {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tarefa-progresso .pessoa-chip.done .chip-check {
+            background: var(--green);
+            border-color: var(--green);
+            color: #000;
+        }
+
+        /* ===== STREAK FLAMES ===== */
+        .streak-display {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.65rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, rgba(255,145,0,0.15), rgba(255,23,68,0.15));
+            color: var(--orange);
+            border: 1px solid rgba(255,145,0,0.3);
+        }
+        .streak-display.hot {
+            animation: pulse 1s ease-in-out infinite;
+            background: linear-gradient(135deg, rgba(255,145,0,0.25), rgba(255,23,68,0.25));
+        }
+
+        /* ===== TROPHY CASE ===== */
+        .trophy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+        }
+        .trophy-item {
+            background: var(--bg-card2);
+            border-radius: 12px;
+            padding: 16px 10px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.03);
+            transition: all 0.3s;
+        }
+        .trophy-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        .trophy-item.earned {
+            border-color: var(--gold);
+            background: rgba(255,214,0,0.05);
+        }
+        .trophy-item.locked {
+            opacity: 0.35;
+            filter: grayscale(1);
+        }
+        .trophy-item .trophy-icon {
+            font-size: 2rem;
+            margin-bottom: 6px;
+            display: inline-block;
+        }
+        .trophy-item.earned .trophy-icon { animation: float 3s ease-in-out infinite; }
+        .trophy-item .trophy-name {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: #fff;
+        }
+        .trophy-item .trophy-desc {
+            font-size: 0.58rem;
+            color: var(--text-dim);
+            margin-top: 2px;
+        }
+
+        /* ===== LEADERBOARD HIGHLIGHT ===== */
+        .rank-card.top1 {
+            border: 1px solid var(--gold);
+            background: linear-gradient(135deg, rgba(255,214,0,0.08) 0%, var(--bg-card2) 100%);
+            box-shadow: 0 0 20px rgba(255,214,0,0.1);
+        }
+        .rank-card.top2 {
+            border: 1px solid rgba(192,192,192,0.3);
+            background: rgba(192,192,192,0.03);
+        }
+        .rank-card.top3 {
+            border: 1px solid rgba(205,127,50,0.3);
+            background: rgba(205,127,50,0.03);
+        }
+
+        /* ===== GRID GAMIFICACAO ===== */
+        .game-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .game-grid-3 {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 900px) {
+            .game-grid-2, .game-grid-3 { grid-template-columns: 1fr; }
+        }
+
         /* ===== CONFETTI BURST ===== */
         .confetti-piece {
             position: fixed;
@@ -1002,19 +1236,101 @@
 
         <!-- GAMIFICACAO -->
         <div class="page" id="page-gamificacao">
-            <div class="toolbar">
-                <h2 style="flex:1;font-size:1.1rem;font-weight:800;color:var(--gold);">🏆 Gamificação — Quem faz mais, aparece mais!</h2>
-                <button class="btn btn-gold" onclick="openModal('modalXP')">⚡ Registrar XP</button>
+            <!-- SLOGAN MOTIVACIONAL -->
+            <div class="missao-banner">
+                <div class="missao-header">
+                    <div style="position:relative;">
+                        <div class="missao-slogan">VAMOS FAZER DO NETO O CAMPEAO DE VOTOS!</div>
+                        <div class="missao-sub">Cada acao conta. Cada ponto importa. Quem se destaca, o Neto reconhece.</div>
+                    </div>
+                    <div style="display:flex;gap:8px;position:relative;">
+                        <button class="btn btn-gold" onclick="openModal('modalTarefa')">+ Missao do Dia</button>
+                        <button class="btn btn-primary" onclick="openModal('modalXP')">+ Registrar XP</button>
+                    </div>
+                </div>
             </div>
+
+            <!-- STATS -->
             <div class="stats-grid" id="gamificacaoStats"></div>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+
+            <!-- MISSOES DO DIA -->
+            <div class="panel" style="border:1px solid rgba(255,214,0,0.1);">
+                <div class="panel-title" style="color:var(--gold);">MISSOES DO DIA — Quem conclui primeiro ganha bonus!</div>
+                <div id="tarefasDiaList"></div>
+                <div id="tarefasDiaVazio" style="display:none;text-align:center;padding:30px;">
+                    <div style="font-size:3rem;margin-bottom:10px;">🎯</div>
+                    <p style="color:var(--text-dim);font-size:0.9rem;">Nenhuma missao ativa. Crie a primeira!</p>
+                    <button class="btn btn-gold" style="margin-top:12px;" onclick="openModal('modalTarefa')">Criar Missao</button>
+                </div>
+            </div>
+
+            <!-- RANKING + CONQUISTAS + TROFEUS -->
+            <div class="game-grid-3" style="margin-top:20px;">
                 <div class="panel">
-                    <div class="panel-title" style="color:var(--gold);">🏅 Ranking Geral</div>
+                    <div class="panel-title" style="color:var(--gold);">RANKING — Quem ta fazendo o Neto vencer</div>
                     <div id="rankingList"></div>
                 </div>
                 <div class="panel">
-                    <div class="panel-title" style="color:var(--gold);">⚡ Últimas Conquistas</div>
+                    <div class="panel-title" style="color:var(--gold);">ULTIMAS JOGADAS</div>
                     <div id="conquistasList"></div>
+                </div>
+                <div class="panel">
+                    <div class="panel-title" style="color:var(--gold);">VITRINE DE TROFEUS</div>
+                    <div id="trofeusList"></div>
+                </div>
+            </div>
+
+            <!-- TABELA DE PONTUACAO -->
+            <div class="panel" style="margin-top:20px;">
+                <div class="panel-title" style="color:var(--gold);">TABELA DE PONTUACAO — Como ganhar XP</div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;" id="tabelaPontos">
+                    <div style="background:var(--bg-card2);border-radius:10px;padding:14px;border-left:3px solid var(--gold);">
+                        <div style="font-weight:800;color:#fff;font-size:0.82rem;">MISSOES</div>
+                        <div style="font-size:0.72rem;color:var(--text-dim);margin-top:6px;line-height:1.6;">
+                            Concluir no prazo: <strong style="color:var(--green)">+100 XP</strong><br>
+                            Concluir atrasado: <strong style="color:var(--orange)">+50 XP</strong><br>
+                            Primeiro a concluir: <strong style="color:var(--gold)">+75 XP BONUS</strong>
+                        </div>
+                    </div>
+                    <div style="background:var(--bg-card2);border-radius:10px;padding:14px;border-left:3px solid var(--green);">
+                        <div style="font-weight:800;color:#fff;font-size:0.82rem;">CAMPO</div>
+                        <div style="font-size:0.72rem;color:var(--text-dim);margin-top:6px;line-height:1.6;">
+                            Visitou cidade: <strong style="color:var(--green)">+50 XP</strong><br>
+                            Organizou evento: <strong style="color:var(--green)">+60 XP</strong><br>
+                            Distribuiu material: <strong style="color:var(--green)">+15 XP</strong>
+                        </div>
+                    </div>
+                    <div style="background:var(--bg-card2);border-radius:10px;padding:14px;border-left:3px solid var(--cyan);">
+                        <div style="font-weight:800;color:#fff;font-size:0.82rem;">MOBILIZACAO</div>
+                        <div style="font-size:0.72rem;color:var(--text-dim);margin-top:6px;line-height:1.6;">
+                            Trouxe apoiador: <strong style="color:var(--cyan)">+20 XP</strong><br>
+                            5+ apoiadores/dia: <strong style="color:var(--gold)">+150 XP COMBO</strong><br>
+                            Cadastrou lider: <strong style="color:var(--cyan)">+30 XP</strong>
+                        </div>
+                    </div>
+                    <div style="background:var(--bg-card2);border-radius:10px;padding:14px;border-left:3px solid var(--pink);">
+                        <div style="font-weight:800;color:#fff;font-size:0.82rem;">DIGITAL + PRESENCA</div>
+                        <div style="font-size:0.72rem;color:var(--text-dim);margin-top:6px;line-height:1.6;">
+                            Post viral: <strong style="color:var(--pink)">+35 XP</strong><br>
+                            Fez live: <strong style="color:var(--pink)">+25 XP</strong><br>
+                            Presenca reuniao: <strong style="color:var(--pink)">+10 XP</strong>
+                        </div>
+                    </div>
+                    <div style="background:var(--bg-card2);border-radius:10px;padding:14px;border-left:3px solid var(--orange);">
+                        <div style="font-weight:800;color:#fff;font-size:0.82rem;">STREAKS (SEQUENCIA)</div>
+                        <div style="font-size:0.72rem;color:var(--text-dim);margin-top:6px;line-height:1.6;">
+                            3 dias seguidos: <strong style="color:var(--orange)">+50 XP</strong><br>
+                            7 dias seguidos: <strong style="color:var(--orange)">+200 XP</strong><br>
+                            15 dias seguidos: <strong style="color:var(--gold)">+500 XP LENDARIO</strong>
+                        </div>
+                    </div>
+                    <div style="background:var(--bg-card2);border-radius:10px;padding:14px;border-left:3px solid var(--purple);">
+                        <div style="font-weight:800;color:#fff;font-size:0.82rem;">RESOLUCAO</div>
+                        <div style="font-size:0.72rem;color:var(--text-dim);margin-top:6px;line-height:1.6;">
+                            Resolveu demanda: <strong style="color:var(--purple)">+40 XP</strong><br>
+                            Demanda urgente: <strong style="color:var(--gold)">+80 XP BONUS</strong>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1205,25 +1521,64 @@
         </div>
     </div>
 
-    <div class="modal-overlay" id="modalXP" onclick="closeModal('modalXP')">
+    <!-- Modal Missao do Dia -->
+    <div class="modal-overlay" id="modalTarefa" onclick="closeModal('modalTarefa')">
         <div class="modal" onclick="event.stopPropagation()">
-            <h2>⚡ Registrar XP</h2>
-            <div class="form-group"><label>Participante</label><select id="xpPessoa"></select></div>
+            <h2>🎯 Nova Missao do Dia</h2>
+            <div class="form-group"><label>Titulo da Missao</label><input type="text" id="tfTitulo" placeholder="Ex: Cadastrar 10 apoiadores em Ceilandia"></div>
+            <div class="form-group"><label>Descricao</label><textarea id="tfDesc" rows="3" placeholder="O que precisa ser feito e como ganhar os pontos..."></textarea></div>
             <div class="form-group">
-                <label>Ação</label>
-                <select id="xpAcao">
-                    <option value="visita_cidade" data-xp="50">🗺️ Visitou cidade (50 XP)</option>
-                    <option value="cadastrou_lider" data-xp="30">⭐ Cadastrou líder (30 XP)</option>
-                    <option value="resolveu_demanda" data-xp="40">✅ Resolveu demanda (40 XP)</option>
-                    <option value="organizou_evento" data-xp="60">🎉 Organizou evento (60 XP)</option>
-                    <option value="trouxe_apoiador" data-xp="20">🤝 Trouxe apoiador (20 XP)</option>
-                    <option value="distribuiu_material" data-xp="15">📦 Distribuiu material (15 XP)</option>
-                    <option value="presenca_reuniao" data-xp="10">📋 Presença em reunião (10 XP)</option>
-                    <option value="post_viral" data-xp="35">📱 Post viral (35 XP)</option>
-                    <option value="live_feita" data-xp="25">🎥 Fez live (25 XP)</option>
+                <label>Categoria</label>
+                <select id="tfCategoria">
+                    <option value="mobilizacao">🤝 Mobilizacao (Apoiadores/Lideres)</option>
+                    <option value="campo">🗺️ Campo (Visitas/Eventos)</option>
+                    <option value="digital">📱 Digital (Posts/Lives)</option>
+                    <option value="material">📦 Logistica (Materiais/Distribuicao)</option>
+                    <option value="demanda">📋 Demandas (Resolver problemas)</option>
+                    <option value="presenca">📅 Presenca (Reunioes/Atos)</option>
+                    <option value="especial">🌟 Missao Especial</option>
                 </select>
             </div>
-            <div class="form-group"><label>Observação</label><input type="text" id="xpObs" placeholder="Opcional"></div>
+            <div class="form-group"><label>Prazo</label><input type="date" id="tfPrazo"></div>
+            <div class="form-group"><label>XP por Conclusao</label><input type="number" id="tfXP" value="100" placeholder="XP base"></div>
+            <div class="form-group"><label>Bonus para o Primeiro (%)</label><input type="number" id="tfBonus" value="75" placeholder="XP extra para quem concluir primeiro"></div>
+            <div class="form-group">
+                <label>Responsaveis (selecione os colaboradores)</label>
+                <div id="tfResponsaveisContainer" style="max-height:180px;overflow-y:auto;padding:8px;background:var(--bg);border-radius:10px;border:1px solid rgba(255,255,255,0.1);"></div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeModal('modalTarefa')">Cancelar</button>
+                <button class="btn btn-gold" onclick="saveTarefa()">🎯 Criar Missao!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal XP -->
+    <div class="modal-overlay" id="modalXP" onclick="closeModal('modalXP')">
+        <div class="modal" onclick="event.stopPropagation()">
+            <h2>⚡ Registrar XP Manual</h2>
+            <div class="form-group"><label>Colaborador</label><select id="xpPessoa"></select></div>
+            <div class="form-group">
+                <label>Acao Realizada</label>
+                <select id="xpAcao">
+                    <option value="trouxe_apoiador" data-xp="20">🤝 Trouxe 1 apoiador (+20 XP)</option>
+                    <option value="combo_apoiadores" data-xp="150">🔥 Trouxe 5+ apoiadores no dia (+150 XP COMBO)</option>
+                    <option value="visita_cidade" data-xp="50">🗺️ Visitou cidade (+50 XP)</option>
+                    <option value="cadastrou_lider" data-xp="30">⭐ Cadastrou lider (+30 XP)</option>
+                    <option value="resolveu_demanda" data-xp="40">✅ Resolveu demanda (+40 XP)</option>
+                    <option value="demanda_urgente" data-xp="80">🚨 Resolveu demanda URGENTE (+80 XP)</option>
+                    <option value="organizou_evento" data-xp="60">🎉 Organizou evento (+60 XP)</option>
+                    <option value="distribuiu_material" data-xp="15">📦 Distribuiu material (+15 XP)</option>
+                    <option value="presenca_reuniao" data-xp="10">📋 Presenca em reuniao (+10 XP)</option>
+                    <option value="post_viral" data-xp="35">📱 Post viral (+35 XP)</option>
+                    <option value="live_feita" data-xp="25">🎥 Fez live (+25 XP)</option>
+                    <option value="corpo_a_corpo" data-xp="30">🚶 Corpo a corpo na rua (+30 XP)</option>
+                    <option value="panfletagem" data-xp="20">📄 Panfletagem (+20 XP)</option>
+                    <option value="articulacao_politica" data-xp="45">🏛️ Articulacao politica (+45 XP)</option>
+                </select>
+            </div>
+            <div class="form-group"><label>Quantas vezes?</label><input type="number" id="xpQtd" value="1" min="1" max="50"></div>
+            <div class="form-group"><label>Observacao</label><input type="text" id="xpObs" placeholder="Detalhe opcional"></div>
             <div class="modal-actions">
                 <button class="btn btn-outline" onclick="closeModal('modalXP')">Cancelar</button>
                 <button class="btn btn-gold" onclick="saveXP()">⚡ Dar XP!</button>
@@ -1252,7 +1607,10 @@
             return {
                 eventos: [], pessoas: [], lideres: [], quemequem: [],
                 demandas: [], pesquisas: [], materiais: [], gamificacao: [],
-                visitas: {}, atividades: [], nextId: 1
+                visitas: {}, atividades: [], nextId: 1,
+                tarefas_game: [],
+                streaks: {},
+                trofeus: []
             };
         }
 
@@ -1374,11 +1732,67 @@
 
         // ===== LEVEL SYSTEM =====
         function getLevel(xp) {
-            if (xp >= 1000) return { level: 5, nome: 'Lenda', icon: '👑', next: Infinity };
-            if (xp >= 500) return { level: 4, nome: 'Mestre', icon: '🔥', next: 1000 };
-            if (xp >= 200) return { level: 3, nome: 'Veterano', icon: '⚡', next: 500 };
-            if (xp >= 50) return { level: 2, nome: 'Ativo', icon: '💪', next: 200 };
-            return { level: 1, nome: 'Novato', icon: '🌱', next: 50 };
+            if (xp >= 5000) return { level: 10, nome: 'Imbativel', icon: '🏆', next: Infinity, cor: '#ffd600' };
+            if (xp >= 3000) return { level: 9, nome: 'Campeao', icon: '👑', next: 5000, cor: '#ffd600' };
+            if (xp >= 2000) return { level: 8, nome: 'Lenda', icon: '🌟', next: 3000, cor: '#b388ff' };
+            if (xp >= 1500) return { level: 7, nome: 'Senador', icon: '🏛️', next: 2000, cor: '#b388ff' };
+            if (xp >= 1000) return { level: 6, nome: 'Deputado', icon: '🔥', next: 1500, cor: '#ff4081' };
+            if (xp >= 600) return { level: 5, nome: 'Vereador', icon: '⚡', next: 1000, cor: '#00e5ff' };
+            if (xp >= 300) return { level: 4, nome: 'Cabo Eleitoral', icon: '💪', next: 600, cor: '#00e676' };
+            if (xp >= 100) return { level: 3, nome: 'Militante', icon: '✊', next: 300, cor: '#00e676' };
+            if (xp >= 30) return { level: 2, nome: 'Simpatizante', icon: '🤝', next: 100, cor: '#448aff' };
+            return { level: 1, nome: 'Novato', icon: '🌱', next: 30, cor: '#888' };
+        }
+
+        // ===== TROFEUS DEFINICAO =====
+        const TROFEUS_DEF = [
+            { id: 'primeiro_xp', nome: 'Primeiro Passo', icon: '🎯', desc: 'Ganhou XP pela primeira vez', check: (p, rk) => rk.acoes >= 1 },
+            { id: 'maratonista_3', nome: 'Esquentando', icon: '🔥', desc: '3 dias de streak', check: (p, rk, streaks) => (streaks[p]?.dias || 0) >= 3 },
+            { id: 'maratonista_7', nome: 'Maratonista', icon: '🏃', desc: '7 dias de streak', check: (p, rk, streaks) => (streaks[p]?.dias || 0) >= 7 },
+            { id: 'maratonista_15', nome: 'Incansavel', icon: '💎', desc: '15 dias seguidos', check: (p, rk, streaks) => (streaks[p]?.dias || 0) >= 15 },
+            { id: 'rei_apoiadores', nome: 'Rei dos Apoiadores', icon: '👑', desc: '50+ apoiadores trazidos', check: (p, rk, s, gf) => gf.filter(g => g.pessoa === p && g.acao === 'trouxe_apoiador').length >= 50 },
+            { id: 'desbravador', nome: 'Desbravador', icon: '🗺️', desc: 'Visitou 10+ cidades', check: (p, rk, s, gf) => gf.filter(g => g.pessoa === p && g.acao === 'visita_cidade').length >= 10 },
+            { id: 'sniper', nome: 'Sniper', icon: '🎯', desc: 'Completou 10 missoes no prazo', check: (p, rk, s, gf, tg) => tg.filter(t => t.concluidos?.some(c => c.pessoa === p && c.noPrazo)).length >= 10 },
+            { id: 'influencer', nome: 'Influencer', icon: '📱', desc: '10+ posts virais', check: (p, rk, s, gf) => gf.filter(g => g.pessoa === p && g.acao === 'post_viral').length >= 10 },
+            { id: 'resolvedor', nome: 'Resolvedor', icon: '✅', desc: 'Resolveu 20+ demandas', check: (p, rk, s, gf) => gf.filter(g => g.pessoa === p && (g.acao === 'resolveu_demanda' || g.acao === 'demanda_urgente')).length >= 20 },
+            { id: 'centuriao', nome: 'Centuriao', icon: '💯', desc: 'Acumulou 100+ acoes', check: (p, rk) => rk.acoes >= 100 },
+            { id: 'lv5', nome: 'Vereador do XP', icon: '⚡', desc: 'Alcancou Level 5', check: (p, rk) => getLevel(rk.xp).level >= 5 },
+            { id: 'lv8', nome: 'Lenda Viva', icon: '🌟', desc: 'Alcancou Level 8', check: (p, rk) => getLevel(rk.xp).level >= 8 },
+        ];
+
+        function checkTrofeus(pessoa, rankData) {
+            const earned = [];
+            TROFEUS_DEF.forEach(t => {
+                const jaTemn = data.trofeus.some(tr => tr.pessoa === pessoa && tr.trofeu === t.id);
+                if (!jaTemn) {
+                    try {
+                        if (t.check(pessoa, rankData, data.streaks, data.gamificacao, data.tarefas_game)) {
+                            data.trofeus.push({ pessoa, trofeu: t.id, data: new Date().toISOString() });
+                            earned.push(t);
+                        }
+                    } catch(e) {}
+                }
+            });
+            return earned;
+        }
+
+        function updateStreak(pessoa) {
+            const hoje = new Date().toISOString().split('T')[0];
+            if (!data.streaks[pessoa]) data.streaks[pessoa] = { dias: 0, ultimoDia: '' };
+            const s = data.streaks[pessoa];
+            if (s.ultimoDia === hoje) return s.dias;
+            const ontem = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+            if (s.ultimoDia === ontem) {
+                s.dias++;
+            } else {
+                s.dias = 1;
+            }
+            s.ultimoDia = hoje;
+            // Bonus de streak
+            if (s.dias === 3) { data.gamificacao.push({ id: gerarId(), pessoa, acao: 'streak_3', xp: 50, obs: '3 dias seguidos!', data: new Date().toISOString() }); }
+            if (s.dias === 7) { data.gamificacao.push({ id: gerarId(), pessoa, acao: 'streak_7', xp: 200, obs: '7 dias seguidos!', data: new Date().toISOString() }); }
+            if (s.dias === 15) { data.gamificacao.push({ id: gerarId(), pessoa, acao: 'streak_15', xp: 500, obs: '15 DIAS SEGUIDOS — LENDARIO!', data: new Date().toISOString() }); }
+            return s.dias;
         }
 
         // ===== DASHBOARD =====
@@ -1684,48 +2098,345 @@
 
         // ===== GAMIFICACAO =====
         function renderGamificacao() {
+            // Build ranking
             const ranking = {};
-            data.gamificacao.forEach(g=>{
-                if(!ranking[g.pessoa]) ranking[g.pessoa]={nome:g.pessoa,xp:0,acoes:0};
-                ranking[g.pessoa].xp+=(g.xp||0); ranking[g.pessoa].acoes++;
+            data.gamificacao.forEach(g => {
+                if (!ranking[g.pessoa]) ranking[g.pessoa] = { nome: g.pessoa, xp: 0, acoes: 0 };
+                ranking[g.pessoa].xp += (g.xp || 0);
+                ranking[g.pessoa].acoes++;
             });
-            const rk = Object.values(ranking).sort((a,b)=>b.xp-a.xp);
-            const totalXP = data.gamificacao.reduce((s,g)=>s+(g.xp||0),0);
-            const maxXP = rk.length>0?rk[0].xp:1;
+            const rk = Object.values(ranking).sort((a, b) => b.xp - a.xp);
+            const totalXP = data.gamificacao.reduce((s, g) => s + (g.xp || 0), 0);
+            const maxXP = rk.length > 0 ? rk[0].xp : 1;
+            const hoje = new Date().toISOString().split('T')[0];
+            const missoesAtivas = data.tarefas_game.filter(t => t.status === 'ativa').length;
+            const missoesConcluidas = data.tarefas_game.filter(t => t.status === 'concluida').length;
+            const totalTrofeus = data.trofeus.length;
 
+            // XP ganho hoje
+            const xpHoje = data.gamificacao.filter(g => g.data && g.data.startsWith(hoje)).reduce((s, g) => s + (g.xp || 0), 0);
+
+            // Stats
             document.getElementById('gamificacaoStats').innerHTML = `
-                <div class="stat-card gold"><div class="stat-icon">⚡</div><div class="stat-label">XP Total</div><div class="stat-value">${totalXP.toLocaleString('pt-BR')}</div></div>
-                <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-label">Participantes</div><div class="stat-value">${rk.length}</div></div>
-                <div class="stat-card purple"><div class="stat-icon">🎯</div><div class="stat-label">Ações</div><div class="stat-value">${data.gamificacao.length}</div></div>
-                <div class="stat-card pink"><div class="stat-icon">👑</div><div class="stat-label">Líder</div><div class="stat-value" style="font-size:1.1rem;">${rk.length>0?escapeHtml(rk[0].nome):'-'}</div><div class="stat-sub">${rk.length>0?rk[0].xp+' XP — '+getLevel(rk[0].xp).icon+' '+getLevel(rk[0].xp).nome:''}</div></div>
+                <div class="stat-card gold"><div class="stat-icon">⚡</div><div class="stat-label">XP Total da Equipe</div><div class="stat-value">${totalXP.toLocaleString('pt-BR')}</div><div class="stat-sub">Nivel coletivo: ${getLevel(Math.floor(totalXP / Math.max(rk.length, 1))).icon} ${getLevel(Math.floor(totalXP / Math.max(rk.length, 1))).nome}</div></div>
+                <div class="stat-card cyan"><div class="stat-icon">🔥</div><div class="stat-label">XP Hoje</div><div class="stat-value">${xpHoje.toLocaleString('pt-BR')}</div><div class="stat-sub">${xpHoje > 0 ? 'A equipe ta ON!' : 'Bora marcar pontos!'}</div></div>
+                <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-label">Colaboradores</div><div class="stat-value">${rk.length}</div><div class="stat-sub">${data.pessoas.length} no time</div></div>
+                <div class="stat-card orange"><div class="stat-icon">🎯</div><div class="stat-label">Missoes Ativas</div><div class="stat-value">${missoesAtivas}</div><div class="stat-sub">${missoesConcluidas} concluidas</div></div>
+                <div class="stat-card purple"><div class="stat-icon">🏆</div><div class="stat-label">Trofeus</div><div class="stat-value">${totalTrofeus}</div><div class="stat-sub">${TROFEUS_DEF.length} disponiveis</div></div>
+                <div class="stat-card pink"><div class="stat-icon">👑</div><div class="stat-label">MVP</div><div class="stat-value" style="font-size:1rem;">${rk.length > 0 ? escapeHtml(rk[0].nome) : '-'}</div><div class="stat-sub">${rk.length > 0 ? rk[0].xp + ' XP — ' + getLevel(rk[0].xp).icon + ' ' + getLevel(rk[0].xp).nome : 'Ninguem ainda'}</div></div>
             `;
 
-            const medalhas = ['🥇','🥈','🥉'];
+            // Missoes do Dia
+            renderTarefasDia();
+
+            // Ranking
+            const medalhas = ['🥇', '🥈', '🥉'];
             document.getElementById('rankingList').innerHTML = rk.length
-                ? rk.map((r,i)=>{const lv=getLevel(r.xp); return `<div class="rank-card"><div class="rank-pos">${i<3?medalhas[i]:(i+1)+'º'}</div><div class="rank-info"><h4>${escapeHtml(r.nome)}</h4><p>${r.acoes} ações | <span class="level-badge">${lv.icon} ${lv.nome} Lv.${lv.level}</span></p><div class="xp-bar"><div class="xp-fill" style="width:${Math.round((r.xp/maxXP)*100)}%"></div></div></div><div class="rank-xp">${r.xp} XP</div></div>`;}).join('')
+                ? rk.map((r, i) => {
+                    const lv = getLevel(r.xp);
+                    const streak = data.streaks[r.nome]?.dias || 0;
+                    const topCls = i === 0 ? ' top1' : i === 1 ? ' top2' : i === 2 ? ' top3' : '';
+                    const pctNext = lv.next === Infinity ? 100 : Math.round(((r.xp - (lv.level > 1 ? [0,0,30,100,300,600,1000,1500,2000,3000,5000][lv.level] : 0)) / (lv.next - (lv.level > 1 ? [0,0,30,100,300,600,1000,1500,2000,3000,5000][lv.level] : 0))) * 100);
+                    return `<div class="rank-card${topCls}">
+                        <div class="rank-pos">${i < 3 ? medalhas[i] : (i + 1) + 'o'}</div>
+                        <div class="rank-info">
+                            <h4>${escapeHtml(r.nome)}</h4>
+                            <p>
+                                ${r.acoes} acoes |
+                                <span class="level-badge" style="background:linear-gradient(135deg,${lv.cor},${lv.cor}88);">${lv.icon} ${lv.nome} Lv.${lv.level}</span>
+                                ${streak >= 3 ? ' <span class="streak-display' + (streak >= 7 ? ' hot' : '') + '">🔥 ' + streak + ' dias</span>' : ''}
+                            </p>
+                            <div class="xp-bar"><div class="xp-fill" style="width:${Math.min(pctNext, 100)}%"></div></div>
+                            <p style="font-size:0.6rem;margin-top:2px;color:var(--text-dim)">${lv.next === Infinity ? 'NIVEL MAXIMO!' : r.xp + '/' + lv.next + ' XP para ' + getLevel(lv.next).nome}</p>
+                        </div>
+                        <div class="rank-xp">${r.xp.toLocaleString('pt-BR')}<br><span style="font-size:0.6rem;color:var(--text-dim)">XP</span></div>
+                    </div>`;
+                }).join('')
                 : '<p style="color:var(--text-dim)">Registre XP para ver o ranking!</p>';
 
-            const acaoLabels = {visita_cidade:'🗺️ Visitou cidade',cadastrou_lider:'⭐ Cadastrou líder',resolveu_demanda:'✅ Resolveu demanda',organizou_evento:'🎉 Organizou evento',trouxe_apoiador:'🤝 Trouxe apoiador',distribuiu_material:'📦 Distribuiu material',presenca_reuniao:'📋 Reunião',post_viral:'📱 Post viral',live_feita:'🎥 Fez live'};
-            const recentes = [...data.gamificacao].reverse().slice(0,10);
+            // Ultimas jogadas
+            const acaoLabels = {
+                trouxe_apoiador: '🤝 Trouxe apoiador', combo_apoiadores: '🔥 COMBO apoiadores',
+                visita_cidade: '🗺️ Visitou cidade', cadastrou_lider: '⭐ Cadastrou lider',
+                resolveu_demanda: '✅ Resolveu demanda', demanda_urgente: '🚨 Demanda URGENTE',
+                organizou_evento: '🎉 Organizou evento', distribuiu_material: '📦 Distribuiu material',
+                presenca_reuniao: '📋 Reuniao', post_viral: '📱 Post viral',
+                live_feita: '🎥 Fez live', corpo_a_corpo: '🚶 Corpo a corpo',
+                panfletagem: '📄 Panfletagem', articulacao_politica: '🏛️ Articulacao politica',
+                missao_concluida: '🎯 Missao concluida', missao_primeiro: '⚡ PRIMEIRO a concluir',
+                missao_atrasada: '⏰ Missao (atrasada)',
+                streak_3: '🔥 Streak 3 dias', streak_7: '🔥🔥 Streak 7 dias', streak_15: '💎 STREAK 15 DIAS'
+            };
+            const recentes = [...data.gamificacao].reverse().slice(0, 12);
 
             document.getElementById('conquistasList').innerHTML = recentes.length
-                ? recentes.map(g=>`<div style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.03);"><div style="display:flex;justify-content:space-between;align-items:center;"><div><strong style="font-size:0.82rem;color:#fff">${escapeHtml(g.pessoa)}</strong><br><span style="font-size:0.72rem;color:var(--text-dim)">${acaoLabels[g.acao]||g.acao}</span>${g.obs?'<br><small style="color:var(--text-dim)">'+escapeHtml(g.obs)+'</small>':''}</div><span class="tag tag-gold" style="font-size:0.72rem;">+${g.xp} XP</span></div></div>`).join('')
-                : '<p style="color:var(--text-dim)">Nenhuma conquista ainda!</p>';
+                ? recentes.map(g => {
+                    const isStreak = g.acao?.startsWith('streak_');
+                    const isMissao = g.acao?.startsWith('missao_');
+                    const tagCls = isStreak ? 'tag-orange' : isMissao ? 'tag-green' : 'tag-gold';
+                    return `<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.03);">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <div>
+                                <strong style="font-size:0.78rem;color:#fff">${escapeHtml(g.pessoa)}</strong><br>
+                                <span style="font-size:0.68rem;color:var(--text-dim)">${acaoLabels[g.acao] || g.acao}${g.qtd && g.qtd > 1 ? ' x' + g.qtd : ''}</span>
+                                ${g.obs ? '<br><small style="color:var(--text-dim);font-size:0.6rem;">' + escapeHtml(g.obs) + '</small>' : ''}
+                            </div>
+                            <span class="tag ${tagCls}" style="font-size:0.68rem;">+${g.xp} XP</span>
+                        </div>
+                    </div>`;
+                }).join('')
+                : '<p style="color:var(--text-dim)">O jogo comeca agora!</p>';
 
+            // Trofeus
+            renderTrofeus(rk);
+
+            // Preencher selects dos modais
             const sel = document.getElementById('xpPessoa');
             sel.innerHTML = '<option value="">Selecione...</option>';
-            data.pessoas.forEach(p=>{sel.innerHTML+=`<option value="${escapeHtml(p.nome)}">${escapeHtml(p.nome)}</option>`;});
+            data.pessoas.forEach(p => { sel.innerHTML += `<option value="${escapeHtml(p.nome)}">${escapeHtml(p.nome)}</option>`; });
+
+            // Container de responsaveis no modal de tarefa
+            const container = document.getElementById('tfResponsaveisContainer');
+            if (container) {
+                container.innerHTML = data.pessoas.length
+                    ? data.pessoas.map(p => `<label style="display:flex;align-items:center;gap:8px;padding:6px 0;cursor:pointer;font-size:0.8rem;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.03);"><input type="checkbox" value="${escapeHtml(p.nome)}" class="tf-responsavel" style="width:16px;height:16px;accent-color:var(--green);"> ${escapeHtml(p.nome)} <span class="tag tag-blue" style="font-size:0.55rem;">${escapeHtml(p.funcao)}</span></label>`).join('')
+                    : '<p style="color:var(--text-dim);font-size:0.78rem;">Adicione pessoas primeiro na aba "Pessoas da Campanha"</p>';
+            }
         }
 
+        // ===== RENDER TAREFAS DO DIA =====
+        function renderTarefasDia() {
+            const hoje = new Date().toISOString().split('T')[0];
+
+            // Atualizar status de tarefas expiradas
+            data.tarefas_game.forEach(t => {
+                if (t.status === 'ativa' && t.prazo < hoje) {
+                    // Verificar se todos concluiram
+                    const todosConcluiram = t.responsaveis.every(r => t.concluidos?.some(c => c.pessoa === r));
+                    if (todosConcluiram) t.status = 'concluida';
+                }
+            });
+
+            const ativas = data.tarefas_game.filter(t => t.status === 'ativa').sort((a, b) => a.prazo.localeCompare(b.prazo));
+            const recentes = data.tarefas_game.filter(t => t.status !== 'ativa').sort((a, b) => (b.prazo || '').localeCompare(a.prazo || '')).slice(0, 3);
+            const todas = [...ativas, ...recentes];
+
+            const listEl = document.getElementById('tarefasDiaList');
+            const vazioEl = document.getElementById('tarefasDiaVazio');
+
+            if (todas.length === 0) {
+                listEl.style.display = 'none';
+                vazioEl.style.display = 'block';
+                return;
+            }
+            listEl.style.display = 'block';
+            vazioEl.style.display = 'none';
+
+            const catIcons = { mobilizacao: '🤝', campo: '🗺️', digital: '📱', material: '📦', demanda: '📋', presenca: '📅', especial: '🌟' };
+
+            listEl.innerHTML = todas.map(t => {
+                const vencida = t.prazo < hoje && t.status === 'ativa';
+                const concluidos = t.concluidos || [];
+                const totalResp = t.responsaveis.length;
+                const totalConc = concluidos.length;
+                const pctConc = totalResp > 0 ? Math.round((totalConc / totalResp) * 100) : 0;
+                const todosOk = totalConc >= totalResp && totalResp > 0;
+                const cls = todosOk ? 'concluida' : vencida ? 'atrasada' : '';
+                const primeiro = concluidos.length > 0 ? concluidos[0].pessoa : null;
+
+                return `<div class="tarefa-dia-card ${cls}">
+                    <div class="tarefa-top">
+                        <div class="tarefa-titulo">${catIcons[t.categoria] || '🎯'} ${escapeHtml(t.titulo)}</div>
+                        <div style="display:flex;gap:6px;align-items:center;">
+                            <div class="tarefa-xp">${t.xpBase} XP</div>
+                            ${t.status !== 'ativa' ? '<span class="tag tag-green">CONCLUIDA</span>' : vencida ? '<span class="tag tag-red">ATRASADA</span>' : '<span class="tag tag-gold">ATIVA</span>'}
+                        </div>
+                    </div>
+                    ${t.descricao ? '<div class="tarefa-desc">' + escapeHtml(t.descricao) + '</div>' : ''}
+                    <div class="tarefa-meta">
+                        <span>📅 Prazo: <strong style="color:${vencida ? 'var(--red)' : 'var(--green)'}">${formatDate(t.prazo)}</strong></span>
+                        <span>👥 ${totalConc}/${totalResp} concluiram</span>
+                        <span>⚡ Bonus 1o: +${t.xpBonus} XP</span>
+                        ${primeiro ? '<span style="color:var(--gold)">🏅 1o: ' + escapeHtml(primeiro) + '</span>' : ''}
+                    </div>
+                    <div style="margin-bottom:6px;">
+                        <div class="xp-bar" style="height:8px;"><div class="xp-fill" style="width:${pctConc}%;"></div></div>
+                    </div>
+                    <div class="tarefa-progresso">
+                        ${t.responsaveis.map(r => {
+                            const fez = concluidos.some(c => c.pessoa === r);
+                            const ehPrimeiro = primeiro === r;
+                            return `<div class="pessoa-chip ${fez ? 'done' : 'pendente'}" ${!fez && t.status === 'ativa' ? 'onclick="concluirMissao(' + t.id + ',\'' + escapeHtml(r) + '\')" style="cursor:pointer;" title="Clique para marcar como concluido"' : ''}>
+                                <span class="chip-check">${fez ? '✓' : ''}</span>
+                                ${escapeHtml(r)}
+                                ${ehPrimeiro ? ' 🏅' : ''}
+                            </div>`;
+                        }).join('')}
+                    </div>
+                    ${t.status === 'ativa' ? '<div style="margin-top:10px;display:flex;gap:6px;"><button class="btn btn-danger btn-sm" onclick="deleteTarefa(' + t.id + ')">Excluir</button></div>' : ''}
+                </div>`;
+            }).join('');
+        }
+
+        // ===== RENDER TROFEUS =====
+        function renderTrofeus(rk) {
+            // Check trofeus for all ranked people
+            rk.forEach(r => {
+                checkTrofeus(r.nome, r);
+            });
+            saveData();
+
+            document.getElementById('trofeusList').innerHTML = `<div class="trophy-grid">
+                ${TROFEUS_DEF.map(t => {
+                    const earned = data.trofeus.filter(tr => tr.trofeu === t.id);
+                    const isEarned = earned.length > 0;
+                    const quem = earned.map(e => e.pessoa).join(', ');
+                    return `<div class="trophy-item ${isEarned ? 'earned' : 'locked'}">
+                        <div class="trophy-icon">${t.icon}</div>
+                        <div class="trophy-name">${t.nome}</div>
+                        <div class="trophy-desc">${t.desc}</div>
+                        ${isEarned ? '<div style="font-size:0.55rem;color:var(--gold);margin-top:4px;">' + escapeHtml(quem) + '</div>' : '<div style="font-size:0.55rem;color:var(--text-dim);margin-top:4px;">🔒 Bloqueado</div>'}
+                    </div>`;
+                }).join('')}
+            </div>`;
+        }
+
+        // ===== SAVE TAREFA DO DIA =====
+        function saveTarefa() {
+            const titulo = document.getElementById('tfTitulo').value.trim();
+            const prazo = document.getElementById('tfPrazo').value;
+            if (!titulo) return alert('De um titulo para a missao!');
+            if (!prazo) return alert('Defina um prazo!');
+
+            const checks = document.querySelectorAll('.tf-responsavel:checked');
+            const responsaveis = Array.from(checks).map(c => c.value);
+            if (responsaveis.length === 0) return alert('Selecione pelo menos 1 responsavel!');
+
+            const xpBase = parseInt(document.getElementById('tfXP').value) || 100;
+            const xpBonus = parseInt(document.getElementById('tfBonus').value) || 75;
+
+            data.tarefas_game.push({
+                id: gerarId(),
+                titulo: titulo,
+                descricao: document.getElementById('tfDesc').value.trim(),
+                categoria: document.getElementById('tfCategoria').value,
+                prazo: prazo,
+                xpBase: xpBase,
+                xpBonus: xpBonus,
+                responsaveis: responsaveis,
+                concluidos: [],
+                status: 'ativa',
+                dataCriacao: new Date().toISOString()
+            });
+
+            addAtividade('🎯 Missao criada: ' + titulo + ' (' + responsaveis.length + ' responsaveis)');
+            saveData();
+            closeModal('modalTarefa');
+            document.getElementById('tfTitulo').value = '';
+            document.getElementById('tfDesc').value = '';
+            renderGamificacao();
+        }
+
+        // ===== CONCLUIR MISSAO =====
+        function concluirMissao(tarefaId, pessoa) {
+            const t = data.tarefas_game.find(t => t.id === tarefaId);
+            if (!t || t.status !== 'ativa') return;
+            if (t.concluidos.some(c => c.pessoa === pessoa)) return;
+
+            const hoje = new Date().toISOString().split('T')[0];
+            const noPrazo = hoje <= t.prazo;
+            const ehPrimeiro = t.concluidos.length === 0;
+
+            t.concluidos.push({ pessoa, data: new Date().toISOString(), noPrazo });
+
+            // Calcular XP
+            let xpGanho = noPrazo ? t.xpBase : Math.floor(t.xpBase / 2);
+            let acaoTipo = noPrazo ? 'missao_concluida' : 'missao_atrasada';
+            let obs = 'Missao: ' + t.titulo;
+
+            if (ehPrimeiro) {
+                xpGanho += t.xpBonus;
+                acaoTipo = 'missao_primeiro';
+                obs = 'PRIMEIRO a concluir: ' + t.titulo + ' (+' + t.xpBonus + ' bonus!)';
+            }
+
+            data.gamificacao.push({
+                id: gerarId(), pessoa, acao: acaoTipo, xp: xpGanho,
+                obs: obs, data: new Date().toISOString()
+            });
+
+            // Update streak
+            updateStreak(pessoa);
+
+            // Check if all completed
+            if (t.concluidos.length >= t.responsaveis.length) {
+                t.status = 'concluida';
+            }
+
+            addAtividade((ehPrimeiro ? '🏅 ' : '✅ ') + pessoa + ' concluiu missao: ' + t.titulo + ' (+' + xpGanho + ' XP)');
+
+            // Check trofeus
+            const ranking = {};
+            data.gamificacao.forEach(g => {
+                if (!ranking[g.pessoa]) ranking[g.pessoa] = { nome: g.pessoa, xp: 0, acoes: 0 };
+                ranking[g.pessoa].xp += (g.xp || 0); ranking[g.pessoa].acoes++;
+            });
+            const newTrophies = checkTrofeus(pessoa, ranking[pessoa] || { xp: 0, acoes: 0 });
+            if (newTrophies.length > 0) {
+                addAtividade('🏆 ' + pessoa + ' desbloqueou: ' + newTrophies.map(t => t.icon + ' ' + t.nome).join(', '));
+            }
+
+            saveData();
+            renderGamificacao();
+            triggerConfetti();
+        }
+
+        // ===== DELETE TAREFA =====
+        function deleteTarefa(id) {
+            if (!confirm('Excluir esta missao?')) return;
+            data.tarefas_game = data.tarefas_game.filter(t => t.id !== id);
+            saveData();
+            renderGamificacao();
+        }
+
+        // ===== SAVE XP MANUAL =====
         function saveXP() {
             const p = document.getElementById('xpPessoa').value;
-            if(!p)return alert('Selecione participante.');
+            if (!p) return alert('Selecione um colaborador.');
             const sel = document.getElementById('xpAcao');
-            const xp = parseInt(sel.options[sel.selectedIndex].getAttribute('data-xp'))||10;
-            data.gamificacao.push({id:gerarId(),pessoa:p,acao:sel.value,xp:xp,obs:document.getElementById('xpObs').value.trim(),data:new Date().toISOString()});
-            addAtividade('⚡ '+p+' ganhou '+xp+' XP!'); saveData(); closeModal('modalXP');
-            document.getElementById('xpObs').value='';
-            renderGamificacao(); triggerConfetti();
+            const xpUnit = parseInt(sel.options[sel.selectedIndex].getAttribute('data-xp')) || 10;
+            const qtd = Math.max(1, Math.min(50, parseInt(document.getElementById('xpQtd').value) || 1));
+            const xpTotal = xpUnit * qtd;
+
+            data.gamificacao.push({
+                id: gerarId(), pessoa: p, acao: sel.value, xp: xpTotal,
+                qtd: qtd,
+                obs: document.getElementById('xpObs').value.trim(),
+                data: new Date().toISOString()
+            });
+
+            // Update streak
+            updateStreak(p);
+
+            // Check trofeus
+            const ranking = {};
+            data.gamificacao.forEach(g => {
+                if (!ranking[g.pessoa]) ranking[g.pessoa] = { nome: g.pessoa, xp: 0, acoes: 0 };
+                ranking[g.pessoa].xp += (g.xp || 0); ranking[g.pessoa].acoes++;
+            });
+            const newTrophies = checkTrofeus(p, ranking[p] || { xp: 0, acoes: 0 });
+
+            let msg = '⚡ ' + p + ' ganhou ' + xpTotal + ' XP!';
+            if (qtd > 1) msg += ' (' + qtd + 'x)';
+            if (newTrophies.length > 0) msg += ' 🏆 Trofeu: ' + newTrophies.map(t => t.nome).join(', ');
+            addAtividade(msg);
+
+            saveData();
+            closeModal('modalXP');
+            document.getElementById('xpObs').value = '';
+            document.getElementById('xpQtd').value = '1';
+            renderGamificacao();
+            triggerConfetti();
         }
 
         // ===== EXPORT/IMPORT =====
