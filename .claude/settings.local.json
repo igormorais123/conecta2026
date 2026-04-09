@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh repo:*)",
+      "Bash(cd:*)",
+      "Bash(cp \"C:/Agentes/frontend/public/conecta/js/supabase-config.js\" \"C:/Users/IgorPC/.claude/projects/Conecta 2026/js/\")",
+      "Bash(cp \"C:/Agentes/frontend/public/conecta/js/conecta-db.js\" \"C:/Users/IgorPC/.claude/projects/Conecta 2026/js/\")",
+      "Bash(cp \"C:/Agentes/frontend/public/conecta/login.html\" \"C:/Users/IgorPC/.claude/projects/Conecta 2026/\")",
+      "Bash(cp \"C:/Agentes/frontend/public/conecta/setup/migration.sql\" \"C:/Users/IgorPC/.claude/projects/Conecta 2026/setup/\")",
+      "Bash(cp \"C:/Agentes/frontend/public/conecta/setup/SETUP.md\" \"C:/Users/IgorPC/.claude/projects/Conecta 2026/setup/\")",
+      "Bash(cp \"C:/Users/IgorPC/.claude/projects/Conecta 2026/CONECTA.html\" \"C:/Agentes/frontend/public/conecta/index.html\")",
+      "Bash(cp \"C:/Users/IgorPC/.claude/projects/Conecta 2026/cadastro-apoiador.html\" \"C:/Agentes/frontend/public/conecta/\")",
+      "Bash(cp \"C:/Users/IgorPC/.claude/projects/Conecta 2026/qrcode-cartao.html\" \"C:/Agentes/frontend/public/conecta/\")",
+      "Bash(cp \"C:/Users/IgorPC/.claude/projects/Conecta 2026/login.html\" \"C:/Agentes/frontend/public/conecta/\")",
+      "Bash(cp \"C:/Users/IgorPC/.claude/projects/Conecta 2026/js/\"* \"C:/Agentes/frontend/public/conecta/js/\")"
+    ]
+  }
+}

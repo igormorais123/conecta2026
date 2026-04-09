@@ -3,7 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.socket.io https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src https://fonts.gstatic.com; connect-src https://*.supabase.co wss://*.supabase.co https://api.qrserver.com; img-src 'self' data: https:; frame-ancestors 'none';">
+    <meta http-equiv="X-Frame-Options" content="DENY">
     <title>Coordenadores Regionais - Campanha Celina</title>
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" id="manifestLink" href="js/manifest.json">
+    <link rel="icon" id="faviconLink" href="icons/favicon.svg" type="image/svg+xml">
+    <meta name="theme-color" content="#1a237e">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="CONECTA">
+    <link rel="apple-touch-icon" id="appleTouchIcon" href="icons/icon-192.png">
+    
+    <script src="js/supabase-config.js" defer></script>
+    <script>
+        (function initProtectedPaths() {
+            var cfg = window.CONECTA_CONFIG || {};
+            var basePath = cfg.basePath || './';
+            if (typeof window.CONECTA_APPLY_PWA === 'function') {
+                window.CONECTA_APPLY_PWA({
+                    manifestLink: document.getElementById('manifestLink'),
+                    faviconLink: document.getElementById('faviconLink'),
+                    appleTouchIcon: document.getElementById('appleTouchIcon')
+                });
+            }
+
+            window.addEventListener('supabase-ready', async function() {
+                var client = window.CONECTA_SUPABASE;
+                if (!client) return;
+                var sessionResult = await client.auth.getSession();
+                if (!sessionResult.data.session) {
+                    window.location.href = (cfg && cfg.loginPath) || (basePath + 'login.html');
+                }
+            });
+        })();
+    </script>
     <style>
         * {
             margin: 0;
@@ -101,6 +136,21 @@
             font-style: italic;
             font-size: 0.9rem;
         }
+        .btn-whatsapp {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+            padding: 8px 16px;
+            background: #25D366;
+            color: #fff;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        .btn-whatsapp:hover { background: #1da851; }
 
         /* Cores por regiao */
         .norte .card-header { background: linear-gradient(135deg, #059669, #10b981); }
@@ -131,6 +181,7 @@
 </head>
 <body>
 
+    <a href="CONECTA.html" style="color:#cbd5e1;text-decoration:none;font-size:0.85rem;margin-bottom:12px;display:inline-block;">&larr; Voltar ao CONECTA</a>
     <h1>Coordenadores Regionais</h1>
     <p class="subtitulo">Campanha Celina &mdash; Contatos das Subcoordenadorias de Mobiliza&ccedil;&atilde;o</p>
 
@@ -147,6 +198,7 @@
                     <span class="tel-icon">&#128222;</span>
                     <a href="tel:+5561992857514">(61) 99285-7514</a>
                 </div>
+                <a href="https://wa.me/5561992857514" target="_blank" class="btn-whatsapp">WhatsApp</a>
             </div>
         </div>
 
@@ -161,6 +213,7 @@
                     <span class="tel-icon">&#128222;</span>
                     <a href="tel:+5561984254075">(61) 98425-4075</a>
                 </div>
+                <a href="https://wa.me/5561984254075" target="_blank" class="btn-whatsapp">WhatsApp</a>
             </div>
         </div>
 
@@ -175,6 +228,7 @@
                     <span class="tel-icon">&#128222;</span>
                     <a href="tel:+5561993028885">(61) 99302-8885</a>
                 </div>
+                <a href="https://wa.me/5561993028885" target="_blank" class="btn-whatsapp">WhatsApp</a>
             </div>
         </div>
 
@@ -189,6 +243,7 @@
                     <span class="tel-icon">&#128222;</span>
                     <a href="tel:+5561991305758">(61) 99130-5758</a>
                 </div>
+                <a href="https://wa.me/5561991305758" target="_blank" class="btn-whatsapp">WhatsApp</a>
             </div>
         </div>
 
@@ -203,6 +258,7 @@
                     <span class="tel-icon">&#128222;</span>
                     <a href="tel:+5561984963088">(61) 98496-3088</a>
                 </div>
+                <a href="https://wa.me/5561984963088" target="_blank" class="btn-whatsapp">WhatsApp</a>
             </div>
         </div>
 
@@ -217,12 +273,21 @@
                     <span class="tel-icon">&#128222;</span>
                     <a href="tel:+5561986233536">(61) 98623-3536</a>
                 </div>
+                <a href="https://wa.me/5561986233536" target="_blank" class="btn-whatsapp">WhatsApp</a>
             </div>
         </div>
 
     </div>
 
     <p class="rodape">Atualizado em 22/03/2026 &bull; Dados extra&iacute;dos do sistema CONECTA</p>
+
+    <footer style="text-align:center;padding:20px;font-size:0.7rem;color:#64748b;margin-top:20px;">
+        <div style="margin-bottom:4px;">
+            <img src="icons/inteia-logo.svg" alt="INTEIA" style="height:24px;vertical-align:middle;margin-right:6px;">
+            Implementado por <a href="https://inteia.com.br" target="_blank" style="color:#94a3b8;text-decoration:none;"><strong>INTEIA &mdash; Inteligência Estratégica Eleitoral</strong></a>
+        </div>
+        <div>Sistema desenvolvido por <strong>Silvio Morais Vieira</strong></div>
+    </footer>
 
 </body>
 </html>

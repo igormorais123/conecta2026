@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.socket.io https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src https://fonts.gstatic.com; connect-src https://*.supabase.co wss://*.supabase.co https://api.qrserver.com; img-src 'self' data: https:; frame-ancestors 'none';">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <title>Login - CONECTA Celina Leão 2026</title>
+    <link rel="manifest" id="manifestLink" href="js/manifest.json">
+    <link rel="icon" id="faviconLink" href="icons/favicon.svg" type="image/svg+xml">
+    <meta name="theme-color" content="#1a237e">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="CONECTA">
+    <link rel="apple-touch-icon" id="appleTouchIcon" href="icons/icon-192.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="js/supabase-config.js" defer></script>
+    <script>
+        (function initPwaAssets() {
+            if (typeof window.CONECTA_APPLY_PWA === 'function') {
+                window.CONECTA_APPLY_PWA({
+                    manifestLink: document.getElementById('manifestLink'),
+                    faviconLink: document.getElementById('faviconLink'),
+                    appleTouchIcon: document.getElementById('appleTouchIcon')
+                });
+            }
+        })();
+    </script>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --primary: #1a237e;
+            --primary-light: #283593;
+            --accent: #ff6f00;
+            --bg: #f0f2f5;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --error: #dc2626;
+            --error-bg: #fef2f2;
+            --success: #16a34a;
+            --success-bg: #f0fdf4;
+            --radius: 12px;
+            --shadow-lg: 0 8px 40px rgba(26, 35, 126, 0.15);
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(26, 35, 126, 0.12), transparent 30%),
+                radial-gradient(circle at bottom right, rgba(255, 111, 0, 0.10), transparent 28%),
+                var(--bg);
+        }
+
+        .login-shell { width: 100%; max-width: 440px; }
+        .login-header { text-align: center; margin-bottom: 28px; }
+        .login-header h1 { font-size: 2.5rem; letter-spacing: 4px; color: var(--primary); }
+        .login-header p { margin-top: 8px; font-size: 0.9rem; color: var(--text-muted); }
+
+        .login-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            padding: 34px 30px;
+        }
+
+        .login-card h2 { margin-bottom: 20px; font-size: 1.1rem; text-align: center; }
+        .login-links {
+            display: flex;
+            justify-content: center;
+            margin: 4px 0 18px;
+        }
+        .login-links a {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 700;
+        }
+        .login-links a:hover { text-decoration: underline; }
+
+        .field { margin-bottom: 16px; }
+        .field label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+
+        .field input {
+            width: 100%;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 14px;
+            font: inherit;
+            color: var(--text);
+            background: #fafbfc;
+            outline: none;
+        }
+
+        .field input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26, 35, 126, 0.10);
+            background: #fff;
+        }
+
+        .message {
+            display: none;
+            margin-bottom: 16px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .message.error {
+            display: block;
+            color: var(--error);
+            background: var(--error-bg);
+            border: 1px solid #fecaca;
+        }
+
+        .message.success {
+            display: block;
+            color: var(--success);
+            background: var(--success-bg);
+            border: 1px solid #bbf7d0;
+        }
+
+        .button {
+            width: 100%;
+            border: none;
+            border-radius: 8px;
+            padding: 13px 18px;
+            font: 600 0.95rem 'Inter', 'Segoe UI', sans-serif;
+            cursor: pointer;
+            background: var(--primary);
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .button:hover:not(:disabled) { background: var(--primary-light); }
+        .button:disabled { opacity: 0.7; cursor: wait; }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2.5px solid rgba(255,255,255,0.35);
+            border-top-color: #fff;
+            border-radius: 50%;
+            display: none;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .helper {
+            margin-top: 16px;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.74rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        @media (max-width: 480px) {
+            .login-card { padding: 28px 20px; }
+            .login-header h1 { font-size: 2.1rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="login-shell">
+    <div class="login-header">
+        <h1>CONECTA</h1>
+        <p>Celina Leao 2026</p>
+    </div>
+
+    <div class="login-card">
+        <h2>Acesse o sistema</h2>
+        <div class="login-links">
+            <a id="linkInteia" href="https://inteia.com.br" target="_blank" rel="noopener noreferrer">Voltar ao site da INTEIA</a>
+        </div>
+        <div id="message" class="message"></div>
+
+        <form id="loginForm" autocomplete="on">
+            <div class="field">
+                <label for="username">Usuário</label>
+                <input type="text" id="username" name="username" placeholder="Digite seu usuário" autocomplete="username" required>
+            </div>
+
+            <div class="field">
+                <label for="password">Senha</label>
+                <input type="password" id="password" name="password" placeholder="Digite sua senha" autocomplete="current-password" required>
+            </div>
+
+            <button type="submit" class="button" id="btnLogin">
+                <span class="spinner" id="spinnerLogin"></span>
+                <span id="btnLoginText">Entrar</span>
+            </button>
+        </form>
+
+        <div class="helper">
+            Use seu usuário da campanha para acessar o sistema.
+        </div>
+    </div>
+
+    <div class="footer">
+        Sistema de campanha - acesso restrito<br>
+        Implementado por <a id="footerInteiaLink" href="https://inteia.com.br" target="_blank" rel="noopener noreferrer" style="color:#94a3b8;text-decoration:none;">INTEIA - Inteligência Estratégica Eleitoral</a><br>
+        Sistema desenvolvido por Silvio Morais Vieira
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+
+    var sitePath = (window.CONECTA_CONFIG && window.CONECTA_CONFIG.sitePath) || 'https://inteia.com.br/';
+    var linkInteia = document.getElementById('linkInteia');
+    var footerInteiaLink = document.getElementById('footerInteiaLink');
+    if (linkInteia) linkInteia.href = sitePath;
+    if (footerInteiaLink) footerInteiaLink.href = sitePath;
+
+    async function resolveEmail(client, username) {
+        try {
+            var result = await client.rpc('resolver_email_por_username', { p_username: username });
+            if (result.error) {
+                console.warn('Falha ao resolver username via RPC:', result.error);
+                return null;
+            }
+            return result.data || null;
+        } catch (error) {
+            console.warn('Erro ao resolver username via RPC:', error);
+            return null;
+        }
+    }
+
+    var messageEl = document.getElementById('message');
+    var formEl = document.getElementById('loginForm');
+    var usernameEl = document.getElementById('username');
+    var passwordEl = document.getElementById('password');
+    var buttonEl = document.getElementById('btnLogin');
+    var spinnerEl = document.getElementById('spinnerLogin');
+    var buttonTextEl = document.getElementById('btnLoginText');
+
+    function showMessage(text, type) {
+        messageEl.textContent = text;
+        messageEl.className = 'message ' + type;
+    }
+
+    function clearMessage() {
+        messageEl.textContent = '';
+        messageEl.className = 'message';
+    }
+
+    function setLoading(loading) {
+        buttonEl.disabled = loading;
+        spinnerEl.style.display = loading ? 'inline-block' : 'none';
+        buttonTextEl.textContent = loading ? 'Entrando...' : 'Entrar';
+    }
+
+    async function getClient() {
+        if (window.CONECTA_SUPABASE) return window.CONECTA_SUPABASE;
+        await new Promise(function(resolve) {
+            window.addEventListener('supabase-ready', resolve, { once: true });
+        });
+        return window.CONECTA_SUPABASE;
+    }
+
+    async function checkExistingSession() {
+        var client = await getClient();
+        if (!client) {
+            showMessage('Supabase não configurado. Ajuste js/supabase-config.js.', 'error');
+            return;
+        }
+
+        var sessionResult = await client.auth.getSession();
+        if (sessionResult.data.session) {
+            window.location.href = (window.CONECTA_CONFIG && window.CONECTA_CONFIG.appPath) || 'CONECTA.html';
+        }
+    }
+
+    formEl.addEventListener('submit', async function(event) {
+        event.preventDefault();
+        clearMessage();
+
+        var username = usernameEl.value.trim().toLowerCase();
+        var password = passwordEl.value;
+
+        if (!username || !password) {
+            showMessage('Preencha usuário e senha.', 'error');
+            return;
+        }
+
+        var client = await getClient();
+        if (!client) {
+            showMessage('Supabase não configurado. Ajuste js/supabase-config.js.', 'error');
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            var email = await resolveEmail(client, username);
+            if (!email) {
+                showMessage('Usuário ou senha inválidos.', 'error');
+                return;
+            }
+
+            var result = await client.auth.signInWithPassword({ email: email, password: password });
+            if (result.error) {
+                showMessage('Usuário ou senha inválidos.', 'error');
+                return;
+            }
+
+            window.location.href = (window.CONECTA_CONFIG && window.CONECTA_CONFIG.appPath) || 'CONECTA.html';
+        } catch (error) {
+            showMessage('Erro de conexão. Tente novamente.', 'error');
+        } finally {
+            setLoading(false);
+        }
+    });
+
+    checkExistingSession();
+})();
+</script>
+</body>
+</html>

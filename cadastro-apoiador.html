@@ -2,11 +2,23 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.socket.io https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src https://fonts.gstatic.com; connect-src https://*.supabase.co wss://*.supabase.co https://api.qrserver.com; img-src 'self' data: https:; frame-ancestors 'none';">
+    <meta http-equiv="X-Frame-Options" content="DENY">
     <title>Cadastro de Apoiador - Celina Leão</title>
+    <link rel="icon" id="faviconLink" href="icons/favicon.svg" type="image/svg+xml">
+    <script>
+        (function initPublicFavicon() {
+            var faviconLink = document.getElementById('faviconLink');
+            if (!faviconLink) return;
+            if (window.location.origin === 'https://inteia.com.br' && window.location.pathname.indexOf('/conecta2026/') === 0) {
+                faviconLink.href = 'https://inteia.com.br/brand/escudo-v2-256.png';
+                faviconLink.type = 'image/png';
+            }
+        })();
+    </script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
@@ -110,7 +122,7 @@
         }
 
         label .opcional {
-            color: #999;
+            color: #6b6b6b;
             font-weight: 400;
             font-size: 12px;
             margin-left: 4px;
@@ -370,6 +382,8 @@
             input, select { padding: 12px 14px; font-size: 15px; }
         }
     </style>
+    <!-- Importacao do Cliente Supabase Consolidado -->
+    <script src="js/supabase-config.js"></script>
 </head>
 <body>
 
@@ -379,7 +393,7 @@
     <p>Governadora do Distrito Federal</p>
 </div>
 
-<div class="container">
+<main class="container">
     <!-- FORMULARIO -->
     <div class="form-container" id="formContainer">
         <div class="intro">
@@ -452,7 +466,7 @@
                 <label for="instagram">Instagram <span class="opcional">(opcional)</span></label>
                 <div class="instagram-wrapper">
                     <span class="prefixo">@</span>
-                    <input type="text" id="instagram" name="instagram" placeholder="seuusuario" autocomplete="off" autocapitalize="none">
+                    <input type="text" id="instagram" name="instagram" placeholder="seuusuário" autocomplete="off" autocapitalize="none">
                 </div>
             </div>
 
@@ -495,7 +509,7 @@
 
         <button class="btn-novo" onclick="novoCadastro()">Fazer novo cadastro</button>
     </div>
-</div>
+</main>
 
 <script>
 // ===== MASCARA DE TELEFONE =====
@@ -593,27 +607,88 @@ document.getElementById('formCadastro').addEventListener('submit', function(e) {
 
     dadosEnviados = coletarDados();
 
-    // Construir URL da API relativa ao servidor que serviu esta pagina
-    var apiUrl = window.location.origin + '/api/cadastros';
-
-    fetch(apiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dadosEnviados)
-    })
-    .then(function(response) {
-        if (!response.ok) throw new Error('Erro no servidor');
-        return response.json();
-    })
-    .then(function(data) {
-        mostrarSucesso(true);
-    })
-    .catch(function(err) {
-        // Servidor indisponivel - salvar localmente como fallback
-        console.log('Servidor indisponivel, dados apenas em tela:', err.message);
+    // Tentar salvar no Supabase via client compartilhado
+    var sb = window.CONECTA_SUPABASE || window._conectaSupabase;
+    if (sb) {
+        sb.from('apoiadores').insert({
+            nome: dadosEnviados.nome,
+            telefone: dadosEnviados.telefone,
+            telefone_numeros: dadosEnviados.telefoneNumeros,
+            email: dadosEnviados.email || null,
+            cidade: dadosEnviados.cidade,
+            instagram: dadosEnviados.instagram || null,
+            lgpd_aceite: true
+        }).then(function(result) {
+            if (result.error) {
+                console.warn('Supabase erro, salvando local:', result.error);
+                salvarLocal(dadosEnviados);
+                mostrarSucesso(false);
+            } else {
+                mostrarSucesso(true);
+            }
+        }).catch(function() {
+            salvarLocal(dadosEnviados);
+            mostrarSucesso(false);
+        });
+    } else {
+        salvarLocal(dadosEnviados);
         mostrarSucesso(false);
-    });
+    }
+
+    function salvarLocal(dados) {
+        try {
+            var fila = JSON.parse(localStorage.getItem('conecta_apoiadores_fila') || '[]');
+            fila.push(dados);
+            localStorage.setItem('conecta_apoiadores_fila', JSON.stringify(fila));
+        } catch(e) { console.warn('Erro localStorage:', e); }
+    }
 });
+
+async function replayFilaApoiadores() {
+    var sb = window.CONECTA_SUPABASE || window._conectaSupabase;
+    if (!sb) return;
+
+    try {
+        var fila = JSON.parse(localStorage.getItem('conecta_apoiadores_fila') || '[]');
+        if (fila.length === 0) return;
+
+        var resultados = await Promise.all(fila.map(function(dados) {
+            return sb.from('apoiadores').insert({
+                nome: dados.nome, telefone: dados.telefone,
+                telefone_numeros: dados.telefoneNumeros,
+                email: dados.email || null, cidade: dados.cidade,
+                instagram: dados.instagram || null, lgpd_aceite: true
+            }).then(function(r) {
+                return { ok: !r.error, dados: dados };
+            }).catch(function() {
+                return { ok: false, dados: dados };
+            });
+        }));
+
+        var restante = resultados.filter(function(item) {
+            return !item.ok;
+        }).map(function(item) {
+            return item.dados;
+        });
+
+        localStorage.setItem('conecta_apoiadores_fila', JSON.stringify(restante));
+    } catch(e) {
+        console.warn('Erro ao reenviar fila de apoiadores:', e);
+    }
+}
+
+// Retry da fila quando ficar online
+window.addEventListener('online', function() {
+    replayFilaApoiadores();
+});
+
+if (navigator.onLine) {
+    if (window.CONECTA_SUPABASE || window._conectaSupabase) {
+        replayFilaApoiadores();
+    } else {
+        window.addEventListener('supabase-ready', replayFilaApoiadores, { once: true });
+    }
+}
 
 function mostrarSucesso(salvoNoServidor) {
     document.getElementById('formContainer').classList.add('oculto');
@@ -623,22 +698,35 @@ function mostrarSucesso(salvoNoServidor) {
     if (salvoNoServidor) {
         document.getElementById('msgSucesso').textContent = 'Seus dados foram salvos com sucesso. Obrigada pelo cadastro!';
     } else {
-        document.getElementById('msgSucesso').textContent = 'Cadastro registrado! (Servidor local indisponível - dados exibidos abaixo para registro manual)';
+        document.getElementById('msgSucesso').textContent = 'Cadastro registrado localmente. Será enviado automaticamente quando a conexão for restabelecida.';
     }
 
-    // Resumo
+    // Resumo (construção segura via DOM para evitar XSS)
     var resumo = document.getElementById('resumo');
-    var html = '<h3>Seus dados</h3>';
-    html += '<div class="item"><span class="rotulo">Nome</span><span class="valor">' + dadosEnviados.nome + '</span></div>';
-    html += '<div class="item"><span class="rotulo">Telefone</span><span class="valor">' + dadosEnviados.telefone + '</span></div>';
-    if (dadosEnviados.email) {
-        html += '<div class="item"><span class="rotulo">E-mail</span><span class="valor">' + dadosEnviados.email + '</span></div>';
+    resumo.textContent = '';
+    var h3 = document.createElement('h3');
+    h3.textContent = 'Seus dados';
+    resumo.appendChild(h3);
+
+    function addResumoItem(rotulo, valor) {
+        var div = document.createElement('div');
+        div.className = 'item';
+        var spanR = document.createElement('span');
+        spanR.className = 'rotulo';
+        spanR.textContent = rotulo;
+        var spanV = document.createElement('span');
+        spanV.className = 'valor';
+        spanV.textContent = valor;
+        div.appendChild(spanR);
+        div.appendChild(spanV);
+        resumo.appendChild(div);
     }
-    html += '<div class="item"><span class="rotulo">Cidade/RA</span><span class="valor">' + dadosEnviados.cidade + '</span></div>';
-    if (dadosEnviados.instagram) {
-        html += '<div class="item"><span class="rotulo">Instagram</span><span class="valor">' + dadosEnviados.instagram + '</span></div>';
-    }
-    resumo.innerHTML = html;
+
+    addResumoItem('Nome', dadosEnviados.nome);
+    addResumoItem('Telefone', dadosEnviados.telefone);
+    if (dadosEnviados.email) addResumoItem('E-mail', dadosEnviados.email);
+    addResumoItem('Cidade/RA', dadosEnviados.cidade);
+    if (dadosEnviados.instagram) addResumoItem('Instagram', dadosEnviados.instagram);
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }

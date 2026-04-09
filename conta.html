@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.socket.io https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src https://fonts.gstatic.com; connect-src https://*.supabase.co wss://*.supabase.co https://api.qrserver.com; img-src 'self' data: https:; frame-ancestors 'none';">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <title>Minha Conta - CONECTA 2026</title>
+    <link rel="manifest" id="manifestLink" href="js/manifest.json">
+    <link rel="icon" id="faviconLink" href="icons/favicon.svg" type="image/svg+xml">
+    <meta name="theme-color" content="#1a237e">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="CONECTA">
+    <link rel="apple-touch-icon" id="appleTouchIcon" href="icons/icon-192.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="js/supabase-config.js" defer></script>
+    <script src="js/conecta-db.js" defer></script>
+    <script src="js/elexion-client.js" defer></script>
+    <script>
+        (function initPwaAssets() {
+            if (typeof window.CONECTA_APPLY_PWA === 'function') {
+                window.CONECTA_APPLY_PWA({
+                    manifestLink: document.getElementById('manifestLink'),
+                    faviconLink: document.getElementById('faviconLink'),
+                    appleTouchIcon: document.getElementById('appleTouchIcon')
+                });
+            }
+        })();
+    </script>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            min-height: 100vh;
+            padding: 24px;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            color: #1e293b;
+            background:
+                radial-gradient(circle at top left, rgba(26, 35, 126, 0.12), transparent 25%),
+                radial-gradient(circle at bottom right, rgba(255, 111, 0, 0.10), transparent 25%),
+                #f0f2f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .card {
+            width: 100%;
+            max-width: 520px;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            box-shadow: 0 12px 40px rgba(26, 35, 126, 0.14);
+            padding: 32px 28px;
+        }
+        h1 {
+            font-size: 1.5rem;
+            color: #1a237e;
+            margin-bottom: 6px;
+        }
+        .subtitle {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+        }
+        .panel {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        .label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+        .field {
+            margin-bottom: 16px;
+        }
+        input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid #dbe3ee;
+            border-radius: 8px;
+            font: inherit;
+            background: #fff;
+            color: #1e293b;
+            outline: none;
+        }
+        input:focus {
+            border-color: #1a237e;
+            box-shadow: 0 0 0 3px rgba(26, 35, 126, 0.10);
+        }
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        .secondary-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+        }
+        button, a.button-link {
+            border: none;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font: 600 0.9rem 'Inter', 'Segoe UI', sans-serif;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .primary { background: #1a237e; color: #fff; }
+        .secondary { background: #fff; color: #1a237e; border: 1.5px solid #dbe3ee; }
+        .danger { background: #b91c1c; color: #fff; }
+        .message {
+            display: none;
+            margin-top: 18px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+        .message.error {
+            display: block;
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+        .message.success {
+            display: block;
+            background: #f0fdf4;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+        .footer {
+            margin-top: 24px;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.74rem;
+            line-height: 1.6;
+        }
+        .elexion-section {
+            margin-top: 28px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 24px;
+        }
+        .elexion-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-bottom: 16px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+        }
+        .elexion-status.connected {
+            background: #f0fdf4;
+            border-color: #bbf7d0;
+            color: #15803d;
+        }
+        .elexion-status.disconnected {
+            background: #fef2f2;
+            border-color: #fecaca;
+            color: #dc2626;
+        }
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Minha Conta</h1>
+        <div class="subtitle">Atualize sua senha e gerencie sua sessão.</div>
+
+        <div class="panel">
+            <strong>Usuario logado:</strong> <span id="profileName">Carregando...</span><br>
+            <strong>E-mail interno:</strong> <span id="profileEmail">Carregando...</span>
+        </div>
+
+        <div class="field">
+            <label class="label" for="newPassword">Nova senha</label>
+            <input type="password" id="newPassword" autocomplete="new-password" placeholder="Digite uma nova senha">
+        </div>
+
+        <div class="field">
+            <label class="label" for="confirmPassword">Confirmar nova senha</label>
+            <input type="password" id="confirmPassword" autocomplete="new-password" placeholder="Repita a nova senha">
+        </div>
+
+        <div class="actions">
+            <button class="primary" id="saveButton" type="button">Alterar senha</button>
+            <a class="button-link secondary" id="linkVoltar" href="CONECTA.html">Voltar ao CONECTA</a>
+            <button class="danger" id="logoutButton" type="button">Sair</button>
+        </div>
+        <div class="secondary-links">
+            <a class="button-link secondary" id="linkInteia" href="https://inteia.com.br" target="_blank" rel="noopener noreferrer">Abrir site da INTEIA</a>
+        </div>
+
+        <div id="message" class="message"></div>
+
+        <!-- Integracao Elexion -->
+        <div class="elexion-section">
+            <h2 style="font-size:1.1rem;color:#1a237e;margin-bottom:4px;">Integração Elexion</h2>
+            <p style="color:#64748b;font-size:0.85rem;margin-bottom:14px;">
+                Vincule sua conta do sistema de campo (Elexion) para acessar dados de gamificação e heatmap.
+            </p>
+
+            <div id="elexionStatus" class="elexion-status disconnected">
+                <span class="dot"></span>
+                <span id="elexionStatusText">Não conectado ao Elexion</span>
+            </div>
+
+            <div id="elexionLoginForm">
+                <div class="field">
+                    <label class="label" for="elexionEmail">E-mail Elexion</label>
+                    <input type="email" id="elexionEmail" placeholder="coordenador@inteia.com.br" autocomplete="username">
+                </div>
+                <div class="field">
+                    <label class="label" for="elexionPassword">Senha Elexion</label>
+                    <input type="password" id="elexionPassword" placeholder="" autocomplete="current-password">
+                </div>
+                <div class="actions">
+                    <button class="primary" id="elexionLoginBtn">Conectar ao Elexion</button>
+                </div>
+            </div>
+
+            <div id="elexionConnectedInfo" style="display:none;">
+                <div class="panel">
+                    <strong>Conectado como:</strong> <span id="elexionUserName">&mdash;</span><br>
+                    <strong>E-mail:</strong> <span id="elexionUserEmail">&mdash;</span><br>
+                    <strong>Perfil:</strong> <span id="elexionUserRole">&mdash;</span>
+                </div>
+                <div class="actions">
+                    <button class="secondary" id="elexionDisconnectBtn">Desconectar do Elexion</button>
+                    <button class="secondary" id="elexionTestBtn">Testar Conexão</button>
+                </div>
+            </div>
+
+            <div id="elexionMsg" class="message"></div>
+        </div>
+
+        <div class="footer">
+            Implementado por <a id="footerInteiaLink" href="https://inteia.com.br" target="_blank" rel="noopener noreferrer" style="color:#64748b;text-decoration:none;">INTEIA - Inteligência Estratégica Eleitoral</a><br>
+            Sistema desenvolvido por Silvio Morais Vieira
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        'use strict';
+
+        var messageEl = document.getElementById('message');
+        var saveButton = document.getElementById('saveButton');
+        var logoutButton = document.getElementById('logoutButton');
+        var nameEl = document.getElementById('profileName');
+        var emailEl = document.getElementById('profileEmail');
+        var newPasswordEl = document.getElementById('newPassword');
+        var confirmPasswordEl = document.getElementById('confirmPassword');
+        var linkVoltar = document.getElementById('linkVoltar');
+        var linkInteia = document.getElementById('linkInteia');
+        var footerInteiaLink = document.getElementById('footerInteiaLink');
+
+        function showMessage(text, type) {
+            messageEl.textContent = text;
+            messageEl.className = 'message ' + type;
+        }
+
+        function clearMessage() {
+            messageEl.textContent = '';
+            messageEl.className = 'message';
+        }
+
+        async function requireSession() {
+            await ConectaDB.init();
+            var user = await ConectaDB.getUser();
+            if (!user) {
+                window.location.href = (window.CONECTA_CONFIG && window.CONECTA_CONFIG.loginPath) || 'login.html';
+                return null;
+            }
+            return user;
+        }
+
+        async function loadProfile() {
+            var user = await requireSession();
+            if (!user) return;
+
+            var profile = await ConectaDB.getUserProfile();
+            nameEl.textContent = profile && profile.nome ? profile.nome : user.email;
+            emailEl.textContent = user.email || '-';
+        }
+
+        var cfg = window.CONECTA_CONFIG || {};
+        if (linkVoltar) {
+            linkVoltar.href = cfg.appPath || 'CONECTA.html';
+        }
+        if (linkInteia) {
+            linkInteia.href = cfg.sitePath || 'https://inteia.com.br/';
+        }
+        if (footerInteiaLink) {
+            footerInteiaLink.href = cfg.sitePath || 'https://inteia.com.br/';
+        }
+
+        saveButton.addEventListener('click', async function() {
+            clearMessage();
+            var newPassword = newPasswordEl.value;
+            var confirmPassword = confirmPasswordEl.value;
+
+            if (newPassword.length < 8) {
+                showMessage('A nova senha precisa ter pelo menos 8 caracteres.', 'error');
+                return;
+            }
+            if (!/[A-Z]/.test(newPassword) || !/[0-9]/.test(newPassword)) {
+                showMessage('A senha precisa ter pelo menos 1 letra maiúscula e 1 número.', 'error');
+                return;
+            }
+            if (newPassword !== confirmPassword) {
+                showMessage('As senhas não conferem.', 'error');
+                return;
+            }
+
+            if (!window.CONECTA_SUPABASE) {
+                showMessage('Supabase não configurado.', 'error');
+                return;
+            }
+
+            saveButton.disabled = true;
+            saveButton.textContent = 'Salvando...';
+
+            try {
+                var result = await window.CONECTA_SUPABASE.auth.updateUser({ password: newPassword });
+                if (result.error) {
+                    showMessage(result.error.message, 'error');
+                    return;
+                }
+                newPasswordEl.value = '';
+                confirmPasswordEl.value = '';
+                showMessage('Senha alterada com sucesso.', 'success');
+            } catch (error) {
+                showMessage('Não foi possível alterar a senha.', 'error');
+            } finally {
+                saveButton.disabled = false;
+                saveButton.textContent = 'Alterar senha';
+            }
+        });
+
+        logoutButton.addEventListener('click', function() {
+            ConectaDB.logout();
+        });
+
+        // Ajustar link de volta
+        if (linkVoltar && (window.CONECTA_CONFIG || {}).appPath) linkVoltar.href = window.CONECTA_CONFIG.appPath;
+
+        if (window.CONECTA_SUPABASE || window._conectaSupabaseError) {
+            loadProfile();
+        } else {
+            window.addEventListener('supabase-ready', loadProfile, { once: true });
+        }
+    })();
+    </script>
+    <script>
+    // Integracao Elexion — conta.html
+    (function initElexionUI() {
+        if (typeof ElexionClient === 'undefined') return;
+
+        // Verificar se ja ha sessao ativa
+        ElexionClient.isAuthenticated().then(function(authed) {
+            if (authed) {
+                var user = ElexionClient.getCurrentUser();
+                if (user) mostrarConectado(user);
+            }
+        });
+
+        // Event listeners
+        var loginBtn = document.getElementById('elexionLoginBtn');
+        if (loginBtn) loginBtn.addEventListener('click', conectarElexion);
+
+        var disconnectBtn = document.getElementById('elexionDisconnectBtn');
+        if (disconnectBtn) disconnectBtn.addEventListener('click', desconectarElexion);
+
+        var testBtn = document.getElementById('elexionTestBtn');
+        if (testBtn) testBtn.addEventListener('click', testarElexion);
+    })();
+
+    function mostrarConectado(user) {
+        document.getElementById('elexionLoginForm').style.display = 'none';
+        document.getElementById('elexionConnectedInfo').style.display = 'block';
+        var statusEl = document.getElementById('elexionStatus');
+        statusEl.className = 'elexion-status connected';
+        document.getElementById('elexionStatusText').textContent = 'Conectado ao Elexion';
+        document.getElementById('elexionUserName').textContent = user.name || '\u2014';
+        document.getElementById('elexionUserEmail').textContent = user.email || '\u2014';
+        document.getElementById('elexionUserRole').textContent = user.role || '\u2014';
+    }
+
+    function mostrarDesconectado() {
+        document.getElementById('elexionLoginForm').style.display = 'block';
+        document.getElementById('elexionConnectedInfo').style.display = 'none';
+        var statusEl = document.getElementById('elexionStatus');
+        statusEl.className = 'elexion-status disconnected';
+        document.getElementById('elexionStatusText').textContent = 'Não conectado ao Elexion';
+    }
+
+    function mostrarMensagemElexion(texto, tipo) {
+        var msg = document.getElementById('elexionMsg');
+        msg.textContent = texto;
+        msg.className = 'message ' + tipo;
+        setTimeout(function() { msg.className = 'message'; }, 5000);
+    }
+
+    async function conectarElexion() {
+        if (typeof ElexionClient === 'undefined') {
+            mostrarMensagemElexion('ElexionClient não carregado. Recarregue a página.', 'error');
+            return;
+        }
+        var email = document.getElementById('elexionEmail').value.trim();
+        var password = document.getElementById('elexionPassword').value;
+        if (!email || !password) {
+            mostrarMensagemElexion('Informe e-mail e senha do Elexion.', 'error');
+            return;
+        }
+        var btn = document.getElementById('elexionLoginBtn');
+        btn.disabled = true;
+        btn.textContent = 'Conectando...';
+
+        // ElexionClient.login() foi removido na v2.0 — autenticacao agora e via proxy Supabase
+        btn.disabled = false;
+        btn.textContent = 'Conectar ao Elexion';
+        mostrarMensagemElexion('Login Elexion desabilitado — use a autenticacao via Supabase.', 'error');
+    }
+
+    function desconectarElexion() {
+        if (typeof ElexionClient !== 'undefined') ElexionClient.logout();
+        mostrarDesconectado();
+        mostrarMensagemElexion('Desconectado do Elexion.', 'success');
+    }
+
+    async function testarElexion() {
+        if (typeof ElexionClient === 'undefined') return;
+        var kpis = await ElexionClient.fetchKpis();
+        if (kpis) {
+            mostrarMensagemElexion('Conexao OK - API Elexion respondendo.', 'success');
+        } else {
+            mostrarMensagemElexion('Sem resposta da API Elexion. Token pode ter expirado.', 'error');
+        }
+    }
+    </script>
+</body>
+</html>

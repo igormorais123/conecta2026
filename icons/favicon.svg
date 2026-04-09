@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title>CONECTA 2026</title>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a237e" />
+      <stop offset="100%" stop-color="#3949ab" />
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)" />
+  <path d="M20 32c0-7.18 5.82-13 13-13 4.52 0 8.5 2.31 10.82 5.82l-4.6 2.58A7.97 7.97 0 0 0 33 24c-4.42 0-8 3.58-8 8s3.58 8 8 8c2.63 0 4.96-1.27 6.42-3.24l4.54 2.69A12.95 12.95 0 0 1 33 45c-7.18 0-13-5.82-13-13Z" fill="#ffffff"/>
+  <circle cx="47" cy="22" r="5" fill="#ff6f00" />
+</svg>

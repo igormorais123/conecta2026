@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="200" height="60">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#c9952a"/>
+      <stop offset="100%" stop-color="#e8c547"/>
+    </linearGradient>
+  </defs>
+  <rect width="200" height="60" rx="8" fill="#0f172a"/>
+  <text x="100" y="38" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="26" font-weight="700" fill="url(#g)" letter-spacing="4">INTEIA</text>
+  <text x="100" y="52" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="7" fill="#94a3b8" letter-spacing="1.5">INTELIGÊNCIA ESTRATÉGICA</text>
+</svg>

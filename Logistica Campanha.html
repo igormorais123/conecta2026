@@ -3,22 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.socket.io https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src https://fonts.gstatic.com; connect-src https://*.supabase.co wss://*.supabase.co https://api.qrserver.com; img-src 'self' data: https:; frame-ancestors 'none';">
+<meta http-equiv="X-Frame-Options" content="DENY">
 <title>Logística Campanha Celina Leão 2026</title>
+<link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+<script src="js/supabase-config.js" defer></script>
+<script src="js/conecta-db.js" defer></script>
 <style>
 :root {
     --bg: #0f172a; --card: #1e293b; --card2: #334155; --accent: #3b82f6;
     --accent2: #8b5cf6; --green: #10b981; --orange: #f59e0b; --red: #ef4444;
-    --cyan: #06b6d4; --pink: #ec4899; --text: #f1f5f9; --text2: #94a3b8;
+    --cyan: #06b6d4; --pink: #ec4899; --text: #f1f5f9; --text2: #b8c9db;
     --border: #475569; --input-bg: #0f172a;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:'Segoe UI',Tahoma,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
 
 /* NAV */
-.nav { background:var(--card); border-bottom:2px solid var(--accent); display:flex; align-items:center; padding:0 20px; height:56px; position:sticky; top:0; z-index:100; }
-.nav-brand { font-weight:800; font-size:1.1rem; color:var(--accent); margin-right:30px; white-space:nowrap; }
-.nav-links { display:flex; gap:4px; overflow-x:auto; }
-.nav-links button { background:none; border:none; color:var(--text2); padding:8px 14px; cursor:pointer; border-radius:6px; font-size:0.82rem; white-space:nowrap; transition:all .2s; }
+.nav { background:var(--card); border-bottom:2px solid var(--accent); display:flex; flex-wrap:wrap; align-items:center; padding:8px 20px; position:sticky; top:0; z-index:100; gap:6px; }
+.nav-top-row { display:flex; align-items:center; width:100%; gap:10px; }
+.nav-brand { font-weight:800; font-size:1.1rem; color:var(--accent); white-space:nowrap; }
+.nav-links { display:flex; flex-wrap:wrap; gap:4px; width:100%; padding-top:6px; border-top:1px solid var(--border); }
+.nav-links button { background:none; border:none; color:var(--text2); padding:6px 12px; cursor:pointer; border-radius:6px; font-size:0.8rem; white-space:nowrap; transition:all .2s; }
 .nav-links button:hover, .nav-links button.active { background:var(--accent); color:#fff; }
 
 /* LAYOUT */
@@ -97,7 +103,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
 .btn-primary:hover { background:#2563eb; }
 .btn-success { background:var(--green); color:#fff; }
 .btn-danger { background:var(--red); color:#fff; }
-.btn-sm { padding:5px 12px; font-size:0.75rem; }
+.btn-sm { padding:10px 16px; font-size:0.75rem; min-height:44px; }
 
 /* FORM */
 .form-group { margin-bottom:12px; }
@@ -169,30 +175,65 @@ tr:hover td { background:rgba(59,130,246,0.05); }
 }
 @media(max-width:768px) {
     .grid-2,.grid-3,.grid-4 { grid-template-columns:1fr; }
+    .add-membro-row { grid-template-columns:1fr 1fr; }
     .countdown-grid { grid-template-columns:repeat(2,1fr); }
-    .nav-links { font-size:.7rem; }
+    .nav-links { gap:3px; }
+    .nav-links button { font-size:.73rem; padding:5px 10px; min-height:36px; }
+    #salasStatusGrid { grid-template-columns:repeat(3,1fr) !important; }
+    table { display:block; overflow-x:auto; white-space:nowrap; }
+    .modal { width:95%; padding:16px; margin:20px auto; }
+    .nav { padding:8px 10px; }
+    .nav-top-row { flex-wrap:wrap; gap:6px; }
+    .form-group input, .form-group select { font-size:16px; }
+}
+@media(max-width:480px) {
+    .countdown-grid { grid-template-columns:1fr; }
+    .nav-links { gap:3px; }
+    .nav-links button { font-size:.68rem; padding:5px 8px; min-height:38px; }
+    .header { flex-wrap:wrap; gap:4px; }
+    .add-membro-row { grid-template-columns:1fr; }
 }
 </style>
 </head>
 <body>
+<a href="#mainContent" class="skip-link" style="position:absolute;left:-9999px;top:0;z-index:9999;padding:8px 16px;background:#3b82f6;color:#fff;font-size:14px;text-decoration:none;" onfocus="this.style.left='0'" onblur="this.style.left='-9999px'">Pular para o conteúdo</a>
 
 <!-- NAV -->
 <div class="nav">
-    <div class="nav-brand">&#9881; LOGISTICA CELINA 2026</div>
-    <button class="btn btn-sm" style="background:var(--accent2);color:#fff;margin-right:12px;" onclick="showQRCode()">QR Code Celular</button>
+    <div class="nav-top-row">
+        <div class="nav-brand">&#9881; LOGISTICA CELINA 2026</div>
+        <button class="btn btn-sm" style="background:var(--accent2);color:#fff;" onclick="showQRCode()">QR Code Celular</button>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+            <span id="userName" style="font-size:0.78rem;color:var(--text2);font-weight:600;"></span>
+            <button class="btn btn-sm" style="background:#0277bd;color:#fff;" onclick="quickExportJSON()" title="Ctrl+E">Backup</button>
+            <button class="btn btn-sm" style="background:#455a64;color:#fff;" onclick="quickImportJSON()" title="Restaurar backup">Restaurar</button>
+            <button class="btn btn-sm" style="background:var(--accent);color:#fff;" onclick="openInteiaSite()">INTEIA</button>
+            <button class="btn btn-sm" style="background:var(--green);color:#fff;" onclick="window.location.href=(window.CONECTA_CONFIG && window.CONECTA_CONFIG.appPath) || 'CONECTA.html'">&#8592; CONECTA</button>
+            <button class="btn btn-sm" style="background:var(--card2);color:#fff;" onclick="window.location.href=(window.CONECTA_CONFIG && window.CONECTA_CONFIG.contaPath) || 'conta.html'">Conta</button>
+            <button class="btn btn-sm" style="background:var(--red);color:#fff;" onclick="ConectaDB.logout()">Sair</button>
+        </div>
+    </div>
     <div class="nav-links">
         <button class="active" onclick="showPage('dashboard')">Dashboard</button>
         <button onclick="showPage('tarefas')">Tarefas</button>
         <button onclick="showPage('materiais')">Materiais</button>
         <button onclick="showPage('fornecedores')">Fornecedores</button>
-        <button onclick="showPage('equipe')">Equipe de Campo</button>
+        <button onclick="showPage('equipe')">Equipe</button>
         <button onclick="showPage('subcoord')">Subcoordenações</button>
         <button onclick="showPage('calendario')">Calendário</button>
         <button onclick="showPage('checklist')">Checklist</button>
+        <button onclick="showPage('eleitorado')">Eleitorado DF</button>
+        <button onclick="showPage('agendasalas')">Agenda Salas</button>
+        <button onclick="showPage('orcamento')">Orçamento</button>
+        <button onclick="showPage('distribuicao')">Distribuição</button>
+        <button onclick="showPage('vales')">Vales Combustíveis</button>
+        <button onclick="showPage('reversa')">Ativos na Rua</button>
+        <button onclick="showPage('bandeiracos')">Eventos & Bandeiraços</button>
+        <button onclick="showPage('patrimonio')">Patrimônio</button>
     </div>
 </div>
 
-<div class="container">
+<div class="container" id="mainContent">
 
 <!-- ============ DASHBOARD ============ -->
 <div class="page active" id="page-dashboard">
@@ -233,6 +274,28 @@ tr:hover td { background:rgba(59,130,246,0.05); }
             <div class="stat-label">Alertas Material</div>
             <div class="stat-hint">clique para ver</div>
         </div>
+    </div>
+
+    <!-- STATUS DO SISTEMA -->
+    <div id="sistemaStatus" class="card" style="margin-bottom:16px;padding:10px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:0.78rem;"></div>
+
+    <!-- ACOES RAPIDAS -->
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+        <button class="btn btn-sm" style="background:#7c3aed;color:#fff;padding:8px 16px;" onclick="gerarBriefingIA()">Briefing IA</button>
+        <button class="btn btn-sm" style="background:#25d366;color:#fff;padding:8px 16px;" onclick="gerarResumoWhatsApp()">Resumo WhatsApp</button>
+        <button class="btn btn-sm" style="background:var(--card2);color:#fff;padding:8px 16px;" onclick="imprimirRelatorio()">Imprimir</button>
+        <button class="btn btn-sm" style="background:#0277bd;color:#fff;padding:8px 16px;" onclick="exportTarefasCSV()">Tarefas CSV</button>
+        <button class="btn btn-sm" style="background:#0277bd;color:#fff;padding:8px 16px;" onclick="exportMateriaisCSV()">Materiais CSV</button>
+    </div>
+
+    <!-- BRIEFING IA -->
+    <div class="card" id="briefingIA" style="margin-bottom:16px;border-left:4px solid #7c3aed;display:none;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+            <span style="font-size:1.2rem;">🤖</span>
+            <strong style="color:#a78bfa;">Briefing IA do Dia</strong>
+            <button class="btn btn-sm" style="background:#7c3aed;color:#fff;margin-left:auto;padding:4px 12px;font-size:.72rem;" onclick="gerarBriefingIA()">Atualizar</button>
+        </div>
+        <div id="briefingConteudo" style="font-size:.85rem;line-height:1.6;color:var(--text);white-space:pre-wrap;"></div>
     </div>
 
     <!-- PROXIMAS TAREFAS + ENTREGAS -->
@@ -277,6 +340,9 @@ tr:hover td { background:rgba(59,130,246,0.05); }
                 <option value="__sem__">Sem responsável</option>
             </select>
             <button class="btn btn-primary" onclick="openModalTarefa()">+ Nova Tarefa</button>
+            <button class="btn btn-sm" style="background:#0277bd;color:#fff;margin-left:8px;" onclick="exportTarefasCSV()">CSV</button>
+            <button class="btn btn-sm" style="background:#455a64;color:#fff;" onclick="importTarefasCSV()">Importar CSV</button>
+            <button class="btn btn-sm" style="background:#4285f4;color:#fff;" onclick="addTarefasPendentesToGoogle()">Google Agenda</button>
         </div>
     </div>
     <div class="card"><table><thead><tr>
@@ -313,14 +379,14 @@ tr:hover td { background:rgba(59,130,246,0.05); }
     </tr></thead><tbody id="tbFornecedores"></tbody></table></div>
 </div>
 
-<!-- ============ EQUIPE DE CAMPO ============ -->
+<!-- ============ EQUIPE ============ -->
 <div class="page" id="page-equipe">
     <div class="card-header" style="margin-bottom:16px;">
         <div>
-            <div class="card-title" style="font-size:1.2rem;">Equipe de Campo</div>
+            <div class="card-title" style="font-size:1.2rem;">Equipe</div>
             <div class="card-subtitle">Equipe para acompanhar a governadora e distribuir materiais</div>
         </div>
-        <button class="btn btn-primary" onclick="openModalEquipe()">+ Adicionar Membro</button>
+        <button class="btn btn-primary" onclick="openModalEquipe()">+ Adicionar</button>
     </div>
     <div class="card"><table><thead><tr>
         <th>Nome da Equipe</th><th>Coordenador de Equipe</th><th>Membros</th><th>Função</th><th>Telefone</th><th>Região</th><th>Materiais Designados</th><th>Atribuições</th><th>Status</th><th>Ações</th>
@@ -489,6 +555,82 @@ tr:hover td { background:rgba(59,130,246,0.05); }
     </div>
 </div>
 
+<!-- ============ ELEITORADO DF ============ -->
+<div class="page" id="page-eleitorado">
+    <div class="card" style="margin-bottom:16px;">
+        <div class="card-header">
+            <div>
+                <div class="card-title" style="font-size:1.2rem;">Eleitorado do Distrito Federal por Região Administrativa</div>
+                <div class="card-subtitle">Base: Eleições 2022 - TRE-DF</div>
+            </div>
+            <div>
+                <input type="text" id="buscaRA" placeholder="Buscar Região Administrativa..." oninput="filtrarEleitorado()" style="padding:9px 14px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.85rem;width:280px;">
+            </div>
+        </div>
+        <div class="grid-3" style="margin-bottom:20px;">
+            <div class="card stat" style="background:var(--card2);">
+                <div class="stat-num" style="color:var(--accent);">2.853.835</div>
+                <div class="stat-label">Total de Eleitores</div>
+            </div>
+            <div class="card stat" style="background:var(--card2);">
+                <div class="stat-num" style="color:var(--green);">34</div>
+                <div class="stat-label">Regiões Administrativas</div>
+            </div>
+            <div class="card stat" style="background:var(--card2);">
+                <div class="stat-num" style="color:var(--cyan);">3.092.855</div>
+                <div class="stat-label">Total de Habitantes</div>
+            </div>
+        </div>
+        <table>
+            <thead><tr>
+                <th style="width:5%;">#</th>
+                <th>Região Administrativa</th>
+                <th style="text-align:right;">Eleitores</th>
+                <th style="text-align:right;">Habitantes</th>
+                <th style="text-align:right;">% Eleitorado</th>
+            </tr></thead>
+            <tbody>
+                <tr><td>1</td><td><strong>Ceilândia</strong></td><td style="text-align:right;">318.000</td><td style="text-align:right;">287.023</td><td style="text-align:right;"><span class="badge badge-blue">11,14%</span></td></tr>
+                <tr><td>2</td><td><strong>Samambaia</strong></td><td style="text-align:right;">252.000</td><td style="text-align:right;">218.840</td><td style="text-align:right;"><span class="badge badge-blue">8,83%</span></td></tr>
+                <tr><td>3</td><td><strong>Taguatinga</strong></td><td style="text-align:right;">223.000</td><td style="text-align:right;">193.367</td><td style="text-align:right;"><span class="badge badge-blue">7,82%</span></td></tr>
+                <tr><td>4</td><td><strong>Plano Piloto</strong></td><td style="text-align:right;">171.000</td><td style="text-align:right;">198.697</td><td style="text-align:right;"><span class="badge badge-purple">5,99%</span></td></tr>
+                <tr><td>5</td><td><strong>Planaltina</strong></td><td style="text-align:right;">136.418</td><td style="text-align:right;">200.000</td><td style="text-align:right;"><span class="badge badge-purple">4,78%</span></td></tr>
+                <tr><td>6</td><td><strong>Gama</strong></td><td style="text-align:right;">128.431</td><td style="text-align:right;">127.000</td><td style="text-align:right;"><span class="badge badge-purple">4,50%</span></td></tr>
+                <tr><td>7</td><td><strong>Águas Claras</strong></td><td style="text-align:right;">115.000</td><td style="text-align:right;">135.000</td><td style="text-align:right;"><span class="badge badge-purple">4,03%</span></td></tr>
+                <tr><td>8</td><td><strong>Recanto das Emas</strong></td><td style="text-align:right;">114.741</td><td style="text-align:right;">160.000</td><td style="text-align:right;"><span class="badge badge-purple">4,02%</span></td></tr>
+                <tr><td>9</td><td><strong>Guarà</strong></td><td style="text-align:right;">102.000</td><td style="text-align:right;">113.000</td><td style="text-align:right;"><span class="badge badge-cyan">3,57%</span></td></tr>
+                <tr><td>10</td><td><strong>Santa Maria</strong></td><td style="text-align:right;">101.226</td><td style="text-align:right;">123.000</td><td style="text-align:right;"><span class="badge badge-cyan">3,55%</span></td></tr>
+                <tr><td>11</td><td><strong>Sol Nascente / Pôr do Sol</strong></td><td style="text-align:right;">95.000</td><td style="text-align:right;">101.866</td><td style="text-align:right;"><span class="badge badge-cyan">3,33%</span></td></tr>
+                <tr><td>12</td><td><strong>Sobradinho</strong></td><td style="text-align:right;">78.000</td><td style="text-align:right;">85.000</td><td style="text-align:right;"><span class="badge badge-cyan">2,73%</span></td></tr>
+                <tr><td>13</td><td><strong>Riacho Fundo II</strong></td><td style="text-align:right;">77.000</td><td style="text-align:right;">39.000</td><td style="text-align:right;"><span class="badge badge-cyan">2,70%</span></td></tr>
+                <tr><td>14</td><td><strong>São Sebastião</strong></td><td style="text-align:right;">74.000</td><td style="text-align:right;">99.000</td><td style="text-align:right;"><span class="badge badge-cyan">2,59%</span></td></tr>
+                <tr><td>15</td><td><strong>Itapoã</strong></td><td style="text-align:right;">68.000</td><td style="text-align:right;">65.408</td><td style="text-align:right;"><span class="badge badge-cyan">2,38%</span></td></tr>
+                <tr><td>16</td><td><strong>Vicente Pires</strong></td><td style="text-align:right;">63.000</td><td style="text-align:right;">96.871</td><td style="text-align:right;"><span class="badge badge-cyan">2,21%</span></td></tr>
+                <tr><td>17</td><td><strong>Sobradinho II</strong></td><td style="text-align:right;">51.000</td><td style="text-align:right;">82.785</td><td style="text-align:right;"><span class="badge badge-green">1,79%</span></td></tr>
+                <tr><td>18</td><td><strong>Paranóa</strong></td><td style="text-align:right;">46.000</td><td style="text-align:right;">46.000</td><td style="text-align:right;"><span class="badge badge-green">1,61%</span></td></tr>
+                <tr><td>19</td><td><strong>Sudoeste/Octogonal</strong></td><td style="text-align:right;">45.000</td><td style="text-align:right;">52.000</td><td style="text-align:right;"><span class="badge badge-green">1,58%</span></td></tr>
+                <tr><td>20</td><td><strong>Riacho Fundo</strong></td><td style="text-align:right;">43.000</td><td style="text-align:right;">37.000</td><td style="text-align:right;"><span class="badge badge-green">1,51%</span></td></tr>
+                <tr><td>21</td><td><strong>Brazlândia</strong></td><td style="text-align:right;">42.000</td><td style="text-align:right;">55.561</td><td style="text-align:right;"><span class="badge badge-green">1,47%</span></td></tr>
+                <tr><td>22</td><td><strong>Lago Norte</strong></td><td style="text-align:right;">39.000</td><td style="text-align:right;">34.000</td><td style="text-align:right;"><span class="badge badge-green">1,37%</span></td></tr>
+                <tr><td>23</td><td><strong>SCIA / Estrutural</strong></td><td style="text-align:right;">36.000</td><td style="text-align:right;">36.042</td><td style="text-align:right;"><span class="badge badge-green">1,26%</span></td></tr>
+                <tr><td>24</td><td><strong>Cruzeiro</strong></td><td style="text-align:right;">32.000</td><td style="text-align:right;">32.000</td><td style="text-align:right;"><span class="badge badge-green">1,12%</span></td></tr>
+                <tr><td>25</td><td><strong>Jardim Botânico</strong></td><td style="text-align:right;">31.000</td><td style="text-align:right;">77.767</td><td style="text-align:right;"><span class="badge badge-green">1,09%</span></td></tr>
+                <tr><td>26</td><td><strong>Arniqueira</strong></td><td style="text-align:right;">29.000</td><td style="text-align:right;">42.320</td><td style="text-align:right;"><span class="badge badge-green">1,02%</span></td></tr>
+                <tr><td>27</td><td><strong>Núcleo Bandeirante</strong></td><td style="text-align:right;">24.000</td><td style="text-align:right;">23.000</td><td style="text-align:right;"><span class="badge badge-orange">0,84%</span></td></tr>
+                <tr><td>28</td><td><strong>Lago Sul</strong></td><td style="text-align:right;">23.000</td><td style="text-align:right;">30.000</td><td style="text-align:right;"><span class="badge badge-orange">0,81%</span></td></tr>
+                <tr><td>29</td><td><strong>Park Way</strong></td><td style="text-align:right;">19.000</td><td style="text-align:right;">22.289</td><td style="text-align:right;"><span class="badge badge-orange">0,67%</span></td></tr>
+                <tr><td>30</td><td><strong>Candangolândia</strong></td><td style="text-align:right;">13.000</td><td style="text-align:right;">16.000</td><td style="text-align:right;"><span class="badge badge-orange">0,46%</span></td></tr>
+                <tr><td>31</td><td><strong>Fercal</strong></td><td style="text-align:right;">7.500</td><td style="text-align:right;">10.268</td><td style="text-align:right;"><span class="badge badge-orange">0,26%</span></td></tr>
+                <tr><td>32</td><td><strong>Varjão</strong></td><td style="text-align:right;">6.500</td><td style="text-align:right;">8.600</td><td style="text-align:right;"><span class="badge badge-orange">0,23%</span></td></tr>
+                <tr><td>33</td><td><strong>SIA</strong></td><td style="text-align:right;">3.000</td><td style="text-align:right;">5.131</td><td style="text-align:right;"><span class="badge badge-orange">0,11%</span></td></tr>
+            </tbody>
+            <tfoot><tr style="background:var(--card2);font-weight:700;">
+                <td></td><td><strong>TOTAL</strong></td><td style="text-align:right;"><strong>2.853.835</strong></td><td style="text-align:right;"><strong>3.092.855</strong></td><td style="text-align:right;"><span class="badge badge-blue">100%</span></td>
+            </tr></tfoot>
+        </table>
+    </div>
+</div>
+
 <!-- ============ CHECKLIST ============ -->
 <div class="page" id="page-checklist">
     <div style="margin-bottom:16px;">
@@ -498,8 +640,83 @@ tr:hover td { background:rgba(59,130,246,0.05); }
     <div class="grid-2" id="checklistGrid"></div>
 </div>
 
+<!-- ============ AGENDA DE SALAS ============ -->
+<div class="page" id="page-agendasalas">
+    <div class="card-header" style="margin-bottom:16px;">
+        <div>
+            <div class="card-title" style="font-size:1.2rem;">Agenda de Salas do Comitê</div>
+            <div class="card-subtitle">Auditório, S5, S6, S14 e S16</div>
+        </div>
+        <button class="btn btn-primary" onclick="openModalAgendaSala()">+ Novo Agendamento</button>
+        <button class="btn btn-sm" style="background:#4285f4;color:#fff;margin-left:8px;" onclick="addSalasToGoogle()">Google Agenda</button>
+    </div>
+
+    <!-- Cards de status das salas -->
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px;" id="salasStatusGrid"></div>
+
+    <!-- Filtros -->
+    <div class="card" style="margin-bottom:16px;padding:14px 20px;">
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+            <div style="font-size:0.78rem;font-weight:600;color:var(--text2);text-transform:uppercase;">Filtros:</div>
+            <select id="filtroSala" onchange="renderAgendaSalas()" style="padding:6px 10px;background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.8rem;">
+                <option value="">Todas as Salas</option>
+                <option value="Auditório">Auditório</option>
+                <option value="S5">S5</option>
+                <option value="S6">S6</option>
+                <option value="S14">S14</option>
+                <option value="S16">S16</option>
+            </select>
+            <input type="date" id="filtroDataSala" onchange="renderAgendaSalas()" style="padding:6px 10px;background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.8rem;">
+            <button class="btn btn-sm" style="background:var(--card2);color:var(--text);" onclick="document.getElementById('filtroSala').value='';document.getElementById('filtroDataSala').value='';renderAgendaSalas();">Limpar Filtros</button>
+        </div>
+    </div>
+
+    <!-- Tabela de agendamentos -->
+    <div class="card"><table><thead><tr>
+        <th>Sala</th><th>Data</th><th>Horário</th><th>Pessoa</th><th>Telefone</th><th>Pessoas</th><th>Assunto</th><th>Status</th><th>Ações</th>
+    </tr></thead><tbody id="tbAgendaSalas"></tbody></table></div>
+</div>
+
+<!-- ============ PATRIMÔNIO ============ -->
+<div class="page" id="page-patrimonio">
+    <div class="card-header" style="margin-bottom:16px;">
+        <div>
+            <div class="card-title" style="font-size:1.2rem;">Patrimônio do Comitê</div>
+            <div class="card-subtitle">Controle de móveis, equipamentos e demais itens</div>
+        </div>
+        <div style="display:flex;gap:8px;">
+            <select id="filtroPatCategoria" onchange="renderPatrimonio()" style="padding:6px 10px;background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.8rem;">
+                <option value="">Todas as Categorias</option>
+                <option value="Móveis">Móveis</option>
+                <option value="Eletrônicos">Eletrônicos</option>
+                <option value="Informática">Informática</option>
+                <option value="Veículos">Veículos</option>
+                <option value="Decoração">Decoração</option>
+                <option value="Utensílios">Utensílios</option>
+                <option value="Material de Escritório">Material de Escritório</option>
+                <option value="Outros">Outros</option>
+            </select>
+            <select id="filtroPatEstado" onchange="renderPatrimonio()" style="padding:6px 10px;background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.8rem;">
+                <option value="">Todos os Estados</option>
+                <option value="Novo">Novo</option>
+                <option value="Bom">Bom</option>
+                <option value="Regular">Regular</option>
+                <option value="Ruim">Ruim</option>
+                <option value="Inutilizado">Inutilizado</option>
+            </select>
+            <button class="btn btn-primary" onclick="openModalPatrimonio()">+ Novo Item</button>
+        </div>
+    </div>
+    <!-- Cards de resumo -->
+    <div class="grid-4" style="margin-bottom:16px;" id="patStats"></div>
+    <!-- Tabela de patrimônio -->
+    <div class="card"><table><thead><tr>
+        <th>Código</th><th>Item</th><th>Categoria</th><th>Qtd</th><th>Estado</th><th>Localização</th><th>Responsável</th><th>Valor Unit.</th><th>Valor Total</th><th>Ações</th>
+    </tr></thead><tbody id="tbPatrimonio"></tbody></table></div>
+</div>
+
 <!-- DETALHE DRILL-DOWN -->
-<div class="detalhe-overlay" id="detalheOverlay" onclick="if(event.target===this)fecharDetalhe()">
+<div class="detalhe-overlay" id="detalheOverlay" role="dialog" aria-modal="true" onclick="if(event.target===this)fecharDetalhe()">
     <div class="detalhe-panel">
         <div class="detalhe-header">
             <h3><span id="detalheIcone"></span> <span id="detalheTitulo"></span> <span class="detalhe-count" id="detalheCount">0</span></h3>
@@ -514,7 +731,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
 <!-- ===== MODALS ===== -->
 
 <!-- Modal Tarefa -->
-<div class="modal-overlay" id="modalTarefa">
+<div class="modal-overlay" role="dialog" aria-modal="true" id="modalTarefa">
 <div class="modal">
     <div class="modal-title">Nova Tarefa</div>
     <input type="hidden" id="tarefaEditId">
@@ -555,7 +772,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
 </div></div>
 
 <!-- Modal Material -->
-<div class="modal-overlay" id="modalMaterial">
+<div class="modal-overlay" role="dialog" aria-modal="true" id="modalMaterial">
 <div class="modal">
     <div class="modal-title">Novo Material</div>
     <input type="hidden" id="matEditId">
@@ -573,6 +790,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
     </div>
     <div class="form-group"><label>Estoque Mínimo</label><input type="number" id="matMinimo" value="0"></div>
     <div class="form-group"><label>Observações</label><textarea id="matObs" placeholder="Especificações, tamanhos, cores..."></textarea></div>
+    <div style="margin-top:10px;margin-bottom:14px;"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" id="matRetornavel" style="width:16px;height:16px;margin:0;"><span><b>Material Retornável</b> (Gera Logística Reversa: ex. Tendas, Bandeiras)</span></label></div>
     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px;">
         <button class="btn" style="background:var(--card2);color:var(--text);" onclick="closeModal('modalMaterial')">Cancelar</button>
         <button class="btn btn-primary" onclick="saveMaterial()">Salvar</button>
@@ -580,7 +798,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
 </div></div>
 
 <!-- Modal Fornecedor -->
-<div class="modal-overlay" id="modalFornecedor">
+<div class="modal-overlay" role="dialog" aria-modal="true" id="modalFornecedor">
 <div class="modal">
     <div class="modal-title">Novo Fornecedor</div>
     <input type="hidden" id="fornEditId">
@@ -602,15 +820,26 @@ tr:hover td { background:rgba(59,130,246,0.05); }
 </div></div>
 
 <!-- Modal Equipe -->
-<div class="modal-overlay" id="modalEquipe">
+<div class="modal-overlay" role="dialog" aria-modal="true" id="modalEquipe">
 <div class="modal">
-    <div class="modal-title">Membro da Equipe de Campo</div>
+    <div class="modal-title">Membro da Equipe</div>
     <input type="hidden" id="eqEditId">
     <div class="form-group"><label>Nome da Equipe</label><input type="text" id="eqNome" placeholder="Ex: Equipe Norte, Equipe Central..."></div>
     <div class="form-group"><label>Coordenador de Equipe</label><input type="text" id="eqChefe" placeholder="Nome do coordenador responsável pela equipe"></div>
     <div class="grid-2">
         <div class="form-group"><label>Função</label>
-            <select id="eqFuncao"><option>Distribuidor</option><option>Credenciamento/QR Code</option><option>Motorista</option><option>Apoio Geral</option><option>Coordenador Regional</option></select>
+            <input type="text" id="eqFuncao" list="eqFuncaoList" placeholder="Digite ou selecione a função..." style="padding:8px 10px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.82rem;width:100%;">
+            <datalist id="eqFuncaoList">
+                <option value="Distribuidor">
+                <option value="Credenciamento/QR Code">
+                <option value="Motorista">
+                <option value="Apoio Geral">
+                <option value="Coordenador Regional">
+                <option value="Panfleteiro">
+                <option value="Bandeireiro">
+                <option value="Segurança">
+                <option value="Fotógrafo/Filmagem">
+            </datalist>
         </div>
         <div class="form-group"><label>Telefone</label><input type="text" id="eqTel"></div>
     </div>
@@ -628,7 +857,7 @@ tr:hover td { background:rgba(59,130,246,0.05); }
 </div></div>
 
 <!-- Modal Membros da Equipe -->
-<div class="modal-overlay" id="modalMembros">
+<div class="modal-overlay" role="dialog" aria-modal="true" id="modalMembros">
 <div class="modal modal-lg">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
         <div>
@@ -638,10 +867,11 @@ tr:hover td { background:rgba(59,130,246,0.05); }
         <button class="btn" style="background:var(--card2);color:var(--text);padding:6px 12px;font-size:0.8rem;" onclick="closeModal('modalMembros')">&#10005;</button>
     </div>
     <input type="hidden" id="membrosEquipeId">
+    <input type="hidden" id="membroEditId" value="">
 
     <!-- Formulário inline para adicionar membro -->
     <div style="background:var(--card2);border-radius:10px;padding:14px;margin-bottom:16px;">
-        <div style="font-size:0.78rem;font-weight:600;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">Adicionar Membro</div>
+        <div style="font-size:0.78rem;font-weight:600;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;" id="membroFormLabel">Adicionar Membro</div>
         <div class="add-membro-row">
             <div>
                 <label style="font-size:0.72rem;color:var(--text2);display:block;margin-bottom:3px;">Nome</label>
@@ -653,21 +883,23 @@ tr:hover td { background:rgba(59,130,246,0.05); }
             </div>
             <div>
                 <label style="font-size:0.72rem;color:var(--text2);display:block;margin-bottom:3px;">Função</label>
-                <select id="membroFuncao">
-                    <option>Distribuidor</option>
-                    <option>Panfleteiro</option>
-                    <option>Bandeireiro</option>
-                    <option>Credenciamento</option>
-                    <option>Motorista</option>
-                    <option>Apoio Geral</option>
-                    <option>Segurança</option>
-                    <option>Fotógrafo/Filmagem</option>
-                    <option>Outro</option>
-                </select>
+                <input type="text" id="membroFuncao" list="membroFuncaoList" placeholder="Digite a função..." style="padding:8px 10px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.82rem;width:100%;">
+                <datalist id="membroFuncaoList">
+                    <option value="Distribuidor">
+                    <option value="Panfleteiro">
+                    <option value="Bandeireiro">
+                    <option value="Credenciamento">
+                    <option value="Motorista">
+                    <option value="Apoio Geral">
+                    <option value="Segurança">
+                    <option value="Fotógrafo/Filmagem">
+                    <option value="Coordenador Regional">
+                    <option value="Credenciamento/QR Code">
+                </datalist>
             </div>
             <div>
                 <label style="font-size:0.72rem;color:transparent;display:block;margin-bottom:3px;">.</label>
-                <button class="btn btn-primary" style="padding:8px 14px;font-size:0.82rem;white-space:nowrap;" onclick="addMembro()">+ Adicionar</button>
+                <button class="btn btn-primary" style="padding:8px 14px;font-size:0.82rem;white-space:nowrap;" onclick="addMembro()" id="membroBtnSalvar">+ Adicionar</button>
             </div>
         </div>
     </div>
@@ -680,9 +912,309 @@ tr:hover td { background:rgba(59,130,246,0.05); }
     </div>
 </div></div>
 
+<!-- Modal Agenda Sala -->
+<div class="modal-overlay" role="dialog" aria-modal="true" id="modalAgendaSala">
+<div class="modal">
+    <div class="modal-title">Novo Agendamento de Sala</div>
+    <input type="hidden" id="agendaSalaEditId">
+    <div class="form-group"><label>Sala</label>
+        <select id="agendaSalaSala">
+            <option>Auditório</option><option>S5</option><option>S6</option><option>S14</option><option>S16</option>
+        </select>
+    </div>
+    <div class="grid-3">
+        <div class="form-group"><label>Data</label><input type="date" id="agendaSalaData"></div>
+        <div class="form-group"><label>Hora Início</label><input type="time" id="agendaSalaHoraInicio"></div>
+        <div class="form-group"><label>Hora Fim</label><input type="time" id="agendaSalaHoraFim"></div>
+    </div>
+    <div class="grid-2">
+        <div class="form-group"><label>Nome da Pessoa</label><input type="text" id="agendaSalaPessoa" placeholder="Nome de quem reservou"></div>
+        <div class="form-group"><label>Telefone</label>
+            <div style="display:flex;gap:6px;">
+                <input type="text" id="agendaSalaDDD" placeholder="61" maxlength="2" style="width:56px;text-align:center;" oninput="this.value=this.value.replace(/\D/g,'');if(this.value.length===2)document.getElementById('agendaSalaTelNum').focus();">
+                <input type="text" id="agendaSalaTelNum" placeholder="99999-9999" style="flex:1;" oninput="formatarTelNum(this)">
+            </div>
+        </div>
+    </div>
+    <div class="grid-2">
+        <div class="form-group"><label>Qtd de Pessoas</label><input type="number" id="agendaSalaQtdPessoas" min="1" value="1" placeholder="Quantidade de participantes"></div>
+        <div class="form-group"><label>Assunto / Motivo</label><input type="text" id="agendaSalaAssunto" placeholder="Ex: Reunião de coordenadores"></div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px;">
+        <button class="btn" style="background:var(--card2);color:var(--text);" onclick="closeModal('modalAgendaSala')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveAgendaSala()">Salvar</button>
+    </div>
+</div></div>
+
+<!-- ============ ORCAMENTO ============ -->
+<div class="page" id="page-orcamento">
+    <div class="card" style="margin-bottom:16px;">
+        <div class="card-header">
+            <div class="card-title" style="font-size:1.2rem;">Controle Orcamentario da Campanha</div>
+            <button class="btn btn-primary" onclick="openModalOrcamento()">+ Nova Despesa</button>
+        </div>
+        <div class="grid-3" id="orcamentoStats" style="margin-bottom:16px;"></div>
+        <table>
+            <thead><tr>
+                <th>Categoria</th><th>Descricao</th><th>Fornecedor</th>
+                <th style="text-align:right;">Valor (R$)</th><th>Status</th><th>Data</th><th>Acoes</th>
+            </tr></thead>
+            <tbody id="orcamentoBody"></tbody>
+            <tfoot id="orcamentoTotal"></tfoot>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Orcamento -->
+<div class="modal-overlay" role="dialog" aria-modal="true" id="modalOrcamento">
+<div class="modal">
+    <div class="modal-title" id="modalOrcamentoTitle">Nova Despesa</div>
+    <input type="hidden" id="orcamentoEditId">
+    <div class="grid-2">
+        <div class="form-group"><label>Categoria</label>
+            <select id="orcCategoria">
+                <option value="Grafica">Grafica / Impressao</option>
+                <option value="Transporte">Transporte / Combustivel</option>
+                <option value="Alimentacao">Alimentação / Eventos</option>
+                <option value="Equipamentos">Equipamentos / Aluguel</option>
+                <option value="Comunicacao">Comunicação / Mídia</option>
+                <option value="Pessoal">Pessoal / Diarias</option>
+                <option value="Juridico">Juridico / Contabil</option>
+                <option value="Outros">Outros</option>
+            </select>
+        </div>
+        <div class="form-group"><label>Status</label>
+            <select id="orcStatus">
+                <option value="Previsto">Previsto</option>
+                <option value="Aprovado">Aprovado</option>
+                <option value="Pago">Pago</option>
+                <option value="Cancelado">Cancelado</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group"><label>Descricao</label><input type="text" id="orcDescricao" placeholder="Ex: 10.000 santinhos"></div>
+    <div class="grid-2">
+        <div class="form-group"><label>Fornecedor</label><input type="text" id="orcFornecedor" placeholder="Nome do fornecedor"></div>
+        <div class="form-group"><label>Valor (R$)</label><input type="number" id="orcValor" min="0" step="0.01" placeholder="0,00"></div>
+    </div>
+    <div class="form-group"><label>Data</label><input type="date" id="orcData"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px;">
+        <button class="btn" style="background:var(--card2);color:var(--text);" onclick="closeModal('modalOrcamento')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveOrcamento()">Salvar</button>
+    </div>
+</div></div>
+
+<!-- ============ DISTRIBUICAO POR REGIAO ============ -->
+<div class="page" id="page-distribuicao">
+    <div class="card" style="margin-bottom:16px;">
+        <div class="card-header">
+            <div class="card-title" style="font-size:1.2rem;">Distribuicao de Material por Regiao</div>
+            <button class="btn btn-primary" onclick="openModalDistribuicao()">+ Registrar Distribuicao</button>
+        </div>
+        <div class="grid-3" id="distStats" style="margin-bottom:16px;"></div>
+        <table>
+            <thead><tr>
+                <th>Regiao / RA</th><th>Material</th><th style="text-align:right;">Quantidade</th>
+                <th>Responsavel</th><th>Data</th><th>Acoes</th>
+            </tr></thead>
+            <tbody id="distribuicaoBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Distribuicao -->
+<div class="modal-overlay" role="dialog" aria-modal="true" id="modalDistribuicao">
+<div class="modal">
+    <div class="modal-title" id="modalDistribuicaoTitle">Registrar Distribuicao</div>
+    <input type="hidden" id="distEditId">
+    <div class="grid-2">
+        <div class="form-group"><label>Regiao / RA</label>
+            <select id="distRegiao">
+                <option value="">Selecione</option>
+                <option>Plano Piloto</option><option>Gama</option><option>Taguatinga</option>
+                <option>Brazlandia</option><option>Sobradinho</option><option>Planaltina</option>
+                <option>Paranoa</option><option>Nucleo Bandeirante</option><option>Ceilandia</option>
+                <option>Guara</option><option>Cruzeiro</option><option>Samambaia</option>
+                <option>Santa Maria</option><option>Sao Sebastiao</option><option>Recanto das Emas</option>
+                <option>Lago Sul</option><option>Riacho Fundo</option><option>Lago Norte</option>
+                <option>Aguas Claras</option><option>Vicente Pires</option><option>Estrutural</option>
+                <option>Sobradinho II</option><option>Jardim Botanico</option><option>Itapoa</option>
+                <option>Sol Nascente</option><option>Arniqueira</option><option>Fercal</option>
+            </select>
+        </div>
+        <div class="form-group"><label>Material</label><input type="text" id="distMaterial" placeholder="Ex: Santinhos, Adesivos"></div>
+    </div>
+    <div class="grid-2">
+        <div class="form-group"><label>Quantidade</label><input type="number" id="distQtd" min="1" placeholder="0"></div>
+        <div class="form-group"><label>Responsavel</label><input type="text" id="distResponsavel" placeholder="Quem distribuiu"></div>
+    </div>
+    <div class="form-group"><label>Data</label><input type="date" id="distData"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px;">
+        <button class="btn" style="background:var(--card2);color:var(--text);" onclick="closeModal('modalDistribuicao')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveDistribuicao()">Salvar</button>
+    </div>
+</div></div>
+
+<!-- ============ VALES COMBUSTÍVEL ============ -->
+<div class="page" id="page-vales">
+    <div class="card-header" style="margin-bottom:16px;">
+        <div>
+            <div class="card-title" style="font-size:1.2rem;">Vales Combustíveis</div>
+            <div class="card-subtitle">Controle de abastecimento da frota de rua</div>
+        </div>
+        <button class="btn btn-primary" onclick="openModalVale()">+ Emitir Vale</button>
+    </div>
+    <div class="grid-2" id="valesStats" style="margin-bottom:16px;"></div>
+    <div class="card"><table><thead><tr>
+        <th>Placa</th><th>Modelo</th><th>Responsável / Liderança</th><th>Litros</th><th>Valor R$</th><th>Data</th><th>Ações</th>
+    </tr></thead><tbody id="tbVales"></tbody></table></div>
+</div>
+
+<!-- Modal Vales -->
+<div class="modal-overlay" role="dialog" aria-modal="true" id="modalVale">
+<div class="modal">
+    <div class="modal-title">Emitir Vale Combustível</div>
+    <input type="hidden" id="valeEditId">
+    <div class="grid-2">
+        <div class="form-group"><label>Placa do Veículo</label><input type="text" id="valePlaca" placeholder="Ex: ABC-1234"></div>
+        <div class="form-group"><label>Modelo / Cor</label><input type="text" id="valeModelo" placeholder="Ex: Gol Prata"></div>
+    </div>
+    <div class="form-group"><label>Liderança / Responsável do Veículo</label><input type="text" id="valeMotorista" placeholder="Nome de quem abasteceu"></div>
+    <div class="grid-3">
+        <div class="form-group"><label>Data</label><input type="date" id="valeData"></div>
+        <div class="form-group"><label>Qtd Litros (Opcional)</label><input type="number" id="valeLitros" step="0.1"></div>
+        <div class="form-group"><label>Valor (R$)</label><input type="number" id="valeValor" step="0.01"></div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px;">
+        <button class="btn" style="background:var(--card2);color:var(--text);" onclick="closeModal('modalVale')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveVale()">Salvar Vale</button>
+    </div>
+</div></div>
+
+<!-- ============ LOGISTICA REVERSA ============ -->
+<div class="page" id="page-reversa">
+    <div class="card-header" style="margin-bottom:16px;">
+        <div>
+            <div class="card-title" style="font-size:1.2rem;">Ativos na Rua (Logística Reversa)</div>
+            <div class="card-subtitle">Controle de materiais retornáveis despachados (Tendas, Bandeiras, etc)</div>
+        </div>
+    </div>
+    <div class="grid-3" id="reversaStats" style="margin-bottom:16px;"></div>
+    <div class="card"><table><thead><tr>
+        <th>Local / RA</th><th>Material</th><th>Qtd</th><th>Responsável</th><th>Saída</th><th>Status</th><th>Ações</th>
+    </tr></thead><tbody id="tbReversa"></tbody></table></div>
+</div>
+
+<!-- ============ BANDEIRACOS ============ -->
+<div class="page" id="page-bandeiracos">
+    <div class="card-header" style="margin-bottom:16px;">
+        <div>
+            <div class="card-title" style="font-size:1.2rem;">Revezamento de Eventos e Bandeiraços</div>
+            <div class="card-subtitle">Agendamento de equipes para evitar conflitos no mesmo ponto.</div>
+        </div>
+        <button class="btn btn-primary" onclick="openModalBandeiraco()">+ Agendar Evento</button>
+        <button class="btn btn-sm" style="background:#4285f4;color:#fff;margin-left:8px;" onclick="addBandeiracosToGoogle()">Google Agenda</button>
+    </div>
+    <div class="grid-3" id="bandeiracosStats" style="margin-bottom:16px;"></div>
+    <div class="card"><table><thead><tr>
+        <th>Data</th><th>Ponto Físico (RA e Detalhe)</th><th>Turno</th><th>Equipe / Liderança</th><th>Qtd Prevista</th><th>Ações</th>
+    </tr></thead><tbody id="tbBandeiracos"></tbody></table></div>
+</div>
+
+<!-- Modal Bandeiracos -->
+<div class="modal-overlay" role="dialog" aria-modal="true" id="modalBandeiraco">
+<div class="modal">
+    <div class="modal-title">Agendar Bandeiraço / Evento</div>
+    <input type="hidden" id="bandEditId">
+    <div class="grid-2">
+        <div class="form-group"><label>Data</label><input type="date" id="bandData"></div>
+        <div class="form-group"><label>Turno</label>
+            <select id="bandTurno"><option>Manhã</option><option>Tarde</option><option>Noite</option><option>O Dia Todo</option></select>
+        </div>
+    </div>
+    <div class="grid-2">
+        <div class="form-group"><label>Região / RA</label>
+            <!-- Same combo as used in other places -->
+            <select id="bandRegiao">
+                <option value="">Selecione</option>
+                <option>Plano Piloto</option><option>Gama</option><option>Taguatinga</option>
+                <option>Brazlandia</option><option>Sobradinho</option><option>Planaltina</option>
+                <option>Paranoa</option><option>Nucleo Bandeirante</option><option>Ceilandia</option>
+                <option>Guara</option><option>Cruzeiro</option><option>Samambaia</option>
+                <option>Santa Maria</option><option>Sao Sebastiao</option><option>Recanto das Emas</option>
+                <option>Lago Sul</option><option>Riacho Fundo</option><option>Lago Norte</option>
+                <option>Aguas Claras</option><option>Vicente Pires</option><option>Estrutural</option>
+                <option>Sobradinho II</option><option>Jardim Botanico</option><option>Itapoa</option>
+                <option>Sol Nascente</option><option>Arniqueira</option><option>Fercal</option>
+            </select>
+        </div>
+        <div class="form-group"><label>Ponto Específico</label><input type="text" id="bandPonto" placeholder="Ex: Balão do Relógio"></div>
+    </div>
+    <div class="form-group"><label>Equipe / Liderança Responsável</label><input type="text" id="bandEquipe" placeholder="Nome do grupo ou líder"></div>
+    <div class="form-group"><label>Quantidade Prevista (Pessoas)</label><input type="number" id="bandQtd" min="1" value="10"></div>
+    <div id="bandError" style="display:none; color:var(--red); font-size:0.85rem; padding:8px; background:rgba(239,68,68,0.1); border-left:3px solid var(--red); margin:10px 0;">Já existe uma equipe agendada neste Ponto, Data e Turno! Escolha outro local ou turno.</div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px;">
+        <button class="btn" style="background:var(--card2);color:var(--text);" onclick="closeModal('modalBandeiraco')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveBandeiraco()">Agendar</button>
+    </div>
+</div></div>
+
+<!-- Modal Patrimônio -->
+<div class="modal-overlay" id="modalPatrimonio">
+<div class="modal">
+    <div class="modal-title">Cadastro de Patrimônio</div>
+    <input type="hidden" id="patEditId">
+    <div class="grid-2">
+        <div class="form-group"><label>Nome do Item</label><input type="text" id="patNome" placeholder="Ex: Mesa de reunião, Impressora..."></div>
+        <div class="form-group"><label>Código / Etiqueta</label><input type="text" id="patCodigo" placeholder="Ex: PAT-001"></div>
+    </div>
+    <div class="grid-2">
+        <div class="form-group"><label>Categoria</label>
+            <select id="patCategoria">
+                <option>Móveis</option><option>Eletrônicos</option><option>Informática</option>
+                <option>Veículos</option><option>Decoração</option><option>Utensílios</option>
+                <option>Material de Escritório</option><option>Outros</option>
+            </select>
+        </div>
+        <div class="form-group"><label>Quantidade</label><input type="number" id="patQtd" value="1" min="1"></div>
+    </div>
+    <div class="grid-2">
+        <div class="form-group"><label>Estado de Conservação</label>
+            <select id="patEstado">
+                <option>Novo</option><option>Bom</option><option>Regular</option><option>Ruim</option><option>Inutilizado</option>
+            </select>
+        </div>
+        <div class="form-group"><label>Origem</label>
+            <select id="patOrigem">
+                <option>Comprado</option><option>Doado</option><option>Emprestado</option><option>Alugado</option><option>Próprio</option>
+            </select>
+        </div>
+    </div>
+    <div class="grid-2">
+        <div class="form-group"><label>Localização</label><input type="text" id="patLocal" placeholder="Ex: Sala 5, Depósito, Auditório..."></div>
+        <div class="form-group"><label>Responsável</label><input type="text" id="patResponsavel" placeholder="Nome do responsável pelo item"></div>
+    </div>
+    <div class="grid-2">
+        <div class="form-group"><label>Valor Unitário (R$)</label><input type="number" id="patValor" value="0" min="0" step="0.01"></div>
+        <div class="form-group"><label>Data de Aquisição</label><input type="date" id="patDataAquisicao"></div>
+    </div>
+    <div class="form-group"><label>Observações</label><textarea id="patObs" placeholder="Marca, modelo, número de série, detalhes adicionais..."></textarea></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px;">
+        <button class="btn" style="background:var(--card2);color:var(--text);" onclick="closeModal('modalPatrimonio')">Cancelar</button>
+        <button class="btn btn-primary" onclick="savePatrimonio()">Salvar</button>
+    </div>
+</div></div>
+
 <script>
 // ==================== DADOS ====================
 var STORAGE_KEY = 'logistica_celina_2026';
+var CURRENT_PAGE = 'dashboard';
+var LOGISTICA_REALTIME_KEYS = ['logistica_celina_2026'];
+
+function updateRealtimeScope() {
+    if (!window.ConectaDB || typeof window.ConectaDB.setActiveKeys !== 'function') return;
+    window.ConectaDB.setActiveKeys(LOGISTICA_REALTIME_KEYS);
+}
 
 // Datas importantes
 var DATAS = {
@@ -705,6 +1237,13 @@ function defaultData() {
         subcoords: ['','','','','',''],
         checklist: {},
         customChecklist: {},
+        agendaSalas: [],
+        orcamento: [],
+        distribuicao: [],
+        vales_combustivel: [],
+        logistica_reversa: [],
+        escala_bandeiracos: [],
+        patrimonio: [],
         nextId: 1
     };
 }
@@ -713,18 +1252,36 @@ function loadData() {
     try { var d = JSON.parse(localStorage.getItem(STORAGE_KEY)); return d || defaultData(); }
     catch(e) { return defaultData(); }
 }
-function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA)); }
+var _saveToastTimer = null;
+function saveData() {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+        // Toast discreto (debounced para não spammar)
+        clearTimeout(_saveToastTimer);
+        _saveToastTimer = setTimeout(function() {
+            if (typeof showToast === 'function') showToast('Salvo');
+        }, 500);
+    } catch(e) {
+        console.error('[Logistica] Erro ao salvar:', e.name);
+        if (e.name === 'QuotaExceededError') {
+            if (typeof showToast === 'function') showToast('Espaco cheio! Use o botao Backup para exportar.', 'error');
+            else alert('Espaco de armazenamento cheio! Exporte seus dados.');
+        }
+    }
+}
 var DATA = loadData();
 
-function genId() { var id = DATA.nextId || 1; DATA.nextId = id + 1; saveData(); return id; }
+function genId() { var id = DATA.nextId || 1; DATA.nextId = id + 1; return id; }
 
 // ==================== NAVEGAÇÃO ====================
 function showPage(id) {
+    CURRENT_PAGE = id;
+    updateRealtimeScope();
     document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
     document.querySelectorAll('.nav-links button').forEach(function(b) { b.classList.remove('active'); });
     document.getElementById('page-' + id).classList.add('active');
     var btns = document.querySelectorAll('.nav-links button');
-    var pages = ['dashboard','tarefas','materiais','fornecedores','equipe','subcoord','calendario','checklist'];
+    var pages = ['dashboard','tarefas','materiais','fornecedores','equipe','subcoord','calendario','checklist','eleitorado','agendasalas','orcamento','distribuicao','vales','reversa','bandeiracos','patrimonio'];
     var idx = pages.indexOf(id);
     if (idx >= 0 && btns[idx]) btns[idx].classList.add('active');
     if (id === 'dashboard') renderDashboard();
@@ -733,7 +1290,25 @@ function showPage(id) {
     if (id === 'fornecedores') renderFornecedores();
     if (id === 'equipe') renderEquipe();
     if (id === 'checklist') renderChecklist();
+    if (id === 'agendasalas') renderAgendaSalas();
+    if (id === 'orcamento') renderOrcamento();
+    if (id === 'distribuicao') renderDistribuicao();
+    if (id === 'vales') renderVales();
+    if (id === 'reversa') renderReversa();
+    if (id === 'bandeiracos') renderBandeiracos();
+    if (id === 'patrimonio') renderPatrimonio();
 }
+
+window.renderCurrentPage = function() {
+    if (CURRENT_PAGE === 'dashboard') renderDashboard();
+    if (CURRENT_PAGE === 'tarefas') { populateFiltroResponsavel(); renderTarefas(); }
+    if (CURRENT_PAGE === 'materiais') renderMateriais();
+    if (CURRENT_PAGE === 'fornecedores') renderFornecedores();
+    if (CURRENT_PAGE === 'equipe') renderEquipe();
+    if (CURRENT_PAGE === 'checklist') renderChecklist();
+    if (CURRENT_PAGE === 'agendasalas') renderAgendaSalas();
+    if (CURRENT_PAGE === 'patrimonio') renderPatrimonio();
+};
 
 // ==================== COUNTDOWN / DASHBOARD ====================
 function updateCountdown() {
@@ -792,6 +1367,7 @@ function updateCountdown() {
 
 function renderDashboard() {
     updateCountdown();
+    if (typeof renderSistemaStatus === 'function') renderSistemaStatus();
 
     var hoje = new Date().toISOString().slice(0,10);
     var tarefasHoje = DATA.tarefas.filter(function(t) { return t.prazo === hoje && t.status !== 'concluida'; });
@@ -850,10 +1426,12 @@ function populateResponsavelSelect(selectedValue) {
         if (t.responsavel && nomes.indexOf(t.responsavel) === -1) { nomes.push(t.responsavel); }
     });
     nomes.sort();
+    var html = sel.innerHTML;
     nomes.forEach(function(n) {
-        sel.innerHTML += '<option value="' + esc(n) + '">' + esc(n) + '</option>';
+        html += '<option value="' + esc(n) + '">' + esc(n) + '</option>';
     });
-    sel.innerHTML += '<option value="__outro__">Outro (digitar nome)</option>';
+    html += '<option value="__outro__">Outro (digitar nome)</option>';
+    sel.innerHTML = html;
     // Definir valor selecionado
     if (current && nomes.indexOf(current) === -1 && current !== '__outro__') {
         sel.innerHTML = sel.innerHTML.replace('</option><option value="__outro__">',
@@ -879,9 +1457,11 @@ function populateFiltroResponsavel() {
         if (t.responsavel && nomes.indexOf(t.responsavel) === -1) { nomes.push(t.responsavel); }
     });
     nomes.sort();
+    var html = sel.innerHTML;
     nomes.forEach(function(n) {
-        sel.innerHTML += '<option value="' + esc(n) + '">' + esc(n) + '</option>';
+        html += '<option value="' + esc(n) + '">' + esc(n) + '</option>';
     });
+    sel.innerHTML = html;
     sel.value = current || '';
 }
 
@@ -958,16 +1538,28 @@ function renderTarefas() {
         var respHtml = t.responsavel ? '<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(99,102,241,.15);color:#818cf8;padding:2px 8px;border-radius:10px;font-size:.75rem;font-weight:600;">' +
             '<span style="width:18px;height:18px;border-radius:50%;background:#818cf8;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.65rem;">' + esc(t.responsavel.charAt(0).toUpperCase()) + '</span>' +
             esc(t.responsavel) + '</span>' : '<span style="color:var(--text2);font-size:.75rem;font-style:italic;">—</span>';
+        // Destaque de prazo vencendo
+        var hoje = new Date().toISOString().slice(0,10);
+        var amanha = new Date(Date.now() + 86400000).toISOString().slice(0,10);
+        var prazoStyle = '';
+        var prazoIcon = '';
+        if (t.prazo && t.status !== 'concluida') {
+            if (t.prazo < hoje) { prazoStyle = 'color:var(--red);font-weight:700;'; prazoIcon = ' ⚠'; }
+            else if (t.prazo === hoje) { prazoStyle = 'color:var(--orange);font-weight:700;'; prazoIcon = ' HOJE'; }
+            else if (t.prazo === amanha) { prazoStyle = 'color:#fbbf24;'; prazoIcon = ' amanha'; }
+        }
+        var gcalBtn = t.prazo && t.status !== 'concluida' ? ' <button class="btn btn-sm" style="background:#4285f4;color:#fff;padding:2px 6px;font-size:.6rem;" onclick="addTarefaToGoogle(' + t.id + ')" title="Google Agenda">Agenda</button>' : '';
         html += '<tr' + (t.status==='concluida'?' style="opacity:.5;"':'') + '>' +
             '<td><input type="checkbox" ' + checked + ' onchange="toggleTarefa(' + t.id + ')"></td>' +
             '<td><strong>' + esc(t.titulo) + '</strong>' + (t.desc ? '<br><span style="font-size:.75rem;color:var(--text2);">' + esc(t.desc).substring(0,60) + '</span>' : '') + '</td>' +
             '<td>' + respHtml + '</td>' +
             '<td>' + esc(t.categoria) + '</td>' +
             '<td><span class="badge badge-' + (t.fase==='pre'?'orange':'green') + '">' + faseLabel + '</span></td>' +
-            '<td>' + formatDate(t.prazo) + '</td>' +
+            '<td style="' + prazoStyle + '">' + formatDate(t.prazo) + prazoIcon + '</td>' +
             '<td><span class="badge badge-' + prioCor + '">' + t.prioridade + '</span></td>' +
             '<td><span class="badge badge-' + stCor + '">' + stLabel + '</span></td>' +
             '<td><button class="btn btn-sm btn-primary" onclick="openModalTarefa(' + t.id + ')">Editar</button> ' +
+            gcalBtn +
             '<button class="btn btn-sm btn-danger" onclick="delTarefa(' + t.id + ')">X</button></td></tr>';
     });
     document.getElementById('tbTarefas').innerHTML = html || '<tr><td colspan="9" style="text-align:center;color:var(--text2);">Nenhuma tarefa.</td></tr>';
@@ -998,10 +1590,12 @@ function openModalMaterial(id) {
             document.getElementById('matDist').value = m.dist;
             document.getElementById('matMinimo').value = m.minimo;
             document.getElementById('matObs').value = m.obs || '';
+            document.getElementById('matRetornavel').checked = !!m.retornavel;
         }
     } else {
         ['matNome','matFornecedor','matObs'].forEach(function(x) { document.getElementById(x).value = ''; });
         ['matQtd','matEstoque','matDist','matMinimo'].forEach(function(x) { document.getElementById(x).value = '0'; });
+        document.getElementById('matRetornavel').checked = false;
     }
     document.getElementById('modalMaterial').classList.add('show');
 }
@@ -1010,14 +1604,38 @@ function saveMaterial() {
     var nome = document.getElementById('matNome').value.trim();
     if (!nome) return alert('Preencha o nome.');
     var editId = document.getElementById('matEditId').value;
+    var novoDist = parseInt(document.getElementById('matDist').value) || 0;
+    var novoEstoque = parseInt(document.getElementById('matEstoque').value) || 0;
+
+    // Ao editar, ajustar estoque automaticamente com base na diferença do distribuído
+    if (editId) {
+        var matAntigo = DATA.materiais.find(function(x) { return x.id == editId; });
+        if (matAntigo) {
+            var distAnterior = matAntigo.dist || 0;
+            var difDist = novoDist - distAnterior;
+            if (difDist > 0) {
+                // Distribuiu mais → diminui do estoque
+                if (difDist > novoEstoque) {
+                    if (!confirm('A quantidade a distribuir (' + difDist + ') é maior que o estoque atual (' + novoEstoque + '). Deseja continuar mesmo assim?')) return;
+                }
+                novoEstoque = novoEstoque - difDist;
+                if (novoEstoque < 0) novoEstoque = 0;
+            } else if (difDist < 0) {
+                // Devolveu materiais → aumenta o estoque
+                novoEstoque = novoEstoque + Math.abs(difDist);
+            }
+        }
+    }
+
     var obj = {
         nome: nome, fase: document.getElementById('matFase').value,
         fornecedor: document.getElementById('matFornecedor').value.trim(),
         qtd: parseInt(document.getElementById('matQtd').value) || 0,
-        estoque: parseInt(document.getElementById('matEstoque').value) || 0,
-        dist: parseInt(document.getElementById('matDist').value) || 0,
+        estoque: novoEstoque,
+        dist: novoDist,
         minimo: parseInt(document.getElementById('matMinimo').value) || 0,
-        obs: document.getElementById('matObs').value.trim()
+        obs: document.getElementById('matObs').value.trim(),
+        retornavel: document.getElementById('matRetornavel').checked
     };
     if (editId) {
         var idx = DATA.materiais.findIndex(function(x) { return x.id == editId; });
@@ -1044,8 +1662,9 @@ function renderMateriais() {
         else if (m.minimo > 0 && m.estoque <= m.minimo) { status = 'Estoque Baixo'; stCor = 'orange'; }
         else { status = 'OK'; stCor = 'green'; }
         var faseLabel = m.fase === 'pre' ? 'Pré' : m.fase === 'campanha' ? 'Campanha' : 'Ambas';
+        var alertRet = m.retornavel ? ' <span class="badge" style="background:var(--accent2);font-size:0.65rem;">Retornável</span>' : '';
 
-        html += '<tr><td><strong>' + esc(m.nome) + '</strong></td>' +
+        html += '<tr><td><strong>' + esc(m.nome) + '</strong>' + alertRet + '</td>' +
             '<td><span class="badge badge-' + (m.fase==='pre'?'orange':'green') + '">' + faseLabel + '</span></td>' +
             '<td>' + m.qtd.toLocaleString('pt-BR') + '</td>' +
             '<td>' + m.estoque.toLocaleString('pt-BR') + '</td>' +
@@ -1129,6 +1748,7 @@ function delFornecedor(id) {
 }
 
 // ==================== EQUIPE ====================
+
 function openModalEquipe(id) {
     document.getElementById('eqEditId').value = id || '';
     if (id) {
@@ -1136,14 +1756,14 @@ function openModalEquipe(id) {
         if (e) {
             document.getElementById('eqChefe').value = e.chefe || '';
             document.getElementById('eqNome').value = e.nome;
-            document.getElementById('eqFuncao').value = e.funcao;
+            document.getElementById('eqFuncao').value = e.funcao || '';
             document.getElementById('eqTel').value = e.tel;
             document.getElementById('eqRegiao').value = e.regiao;
             document.getElementById('eqMat').value = e.materiais;
             document.getElementById('eqAtribuicoes').value = e.atribuicoes || '';
         }
     } else {
-        ['eqChefe','eqNome','eqTel','eqRegiao','eqMat','eqAtribuicoes'].forEach(function(x) { document.getElementById(x).value = ''; });
+        ['eqChefe','eqNome','eqFuncao','eqTel','eqRegiao','eqMat','eqAtribuicoes'].forEach(function(x) { document.getElementById(x).value = ''; });
     }
     document.getElementById('modalEquipe').classList.add('show');
 }
@@ -1152,9 +1772,10 @@ function saveEquipe() {
     var nome = document.getElementById('eqNome').value.trim();
     if (!nome) return alert('Preencha o nome.');
     var editId = document.getElementById('eqEditId').value;
+    var funcao = document.getElementById('eqFuncao').value.trim();
     var obj = {
         chefe: document.getElementById('eqChefe').value.trim(),
-        nome: nome, funcao: document.getElementById('eqFuncao').value,
+        nome: nome, funcao: funcao,
         tel: document.getElementById('eqTel').value.trim(),
         regiao: document.getElementById('eqRegiao').value.trim(),
         materiais: document.getElementById('eqMat').value.trim(),
@@ -1215,10 +1836,32 @@ function openModalMembros(equipeId) {
     document.getElementById('membrosEquipeId').value = equipeId;
     document.getElementById('membrosTitle').textContent = 'Equipe: ' + e.nome;
     document.getElementById('membrosSubtitle').textContent = 'Coordenador: ' + (e.chefe || 'Não definido') + ' | Região: ' + (e.regiao || '—');
-    document.getElementById('membroNome').value = '';
-    document.getElementById('membroTel').value = '';
+    cancelarEdicaoMembro();
     renderMembros(equipeId);
     document.getElementById('modalMembros').classList.add('show');
+}
+
+function editarMembro(equipeId, membroId) {
+    var e = DATA.equipe.find(function(x) { return x.id == equipeId; });
+    if (!e || !e.membros) return;
+    var m = e.membros.find(function(x) { return x.id == membroId; });
+    if (!m) return;
+    document.getElementById('membroEditId').value = membroId;
+    document.getElementById('membroNome').value = m.nome;
+    document.getElementById('membroTel').value = m.tel || '';
+    document.getElementById('membroFuncao').value = m.funcao || '';
+    document.getElementById('membroFormLabel').textContent = 'Editar Membro';
+    document.getElementById('membroBtnSalvar').textContent = 'Salvar';
+    document.getElementById('membroNome').focus();
+}
+
+function cancelarEdicaoMembro() {
+    document.getElementById('membroEditId').value = '';
+    document.getElementById('membroNome').value = '';
+    document.getElementById('membroTel').value = '';
+    document.getElementById('membroFuncao').value = '';
+    document.getElementById('membroFormLabel').textContent = 'Adicionar Membro';
+    document.getElementById('membroBtnSalvar').textContent = '+ Adicionar';
 }
 
 function addMembro() {
@@ -1228,15 +1871,27 @@ function addMembro() {
     var e = DATA.equipe.find(function(x) { return x.id == equipeId; });
     if (!e) return;
     if (!e.membros) e.membros = [];
-    e.membros.push({
-        id: Date.now(),
-        nome: nome,
-        tel: document.getElementById('membroTel').value.trim(),
-        funcao: document.getElementById('membroFuncao').value
-    });
+    var funcao = document.getElementById('membroFuncao').value.trim();
+    var editId = document.getElementById('membroEditId').value;
+    if (editId) {
+        // Editar membro existente
+        var m = e.membros.find(function(x) { return x.id == parseInt(editId); });
+        if (m) {
+            m.nome = nome;
+            m.tel = document.getElementById('membroTel').value.trim();
+            m.funcao = funcao;
+        }
+    } else {
+        // Adicionar novo
+        e.membros.push({
+            id: Date.now(),
+            nome: nome,
+            tel: document.getElementById('membroTel').value.trim(),
+            funcao: funcao
+        });
+    }
     saveData();
-    document.getElementById('membroNome').value = '';
-    document.getElementById('membroTel').value = '';
+    cancelarEdicaoMembro();
     renderMembros(equipeId);
     renderEquipe();
 }
@@ -1276,6 +1931,7 @@ function renderMembros(equipeId) {
                 '</div>' +
             '</div>' +
             '<div class="membro-actions">' +
+                '<button class="btn btn-sm btn-primary" style="padding:3px 8px;font-size:0.7rem;margin-right:3px;" onclick="editarMembro(' + equipeId + ',' + m.id + ')" title="Editar membro">&#9998;</button>' +
                 '<button class="btn btn-sm btn-danger" style="padding:3px 8px;font-size:0.7rem;" onclick="delMembro(' + equipeId + ',' + m.id + ')" title="Remover membro">&#10005;</button>' +
             '</div>' +
         '</div>';
@@ -1307,7 +1963,7 @@ var CHECKLIST_ITEMS = {
         'Produzir folders institucionais (sem número, sem pedido de voto)',
         'Produzir cartões com QR Code (cadastro de apoiadores)',
         'Produzir banner/backdrop institucional',
-        'Montar equipe de campo para acompanhar a governadora',
+        'Montar equipe para acompanhar a governadora',
         'Treinar equipe para distribuição de material e QR Code',
         'Definir fornecedores de impressão (orçar com 3-5 gráficas)',
         'Contratar gráfica principal',
@@ -1425,6 +2081,295 @@ function removeChecklistItem(secao, idx) {
     });
     DATA.checklist = newChecklist;
     saveData(); renderChecklist();
+}
+
+// ==================== AGENDA DE SALAS ====================
+var SALAS = ['Auditório','S5','S6','S14','S16'];
+
+function formatarTelNum(el) {
+    var v = el.value.replace(/\D/g,'');
+    if (v.length > 5) v = v.slice(0,5) + '-' + v.slice(5,9);
+    el.value = v;
+}
+
+function montarTelefone() {
+    var ddd = document.getElementById('agendaSalaDDD').value.trim();
+    var num = document.getElementById('agendaSalaTelNum').value.trim();
+    if (!ddd && !num) return '';
+    return '(' + ddd + ') ' + num;
+}
+
+function desmontarTelefone(tel) {
+    if (!tel) return { ddd: '', num: '' };
+    var m = tel.match(/\((\d{1,2})\)\s*(.*)/);
+    if (m) return { ddd: m[1], num: m[2] };
+    return { ddd: '', num: tel };
+}
+
+function openModalAgendaSala(id) {
+    document.getElementById('agendaSalaEditId').value = id || '';
+    if (id) {
+        var a = (DATA.agendaSalas || []).find(function(x) { return x.id == id; });
+        if (a) {
+            document.getElementById('agendaSalaSala').value = a.sala;
+            document.getElementById('agendaSalaData').value = a.data;
+            document.getElementById('agendaSalaHoraInicio').value = a.horaInicio;
+            document.getElementById('agendaSalaHoraFim').value = a.horaFim;
+            document.getElementById('agendaSalaPessoa').value = a.pessoa;
+            var tel = desmontarTelefone(a.telefone);
+            document.getElementById('agendaSalaDDD').value = tel.ddd;
+            document.getElementById('agendaSalaTelNum').value = tel.num;
+            document.getElementById('agendaSalaQtdPessoas').value = a.qtdPessoas || 1;
+            document.getElementById('agendaSalaAssunto').value = a.assunto || '';
+        }
+    } else {
+        document.getElementById('agendaSalaSala').value = 'Auditório';
+        document.getElementById('agendaSalaData').value = new Date().toISOString().slice(0,10);
+        document.getElementById('agendaSalaHoraInicio').value = '';
+        document.getElementById('agendaSalaHoraFim').value = '';
+        document.getElementById('agendaSalaPessoa').value = '';
+        document.getElementById('agendaSalaDDD').value = '61';
+        document.getElementById('agendaSalaTelNum').value = '';
+        document.getElementById('agendaSalaQtdPessoas').value = 1;
+        document.getElementById('agendaSalaAssunto').value = '';
+    }
+    document.getElementById('modalAgendaSala').classList.add('show');
+}
+
+function saveAgendaSala() {
+    var sala = document.getElementById('agendaSalaSala').value;
+    var data = document.getElementById('agendaSalaData').value;
+    var horaInicio = document.getElementById('agendaSalaHoraInicio').value;
+    var horaFim = document.getElementById('agendaSalaHoraFim').value;
+    var pessoa = document.getElementById('agendaSalaPessoa').value.trim();
+    var telefone = montarTelefone();
+    var qtdPessoas = parseInt(document.getElementById('agendaSalaQtdPessoas').value) || 1;
+    var assunto = document.getElementById('agendaSalaAssunto').value.trim();
+
+    if (!data) return alert('Preencha a data.');
+    if (!horaInicio) return alert('Preencha a hora de início.');
+    if (!horaFim) return alert('Preencha a hora de fim.');
+    if (!pessoa) return alert('Preencha o nome da pessoa.');
+    if (horaFim <= horaInicio) return alert('A hora de fim deve ser depois da hora de início.');
+
+    if (!DATA.agendaSalas) DATA.agendaSalas = [];
+    var editId = document.getElementById('agendaSalaEditId').value;
+
+    // Validação de conflito de horário
+    var conflito = DATA.agendaSalas.find(function(a) {
+        if (editId && a.id == editId) return false;
+        if (a.sala !== sala || a.data !== data) return false;
+        return horaInicio < a.horaFim && a.horaInicio < horaFim;
+    });
+
+    if (conflito) {
+        return alert('CONFLITO DE HORÁRIO!\n\nA ' + sala + ' já está reservada nesta data das ' + conflito.horaInicio + ' às ' + conflito.horaFim + ' por ' + conflito.pessoa + '.\n\nEscolha outro horário ou outra sala.');
+    }
+
+    var obj = {
+        sala: sala, data: data, horaInicio: horaInicio, horaFim: horaFim,
+        pessoa: pessoa, telefone: telefone, qtdPessoas: qtdPessoas, assunto: assunto, status: 'confirmado'
+    };
+
+    if (editId) {
+        var idx = DATA.agendaSalas.findIndex(function(x) { return x.id == editId; });
+        if (idx >= 0) { obj.id = parseInt(editId); DATA.agendaSalas[idx] = obj; }
+    } else {
+        obj.id = genId();
+        DATA.agendaSalas.push(obj);
+    }
+    saveData(); closeModal('modalAgendaSala'); renderAgendaSalas();
+}
+
+function delAgendaSala(id) {
+    if (!confirm('Excluir este agendamento?')) return;
+    DATA.agendaSalas = (DATA.agendaSalas || []).filter(function(x) { return x.id != id; });
+    saveData(); renderAgendaSalas();
+}
+
+function renderAgendaSalas() {
+    if (!DATA.agendaSalas) DATA.agendaSalas = [];
+    var agora = new Date();
+    var hojeStr = agora.toISOString().slice(0,10);
+    var horaAtual = agora.toTimeString().slice(0,5);
+
+    // --- Cards de status das salas ---
+    var cardsHtml = '';
+    SALAS.forEach(function(sala, i) {
+        var agendHoje = DATA.agendaSalas.filter(function(a) { return a.sala === sala && a.data === hojeStr; })
+            .sort(function(a,b) { return a.horaInicio > b.horaInicio ? 1 : -1; });
+
+        var ocupadaAgora = agendHoje.find(function(a) { return horaAtual >= a.horaInicio && horaAtual < a.horaFim; });
+        var proxima = agendHoje.find(function(a) { return a.horaInicio > horaAtual; });
+
+        var statusLabel, statusCor, statusBg;
+        if (ocupadaAgora) {
+            statusLabel = 'OCUPADA'; statusCor = 'var(--red)'; statusBg = 'rgba(239,68,68,.12)';
+        } else {
+            statusLabel = 'LIVRE'; statusCor = 'var(--green)'; statusBg = 'rgba(16,185,129,.12)';
+        }
+
+        var cores = ['var(--accent)','var(--accent2)','var(--cyan)','var(--orange)','var(--green)'];
+        cardsHtml += '<div class="card" style="border-top:3px solid ' + cores[i] + ';text-align:center;padding:16px 12px;cursor:pointer;transition:all .2s;" onclick="abrirDetalheCardSala(\'' + sala.replace(/'/g,"\\'") + '\')" title="Clique para ver agendamentos">' +
+            '<div style="font-weight:700;font-size:0.9rem;margin-bottom:8px;">' + sala + '</div>' +
+            '<div style="display:inline-block;padding:4px 14px;border-radius:20px;font-size:0.75rem;font-weight:700;background:' + statusBg + ';color:' + statusCor + ';">' + statusLabel + '</div>';
+
+        if (ocupadaAgora) {
+            cardsHtml += '<div style="margin-top:8px;font-size:0.72rem;color:var(--text2);">' +
+                esc(ocupadaAgora.pessoa) + '<br>' + ocupadaAgora.horaInicio + ' - ' + ocupadaAgora.horaFim + '</div>';
+        }
+        if (proxima) {
+            cardsHtml += '<div style="margin-top:8px;font-size:0.68rem;color:var(--text2);border-top:1px solid var(--border);padding-top:6px;">' +
+                'Próximo: ' + proxima.horaInicio + '<br>' + esc(proxima.pessoa) + '</div>';
+        } else if (!ocupadaAgora) {
+            cardsHtml += '<div style="margin-top:8px;font-size:0.68rem;color:var(--text2);">Sem agendamentos hoje</div>';
+        }
+
+        cardsHtml += '</div>';
+    });
+    document.getElementById('salasStatusGrid').innerHTML = cardsHtml;
+
+    // --- Tabela de agendamentos ---
+    var filtroSala = document.getElementById('filtroSala').value;
+    var filtroData = document.getElementById('filtroDataSala').value;
+
+    var lista = DATA.agendaSalas.filter(function(a) {
+        if (filtroSala && a.sala !== filtroSala) return false;
+        if (filtroData && a.data !== filtroData) return false;
+        return true;
+    }).sort(function(a,b) {
+        if (a.data !== b.data) return a.data > b.data ? 1 : -1;
+        if (a.horaInicio !== b.horaInicio) return a.horaInicio > b.horaInicio ? 1 : -1;
+        return a.sala > b.sala ? 1 : -1;
+    });
+
+    var html = '';
+    lista.forEach(function(a) {
+        var passado = a.data < hojeStr || (a.data === hojeStr && a.horaFim <= horaAtual);
+        var emAndamento = a.data === hojeStr && horaAtual >= a.horaInicio && horaAtual < a.horaFim;
+        var stLabel, stCor;
+        if (emAndamento) { stLabel = 'Em uso'; stCor = 'cyan'; }
+        else if (passado) { stLabel = 'Encerrado'; stCor = 'purple'; }
+        else { stLabel = 'Confirmado'; stCor = 'green'; }
+
+        html += '<tr' + (passado && !emAndamento ? ' style="opacity:.5;"' : '') + '>' +
+            '<td><strong><a href="#" onclick="abrirDetalheSala(' + a.id + ');return false;" style="color:var(--accent);text-decoration:none;cursor:pointer;">' + esc(a.sala) + '</a></strong></td>' +
+            '<td>' + formatDate(a.data) + '</td>' +
+            '<td>' + a.horaInicio + ' - ' + a.horaFim + '</td>' +
+            '<td>' + esc(a.pessoa) + '</td>' +
+            '<td>' + esc(a.telefone || '-') + '</td>' +
+            '<td style="text-align:center;">' + (a.qtdPessoas || 1) + '</td>' +
+            '<td>' + esc(a.assunto || '-') + '</td>' +
+            '<td><span class="badge badge-' + stCor + '">' + stLabel + '</span></td>' +
+            '<td><button class="btn btn-sm btn-primary" onclick="openModalAgendaSala(' + a.id + ')">Editar</button> ' +
+            '<button class="btn btn-sm btn-danger" onclick="delAgendaSala(' + a.id + ')">X</button></td></tr>';
+    });
+    document.getElementById('tbAgendaSalas').innerHTML = html || '<tr><td colspan="9" style="text-align:center;color:var(--text2);">Nenhum agendamento cadastrado.</td></tr>';
+}
+
+// ==================== DETALHE AGENDA SALA ====================
+function abrirDetalheSala(id) {
+    var a = (DATA.agendaSalas || []).find(function(x) { return x.id == id; });
+    if (!a) return;
+
+    var agora = new Date();
+    var hojeStr = agora.toISOString().slice(0,10);
+    var horaAtual = agora.toTimeString().slice(0,5);
+    var passado = a.data < hojeStr || (a.data === hojeStr && a.horaFim <= horaAtual);
+    var emAndamento = a.data === hojeStr && horaAtual >= a.horaInicio && horaAtual < a.horaFim;
+    var stLabel, stCor;
+    if (emAndamento) { stLabel = 'Em uso'; stCor = 'cyan'; }
+    else if (passado) { stLabel = 'Encerrado'; stCor = 'purple'; }
+    else { stLabel = 'Confirmado'; stCor = 'green'; }
+
+    var html = '<div style="padding:4px 0;">';
+
+    // Cabeçalho com status
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">' +
+        '<div style="font-size:1.1rem;font-weight:800;color:var(--accent);">' + esc(a.sala) + '</div>' +
+        '<span class="badge badge-' + stCor + '" style="font-size:.8rem;padding:5px 14px;">' + stLabel + '</span></div>';
+
+    // Informações em grid
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">';
+
+    html += '<div style="background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:14px;">' +
+        '<div style="font-size:.68rem;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Data</div>' +
+        '<div style="font-size:.95rem;font-weight:600;">' + formatDate(a.data) + '</div></div>';
+
+    html += '<div style="background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:14px;">' +
+        '<div style="font-size:.68rem;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Horário</div>' +
+        '<div style="font-size:.95rem;font-weight:600;">' + a.horaInicio + ' às ' + a.horaFim + '</div></div>';
+
+    html += '<div style="background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:14px;">' +
+        '<div style="font-size:.68rem;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Pessoa Responsável</div>' +
+        '<div style="font-size:.95rem;font-weight:600;">' + esc(a.pessoa) + '</div></div>';
+
+    html += '<div style="background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:14px;">' +
+        '<div style="font-size:.68rem;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Telefone</div>' +
+        '<div style="font-size:.95rem;font-weight:600;">' + esc(a.telefone || 'Não informado') + '</div></div>';
+
+    html += '<div style="background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:14px;">' +
+        '<div style="font-size:.68rem;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Qtd de Pessoas</div>' +
+        '<div style="font-size:.95rem;font-weight:600;">' + (a.qtdPessoas || 1) + ' pessoa' + ((a.qtdPessoas || 1) > 1 ? 's' : '') + '</div></div>';
+
+    html += '<div style="background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:14px;">' +
+        '<div style="font-size:.68rem;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Assunto / Motivo</div>' +
+        '<div style="font-size:.95rem;font-weight:600;">' + esc(a.assunto || 'Não informado') + '</div></div>';
+
+    html += '</div>';
+
+    // Botões de ação
+    html += '<div style="display:flex;gap:8px;justify-content:center;margin-top:20px;">' +
+        '<button class="btn btn-primary" onclick="fecharDetalhe();openModalAgendaSala(' + a.id + ')">Editar Agendamento</button>' +
+        '<button class="btn btn-danger" onclick="fecharDetalhe();delAgendaSala(' + a.id + ')">Excluir</button></div>';
+
+    html += '</div>';
+
+    abrirDetalhe('&#128197;', a.sala + ' — Detalhes do Agendamento', '1', html);
+}
+
+function abrirDetalheCardSala(nomeSala) {
+    var agora = new Date();
+    var hojeStr = agora.toISOString().slice(0,10);
+    var horaAtual = agora.toTimeString().slice(0,5);
+
+    // Agendamentos futuros e de hoje dessa sala
+    var agendamentos = (DATA.agendaSalas || []).filter(function(a) {
+        return a.sala === nomeSala && a.data >= hojeStr;
+    }).sort(function(a,b) {
+        if (a.data !== b.data) return a.data > b.data ? 1 : -1;
+        return a.horaInicio > b.horaInicio ? 1 : -1;
+    });
+
+    var html = '';
+    if (agendamentos.length === 0) {
+        html = '<div class="detalhe-empty"><div class="detalhe-empty-icon">&#128197;</div>' +
+            '<div class="detalhe-empty-text">Nenhum agendamento futuro para ' + esc(nomeSala) + '.</div>' +
+            '<button class="detalhe-action" onclick="fecharDetalhe();openModalAgendaSala()">Agendar esta sala</button></div>';
+    } else {
+        agendamentos.forEach(function(a) {
+            var passado = a.data < hojeStr || (a.data === hojeStr && a.horaFim <= horaAtual);
+            var emAndamento = a.data === hojeStr && horaAtual >= a.horaInicio && horaAtual < a.horaFim;
+            var stLabel, stCor;
+            if (emAndamento) { stLabel = 'Em uso'; stCor = 'cyan'; }
+            else if (passado) { stLabel = 'Encerrado'; stCor = 'purple'; }
+            else { stLabel = 'Confirmado'; stCor = 'green'; }
+
+            html += '<div class="detalhe-item" style="cursor:pointer;' + (emAndamento ? 'border-color:var(--cyan);' : '') + '" onclick="fecharDetalhe();abrirDetalheSala(' + a.id + ')">' +
+                '<div class="detalhe-item-info">' +
+                '<div class="detalhe-item-title">' + esc(a.pessoa) + '</div>' +
+                '<div class="detalhe-item-sub">' + formatDate(a.data) + ' | ' + a.horaInicio + ' - ' + a.horaFim +
+                ' | ' + (a.qtdPessoas || 1) + ' pessoa' + ((a.qtdPessoas || 1) > 1 ? 's' : '') +
+                (a.assunto ? ' | ' + esc(a.assunto) : '') +
+                (a.telefone ? ' | ' + esc(a.telefone) : '') + '</div></div>' +
+                '<div class="detalhe-item-right"><span class="badge badge-' + stCor + '">' + stLabel + '</span></div></div>';
+        });
+
+        html += '<div style="text-align:center;margin-top:16px;">' +
+            '<button class="detalhe-action" onclick="fecharDetalhe();openModalAgendaSala()">+ Novo Agendamento</button></div>';
+    }
+
+    abrirDetalhe('&#127970;', nomeSala, agendamentos.length, html);
 }
 
 // ==================== DRILL-DOWN DOS STAT CARDS ====================
@@ -1600,7 +2545,320 @@ function abrirDetalheAlertas() {
 // Fechar detalhe com ESC
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape') fecharDetalhe(); });
 
+// ==================== FILTRO ELEITORADO ====================
+function filtrarEleitorado() {
+    var termo = document.getElementById('buscaRA').value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    var tabela = document.querySelector('#page-eleitorado table tbody');
+    var linhas = tabela.querySelectorAll('tr');
+    linhas.forEach(function(tr) {
+        var cidade = (tr.children[1] || {}).textContent || '';
+        var cidadeNorm = cidade.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+        tr.style.display = cidadeNorm.indexOf(termo) >= 0 ? '' : 'none';
+    });
+}
+
+// ==================== ORCAMENTO ====================
+function openModalOrcamento(id) {
+    document.getElementById('modalOrcamentoTitle').textContent = id ? 'Editar Despesa' : 'Nova Despesa';
+    if (id) {
+        var o = (DATA.orcamento || []).find(function(x) { return x.id === id; });
+        if (!o) return;
+        document.getElementById('orcamentoEditId').value = id;
+        document.getElementById('orcCategoria').value = o.categoria || 'Outros';
+        document.getElementById('orcDescricao').value = o.descricao || '';
+        document.getElementById('orcFornecedor').value = o.fornecedor || '';
+        document.getElementById('orcValor').value = o.valor || '';
+        document.getElementById('orcStatus').value = o.status || 'Previsto';
+        document.getElementById('orcData').value = o.data || '';
+    } else {
+        document.getElementById('orcamentoEditId').value = '';
+        document.getElementById('orcCategoria').value = 'Grafica';
+        document.getElementById('orcDescricao').value = '';
+        document.getElementById('orcFornecedor').value = '';
+        document.getElementById('orcValor').value = '';
+        document.getElementById('orcStatus').value = 'Previsto';
+        document.getElementById('orcData').value = new Date().toISOString().split('T')[0];
+    }
+    document.getElementById('modalOrcamento').classList.add('show');
+}
+
+function saveOrcamento() {
+    if (!DATA.orcamento) DATA.orcamento = [];
+    var id = document.getElementById('orcamentoEditId').value;
+    var item = {
+        id: id ? Number(id) : genId(),
+        categoria: document.getElementById('orcCategoria').value,
+        descricao: document.getElementById('orcDescricao').value,
+        fornecedor: document.getElementById('orcFornecedor').value,
+        valor: parseFloat(document.getElementById('orcValor').value) || 0,
+        status: document.getElementById('orcStatus').value,
+        data: document.getElementById('orcData').value
+    };
+    if (!item.descricao) return;
+    if (id) {
+        var idx = DATA.orcamento.findIndex(function(x) { return x.id === Number(id); });
+        if (idx >= 0) DATA.orcamento[idx] = item;
+    } else {
+        DATA.orcamento.push(item);
+    }
+    saveData(); closeModal('modalOrcamento'); renderOrcamento();
+}
+
+function delOrcamento(id) {
+    if (!confirm('Remover esta despesa?')) return;
+    DATA.orcamento = (DATA.orcamento || []).filter(function(x) { return x.id !== id; });
+    saveData(); renderOrcamento();
+}
+
+function renderOrcamento() {
+    if (!DATA.orcamento) DATA.orcamento = [];
+    var items = DATA.orcamento;
+    var total = 0; var previsto = 0; var pago = 0;
+    items.forEach(function(o) {
+        total += o.valor || 0;
+        if (o.status === 'Previsto' || o.status === 'Aprovado') previsto += o.valor || 0;
+        if (o.status === 'Pago') pago += o.valor || 0;
+    });
+
+    document.getElementById('orcamentoStats').innerHTML =
+        '<div class="card stat" style="background:var(--card2);"><div class="stat-num" style="color:var(--accent);">R$ ' + total.toLocaleString('pt-BR', {minimumFractionDigits:2}) + '</div><div class="stat-label">Total Orcado</div></div>' +
+        '<div class="card stat" style="background:var(--card2);"><div class="stat-num" style="color:var(--orange);">R$ ' + previsto.toLocaleString('pt-BR', {minimumFractionDigits:2}) + '</div><div class="stat-label">Previsto/Aprovado</div></div>' +
+        '<div class="card stat" style="background:var(--card2);"><div class="stat-num" style="color:var(--green);">R$ ' + pago.toLocaleString('pt-BR', {minimumFractionDigits:2}) + '</div><div class="stat-label">Pago</div></div>';
+
+    var statusColors = { Previsto: 'var(--text2)', Aprovado: 'var(--accent)', Pago: 'var(--green)', Cancelado: 'var(--red)' };
+    var html = items.length === 0 ? '<tr><td colspan="7" style="text-align:center;color:var(--text2);padding:30px;">Nenhuma despesa registrada</td></tr>' :
+        items.sort(function(a,b) { return (b.data||'').localeCompare(a.data||''); }).map(function(o) {
+            return '<tr>' +
+                '<td><span class="badge" style="background:var(--card2);font-size:.75rem;">' + esc(o.categoria) + '</span></td>' +
+                '<td>' + esc(o.descricao) + '</td>' +
+                '<td>' + esc(o.fornecedor) + '</td>' +
+                '<td style="text-align:right;font-weight:600;">R$ ' + (o.valor||0).toLocaleString('pt-BR', {minimumFractionDigits:2}) + '</td>' +
+                '<td><span class="badge" style="background:' + (statusColors[o.status]||'var(--text2)') + ';color:#fff;font-size:.7rem;">' + o.status + '</span></td>' +
+                '<td>' + formatDate(o.data) + '</td>' +
+                '<td><button class="btn btn-sm" style="background:var(--accent);color:#fff;" onclick="openModalOrcamento(' + o.id + ')">Editar</button> <button class="btn btn-sm" style="background:var(--red);color:#fff;" onclick="delOrcamento(' + o.id + ')">X</button></td>' +
+                '</tr>';
+        }).join('');
+    document.getElementById('orcamentoBody').innerHTML = html;
+    document.getElementById('orcamentoTotal').innerHTML = items.length > 0 ? '<tr style="background:var(--card2);font-weight:700;"><td colspan="3"><strong>TOTAL</strong></td><td style="text-align:right;"><strong>R$ ' + total.toLocaleString('pt-BR', {minimumFractionDigits:2}) + '</strong></td><td colspan="3"></td></tr>' : '';
+}
+
+// ==================== DISTRIBUICAO ====================
+function openModalDistribuicao(id) {
+    document.getElementById('modalDistribuicaoTitle').textContent = id ? 'Editar Distribuicao' : 'Registrar Distribuicao';
+    if (id) {
+        var d = (DATA.distribuicao || []).find(function(x) { return x.id === id; });
+        if (!d) return;
+        document.getElementById('distEditId').value = id;
+        document.getElementById('distRegiao').value = d.regiao || '';
+        document.getElementById('distMaterial').value = d.material || '';
+        document.getElementById('distQtd').value = d.qtd || '';
+        document.getElementById('distResponsavel').value = d.responsavel || '';
+        document.getElementById('distData').value = d.data || '';
+    } else {
+        document.getElementById('distEditId').value = '';
+        document.getElementById('distRegiao').value = '';
+        document.getElementById('distMaterial').value = '';
+        document.getElementById('distQtd').value = '';
+        document.getElementById('distResponsavel').value = '';
+        document.getElementById('distData').value = new Date().toISOString().split('T')[0];
+    }
+    document.getElementById('modalDistribuicao').classList.add('show');
+}
+
+function saveDistribuicao() {
+    if (!DATA.distribuicao) DATA.distribuicao = [];
+    var id = document.getElementById('distEditId').value;
+    var item = {
+        id: id ? Number(id) : genId(),
+        regiao: document.getElementById('distRegiao').value,
+        material: document.getElementById('distMaterial').value,
+        qtd: parseInt(document.getElementById('distQtd').value) || 0,
+        responsavel: document.getElementById('distResponsavel').value,
+        data: document.getElementById('distData').value
+    };
+    if (!item.regiao || !item.material) return;
+    if (id) {
+        var idx = DATA.distribuicao.findIndex(function(x) { return x.id === Number(id); });
+        if (idx >= 0) DATA.distribuicao[idx] = item;
+    } else {
+        DATA.distribuicao.push(item);
+        
+        var mObj = DATA.materiais.find(function(m) { return m.nome.trim().toLowerCase() === item.material.trim().toLowerCase(); });
+        if (mObj && mObj.retornavel) {
+            if (!DATA.logistica_reversa) DATA.logistica_reversa = [];
+            DATA.logistica_reversa.push({
+                id: genId(),
+                distId: item.id,
+                material: item.material,
+                qtd: item.qtd,
+                responsavel: item.responsavel,
+                regiao: item.regiao,
+                dataSaida: item.data,
+                horaSaida: new Date().toTimeString().slice(0,5),
+                status: 'Na Rua'
+            });
+        }
+    }
+    saveData(); closeModal('modalDistribuicao'); renderDistribuicao();
+}
+
+function delDistribuicao(id) {
+    if (!confirm('Remover este registro?')) return;
+    DATA.distribuicao = (DATA.distribuicao || []).filter(function(x) { return x.id !== id; });
+    saveData(); renderDistribuicao();
+}
+
+function renderDistribuicao() {
+    if (!DATA.distribuicao) DATA.distribuicao = [];
+    var items = DATA.distribuicao;
+    var totalQtd = 0; var regioes = {}; var materiais = {};
+    items.forEach(function(d) {
+        totalQtd += d.qtd || 0;
+        regioes[d.regiao] = (regioes[d.regiao] || 0) + (d.qtd || 0);
+        materiais[d.material] = (materiais[d.material] || 0) + (d.qtd || 0);
+    });
+
+    document.getElementById('distStats').innerHTML =
+        '<div class="card stat" style="background:var(--card2);"><div class="stat-num" style="color:var(--accent);">' + totalQtd.toLocaleString('pt-BR') + '</div><div class="stat-label">Itens Distribuidos</div></div>' +
+        '<div class="card stat" style="background:var(--card2);"><div class="stat-num" style="color:var(--cyan);">' + Object.keys(regioes).length + '</div><div class="stat-label">Regioes Atendidas</div></div>' +
+        '<div class="card stat" style="background:var(--card2);"><div class="stat-num" style="color:var(--green);">' + Object.keys(materiais).length + '</div><div class="stat-label">Tipos de Material</div></div>';
+
+    var html = items.length === 0 ? '<tr><td colspan="6" style="text-align:center;color:var(--text2);padding:30px;">Nenhuma distribuicao registrada</td></tr>' :
+        items.sort(function(a,b) { return (b.data||'').localeCompare(a.data||''); }).map(function(d) {
+            return '<tr>' +
+                '<td><strong>' + esc(d.regiao) + '</strong></td>' +
+                '<td>' + esc(d.material) + '</td>' +
+                '<td style="text-align:right;font-weight:600;">' + (d.qtd||0).toLocaleString('pt-BR') + '</td>' +
+                '<td>' + esc(d.responsavel) + '</td>' +
+                '<td>' + formatDate(d.data) + '</td>' +
+                '<td><button class="btn btn-sm" style="background:var(--accent);color:#fff;" onclick="openModalDistribuicao(' + d.id + ')">Editar</button> <button class="btn btn-sm" style="background:var(--red);color:#fff;" onclick="delDistribuicao(' + d.id + ')">X</button></td>' +
+                '</tr>';
+        }).join('');
+    document.getElementById('distribuicaoBody').innerHTML = html;
+}
+
 // ==================== UTILS ====================
+// ==================== PATRIMÔNIO ====================
+function openModalPatrimonio(id) {
+    document.getElementById('patEditId').value = id || '';
+    if (id) {
+        var p = (DATA.patrimonio || []).find(function(x) { return x.id == id; });
+        if (p) {
+            document.getElementById('patNome').value = p.nome || '';
+            document.getElementById('patCodigo').value = p.codigo || '';
+            document.getElementById('patCategoria').value = p.categoria || 'Móveis';
+            document.getElementById('patQtd').value = p.qtd || 1;
+            document.getElementById('patEstado').value = p.estado || 'Bom';
+            document.getElementById('patOrigem').value = p.origem || 'Comprado';
+            document.getElementById('patLocal').value = p.local || '';
+            document.getElementById('patResponsavel').value = p.responsavel || '';
+            document.getElementById('patValor').value = p.valor || 0;
+            document.getElementById('patDataAquisicao').value = p.dataAquisicao || '';
+            document.getElementById('patObs').value = p.obs || '';
+        }
+    } else {
+        document.getElementById('patNome').value = '';
+        document.getElementById('patCodigo').value = '';
+        document.getElementById('patCategoria').value = 'Móveis';
+        document.getElementById('patQtd').value = 1;
+        document.getElementById('patEstado').value = 'Bom';
+        document.getElementById('patOrigem').value = 'Comprado';
+        document.getElementById('patLocal').value = '';
+        document.getElementById('patResponsavel').value = '';
+        document.getElementById('patValor').value = 0;
+        document.getElementById('patDataAquisicao').value = '';
+        document.getElementById('patObs').value = '';
+    }
+    document.getElementById('modalPatrimonio').classList.add('show');
+}
+
+function savePatrimonio() {
+    var nome = document.getElementById('patNome').value.trim();
+    if (!nome) { alert('Informe o nome do item.'); return; }
+    if (!DATA.patrimonio) DATA.patrimonio = [];
+    var editId = document.getElementById('patEditId').value;
+    var item = {
+        id: editId ? parseInt(editId) : genId(),
+        nome: nome,
+        codigo: document.getElementById('patCodigo').value.trim(),
+        categoria: document.getElementById('patCategoria').value,
+        qtd: parseInt(document.getElementById('patQtd').value) || 1,
+        estado: document.getElementById('patEstado').value,
+        origem: document.getElementById('patOrigem').value,
+        local: document.getElementById('patLocal').value.trim(),
+        responsavel: document.getElementById('patResponsavel').value.trim(),
+        valor: parseFloat(document.getElementById('patValor').value) || 0,
+        dataAquisicao: document.getElementById('patDataAquisicao').value,
+        obs: document.getElementById('patObs').value.trim()
+    };
+    if (editId) {
+        var idx = DATA.patrimonio.findIndex(function(x) { return x.id == editId; });
+        if (idx >= 0) DATA.patrimonio[idx] = item;
+    } else {
+        DATA.patrimonio.push(item);
+    }
+    saveData();
+    closeModal('modalPatrimonio');
+    renderPatrimonio();
+}
+
+function deletePatrimonio(id) {
+    if (!confirm('Excluir este item do patrimônio?')) return;
+    DATA.patrimonio = (DATA.patrimonio || []).filter(function(x) { return x.id != id; });
+    saveData();
+    renderPatrimonio();
+}
+
+function renderPatrimonio() {
+    if (!DATA.patrimonio) DATA.patrimonio = [];
+    var itens = DATA.patrimonio;
+
+    // Filtros
+    var filtroCategoria = document.getElementById('filtroPatCategoria').value;
+    var filtroEstado = document.getElementById('filtroPatEstado').value;
+    var filtrados = itens.filter(function(p) {
+        if (filtroCategoria && p.categoria !== filtroCategoria) return false;
+        if (filtroEstado && p.estado !== filtroEstado) return false;
+        return true;
+    });
+
+    // Stats
+    var totalItens = itens.length;
+    var totalQtd = itens.reduce(function(s, p) { return s + (p.qtd || 0); }, 0);
+    var totalValor = itens.reduce(function(s, p) { return s + ((p.valor || 0) * (p.qtd || 1)); }, 0);
+    var categorias = {};
+    itens.forEach(function(p) { categorias[p.categoria] = (categorias[p.categoria] || 0) + 1; });
+    var numCategorias = Object.keys(categorias).length;
+
+    document.getElementById('patStats').innerHTML =
+        '<div class="card stat"><div class="stat-num" style="color:var(--accent);">' + totalItens + '</div><div class="stat-label">Itens Cadastrados</div></div>' +
+        '<div class="card stat"><div class="stat-num" style="color:var(--cyan);">' + totalQtd + '</div><div class="stat-label">Quantidade Total</div></div>' +
+        '<div class="card stat"><div class="stat-num" style="color:var(--green);">R$ ' + totalValor.toLocaleString('pt-BR', {minimumFractionDigits:2}) + '</div><div class="stat-label">Valor Total</div></div>' +
+        '<div class="card stat"><div class="stat-num" style="color:var(--orange);">' + numCategorias + '</div><div class="stat-label">Categorias</div></div>';
+
+    // Tabela
+    var html = '';
+    filtrados.forEach(function(p) {
+        var estadoCor = p.estado === 'Novo' ? 'green' : p.estado === 'Bom' ? 'blue' : p.estado === 'Regular' ? 'orange' : p.estado === 'Ruim' ? 'red' : 'purple';
+        var valorTotal = (p.valor || 0) * (p.qtd || 1);
+        html += '<tr>' +
+            '<td><span style="font-weight:700;color:var(--accent);">' + esc(p.codigo || '-') + '</span></td>' +
+            '<td><div style="font-weight:600;">' + esc(p.nome) + '</div>' +
+                (p.obs ? '<div style="font-size:.72rem;color:var(--text2);">' + esc(p.obs) + '</div>' : '') +
+                '<div style="font-size:.7rem;color:var(--text2);">' + esc(p.origem || '') + (p.dataAquisicao ? ' | ' + formatDate(p.dataAquisicao) : '') + '</div></td>' +
+            '<td><span class="badge badge-cyan">' + esc(p.categoria) + '</span></td>' +
+            '<td style="font-weight:700;text-align:center;">' + (p.qtd || 1) + '</td>' +
+            '<td><span class="badge badge-' + estadoCor + '">' + esc(p.estado) + '</span></td>' +
+            '<td>' + esc(p.local || '-') + '</td>' +
+            '<td>' + esc(p.responsavel || '-') + '</td>' +
+            '<td>R$ ' + (p.valor || 0).toLocaleString('pt-BR', {minimumFractionDigits:2}) + '</td>' +
+            '<td style="font-weight:600;">R$ ' + valorTotal.toLocaleString('pt-BR', {minimumFractionDigits:2}) + '</td>' +
+            '<td><button class="btn btn-sm btn-primary" onclick="openModalPatrimonio(' + p.id + ')">Editar</button> ' +
+            '<button class="btn btn-sm btn-danger" onclick="deletePatrimonio(' + p.id + ')">Excluir</button></td></tr>';
+    });
+    document.getElementById('tbPatrimonio').innerHTML = html || '<tr><td colspan="10" style="text-align:center;color:var(--text2);padding:30px;">Nenhum item cadastrado no patrimônio.</td></tr>';
+}
+
 function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 function esc(s) { var d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
 function formatDate(d) {
@@ -1611,7 +2869,15 @@ function formatDate(d) {
 
 // ==================== QR CODE ====================
 function showQRCode() {
-    var url = 'http://192.168.0.2:8080/Logistica%20Campanha.html';
+    var cfg = window.CONECTA_CONFIG || {};
+    var path = cfg.logisticaPath || 'Logistica Campanha.html';
+    var url;
+    if (/^https?:\/\//i.test(path)) {
+        url = path;
+    } else {
+        var normalizedPath = path.charAt(0) === '/' ? path : '/' + path.replace(/^\.\//, '');
+        url = window.location.origin + normalizedPath;
+    }
     var qrApi = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' + encodeURIComponent(url);
     var overlay = document.createElement('div');
     overlay.className = 'modal-overlay show';
@@ -1626,17 +2892,796 @@ function showQRCode() {
     document.body.appendChild(overlay);
 }
 
+function openInteiaSite() {
+    var sitePath = (window.CONECTA_CONFIG && window.CONECTA_CONFIG.sitePath) || 'https://inteia.com.br/';
+    window.open(sitePath, '_blank', 'noopener');
+}
+
 // Click fora do modal fecha
 document.querySelectorAll('.modal-overlay').forEach(function(o) {
     o.addEventListener('click', function(e) { if (e.target === o) o.classList.remove('show'); });
 });
 
-// ==================== INIT ====================
-loadSubcoords();
-renderDashboard();
+// ==================== VALES COMBUSTÍVEIS ====================
+function renderVales() {
+    var vales = DATA.vales_combustivel || [];
+    var totalCota = 0;
+    var html = '';
+    
+    var sorted = vales.slice().sort(function(a,b) { return new Date(b.data||'') - new Date(a.data||''); });
+    sorted.forEach(function(v) {
+        totalCota += (v.valor || 0);
+        html += '<tr><td><strong>' + esc(v.placa || '') + '</strong></td>' +
+            '<td>' + esc(v.modelo || '') + '</td>' +
+            '<td>' + esc(v.motorista || '') + '</td>' +
+            '<td>' + (v.litros || 0) + ' L</td>' +
+            '<td>R$ ' + (v.valor || 0).toLocaleString('pt-BR',{minimumFractionDigits:2}) + '</td>' +
+            '<td>' + esc((v.data||'').slice(0,10).split('-').reverse().join('/')) + '</td>' +
+            '<td><button class="btn btn-sm btn-primary" onclick="openModalVale(' + v.id + ')">Editar</button> ' +
+            '<button class="btn btn-sm" style="background:var(--red);color:#fff;" onclick="delVale(' + v.id + ')">X</button></td></tr>';
+    });
+    document.getElementById('tbVales').innerHTML = html || '<tr><td colspan="7" style="text-align:center;color:var(--text2);">Nenhum vale emitido.</td></tr>';
+    
+    var htmlStats = '<div class="card stat"><div class="stat-num" style="color:var(--orange);">' + vales.length + '</div><div class="stat-label">Vales Emitidos</div></div>' +
+                    '<div class="card stat"><div class="stat-num" style="color:var(--green);">R$ ' + totalCota.toLocaleString('pt-BR',{minimumFractionDigits:2}) + '</div><div class="stat-label">Cota Total Gasta (R$)</div></div>';
+    document.getElementById('valesStats').innerHTML = htmlStats;
+}
 
-// Atualiza countdown a cada minuto
-setInterval(updateCountdown, 60000);
+function openModalVale(id) {
+    document.getElementById('valeEditId').value = id || '';
+    if (id) {
+        var v = (DATA.vales_combustivel||[]).find(function(x) { return x.id == id; });
+        if (v) {
+            document.getElementById('valePlaca').value = v.placa;
+            document.getElementById('valeModelo').value = v.modelo;
+            document.getElementById('valeMotorista').value = v.motorista;
+            document.getElementById('valeLitros').value = v.litros || '';
+            document.getElementById('valeValor').value = v.valor || '';
+            document.getElementById('valeData').value = (v.data||'').slice(0,10);
+        }
+    } else {
+        ['valePlaca','valeModelo','valeMotorista','valeLitros','valeValor'].forEach(function(x){document.getElementById(x).value='';});
+        document.getElementById('valeData').value = new Date().toISOString().slice(0,10);
+    }
+    document.getElementById('modalVale').classList.add('show');
+}
+
+function saveVale() {
+    var id = document.getElementById('valeEditId').value;
+    var v = {
+        placa: document.getElementById('valePlaca').value.trim().toUpperCase(),
+        modelo: document.getElementById('valeModelo').value.trim(),
+        motorista: document.getElementById('valeMotorista').value.trim(),
+        litros: parseFloat(document.getElementById('valeLitros').value) || 0,
+        valor: parseFloat(document.getElementById('valeValor').value) || 0,
+        data: document.getElementById('valeData').value
+    };
+    if (!v.placa) { alert('A placa do veículo é obrigatória'); return; }
+    if (!DATA.vales_combustivel) DATA.vales_combustivel = [];
+    if (id) {
+        var idx = DATA.vales_combustivel.findIndex(function(x){return x.id==id;});
+        if(idx>=0) { v.id=parseInt(id); DATA.vales_combustivel[idx]=v; }
+    } else {
+        v.id = genId();
+        DATA.vales_combustivel.push(v);
+    }
+    saveData(); closeModal('modalVale'); renderVales();
+}
+
+function delVale(id) {
+    if (!confirm('Tem certeza que deseja excluir este vale?')) return;
+    DATA.vales_combustivel = DATA.vales_combustivel.filter(function(x){return x.id!=id;});
+    saveData(); renderVales();
+}
+
+// ==================== LOGISTICA REVERSA ====================
+function renderReversa() {
+    var itens = DATA.logistica_reversa || [];
+    var ativos = 0; var devolvidos = 0; var atrasados = 0;
+    
+    var html = '';
+    var hojeIso = new Date().toISOString().slice(0,10);
+    var horaAtual = new Date().getHours();
+    
+    var sorted = itens.slice().sort(function(a,b) { return new Date(b.dataSaida||'') - new Date(a.dataSaida||''); });
+    sorted.forEach(function(r) {
+        if (r.status === 'Na Rua' && (r.dataSaida < hojeIso || (r.dataSaida === hojeIso && horaAtual >= 20))) {
+            r.status = 'Atrasado/Perdido';
+            var idx = DATA.logistica_reversa.findIndex(function(x){return x.id==r.id});
+            if(idx>=0) DATA.logistica_reversa[idx].status = r.status;
+            saveData();
+        }
+        
+        if (r.status === 'Na Rua') ativos++;
+        else if (r.status === 'Atrasado/Perdido') atrasados++;
+        else devolvidos++;
+        
+        var stCor = r.status==='Devolvido' ? 'var(--green)' : r.status==='Atrasado/Perdido' ? 'var(--red)' : 'var(--orange)';
+        
+        html += '<tr><td><strong>' + esc(r.regiao) + '</strong></td>' +
+            '<td>' + esc(r.material) + '</td>' +
+            '<td>' + (r.qtd || 0) + '</td>' +
+            '<td>' + esc(r.responsavel) + '</td>' +
+            '<td>' + formatDate(r.dataSaida) + ' ' + (r.horaSaida||'') + '</td>' +
+            '<td><span class="badge" style="background:' + stCor + ';color:#fff;">' + r.status + '</span></td>' +
+            '<td>' + 
+            (r.status !== 'Devolvido' ? '<button class="btn btn-sm" style="background:var(--green);color:#fff;" onclick="baixaReversa(' + r.id + ')">Dar Baixa</button> ' : '') + 
+            '<button class="btn btn-sm" style="background:var(--red);color:#fff;" onclick="delReversa(' + r.id + ')">X</button></td></tr>';
+    });
+    document.getElementById('tbReversa').innerHTML = html || '<tr><td colspan="7" style="text-align:center;color:var(--text2);">Nenhum ativo registrado na rua.</td></tr>';
+    
+    document.getElementById('reversaStats').innerHTML = 
+        '<div class="card stat"><div class="stat-num" style="color:var(--orange);">' + ativos + '</div><div class="stat-label">Ativos Atualmente na Rua</div></div>' +
+        '<div class="card stat"><div class="stat-num" style="color:var(--red);">' + atrasados + '</div><div class="stat-label">Atrasados / Não Devolvidos</div></div>' +
+        '<div class="card stat"><div class="stat-num" style="color:var(--green);">' + devolvidos + '</div><div class="stat-label">Devolvidos com Sucesso</div></div>';
+}
+
+function baixaReversa(id) {
+    if (!confirm('Confirmar a devolução deste material?')) return;
+    var idx = DATA.logistica_reversa.findIndex(function(x){return x.id==id;});
+    if (idx >= 0) {
+        DATA.logistica_reversa[idx].status = 'Devolvido';
+        DATA.logistica_reversa[idx].dataRetorno = new Date().toISOString().slice(0,10);
+        saveData(); renderReversa();
+    }
+}
+
+function delReversa(id) {
+    if (!confirm('Excluir este registro do histórico?')) return;
+    DATA.logistica_reversa = DATA.logistica_reversa.filter(function(x){return x.id!=id;});
+    saveData(); renderReversa();
+}
+
+// ==================== EVENTOS E BANDEIRACOS ====================
+function renderBandeiracos() {
+    var itens = DATA.escala_bandeiracos || [];
+    var html = '';
+    
+    var totalPessoas = 0; var pontosDistintos = {};
+    
+    var sorted = itens.slice().sort(function(a,b) { return (a.data||'').localeCompare(b.data||''); });
+    sorted.forEach(function(b) {
+        totalPessoas += (b.qtd || 0);
+        pontosDistintos[b.ponto] = true;
+        
+        html += '<tr><td><strong>' + formatDate(b.data) + '</strong></td>' +
+            '<td><span style="color:var(--text2);font-size:0.8rem;">' + esc(b.regiao) + ' /</span> ' + esc(b.ponto) + '</td>' +
+            '<td><span class="badge" style="background:var(--card2);color:#fff;">' + b.turno + '</span></td>' +
+            '<td>' + esc(b.equipe) + '</td>' +
+            '<td>' + (b.qtd||0) + '</td>' +
+            '<td><button class="btn btn-sm btn-primary" onclick="openModalBandeiraco(' + b.id + ')">Editar</button> ' +
+             '<button class="btn btn-sm" style="background:var(--red);color:#fff;" onclick="delBandeiraco(' + b.id + ')">X</button></td></tr>';
+    });
+    document.getElementById('tbBandeiracos').innerHTML = html || '<tr><td colspan="6" style="text-align:center;color:var(--text2);">Nenhum bandeiraço ou evento agendado.</td></tr>';
+    
+    document.getElementById('bandeiracosStats').innerHTML = 
+        '<div class="card stat"><div class="stat-num" style="color:var(--accent);">' + itens.length + '</div><div class="stat-label">Eventos Agendados</div></div>' +
+        '<div class="card stat"><div class="stat-num" style="color:var(--orange);">' + Object.keys(pontosDistintos).length + '</div><div class="stat-label">Pontos Cobertos</div></div>' +
+        '<div class="card stat"><div class="stat-num" style="color:var(--green);">' + totalPessoas + '</div><div class="stat-label">Total Geração/Pessoas Estimadas</div></div>';
+}
+
+function openModalBandeiraco(id) {
+    document.getElementById('bandEditId').value = id || '';
+    document.getElementById('bandError').style.display = 'none';
+    if (id) {
+        var b = (DATA.escala_bandeiracos||[]).find(function(x) { return x.id == id; });
+        if (b) {
+            document.getElementById('bandData').value = b.data||'';
+            document.getElementById('bandTurno').value = b.turno;
+            document.getElementById('bandRegiao').value = b.regiao;
+            document.getElementById('bandPonto').value = b.ponto;
+            document.getElementById('bandEquipe').value = b.equipe;
+            document.getElementById('bandQtd').value = b.qtd;
+        }
+    } else {
+        ['bandPonto','bandEquipe'].forEach(function(x){document.getElementById(x).value='';});
+        document.getElementById('bandRegiao').value = '';
+        document.getElementById('bandTurno').value = 'Manhã';
+        document.getElementById('bandQtd').value = '10';
+        document.getElementById('bandData').value = new Date().toISOString().slice(0,10);
+    }
+    document.getElementById('modalBandeiraco').classList.add('show');
+}
+
+function saveBandeiraco() {
+    var id = document.getElementById('bandEditId').value;
+    var b = {
+        data: document.getElementById('bandData').value,
+        turno: document.getElementById('bandTurno').value,
+        regiao: document.getElementById('bandRegiao').value,
+        ponto: document.getElementById('bandPonto').value.trim(),
+        equipe: document.getElementById('bandEquipe').value.trim(),
+        qtd: parseInt(document.getElementById('bandQtd').value) || 0
+    };
+    if (!b.data || !b.regiao || !b.ponto) { alert('Data, Região e Ponto são obrigatórios.'); return; }
+    if (!DATA.escala_bandeiracos) DATA.escala_bandeiracos = [];
+    
+    // Conflito check: Mesma data, mesmo turno, mesma regiao e mesmo ponto
+    // Ignorar a si mesmo (se for edit)
+    var conflito = DATA.escala_bandeiracos.find(function(x) { 
+        if (id && x.id == id) return false;
+        var mesmoTempo = (x.data === b.data && (x.turno === 'O Dia Todo' || b.turno === 'O Dia Todo' || x.turno === b.turno));
+        var mesmoLugar = (x.regiao === b.regiao && x.ponto.toLowerCase() === b.ponto.toLowerCase());
+        return mesmoTempo && mesmoLugar;
+    });
+    
+    if (conflito) {
+        document.getElementById('bandError').style.display = 'block';
+        return; // Impossibilita o agendamento
+    }
+    
+    if (id) {
+        var idx = DATA.escala_bandeiracos.findIndex(function(x){return x.id==id;});
+        if(idx>=0) { b.id=parseInt(id); DATA.escala_bandeiracos[idx]=b; }
+    } else {
+        b.id = genId();
+        DATA.escala_bandeiracos.push(b);
+    }
+    saveData(); closeModal('modalBandeiraco'); renderBandeiracos();
+}
+
+function delBandeiraco(id) {
+    if (!confirm('Cancelar este bandeiraço/evento?')) return;
+    DATA.escala_bandeiracos = DATA.escala_bandeiracos.filter(function(x){return x.id!=id;});
+    saveData(); renderBandeiracos();
+}
+
+// ==================== INIT ====================
+function refreshStateFromStorage() {
+    DATA = loadData();
+}
+
+async function bootstrapLogistica() {
+    if (window.__logisticaBootstrapped) return;
+    window.__logisticaBootstrapped = true;
+
+    if (!window.CONECTA_SUPABASE) {
+        if (window._conectaSupabaseError) {
+            console.warn('[Logistica] Supabase indisponivel, funcionando com dados locais.');
+            renderDashboard();
+            setInterval(updateCountdown, 60000);
+            return;
+        }
+        window.addEventListener('conecta-supabase-ready', bootstrapLogistica, { once: true });
+        return;
+    }
+
+    try {
+        var sessionResult = await window.CONECTA_SUPABASE.auth.getSession();
+        if (!sessionResult.data.session) {
+            window.location.href = (window.CONECTA_CONFIG && window.CONECTA_CONFIG.loginPath) || 'login.html';
+            return;
+        }
+
+        await ConectaDB.init();
+        updateRealtimeScope();
+        refreshStateFromStorage();
+        loadSubcoords();
+
+        var profile = await ConectaDB.getUserProfile();
+        var userNameEl = document.getElementById('userName');
+        if (userNameEl) {
+            userNameEl.textContent = profile && profile.nome ? profile.nome : (sessionResult.data.session.user.email || '');
+        }
+    } catch (error) {
+        console.error('Falha ao verificar sessao na Logistica:', error);
+        console.warn('[Logistica] Erro de sessao, funcionando com dados locais.');
+        renderDashboard();
+        setInterval(updateCountdown, 60000);
+        return;
+    }
+
+    renderDashboard();
+    setInterval(updateCountdown, 60000);
+}
+
+if (window.CONECTA_SUPABASE || window._conectaSupabaseError) {
+    bootstrapLogistica();
+} else {
+    window.addEventListener('conecta-supabase-ready', bootstrapLogistica, { once: true });
+    window.addEventListener('supabase-ready', bootstrapLogistica, { once: true });
+}
+// ==================== STATUS DO SISTEMA ====================
+function renderSistemaStatus() {
+    var el = document.getElementById('sistemaStatus');
+    if (!el) return;
+
+    // Calcular uso do localStorage
+    var dataStr = localStorage.getItem(STORAGE_KEY) || '';
+    var usedKB = Math.round(dataStr.length / 1024);
+    var maxKB = 5120; // 5MB
+    var pct = Math.round(usedKB / maxKB * 100);
+    var corBarra = pct > 80 ? 'var(--red)' : pct > 50 ? 'var(--orange)' : 'var(--green)';
+
+    // Contadores rapidos
+    var nTarefas = DATA.tarefas.length;
+    var nMateriais = DATA.materiais.length;
+    var nFornecedores = DATA.fornecedores.length;
+    var nEquipe = DATA.equipe.length;
+    var nPatrimonio = (DATA.patrimonio || []).length;
+
+    // Ultimo backup
+    var lastBackup = localStorage.getItem('logistica_ultimo_backup');
+    var diasSemBackup = lastBackup ? Math.floor((Date.now() - parseInt(lastBackup)) / 86400000) : 999;
+    var backupMsg = diasSemBackup > 7
+        ? '<span style="color:var(--red);font-weight:700;">Sem backup ha ' + diasSemBackup + ' dias!</span> <button onclick="quickExportJSON()" style="background:var(--red);color:#fff;border:none;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:0.72rem;">Fazer agora</button>'
+        : diasSemBackup === 999
+        ? '<span style="color:var(--orange);">Nenhum backup feito</span> <button onclick="quickExportJSON()" style="background:var(--orange);color:#fff;border:none;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:0.72rem;">Fazer agora</button>'
+        : '<span style="color:var(--green);">Backup: ' + diasSemBackup + 'd atras</span>';
+
+    el.innerHTML =
+        '<div style="display:flex;align-items:center;gap:6px;" title="' + usedKB + 'KB de ' + maxKB + 'KB">' +
+            '<span style="color:var(--text2);">Armazenamento:</span>' +
+            '<div style="width:80px;height:8px;background:#1e293b;border-radius:4px;overflow:hidden;">' +
+                '<div style="width:' + pct + '%;height:100%;background:' + corBarra + ';border-radius:4px;transition:width 0.3s;"></div>' +
+            '</div>' +
+            '<span style="color:var(--text2);">' + usedKB + 'KB (' + pct + '%)</span>' +
+        '</div>' +
+        '<span style="color:var(--text2);">' + nTarefas + ' tarefas | ' + nMateriais + ' materiais | ' + nFornecedores + ' fornecedores | ' + nEquipe + ' equipe | ' + nPatrimonio + ' patrimonio</span>' +
+        '<div style="margin-left:auto;">' + backupMsg + '</div>';
+}
+
+// Registrar timestamp do ultimo backup
+var _origQuickExport = typeof quickExportJSON === 'function' ? quickExportJSON : null;
+
+// ==================== TOAST NOTIFICATIONS ====================
+(function() {
+    var toastEl = document.createElement('div');
+    toastEl.id = 'toast';
+    toastEl.setAttribute('role', 'status');
+    toastEl.setAttribute('aria-live', 'polite');
+    toastEl.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#2e7d32;color:#fff;padding:14px 22px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.4);z-index:9999;opacity:0;transition:opacity 0.3s;max-width:320px;font-size:0.85rem;pointer-events:none;';
+    document.body.appendChild(toastEl);
+})();
+
+function showToast(msg, type) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.background = type === 'error' ? '#c62828' : type === 'warn' ? '#f57f17' : '#2e7d32';
+    t.style.opacity = '1';
+    clearTimeout(t._timer);
+    t._timer = setTimeout(function() { t.style.opacity = '0'; }, 2500);
+}
+
+// ==================== EXPORT RAPIDO ====================
+function quickExportJSON() {
+    var dataStr = JSON.stringify(DATA, null, 2);
+    var blob = new Blob([dataStr], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement('a');
+    link.href = url;
+    link.download = 'logistica-backup-' + new Date().toISOString().split('T')[0] + '.json';
+    link.click();
+    URL.revokeObjectURL(url);
+    localStorage.setItem('logistica_ultimo_backup', String(Date.now()));
+    showToast('Backup exportado: ' + link.download);
+    renderSistemaStatus();
+}
+
+// ==================== ATALHOS DE TECLADO ====================
+document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        saveData();
+        showToast('Dados salvos manualmente');
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+        e.preventDefault();
+        quickExportJSON();
+    }
+});
+
+// ==================== IMPORTAR BACKUP ====================
+function quickImportJSON() {
+    var input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = function() {
+        if (!input.files || !input.files[0]) return;
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                var imported = JSON.parse(e.target.result);
+                if (!imported.tarefas && !imported.materiais) {
+                    showToast('Arquivo inválido: não parece ser um backup da Logística', 'error');
+                    return;
+                }
+                if (!confirm('Isso vai SUBSTITUIR todos os dados atuais pelo backup. Continuar?')) return;
+                DATA = imported;
+                saveData();
+                renderDashboard();
+                showPage('dashboard');
+                showToast('Backup restaurado com sucesso!');
+            } catch(err) {
+                showToast('Erro ao ler arquivo: ' + err.message, 'error');
+            }
+        };
+        reader.readAsText(input.files[0]);
+    };
+    input.click();
+}
+
+// ==================== IMPORT DE CSV DE TAREFAS ====================
+function importTarefasCSV() {
+    var input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.csv';
+    input.onchange = function() {
+        if (!input.files || !input.files[0]) return;
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                var lines = e.target.result.split('\n').filter(function(l) { return l.trim(); });
+                if (lines.length < 2) { showToast('CSV vazio', 'warn'); return; }
+                var header = lines[0].split(',').map(function(h) { return h.trim().replace(/"/g, '').toLowerCase(); });
+                var count = 0;
+                for (var i = 1; i < lines.length; i++) {
+                    var cols = lines[i].split(',').map(function(c) { return c.trim().replace(/^"|"$/g, ''); });
+                    var obj = {};
+                    header.forEach(function(h, idx) { obj[h] = cols[idx] || ''; });
+                    DATA.tarefas.push({
+                        id: genId(),
+                        titulo: obj.titulo || obj.tarefa || obj.nome || 'Tarefa importada',
+                        responsavel: obj.responsavel || '',
+                        status: obj.status || 'pendente',
+                        prazo: obj.prazo || obj.data || '',
+                        prioridade: obj.prioridade || 'media',
+                        fase: obj.fase || 'ambas',
+                        obs: obj.obs || obj.observacao || ''
+                    });
+                    count++;
+                }
+                saveData();
+                showPage('tarefas');
+                showToast(count + ' tarefas importadas do CSV');
+            } catch(err) {
+                showToast('Erro no CSV: ' + err.message, 'error');
+            }
+        };
+        reader.readAsText(input.files[0]);
+    };
+    input.click();
+}
+
+// ==================== EXPORT CSV TAREFAS ====================
+function exportTarefasCSV() {
+    var csv = 'ID,Titulo,Responsavel,Status,Prazo,Prioridade,Fase,Obs\n';
+    DATA.tarefas.forEach(function(t) {
+        csv += '"' + t.id + '","' + (t.titulo || '').replace(/"/g, '""') + '","' +
+            (t.responsavel || '') + '","' + (t.status || '') + '","' +
+            (t.prazo || '') + '","' + (t.prioridade || '') + '","' +
+            (t.fase || '') + '","' + (t.obs || '').replace(/"/g, '""') + '"\n';
+    });
+    var blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement('a');
+    link.href = url;
+    link.download = 'tarefas-' + new Date().toISOString().split('T')[0] + '.csv';
+    link.click();
+    URL.revokeObjectURL(url);
+    showToast('CSV exportado: ' + link.download);
+}
+
+// ==================== EXPORT CSV MATERIAIS ====================
+function exportMateriaisCSV() {
+    var csv = 'Nome,Pedido,Estoque,Distribuido,Minimo,Categoria\n';
+    DATA.materiais.forEach(function(m) {
+        csv += '"' + (m.nome || '').replace(/"/g, '""') + '",' +
+            (m.pedido || 0) + ',' + (m.estoque || 0) + ',' +
+            (m.distribuido || 0) + ',' + (m.minimo || 0) + ',"' +
+            (m.categoria || '') + '"\n';
+    });
+    var blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement('a');
+    link.href = url;
+    link.download = 'materiais-' + new Date().toISOString().split('T')[0] + '.csv';
+    link.click();
+    URL.revokeObjectURL(url);
+    showToast('CSV materiais exportado');
+}
+
+// ==================== RESUMO WHATSAPP ====================
+function gerarResumoWhatsApp() {
+    var hoje = new Date();
+    var hojeStr = hoje.toLocaleDateString('pt-BR');
+    var eleicao = new Date('2026-10-04');
+    var diasEleicao = Math.ceil((eleicao - hoje) / 86400000);
+
+    var tarefasPend = DATA.tarefas.filter(function(t) { return t.status !== 'concluida'; }).length;
+    var tarefasConc = DATA.tarefas.filter(function(t) { return t.status === 'concluida'; }).length;
+    var matEstoque = DATA.materiais.reduce(function(s,m) { return s + (m.estoque || 0); }, 0);
+    var matAlerta = DATA.materiais.filter(function(m) { return m.estoque <= m.minimo && m.minimo > 0; });
+    var equipeTotal = DATA.equipe.length;
+    var valesTotal = DATA.vales_combustivel.reduce(function(s,v) { return s + (v.valor || 0); }, 0);
+    var patTotal = (DATA.patrimonio || []).reduce(function(s,p) { return s + ((p.valor || 0) * (p.qtd || 1)); }, 0);
+
+    var texto = '*LOGISTICA CELINA 2026*\n';
+    texto += 'Relatorio ' + hojeStr + '\n';
+    texto += '_' + diasEleicao + ' dias para a eleicao_\n\n';
+
+    texto += '*Tarefas:* ' + tarefasPend + ' pendentes, ' + tarefasConc + ' concluidas\n';
+    texto += '*Materiais:* ' + matEstoque.toLocaleString('pt-BR') + ' em estoque\n';
+
+    if (matAlerta.length > 0) {
+        texto += '*ALERTAS:* ' + matAlerta.map(function(m) { return m.nome + ' (' + m.estoque + '/' + m.minimo + ')'; }).join(', ') + '\n';
+    }
+
+    texto += '*Equipe:* ' + equipeTotal + ' membros\n';
+
+    if (valesTotal > 0) {
+        texto += '*Vales combustivel:* R$ ' + valesTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2}) + '\n';
+    }
+    if (patTotal > 0) {
+        texto += '*Patrimonio:* R$ ' + patTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2}) + '\n';
+    }
+
+    // Proximas tarefas
+    var prox = DATA.tarefas
+        .filter(function(t) { return t.status !== 'concluida' && t.prazo; })
+        .sort(function(a,b) { return a.prazo.localeCompare(b.prazo); })
+        .slice(0, 5);
+
+    if (prox.length > 0) {
+        texto += '\n*Proximas tarefas:*\n';
+        prox.forEach(function(t) {
+            texto += '- ' + t.titulo + ' (' + t.prazo.split('-').reverse().join('/') + ')' +
+                (t.responsavel ? ' @' + t.responsavel : '') + '\n';
+        });
+    }
+
+    texto += '\n_Gerado pelo CONECTA_';
+
+    // Copiar para clipboard
+    navigator.clipboard.writeText(texto).then(function() {
+        showToast('Resumo copiado! Cole no WhatsApp');
+    }).catch(function() {
+        // Fallback
+        var ta = document.createElement('textarea');
+        ta.value = texto;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('Resumo copiado! Cole no WhatsApp');
+    });
+}
+
+// ==================== IMPRIMIR RELATORIO ====================
+function imprimirRelatorio() {
+    showPage('dashboard');
+    setTimeout(function() { window.print(); }, 300);
+}
+
+// ==================== BRIEFING IA ====================
+var BRIEFING_API_URL = 'https://omniroute.srv1354997.hstgr.cloud/v1/chat/completions';
+var BRIEFING_API_KEY = localStorage.getItem('conecta_ia_key') || '';
+
+function configurarChaveIA() {
+    var key = prompt('Cole a chave da IA (OmniRoute API Key).\nPergunta ao Igor se não tiver:');
+    if (key && key.trim()) {
+        localStorage.setItem('conecta_ia_key', key.trim());
+        BRIEFING_API_KEY = key.trim();
+        showToast('Chave IA configurada');
+        gerarBriefingIA();
+    }
+}
+
+function coletarContextoCampanha() {
+    var hoje = new Date().toISOString().slice(0,10);
+    var eleicao = new Date('2026-10-04');
+    var diasEleicao = Math.ceil((eleicao - new Date()) / 86400000);
+
+    var tarefasPend = (DATA.tarefas || []).filter(function(t) { return t.status !== 'concluida'; });
+    var tarefasHoje = tarefasPend.filter(function(t) { return t.prazo === hoje; });
+    var tarefasAtrasadas = tarefasPend.filter(function(t) { return t.prazo && t.prazo < hoje; });
+    var tarefasAlta = tarefasPend.filter(function(t) { return t.prioridade === 'alta'; });
+
+    var matAlerta = (DATA.materiais || []).filter(function(m) { return m.estoque <= m.minimo && m.minimo > 0; });
+    var matTotal = (DATA.materiais || []).reduce(function(s,m) { return s + (m.estoque || 0); }, 0);
+
+    var proxEventos = (DATA.escala_bandeiracos || []).filter(function(b) {
+        var d = new Date(b.data);
+        var diff = Math.ceil((d - new Date()) / 86400000);
+        return diff >= 0 && diff <= 7;
+    });
+
+    var valesTotal = (DATA.vales_combustivel || []).reduce(function(s,v) { return s + (v.valor || 0); }, 0);
+    var patTotal = (DATA.patrimonio || []).reduce(function(s,p) { return s + ((p.valor || 0) * (p.qtd || 1)); }, 0);
+
+    return 'Data: ' + hoje + '. Faltam ' + diasEleicao + ' dias para a eleicao (04/10/2026).\n' +
+        'TAREFAS: ' + tarefasPend.length + ' pendentes, ' + tarefasHoje.length + ' para hoje, ' +
+        tarefasAtrasadas.length + ' atrasadas, ' + tarefasAlta.length + ' prioridade alta.\n' +
+        (tarefasAtrasadas.length > 0 ? 'Atrasadas: ' + tarefasAtrasadas.map(function(t) { return t.titulo + ' (prazo ' + t.prazo + ', resp: ' + (t.responsavel || 'ninguem') + ')'; }).join('; ') + '\n' : '') +
+        (tarefasAlta.length > 0 ? 'Alta prioridade: ' + tarefasAlta.map(function(t) { return t.titulo + (t.responsavel ? ' @' + t.responsavel : ''); }).join('; ') + '\n' : '') +
+        'MATERIAIS: ' + matTotal + ' em estoque. ' + matAlerta.length + ' com estoque critico.\n' +
+        (matAlerta.length > 0 ? 'Criticos: ' + matAlerta.map(function(m) { return m.nome + ' (' + m.estoque + '/' + m.minimo + ')'; }).join(', ') + '\n' : '') +
+        'EQUIPE: ' + (DATA.equipe || []).length + ' membros.\n' +
+        'EVENTOS PROXIMOS (7 dias): ' + proxEventos.length + '.\n' +
+        (proxEventos.length > 0 ? proxEventos.map(function(e) { return e.data + ' - ' + (e.local || e.ra || 'local?') + ' (' + (e.turno || '') + ')'; }).join('; ') + '\n' : '') +
+        'VALES COMBUSTIVEL: R$ ' + valesTotal.toFixed(2) + '.\n' +
+        'PATRIMONIO: R$ ' + patTotal.toFixed(2) + '.\n' +
+        'FORNECEDORES: ' + (DATA.fornecedores || []).length + '.\n' +
+        'CHECKLIST: ' + (function() { var ks = Object.keys(DATA.checklist || {}); return ks.filter(function(k) { return DATA.checklist[k]; }).length + '/' + ks.length; })() + ' completo.';
+}
+
+async function gerarBriefingIA() {
+    var container = document.getElementById('briefingIA');
+    var conteudo = document.getElementById('briefingConteudo');
+
+    if (!BRIEFING_API_KEY) {
+        configurarChaveIA();
+        return;
+    }
+
+    container.style.display = 'block';
+    conteudo.textContent = 'Analisando dados da campanha...';
+
+    var contexto = coletarContextoCampanha();
+
+    try {
+        var response = await fetch(BRIEFING_API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + BRIEFING_API_KEY
+            },
+            body: JSON.stringify({
+                model: 'anthropic/claude-haiku',
+                max_tokens: 600,
+                messages: [
+                    {
+                        role: 'system',
+                        content: 'Voce e o assistente de logistica da campanha Celina Leao 2026 (Governadora do DF). Gere um briefing CURTO e ACIONAVEL para o coordenador de logistica. Maximo 8 linhas. Use emojis. Foque em: (1) o que precisa de atencao HOJE, (2) riscos/alertas, (3) uma sugestao pratica. Sem introducao, direto ao ponto. Portugues brasileiro.'
+                    },
+                    {
+                        role: 'user',
+                        content: 'Gere o briefing do dia com estes dados:\n\n' + contexto
+                    }
+                ]
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Erro ' + response.status);
+        }
+
+        var data = await response.json();
+        var texto = data.choices && data.choices[0] && data.choices[0].message
+            ? data.choices[0].message.content
+            : 'Sem resposta da IA';
+
+        conteudo.textContent = texto;
+
+        // Cache por 4 horas
+        localStorage.setItem('conecta_briefing_cache', JSON.stringify({
+            texto: texto,
+            timestamp: Date.now()
+        }));
+
+        showToast('Briefing atualizado');
+    } catch(err) {
+        conteudo.textContent = 'Erro ao gerar briefing: ' + err.message + '\nVerifique a chave IA ou tente novamente.';
+        showToast('Erro no briefing: ' + err.message, 'error');
+    }
+}
+
+// Carregar briefing do cache ao abrir
+(function() {
+    try {
+        var cache = JSON.parse(localStorage.getItem('conecta_briefing_cache') || 'null');
+        if (cache && cache.texto && (Date.now() - cache.timestamp) < 14400000) { // 4 horas
+            document.getElementById('briefingIA').style.display = 'block';
+            document.getElementById('briefingConteudo').textContent = cache.texto;
+        }
+    } catch(e) {}
+})();
+
+// ==================== GOOGLE CALENDAR ====================
+function buildGCalUrl(titulo, data, horaInicio, horaFim, local, descricao) {
+    var d = data.replace(/-/g, '');
+    var hi = (horaInicio || '08:00').replace(/:/g, '');
+    var hf = (horaFim || '').replace(/:/g, '');
+    if (!hf) {
+        var h = parseInt(hi.substring(0,2)) + 1;
+        hf = String(h).padStart(2,'0') + hi.substring(2);
+    }
+    var params = new URLSearchParams({
+        action: 'TEMPLATE',
+        text: titulo || 'Evento Campanha',
+        dates: d + 'T' + hi + '00/' + d + 'T' + hf + '00',
+        details: (descricao || '') + '\n\nCriado pelo CONECTA - Logistica',
+        location: local || 'Brasilia-DF'
+    });
+    return 'https://calendar.google.com/calendar/render?' + params.toString();
+}
+
+function addBandeiracosToGoogle() {
+    var futuros = DATA.escala_bandeiracos.filter(function(b) { return new Date(b.data) >= new Date(); });
+    if (futuros.length === 0) return showToast('Nenhum evento futuro', 'warn');
+    if (!confirm('Enviar ' + futuros.length + ' eventos para o Google Agenda?')) return;
+    futuros.forEach(function(b, i) {
+        var turno = b.turno === 'manha' ? '08:00' : b.turno === 'tarde' ? '14:00' : '18:00';
+        var fimTurno = b.turno === 'manha' ? '12:00' : b.turno === 'tarde' ? '18:00' : '21:00';
+        setTimeout(function() {
+            window.open(buildGCalUrl(
+                'Bandeiraco: ' + (b.local || b.ra || 'Evento'),
+                b.data, turno, fimTurno,
+                b.local || b.ra || '',
+                'Equipe: ' + (b.equipe || '') + '\nQtd prevista: ' + (b.qtd || '') + '\n' + (b.obs || '')
+            ), '_blank');
+        }, i * 500);
+    });
+    showToast(futuros.length + ' eventos enviados ao Google Agenda');
+}
+
+function addSalasToGoogle() {
+    var futuros = DATA.agendaSalas.filter(function(a) { return new Date(a.data) >= new Date(); });
+    if (futuros.length === 0) return showToast('Nenhum agendamento futuro', 'warn');
+    if (!confirm('Enviar ' + futuros.length + ' agendamentos para o Google Agenda?')) return;
+    futuros.forEach(function(a, i) {
+        setTimeout(function() {
+            window.open(buildGCalUrl(
+                'Sala ' + (a.sala || '') + ': ' + (a.evento || ''),
+                a.data, a.horaInicio, a.horaFim,
+                'Comite - Sala ' + (a.sala || ''),
+                'Responsavel: ' + (a.responsavel || '') + '\n' + (a.obs || '')
+            ), '_blank');
+        }, i * 500);
+    });
+    showToast(futuros.length + ' agendamentos enviados ao Google Agenda');
+}
+
+function addOneBandeiracaoToGoogle(id) {
+    var b = DATA.escala_bandeiracos.find(function(x) { return x.id == id; });
+    if (!b) return;
+    var turno = b.turno === 'manha' ? '08:00' : b.turno === 'tarde' ? '14:00' : '18:00';
+    var fimTurno = b.turno === 'manha' ? '12:00' : b.turno === 'tarde' ? '18:00' : '21:00';
+    window.open(buildGCalUrl(
+        'Bandeiraco: ' + (b.local || b.ra || 'Evento'),
+        b.data, turno, fimTurno,
+        b.local || b.ra || '',
+        'Equipe: ' + (b.equipe || '') + '\nQtd: ' + (b.qtd || '')
+    ), '_blank');
+    showToast('Abrindo Google Agenda...');
+}
+
+function addTarefaToGoogle(id) {
+    var t = DATA.tarefas.find(function(x) { return x.id == id; });
+    if (!t || !t.prazo) return;
+    window.open(buildGCalUrl(
+        'Tarefa: ' + (t.titulo || ''),
+        t.prazo, '09:00', '10:00',
+        'Comite de Campanha',
+        'Responsável: ' + (t.responsavel || 'não definido') + '\nPrioridade: ' + (t.prioridade || '') + '\nCategoria: ' + (t.categoria || '') + '\n' + (t.desc || '')
+    ), '_blank');
+    showToast('Tarefa enviada ao Google Agenda');
+}
+
+function addTarefasPendentesToGoogle() {
+    var pendentes = DATA.tarefas.filter(function(t) { return t.status !== 'concluida' && t.prazo; });
+    if (pendentes.length === 0) return showToast('Nenhuma tarefa pendente com prazo', 'warn');
+    if (!confirm('Enviar ' + pendentes.length + ' tarefas para o Google Agenda?')) return;
+    pendentes.forEach(function(t, i) {
+        setTimeout(function() {
+            window.open(buildGCalUrl(
+                'Tarefa: ' + (t.titulo || ''),
+                t.prazo, '09:00', '10:00',
+                'Comite de Campanha',
+                'Responsavel: ' + (t.responsavel || '') + '\nPrioridade: ' + (t.prioridade || '')
+            ), '_blank');
+        }, i * 500);
+    });
+    showToast(pendentes.length + ' tarefas enviadas ao Google Agenda');
+}
+
+// ==================== DETECCAO OFFLINE ====================
+window.addEventListener('offline', function() {
+    showToast('Sem internet! Dados ficam salvos localmente.', 'warn');
+});
+window.addEventListener('online', function() {
+    showToast('Conexao restaurada');
+});
 </script>
 </body>
 </html>

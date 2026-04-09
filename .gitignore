@@ -1,3 +1,9 @@
 node_modules/
 screenshot-*.png
 test-browser.js
+setup/CREDENCIAIS.md
+server-http.log
+
+.vercel
+.gstack/
+_verify_*.js
