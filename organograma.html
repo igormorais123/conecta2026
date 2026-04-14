@@ -2528,11 +2528,48 @@
                 <!-- POLÍTICAS PÚBLICAS E SETORIAIS -->
                 <div class="segmentos-categoria">Políticas Públicas e Setoriais</div>
                 <div class="segmentos-grid">
-                    <div class="card-segmento"><div class="seg-nome">Saúde</div><div class="seg-coord">Sec. de Saúde indicar</div><div class="seg-data">03/02/2026</div></div>
-                    <div class="card-segmento"><div class="seg-nome">Educação</div><div class="seg-coord">Raniere — professor da rede pública, ex-gestor regional de ensino no Paranoá e Sobradinho</div><div class="seg-data">04/02/2026</div></div>
-                    <div class="card-segmento"><div class="seg-nome">Segurança Pública</div><div class="seg-coord">Sec. de Segurança indicar coordenador</div><div class="seg-data">11/02/2026</div></div>
-                    <div class="card-segmento"><div class="seg-nome">Esporte</div><div class="seg-coord">Sugestão: Secretário de Esportes indique coordenador</div><div class="seg-data">02/02/2026</div></div>
-                    <div class="card-segmento"><div class="seg-nome">Cultura</div><div class="seg-coord">Sec. de Cultura indique coordenador</div><div class="seg-data">04/02/2026</div></div>
+                    <div class="card-segmento seg-expandable" onclick="toggleSegSub('seg-sub-saude', this)"><div class="seg-nome">Saúde</div><div class="seg-coord">(Clique para ver subcategorias)</div><div class="seg-data">03/02/2026</div></div>
+                    <div class="seg-sub-section" id="seg-sub-saude">
+                        <div class="card-segmento"><div class="seg-nome">Saúde Pública</div><div class="seg-coord">(A definir)</div><div class="seg-data">03/02/2026</div></div>
+                        <div class="card-segmento"><div class="seg-nome">Saúde Particular</div><div class="seg-coord">(A definir)</div><div class="seg-data">03/02/2026</div></div>
+                    </div>
+                    <div class="card-segmento seg-expandable" onclick="toggleSegSub('seg-sub-educacao', this)"><div class="seg-nome">Educação</div><div class="seg-coord">(Clique para ver subcategorias)</div><div class="seg-data">04/02/2026</div></div>
+                    <div class="seg-sub-section" id="seg-sub-educacao">
+                        <div class="card-segmento"><div class="seg-nome">Educação Pública</div><div class="seg-coord">Raniere — professor da rede pública, ex-gestor regional de ensino no Paranoá e Sobradinho</div><div class="seg-data">04/02/2026</div></div>
+                        <div class="card-segmento"><div class="seg-nome">Educação Particular</div><div class="seg-coord">(A definir)</div><div class="seg-data">04/02/2026</div></div>
+                    </div>
+                    <div class="card-segmento seg-expandable" onclick="toggleSegSub('seg-sub-seguranca', this)"><div class="seg-nome">Segurança Pública</div><div class="seg-coord">(Clique para ver subcategorias)</div><div class="seg-data">11/02/2026</div></div>
+                    <div class="seg-sub-section" id="seg-sub-seguranca">
+                        <div class="card-segmento"><div class="seg-nome">Bombeiros</div><div class="seg-coord">(A definir)</div><div class="seg-data">11/02/2026</div></div>
+                        <div class="card-segmento"><div class="seg-nome">Policiais Civis</div><div class="seg-coord">(A definir)</div><div class="seg-data">11/02/2026</div></div>
+                        <div class="card-segmento"><div class="seg-nome">Policiais Militares</div><div class="seg-coord">(A definir)</div><div class="seg-data">11/02/2026</div></div>
+                    </div>
+                    <div class="card-segmento seg-expandable" onclick="toggleSegSub('seg-sub-esporte', this)"><div class="seg-nome">Esporte</div><div class="seg-coord">(Clique para ver subcategorias)</div><div class="seg-data">02/02/2026</div></div>
+                    <div class="seg-sub-section" id="seg-sub-esporte">
+                        <div class="card-segmento"><div class="seg-nome">Futebol</div><div class="seg-coord">(A definir)</div><div class="seg-data">02/02/2026</div></div>
+                        <div class="card-segmento"><div class="seg-nome">Natação</div><div class="seg-coord">(A definir)</div><div class="seg-data">02/02/2026</div></div>
+                        <div class="card-segmento"><div class="seg-nome">Vôlei</div><div class="seg-coord">(A definir)</div><div class="seg-data">02/02/2026</div></div>
+                        <div class="card-segmento"><div class="seg-nome">Basquete</div><div class="seg-coord">(A definir)</div><div class="seg-data">02/02/2026</div></div>
+                        <div class="card-segmento"><div class="seg-nome">Artes Marciais</div><div class="seg-coord">(A definir)</div><div class="seg-data">02/02/2026</div></div>
+                        <div class="card-segmento"><div class="seg-nome">Atletismo</div><div class="seg-coord">(A definir)</div><div class="seg-data">02/02/2026</div></div>
+                        <div class="card-segmento"><div class="seg-nome">Ciclismo</div><div class="seg-coord">(A definir)</div><div class="seg-data">02/02/2026</div></div>
+                        <div class="card-segmento"><div class="seg-nome">Futsal</div><div class="seg-coord">(A definir)</div><div class="seg-data">02/02/2026</div></div>
+                        <div class="card-segmento"><div class="seg-nome">Handebol</div><div class="seg-coord">(A definir)</div><div class="seg-data">02/02/2026</div></div>
+                        <div class="card-segmento"><div class="seg-nome">Tênis</div><div class="seg-coord">(A definir)</div><div class="seg-data">02/02/2026</div></div>
+                        <div class="card-segmento"><div class="seg-nome">CrossFit / Musculação</div><div class="seg-coord">(A definir)</div><div class="seg-data">02/02/2026</div></div>
+                        <div class="card-segmento"><div class="seg-nome">Skate</div><div class="seg-coord">(A definir)</div><div class="seg-data">02/02/2026</div></div>
+                    </div>
+                    <div class="card-segmento seg-expandable" onclick="toggleSegSub('seg-sub-cultura', this)"><div class="seg-nome">Cultura</div><div class="seg-coord">(Clique para ver subcategorias)</div><div class="seg-data">04/02/2026</div></div>
+                    <div class="seg-sub-section" id="seg-sub-cultura">
+                        <div class="card-segmento"><div class="seg-nome">Carnaval</div><div class="seg-coord">(A definir)</div><div class="seg-data">04/02/2026</div></div>
+                        <div class="card-segmento"><div class="seg-nome">Teatro</div><div class="seg-coord">(A definir)</div><div class="seg-data">04/02/2026</div></div>
+                        <div class="card-segmento"><div class="seg-nome">Música</div><div class="seg-coord">(A definir)</div><div class="seg-data">04/02/2026</div></div>
+                        <div class="card-segmento"><div class="seg-nome">Quadrilhas Juninas</div><div class="seg-coord">(A definir)</div><div class="seg-data">04/02/2026</div></div>
+                        <div class="card-segmento"><div class="seg-nome">Dança</div><div class="seg-coord">(A definir)</div><div class="seg-data">04/02/2026</div></div>
+                        <div class="card-segmento"><div class="seg-nome">Cinema</div><div class="seg-coord">(A definir)</div><div class="seg-data">04/02/2026</div></div>
+                        <div class="card-segmento"><div class="seg-nome">Artesanato</div><div class="seg-coord">(A definir)</div><div class="seg-data">04/02/2026</div></div>
+                        <div class="card-segmento"><div class="seg-nome">Literatura</div><div class="seg-coord">(A definir)</div><div class="seg-data">04/02/2026</div></div>
+                    </div>
                     <div class="card-segmento"><div class="seg-nome">Meio Ambiente</div><div class="seg-coord">Pedro Guimarães</div><div class="seg-data">—</div></div>
                     <div class="card-segmento"><div class="seg-nome">Assistência Social</div><div class="seg-coord">(A definir)</div><div class="seg-data">24/02/2026</div></div>
                     <div class="card-segmento"><div class="seg-nome">Habitação</div><div class="seg-coord">(A definir)</div><div class="seg-data">24/02/2026</div></div>
@@ -2553,6 +2590,7 @@
                         <div class="card-segmento"><div class="seg-nome">Evangélicos</div><div class="seg-coord">(A definir)</div><div class="seg-data">16/03/2026</div></div>
                         <div class="card-segmento"><div class="seg-nome">Católicos</div><div class="seg-coord">(A definir)</div><div class="seg-data">16/03/2026</div></div>
                         <div class="card-segmento"><div class="seg-nome">Espíritas</div><div class="seg-coord">(A definir)</div><div class="seg-data">16/03/2026</div></div>
+                        <div class="card-segmento"><div class="seg-nome">Outras Religiões</div><div class="seg-coord">(A definir)</div><div class="seg-data">16/03/2026</div></div>
                     </div>
                     <div class="card-segmento"><div class="seg-nome">Hip Hop</div><div class="seg-coord">Wendel</div><div class="seg-data">11/03/2026</div></div>
                     <div class="card-segmento"><div class="seg-nome">Causa Animal</div><div class="seg-coord">(A definir)</div><div class="seg-data">24/02/2026</div></div>
