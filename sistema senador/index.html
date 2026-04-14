@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0a0a1a">
+    <title>IBANES 2026 — Comando Senado DF</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0a0a1a;
+            --surface: rgba(255,255,255,0.05);
+            --border: rgba(255,255,255,0.1);
+            --text: #e0e0e0;
+            --muted: #888;
+            --green: #00e676;
+            --gold: #ffd600;
+            --purple: #b388ff;
+            --cyan: #00e5ff;
+            --red: #ff5252;
+            --orange: #ff9100;
+            --blue: #448aff;
+            --sidebar-w: 240px;
+            --header-h: 60px;
+            --radius: 14px;
+        }
+
+        html, body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: var(--green); border-radius: 3px; }
+
+        @keyframes fadeIn { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes pulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.05); } }
+        @keyframes glow { 0%,100% { box-shadow:0 0 10px rgba(0,230,118,0.2); } 50% { box-shadow:0 0 30px rgba(0,230,118,0.4); } }
+        @keyframes float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-6px); } }
+        @keyframes neonPulse { 0%,100% { text-shadow:0 0 10px var(--gold); } 50% { text-shadow:0 0 30px var(--gold), 0 0 60px var(--gold); } }
+        @keyframes slideRight { from { opacity:0; transform:translateX(-15px); } to { opacity:1; transform:translateX(0); } }
+
+        /* ===== SPLASH ===== */
+        .splash {
+            position: fixed; inset: 0;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a0a1a 100%);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 99999; cursor: pointer; transition: opacity 0.6s;
+        }
+        .splash.hidden { opacity: 0; pointer-events: none; }
+        .splash-avatar-container {
+            position: relative; width: 200px; height: 200px; margin-bottom: 24px;
+        }
+        .splash-avatar-svg {
+            width: 200px; height: 200px;
+            animation: float 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(0,230,118,0.3));
+        }
+        .splash h1 {
+            font-size: 3rem; font-weight: 900; color: var(--gold);
+            animation: neonPulse 2s ease-in-out infinite; letter-spacing: 3px;
+        }
+        .splash h2 { font-size: 1.4rem; color: var(--green); font-weight: 700; margin-top: 8px; letter-spacing: 2px; }
+        .splash p { color: var(--muted); font-size: 0.85rem; margin-top: 20px; animation: pulse 2s infinite; }
+        .splash-tag {
+            display: inline-block; background: rgba(0,229,255,0.2); color: var(--cyan);
+            padding: 8px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;
+            margin-top: 12px; text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            position: fixed; left: 0; top: 0; bottom: 0; width: var(--sidebar-w);
+            background: rgba(10,10,26,0.95); backdrop-filter: blur(10px);
+            border-right: 1px solid var(--border); z-index: 1000;
+            display: flex; flex-direction: column;
+        }
+        .sidebar-brand {
+            padding: 20px 16px; text-align: center; border-bottom: 1px solid var(--border); cursor: pointer;
+        }
+        .sidebar-brand svg { width: 60px; height: 60px; margin-bottom: 8px; }
+        .sidebar-name { font-size: 1.1rem; font-weight: 900; color: var(--green); letter-spacing: 2px; }
+        .sidebar-title { font-size: 0.6rem; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+        .sidebar-nav { flex: 1; overflow-y: auto; padding: 8px 0; }
+        .nav-section {
+            padding: 12px 16px 4px; font-size: 0.55rem; text-transform: uppercase;
+            letter-spacing: 2px; color: var(--gold); font-weight: 700; opacity: 0.7;
+        }
+        .nav-item {
+            display: flex; align-items: center; gap: 10px; padding: 10px 16px;
+            color: rgba(255,255,255,0.6); cursor: pointer; transition: all 0.3s;
+            border-left: 3px solid transparent; font-size: 0.85rem; font-weight: 500;
+        }
+        .nav-item:hover { color: #fff; transform: translateX(3px); }
+        .nav-item.active { color: var(--green); border-left-color: var(--green); background: rgba(0,230,118,0.08); }
+        .nav-icon { font-size: 1.1rem; width: 24px; text-align: center; }
+        .sidebar-footer {
+            padding: 12px; border-top: 1px solid var(--border); text-align: center;
+            font-size: 0.65rem; color: var(--muted);
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            position: fixed; top: 0; left: var(--sidebar-w); right: 0; height: var(--header-h);
+            background: rgba(10,10,26,0.95); backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border); display: flex; align-items: center;
+            justify-content: space-between; padding: 0 24px; z-index: 999;
+        }
+        .header-title { font-size: 1rem; font-weight: 700; color: var(--green); }
+        .countdown { font-size: 1.1rem; color: var(--gold); font-weight: 700; }
+
+        /* ===== MAIN ===== */
+        .main {
+            margin-left: var(--sidebar-w); margin-top: var(--header-h);
+            padding: 24px; min-height: calc(100vh - var(--header-h));
+        }
+        .page { display: none; animation: fadeIn 0.4s ease; }
+        .page.active { display: block; }
+
+        /* ===== CARDS ===== */
+        .card {
+            background: var(--surface); backdrop-filter: blur(10px);
+            border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 18px; transition: all 0.3s;
+        }
+        .card:hover { transform: translateY(-3px); border-color: rgba(0,230,118,0.3); box-shadow: 0 6px 24px rgba(0,230,118,0.1); }
+
+        .grid { display: grid; gap: 16px; margin-bottom: 16px; }
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+        .stat-card { text-align: center; cursor: pointer; }
+        .stat-number { font-size: 2.2rem; font-weight: 900; color: var(--green); margin: 6px 0; }
+        .stat-label { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .section-title {
+            font-size: 1.2rem; font-weight: 700; color: var(--green);
+            margin: 24px 0 12px; display: flex; align-items: center; gap: 8px;
+        }
+        .section-title::before {
+            content: ''; width: 4px; height: 20px;
+            background: linear-gradient(180deg, var(--green), var(--gold)); border-radius: 2px;
+        }
+
+        .badge {
+            display: inline-block; padding: 3px 8px; border-radius: 10px;
+            font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .badge-success { background: rgba(0,230,118,0.2); color: var(--green); }
+        .badge-warning { background: rgba(255,214,0,0.2); color: var(--gold); }
+        .badge-danger { background: rgba(255,82,82,0.2); color: var(--red); }
+        .badge-info { background: rgba(0,229,255,0.2); color: var(--cyan); }
+
+        .btn {
+            padding: 8px 14px; border: none; border-radius: 8px; font-family: inherit;
+            font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.3s;
+            display: inline-flex; align-items: center; gap: 6px;
+        }
+        .btn-primary { background: var(--green); color: #000; }
+        .btn-primary:hover { box-shadow: 0 0 20px rgba(0,230,118,0.4); }
+        .btn-sm { padding: 5px 10px; font-size: 0.75rem; }
+
+        /* ===== PROGRESS BAR ===== */
+        .progress-bar { height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden; }
+        .progress-fill { height: 100%; border-radius: 4px; transition: width 1s ease; }
+
+        /* ===== LEADERBOARD ===== */
+        .lb-item {
+            display: flex; align-items: center; gap: 12px; padding: 10px;
+            background: var(--surface); border-radius: 10px; margin-bottom: 8px;
+        }
+        .lb-rank {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; color: #000; font-size: 0.85rem;
+        }
+        .lb-name { flex: 1; font-weight: 600; }
+        .lb-pts { font-weight: 700; color: var(--green); }
+
+        /* ===== MODAL ===== */
+        .modal {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.85); z-index: 5000;
+            align-items: center; justify-content: center;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: #1a1a2e; border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 24px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto;
+            animation: fadeIn 0.3s ease;
+        }
+        .modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border);
+        }
+        .modal-title { font-size: 1.2rem; font-weight: 700; color: var(--green); }
+        .modal-close {
+            background: none; border: none; color: var(--muted); font-size: 1.3rem; cursor: pointer;
+        }
+
+        /* ===== FIDELIDADE INDICATOR ===== */
+        .fidelidade-alta { border-left: 3px solid var(--green); }
+        .fidelidade-media { border-left: 3px solid var(--gold); }
+        .fidelidade-baixa { border-left: 3px solid var(--red); }
+
+        /* ===== RODA DA SORTE ===== */
+        .roda-container { text-align: center; position: relative; }
+        .roda-bloqueio {
+            position: absolute; inset: 0; background: rgba(0,0,0,0.7);
+            border-radius: var(--radius); display: flex; flex-direction: column;
+            align-items: center; justify-content: center; z-index: 10; backdrop-filter: blur(3px);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1200px) { .grid-4 { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .main { margin-left: 0; }
+            .header { left: 0; }
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+        }
+
+        /* ===== TOAST ===== */
+        .toast-container {
+            position: fixed; bottom: 20px; right: 20px; z-index: 9000;
+            display: flex; flex-direction: column; gap: 8px; pointer-events: none;
+        }
+        .toast {
+            background: rgba(10,10,26,0.95); backdrop-filter: blur(20px);
+            border: 1px solid var(--green); border-left: 4px solid var(--green);
+            border-radius: 10px; padding: 10px 14px; color: var(--text); font-size: 0.8rem;
+            min-width: 260px; max-width: 340px; display: flex; align-items: center; gap: 8px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        /* ===== MONITORAMENTO REDES ===== */
+        .rede-card {
+            padding: 12px; background: var(--surface); border: 1px solid var(--border);
+            border-radius: 10px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px;
+        }
+        .rede-avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--blue), var(--cyan));
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.8rem; flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- ===== SPLASH ===== -->
+    <div class="splash" id="splash" onclick="entrar()">
+        <div class="splash-avatar-container">
+            <!-- Avatar animado do Ibanes -->
+            <svg class="splash-avatar-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <!-- Fundo circular -->
+                <circle cx="100" cy="100" r="96" fill="#1a237e" stroke="#00e676" stroke-width="3"/>
+                <!-- Corpo/Terno -->
+                <path d="M45 170 Q50 130 100 125 Q150 130 155 170 Z" fill="#1a1a2e" stroke="#ffd600" stroke-width="1.5"/>
+                <!-- Camisa -->
+                <path d="M80 130 L100 145 L120 130 L115 150 L85 150 Z" fill="#fff" opacity="0.9"/>
+                <!-- Gravata -->
+                <path d="M97 133 L100 145 L103 133 L101 160 L99 160 Z" fill="#ff5252"/>
+                <!-- Pescoço -->
+                <ellipse cx="100" cy="120" rx="15" ry="10" fill="#d4a574"/>
+                <!-- Cabeça -->
+                <ellipse cx="100" cy="85" rx="38" ry="42" fill="#d4a574"/>
+                <!-- Cabelo (grisalho/escuro) -->
+                <path d="M62 78 Q62 45 100 40 Q138 45 138 78 Q135 55 100 52 Q65 55 62 78 Z" fill="#4a4a4a"/>
+                <path d="M60 82 Q58 65 65 55 Q60 70 62 85 Z" fill="#3a3a3a"/>
+                <path d="M140 82 Q142 65 135 55 Q140 70 138 85 Z" fill="#3a3a3a"/>
+                <!-- Sobrancelhas -->
+                <path d="M75 72 Q82 68 92 72" stroke="#3a3a3a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                <path d="M108 72 Q118 68 125 72" stroke="#3a3a3a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                <!-- Olhos -->
+                <ellipse cx="84" cy="80" rx="6" ry="5" fill="#fff"/>
+                <circle cx="84" cy="80" r="3" fill="#2c1810"/>
+                <circle cx="85" cy="79" r="1" fill="#fff"/>
+                <ellipse cx="116" cy="80" rx="6" ry="5" fill="#fff"/>
+                <circle cx="116" cy="80" r="3" fill="#2c1810"/>
+                <circle cx="117" cy="79" r="1" fill="#fff"/>
+                <!-- Nariz -->
+                <path d="M100 82 Q96 92 93 95 Q100 97 107 95 Q104 92 100 82" fill="#c49664" opacity="0.6"/>
+                <!-- Sorriso -->
+                <path d="M85 102 Q100 115 115 102" stroke="#a0755a" stroke-width="2" fill="none" stroke-linecap="round"/>
+                <!-- Óculos (estilo senador) -->
+                <rect x="72" y="72" width="24" height="18" rx="3" fill="none" stroke="#555" stroke-width="1.5"/>
+                <rect x="104" y="72" width="24" height="18" rx="3" fill="none" stroke="#555" stroke-width="1.5"/>
+                <path d="M96 80 L104 80" stroke="#555" stroke-width="1.5"/>
+                <!-- Lapela pin Brasil -->
+                <circle cx="72" cy="140" r="5" fill="#009c3b"/>
+                <circle cx="72" cy="140" r="3" fill="#ffdf00"/>
+                <circle cx="72" cy="140" r="1.5" fill="#002776"/>
+            </svg>
+        </div>
+        <h1>IBANES 2026</h1>
+        <h2>SENADO FEDERAL — DF</h2>
+        <span class="splash-tag">Comando de Campanha</span>
+        <p>Clique para entrar no sistema</p>
+    </div>
+
+    <!-- ===== SIDEBAR ===== -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-brand" onclick="navegar('dashboard')">
+            <svg viewBox="0 0 200 200" style="width:55px; height:55px; filter:drop-shadow(0 0 8px rgba(0,230,118,0.3));">
+                <circle cx="100" cy="100" r="96" fill="#1a237e" stroke="#00e676" stroke-width="3"/>
+                <path d="M45 170 Q50 130 100 125 Q150 130 155 170 Z" fill="#1a1a2e" stroke="#ffd600" stroke-width="1.5"/>
+                <path d="M80 130 L100 145 L120 130 L115 150 L85 150 Z" fill="#fff" opacity="0.9"/>
+                <path d="M97 133 L100 145 L103 133 L101 160 L99 160 Z" fill="#ff5252"/>
+                <ellipse cx="100" cy="120" rx="15" ry="10" fill="#d4a574"/>
+                <ellipse cx="100" cy="85" rx="38" ry="42" fill="#d4a574"/>
+                <path d="M62 78 Q62 45 100 40 Q138 45 138 78 Q135 55 100 52 Q65 55 62 78 Z" fill="#4a4a4a"/>
+                <path d="M75 72 Q82 68 92 72" stroke="#3a3a3a" stroke-width="2.5" fill="none"/>
+                <path d="M108 72 Q118 68 125 72" stroke="#3a3a3a" stroke-width="2.5" fill="none"/>
+                <ellipse cx="84" cy="80" rx="6" ry="5" fill="#fff"/>
+                <circle cx="84" cy="80" r="3" fill="#2c1810"/>
+                <ellipse cx="116" cy="80" rx="6" ry="5" fill="#fff"/>
+                <circle cx="116" cy="80" r="3" fill="#2c1810"/>
+                <path d="M85 102 Q100 115 115 102" stroke="#a0755a" stroke-width="2" fill="none"/>
+                <rect x="72" y="72" width="24" height="18" rx="3" fill="none" stroke="#555" stroke-width="1.5"/>
+                <rect x="104" y="72" width="24" height="18" rx="3" fill="none" stroke="#555" stroke-width="1.5"/>
+                <path d="M96 80 L104 80" stroke="#555" stroke-width="1.5"/>
+            </svg>
+            <div class="sidebar-name">IBANES 2026</div>
+            <div class="sidebar-title">Senado Federal — DF</div>
+        </div>
+
+        <div class="sidebar-nav">
+            <div class="nav-section">PAINEL</div>
+            <div class="nav-item active" onclick="navegar('dashboard')">
+                <span class="nav-icon">📊</span> Dashboard
+            </div>
+
+            <div class="nav-section">HIERARQUIA</div>
+            <div class="nav-item" onclick="navegar('federais')">
+                <span class="nav-icon">🏛️</span> Dep. Federais
+            </div>
+            <div class="nav-item" onclick="navegar('distritais')">
+                <span class="nav-icon">🏢</span> Dep. Distritais
+            </div>
+            <div class="nav-item" onclick="navegar('eleitores')">
+                <span class="nav-icon">🗳️</span> Eleitores
+            </div>
+
+            <div class="nav-section">CONTROLE</div>
+            <div class="nav-item" onclick="navegar('gamificacao')">
+                <span class="nav-icon">🎮</span> Gamificação
+            </div>
+            <div class="nav-item" onclick="navegar('monitoramento')">
+                <span class="nav-icon">📡</span> Redes Sociais
+            </div>
+            <div class="nav-item" onclick="navegar('recursos')">
+                <span class="nav-icon">💰</span> Recursos
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            Comando IBANES · Senado 2026
+        </div>
+    </nav>
+
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+        <span class="header-title" id="headerTitle">📊 Dashboard</span>
+        <div style="display:flex; align-items:center; gap:16px;">
+            <div style="display:flex; align-items:center; gap:5px; font-size:0.75rem; color:var(--muted);">
+                <span style="width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;"></span> ao vivo
+            </div>
+            <div class="countdown" id="countdown">---</div>
+        </div>
+    </header>
+
+    <!-- ===== MODAL GENÉRICO ===== -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">---</h2>
+                <button class="modal-close" onclick="fecharModal()">✕</button>
+            </div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- ===== TOAST ===== -->
+    <div class="toast-container" id="toasts"></div>
+
+    <!-- ===== MAIN ===== -->
+    <main class="main" id="main">
+
+        <!-- ========== DASHBOARD ========== -->
+        <div class="page active" id="page-dashboard">
+            <!-- Saudação -->
+            <div class="card" style="padding:14px; margin-bottom:16px; display:flex; align-items:center; gap:14px; background:linear-gradient(135deg, rgba(0,230,118,0.08), rgba(255,214,0,0.05)); border:1px solid rgba(0,230,118,0.2);">
+                <svg viewBox="0 0 200 200" style="width:60px; height:60px; flex-shrink:0; filter:drop-shadow(0 0 8px rgba(0,230,118,0.3));">
+                    <circle cx="100" cy="100" r="96" fill="#1a237e" stroke="#00e676" stroke-width="3"/>
+                    <ellipse cx="100" cy="85" rx="38" ry="42" fill="#d4a574"/>
+                    <path d="M62 78 Q62 45 100 40 Q138 45 138 78 Q135 55 100 52 Q65 55 62 78 Z" fill="#4a4a4a"/>
+                    <ellipse cx="84" cy="80" rx="6" ry="5" fill="#fff"/><circle cx="84" cy="80" r="3" fill="#2c1810"/>
+                    <ellipse cx="116" cy="80" rx="6" ry="5" fill="#fff"/><circle cx="116" cy="80" r="3" fill="#2c1810"/>
+                    <path d="M85 102 Q100 115 115 102" stroke="#a0755a" stroke-width="2" fill="none"/>
+                    <rect x="72" y="72" width="24" height="18" rx="3" fill="none" stroke="#555" stroke-width="1.5"/>
+                    <rect x="104" y="72" width="24" height="18" rx="3" fill="none" stroke="#555" stroke-width="1.5"/>
+                    <path d="M96 80 L104 80" stroke="#555" stroke-width="1.5"/>
+                    <path d="M45 170 Q50 130 100 125 Q150 130 155 170 Z" fill="#1a1a2e"/>
+                </svg>
+                <div>
+                    <div style="font-weight:800; font-size:1rem; color:var(--gold);" id="saudacao">Bom dia, Comando!</div>
+                    <div style="font-size:0.8rem; color:var(--text); margin-top:3px;">Cada eleitor cadastrado pelos distritais fortalece nossa chapa ao Senado. Vamos dominar o DF!</div>
+                </div>
+            </div>
+
+            <!-- Stats principais -->
+            <div class="grid grid-4">
+                <div class="card stat-card" style="border-left:3px solid var(--green);" onclick="navegar('eleitores')">
+                    <div class="stat-label">🗳️ Eleitores Totais</div>
+                    <div class="stat-number" id="statEleitores">0</div>
+                    <div style="font-size:0.65rem; color:var(--cyan); margin-top:3px;">cadastrados pela rede</div>
+                </div>
+                <div class="card stat-card" style="border-left:3px solid var(--blue);" onclick="navegar('federais')">
+                    <div class="stat-label">🏛️ Dep. Federais</div>
+                    <div class="stat-number" style="color:var(--blue);" id="statFederais">0</div>
+                    <div style="font-size:0.65rem; color:var(--cyan); margin-top:3px;">coordenadores gerais</div>
+                </div>
+                <div class="card stat-card" style="border-left:3px solid var(--purple);" onclick="navegar('distritais')">
+                    <div class="stat-label">🏢 Dep. Distritais</div>
+                    <div class="stat-number" style="color:var(--purple);" id="statDistritais">0</div>
+                    <div style="font-size:0.65rem; color:var(--cyan); margin-top:3px;">na linha de frente</div>
+                </div>
+                <div class="card stat-card" style="border-left:3px solid var(--gold);" onclick="navegar('monitoramento')">
+                    <div class="stat-label">📡 Fidelidade Rede</div>
+                    <div class="stat-number" style="color:var(--gold);" id="statFidelidade">0%</div>
+                    <div style="font-size:0.65rem; color:var(--green); margin-top:3px;">apoio confirmado</div>
+                </div>
+            </div>
+
+            <!-- Ranking rápido + Meta -->
+            <div class="grid grid-2">
+                <!-- Top 5 Distritais -->
+                <div class="card">
+                    <div style="font-weight:700; color:var(--gold); margin-bottom:12px; font-size:0.9rem;">🏆 Top 5 Distritais — Cadastros</div>
+                    <div id="dashRanking"></div>
+                </div>
+                <!-- Meta de votos -->
+                <div class="card">
+                    <div style="font-weight:700; color:var(--gold); margin-bottom:12px; font-size:0.9rem;">🎯 Meta Senado 2026</div>
+                    <div style="font-size:0.8rem; color:var(--muted); margin-bottom:10px;">Quórum estimado: ~800.000 votos para eleição ao Senado pelo DF</div>
+                    <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px;">
+                        <span>Progresso</span>
+                        <span style="font-weight:700; color:var(--green);" id="metaPercent">0%</span>
+                    </div>
+                    <div class="progress-bar" style="height:14px; margin-bottom:10px;">
+                        <div class="progress-fill" id="metaBar" style="background:linear-gradient(90deg, var(--cyan), var(--green)); width:0%;"></div>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--muted);">
+                        <span id="metaCadastros">0 cadastrados</span>
+                        <span>Meta: 800.000</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alertas de Fidelidade -->
+            <h2 class="section-title">⚠️ Alertas de Fidelidade</h2>
+            <div id="dashAlertas"></div>
+        </div>
+
+        <!-- ========== DEP. FEDERAIS ========== -->
+        <div class="page" id="page-federais">
+            <p style="color:var(--muted); margin-bottom:16px; font-size:0.85rem;">
+                Deputados Federais são os <strong style="color:var(--gold);">coordenadores gerais</strong>. Cada um gerencia um grupo de distritais e recebe recursos (dinheiro e material) do Ibanes conforme performance.
+            </p>
+            <div class="grid grid-3" id="federaisGrid"></div>
+        </div>
+
+        <!-- ========== DEP. DISTRITAIS ========== -->
+        <div class="page" id="page-distritais">
+            <p style="color:var(--muted); margin-bottom:16px; font-size:0.85rem;">
+                Distritais são a <strong style="color:var(--green);">linha de frente</strong>. Cadastram eleitores fiéis ao Ibanes, ganham pontos e desbloqueiam recompensas. Vinculados aos seus respectivos deputados federais.
+            </p>
+            <div style="margin-bottom:16px; display:flex; gap:8px; flex-wrap:wrap;">
+                <button class="btn btn-sm" style="background:var(--surface); border:1px solid var(--border); color:var(--text);" onclick="filtrarDistritais('todos')">Todos</button>
+                <div id="filtroFederalBtns"></div>
+            </div>
+            <div id="distritaisGrid"></div>
+        </div>
+
+        <!-- ========== ELEITORES ========== -->
+        <div class="page" id="page-eleitores">
+            <p style="color:var(--muted); margin-bottom:16px; font-size:0.85rem;">
+                Eleitores cadastrados pela rede de distritais. Cada eleitor está vinculado ao distrital que o cadastrou.
+            </p>
+            <div style="margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:0.85rem; color:var(--muted);" id="totalEleitoresLabel">Total: 0</span>
+                <button class="btn btn-primary btn-sm" onclick="simularCadastro()">+ Simular Cadastro</button>
+            </div>
+            <div id="eleitoresGrid"></div>
+        </div>
+
+        <!-- ========== GAMIFICAÇÃO ========== -->
+        <div class="page" id="page-gamificacao">
+            <p style="color:var(--muted); margin-bottom:16px; font-size:0.85rem;">
+                Sistema de pontos que estimula distritais a cadastrar eleitores. Federais ganham bônus pela performance dos seus distritais.
+            </p>
+
+            <!-- Ranking completo -->
+            <h2 class="section-title">🏆 Ranking de Distritais</h2>
+            <div id="rankingCompleto"></div>
+
+            <!-- Missões -->
+            <h2 class="section-title">🎯 Missões Ativas</h2>
+            <div class="grid grid-2" id="missoesGrid">
+                <div class="card" style="border-left:3px solid var(--green);">
+                    <div style="font-weight:700; margin-bottom:6px;">📋 Cadastrar 5 eleitores hoje</div>
+                    <div style="font-size:0.8rem; color:var(--muted); margin-bottom:8px;">Meta diária por distrital</div>
+                    <span class="badge badge-success">+100 pts</span>
+                </div>
+                <div class="card" style="border-left:3px solid var(--red);">
+                    <div style="font-weight:700; margin-bottom:6px;">⚡ Relâmpago: 10 cadastros em 2h</div>
+                    <div style="font-size:0.8rem; color:var(--muted); margin-bottom:8px;">Missão bônus limitada</div>
+                    <span class="badge badge-danger">+300 pts</span>
+                </div>
+                <div class="card" style="border-left:3px solid var(--purple);">
+                    <div style="font-weight:700; margin-bottom:6px;">🏆 Alcançar 100 eleitores</div>
+                    <div style="font-size:0.8rem; color:var(--muted); margin-bottom:8px;">Marco de conquista</div>
+                    <span class="badge badge-info">+500 pts + 🎰 Roda</span>
+                </div>
+                <div class="card" style="border-left:3px solid var(--gold);">
+                    <div style="font-weight:700; margin-bottom:6px;">👥 Recrutar novo apoiador ativo</div>
+                    <div style="font-size:0.8rem; color:var(--muted); margin-bottom:8px;">Eleitor que engaja nas redes</div>
+                    <span class="badge badge-warning">+200 pts</span>
+                </div>
+            </div>
+
+            <!-- Tabela de Pontos -->
+            <h2 class="section-title">📊 Tabela de Pontos</h2>
+            <div class="card" style="font-size:0.85rem;">
+                <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--border);">
+                    <span>👤 Cadastrar 1 eleitor</span><span style="color:var(--green); font-weight:700;">+20 pts</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--border);">
+                    <span>📱 Eleitor posta apoio ao Ibanes</span><span style="color:var(--green); font-weight:700;">+50 pts</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--border);">
+                    <span>🔥 Sequência de 7 dias cadastrando</span><span style="color:var(--gold); font-weight:700;">+200 pts</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--border);">
+                    <span>🎯 Completar missão do dia</span><span style="color:var(--purple); font-weight:700;">+100 pts</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; padding:6px 0;">
+                    <span>🏛️ Bônus Federal (por distrital ativo)</span><span style="color:var(--cyan); font-weight:700;">+30 pts/dia</span>
+                </div>
+            </div>
+
+            <!-- Roda da Sorte -->
+            <h2 class="section-title">🎰 Roda da Sorte</h2>
+            <div class="card roda-container" style="padding:20px;">
+                <div class="roda-bloqueio" id="rodaBloqueio">
+                    <div style="font-size:2.2rem; margin-bottom:8px;">🔒</div>
+                    <div style="font-weight:800; color:var(--gold); font-size:0.95rem; margin-bottom:4px;">Roda Bloqueada</div>
+                    <div style="font-size:0.75rem; color:var(--muted); max-width:220px;">Complete missões para desbloquear!</div>
+                    <button onclick="desbloquearRoda()" style="margin-top:10px; padding:6px 16px; background:var(--gold); color:#000; border:none; border-radius:16px; font-weight:700; font-size:0.7rem; cursor:pointer; font-family:Poppins;">🔓 Simular desbloqueio</button>
+                </div>
+                <div style="font-size:0.75rem; color:var(--muted); margin-bottom:10px;">Prêmios: material de campanha do Ibanes para os distritais</div>
+                <div style="position:relative; width:240px; height:240px; margin:0 auto 12px;">
+                    <canvas id="rodaCanvas" width="240" height="240" style="border-radius:50%; box-shadow:0 0 20px rgba(255,214,0,0.2);"></canvas>
+                    <div style="position:absolute; top:-8px; left:50%; transform:translateX(-50%); font-size:1.5rem; z-index:3;">▼</div>
+                    <button id="btnGirar" onclick="girarRoda()" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:70px; height:70px; border-radius:50%; background:#1a1a2e; border:3px solid var(--gold); color:var(--gold); font-size:1rem; font-weight:900; cursor:pointer; z-index:2; font-family:Poppins;">GIRAR</button>
+                </div>
+                <div id="rodaResultado" style="display:none; margin-top:12px; padding:12px; background:linear-gradient(135deg, rgba(255,214,0,0.15), rgba(0,230,118,0.1)); border-radius:10px; border:1px solid var(--gold);">
+                    <div style="font-size:1.3rem;" id="rodaEmoji"></div>
+                    <div style="font-weight:800; color:var(--gold);" id="rodaTexto"></div>
+                    <div style="font-size:0.7rem; color:var(--muted); margin-top:3px;" id="rodaDesc"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== MONITORAMENTO REDES ========== -->
+        <div class="page" id="page-monitoramento">
+            <p style="color:var(--muted); margin-bottom:16px; font-size:0.85rem;">
+                Monitoramento via <strong style="color:var(--cyan);">Apify</strong> das redes sociais dos distritais. Verifica se estão apoiando o Ibanes ou mencionando outros candidatos ao Senado.
+            </p>
+
+            <!-- Resumo -->
+            <div class="grid grid-3" style="margin-bottom:16px;">
+                <div class="card stat-card" style="border-left:3px solid var(--green);">
+                    <div class="stat-label">✅ Fiéis</div>
+                    <div class="stat-number" style="font-size:1.8rem;" id="monitorFieis">0</div>
+                </div>
+                <div class="card stat-card" style="border-left:3px solid var(--gold);">
+                    <div class="stat-label">⚠️ Suspeitos</div>
+                    <div class="stat-number" style="font-size:1.8rem; color:var(--gold);" id="monitorSuspeitos">0</div>
+                </div>
+                <div class="card stat-card" style="border-left:3px solid var(--red);">
+                    <div class="stat-label">🚨 Traidores</div>
+                    <div class="stat-number" style="font-size:1.8rem; color:var(--red);" id="monitorTraidores">0</div>
+                </div>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <h2 class="section-title" style="margin:0;">📡 Feed de Monitoramento</h2>
+                <button class="btn btn-primary btn-sm" onclick="executarMonitoramento()">🔄 Atualizar Redes</button>
+            </div>
+            <div id="monitoramentoFeed"></div>
+
+            <!-- Configuração Apify -->
+            <h2 class="section-title">⚙️ Configuração Apify</h2>
+            <div class="card" style="font-size:0.85rem;">
+                <div style="margin-bottom:10px;">
+                    <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:3px;">Token Apify</label>
+                    <input type="password" id="apifyToken" placeholder="apify_api_xxxxxxx" style="width:100%; padding:8px 12px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:Poppins; font-size:0.8rem;">
+                </div>
+                <div style="margin-bottom:10px;">
+                    <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:3px;">Frequência de varredura</label>
+                    <select style="width:100%; padding:8px 12px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:Poppins; font-size:0.8rem;">
+                        <option>A cada 6 horas</option>
+                        <option>A cada 12 horas</option>
+                        <option>Diário</option>
+                    </select>
+                </div>
+                <div style="font-size:0.7rem; color:var(--muted);">
+                    O Apify monitora Instagram, Twitter/X e Facebook dos distritais cadastrados, buscando menções a candidatos rivais ao Senado.
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== RECURSOS ========== -->
+        <div class="page" id="page-recursos">
+            <p style="color:var(--muted); margin-bottom:16px; font-size:0.85rem;">
+                O Ibanes remunera os deputados federais com <strong style="color:var(--gold);">dinheiro e material</strong> conforme a performance dos distritais vinculados.
+            </p>
+
+            <h2 class="section-title">💰 Distribuição por Federal</h2>
+            <div id="recursosGrid"></div>
+
+            <h2 class="section-title">📦 Materiais Disponíveis</h2>
+            <div class="grid grid-3" id="materiaisGrid">
+                <div class="card" style="text-align:center;">
+                    <div style="font-size:2rem; margin-bottom:6px;">📄</div>
+                    <div style="font-weight:700;">Santinhos</div>
+                    <div style="font-size:0.8rem; color:var(--muted);">50.000 disponíveis</div>
+                    <div class="progress-bar" style="margin-top:8px;"><div class="progress-fill" style="width:35%; background:var(--green);"></div></div>
+                    <div style="font-size:0.7rem; color:var(--cyan); margin-top:4px;">17.500 distribuídos</div>
+                </div>
+                <div class="card" style="text-align:center;">
+                    <div style="font-size:2rem; margin-bottom:6px;">🏷️</div>
+                    <div style="font-weight:700;">Adesivos</div>
+                    <div style="font-size:0.8rem; color:var(--muted);">30.000 disponíveis</div>
+                    <div class="progress-bar" style="margin-top:8px;"><div class="progress-fill" style="width:22%; background:var(--gold);"></div></div>
+                    <div style="font-size:0.7rem; color:var(--cyan); margin-top:4px;">6.600 distribuídos</div>
+                </div>
+                <div class="card" style="text-align:center;">
+                    <div style="font-size:2rem; margin-bottom:6px;">🚩</div>
+                    <div style="font-weight:700;">Bandeiras</div>
+                    <div style="font-size:0.8rem; color:var(--muted);">2.000 disponíveis</div>
+                    <div class="progress-bar" style="margin-top:8px;"><div class="progress-fill" style="width:40%; background:var(--purple);"></div></div>
+                    <div style="font-size:0.7rem; color:var(--cyan); margin-top:4px;">800 distribuídas</div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+    // ===== DADOS DO SISTEMA =====
+    const DADOS = {
+        federais: [
+            {
+                nome: 'Dep. Fed. Ricardo Maia',
+                partido: 'MDB',
+                foto: 'RM',
+                distritais: [0, 1, 2],
+                investimento: 45000,
+                material: { santinhos: 5000, adesivos: 2000 }
+            },
+            {
+                nome: 'Dep. Fed. Patrícia Borges',
+                partido: 'MDB',
+                foto: 'PB',
+                distritais: [3, 4, 5],
+                investimento: 38000,
+                material: { santinhos: 4000, adesivos: 1500 }
+            },
+            {
+                nome: 'Dep. Fed. Carlos Henrique',
+                partido: 'PP',
+                foto: 'CH',
+                distritais: [6, 7],
+                investimento: 32000,
+                material: { santinhos: 3500, adesivos: 1200 }
+            },
+            {
+                nome: 'Dep. Fed. Fernanda Lima',
+                partido: 'PSD',
+                foto: 'FL',
+                distritais: [8, 9],
+                investimento: 28000,
+                material: { santinhos: 3000, adesivos: 1000 }
+            }
+        ],
+        distritais: [
+            { nome: 'João Pereira', partido: 'MDB', regiao: 'Ceilândia', eleitores: 342, pts: 2840, fidelidade: 'alta', instagram: '@joaopereira_df', ultimaAtividade: '2h atrás' },
+            { nome: 'Marina Costa', partido: 'MDB', regiao: 'Taguatinga', eleitores: 287, pts: 2450, fidelidade: 'alta', instagram: '@marinacosta26', ultimaAtividade: '1h atrás' },
+            { nome: 'Felipe Rocha', partido: 'MDB', regiao: 'Samambaia', eleitores: 198, pts: 2180, fidelidade: 'media', instagram: '@feliperocha_df', ultimaAtividade: '5h atrás' },
+            { nome: 'Ana Beatriz', partido: 'MDB', regiao: 'Gama', eleitores: 156, pts: 1920, fidelidade: 'alta', instagram: '@anabeatriz26', ultimaAtividade: '3h atrás' },
+            { nome: 'Roberto Silva', partido: 'PP', regiao: 'Plano Piloto', eleitores: 134, pts: 1650, fidelidade: 'alta', instagram: '@robertosilva_dep', ultimaAtividade: '30min atrás' },
+            { nome: 'Luciana Mendes', partido: 'PP', regiao: 'Sobradinho', eleitores: 112, pts: 1420, fidelidade: 'baixa', instagram: '@lucianamendes_', ultimaAtividade: '2 dias atrás' },
+            { nome: 'André Santos', partido: 'PSD', regiao: 'Águas Claras', eleitores: 98, pts: 1180, fidelidade: 'alta', instagram: '@andresantos_ac', ultimaAtividade: '4h atrás' },
+            { nome: 'Camila Oliveira', partido: 'PSD', regiao: 'Santa Maria', eleitores: 87, pts: 980, fidelidade: 'media', instagram: '@camilaoliveira_sm', ultimaAtividade: '1 dia atrás' },
+            { nome: 'Paulo Henrique', partido: 'PSD', regiao: 'Recanto das Emas', eleitores: 76, pts: 820, fidelidade: 'alta', instagram: '@pauloh_recanto', ultimaAtividade: '6h atrás' },
+            { nome: 'Beatriz Lopes', partido: 'MDB', regiao: 'Planaltina', eleitores: 65, pts: 710, fidelidade: 'media', instagram: '@bialopes_plan', ultimaAtividade: '8h atrás' }
+        ],
+        monitoramento: [
+            { distrital: 'João Pereira', rede: 'Instagram', tipo: 'positivo', msg: 'Postou story com foto do Ibanes: "Nosso senador!"', data: 'Hoje 14:30' },
+            { distrital: 'Marina Costa', rede: 'Twitter/X', tipo: 'positivo', msg: 'Retweetou proposta do Ibanes sobre educação no DF', data: 'Hoje 11:45' },
+            { distrital: 'Felipe Rocha', rede: 'Instagram', tipo: 'suspeito', msg: 'Curtiu foto de evento do candidato rival Senador X', data: 'Hoje 09:20' },
+            { distrital: 'Luciana Mendes', rede: 'Facebook', tipo: 'alerta', msg: 'Compartilhou proposta de outro candidato ao Senado sem mencionar Ibanes', data: 'Ontem 18:00' },
+            { distrital: 'Luciana Mendes', rede: 'Instagram', tipo: 'alerta', msg: 'Foto em evento de candidato rival — sem nenhuma menção ao Ibanes há 15 dias', data: 'Ontem 20:30' },
+            { distrital: 'Ana Beatriz', rede: 'Instagram', tipo: 'positivo', msg: 'Live com 1.2k views promovendo Ibanes no Gama', data: 'Hoje 08:00' },
+            { distrital: 'Roberto Silva', rede: 'Twitter/X', tipo: 'positivo', msg: 'Thread sobre propostas de Ibanes para o Plano Piloto', data: 'Hoje 10:15' },
+            { distrital: 'Camila Oliveira', rede: 'Instagram', tipo: 'suspeito', msg: 'Segue agora perfil da campanha de outro candidato ao Senado', data: 'Hoje 07:45' },
+            { distrital: 'André Santos', rede: 'Instagram', tipo: 'positivo', msg: 'Reels com 3.5k views sobre Ibanes em Águas Claras', data: 'Hoje 12:00' },
+            { distrital: 'Beatriz Lopes', rede: 'Facebook', tipo: 'suspeito', msg: 'Sem postagens sobre Ibanes há 10 dias — padrão incomum', data: 'Hoje 06:00' }
+        ],
+        premiosRoda: [
+            { nome: '5 mil Santinhos', cor: '#00e676', emoji: '📄' },
+            { nome: '10 mil Santinhos', cor: '#ffd600', emoji: '📄' },
+            { nome: '1.000 Adesivos', cor: '#00e5ff', emoji: '🏷️' },
+            { nome: '5 mil Adesivos', cor: '#b388ff', emoji: '🏷️' },
+            { nome: 'Verba R$500', cor: '#ff5252', emoji: '💰' },
+            { nome: '2 mil Bandeiras', cor: '#ff9100', emoji: '🚩' }
+        ]
+    };
+
+    // ===== ESTADO =====
+    let rodaGirando = false;
+    let rodaDesbloqueada = false;
+    let anguloAtual = 0;
+    let filtroFederalAtual = 'todos';
+
+    // ===== INICIALIZAÇÃO =====
+    function entrar() {
+        document.getElementById('splash').classList.add('hidden');
+        inicializar();
+    }
+
+    function inicializar() {
+        atualizarContagem();
+        setInterval(atualizarContagem, 60000);
+        atualizarSaudacao();
+        renderDashboard();
+        renderFederais();
+        renderDistritais();
+        renderEleitores();
+        renderRanking();
+        renderMonitoramento();
+        renderRecursos();
+        desenharRoda();
+    }
+
+    // ===== NAVEGAÇÃO =====
+    function navegar(pagina) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        const el = document.getElementById('page-' + pagina);
+        if (el) el.classList.add('active');
+
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        const nav = document.querySelector(`[onclick="navegar('${pagina}')"]`);
+        if (nav) nav.classList.add('active');
+
+        const titulos = {
+            dashboard: '📊 Dashboard',
+            federais: '🏛️ Deputados Federais',
+            distritais: '🏢 Deputados Distritais',
+            eleitores: '🗳️ Eleitores',
+            gamificacao: '🎮 Gamificação',
+            monitoramento: '📡 Monitoramento de Redes',
+            recursos: '💰 Recursos'
+        };
+        document.getElementById('headerTitle').textContent = titulos[pagina] || pagina;
+    }
+
+    // ===== CONTAGEM REGRESSIVA =====
+    function atualizarContagem() {
+        const eleicao = new Date(2026, 9, 4);
+        const agora = new Date();
+        const dias = Math.floor((eleicao - agora) / (1000 * 60 * 60 * 24));
+        document.getElementById('countdown').textContent = dias > 0 ? `${dias} dias` : 'Eleição!';
+    }
+
+    function atualizarSaudacao() {
+        const h = new Date().getHours();
+        const s = h < 12 ? 'Bom dia' : h < 18 ? 'Boa tarde' : 'Boa noite';
+        document.getElementById('saudacao').textContent = `${s}, Comando!`;
+    }
+
+    // ===== DASHBOARD =====
+    function renderDashboard() {
+        const totalEleitores = DADOS.distritais.reduce((s, d) => s + d.eleitores, 0);
+        document.getElementById('statEleitores').textContent = totalEleitores.toLocaleString('pt-BR');
+        document.getElementById('statFederais').textContent = DADOS.federais.length;
+        document.getElementById('statDistritais').textContent = DADOS.distritais.length;
+
+        // Fidelidade
+        const fieis = DADOS.distritais.filter(d => d.fidelidade === 'alta').length;
+        const pctFid = Math.round((fieis / DADOS.distritais.length) * 100);
+        document.getElementById('statFidelidade').textContent = pctFid + '%';
+
+        // Meta
+        const meta = 800000;
+        const pctMeta = ((totalEleitores / meta) * 100).toFixed(2);
+        document.getElementById('metaPercent').textContent = pctMeta + '%';
+        document.getElementById('metaBar').style.width = Math.min(pctMeta, 100) + '%';
+        document.getElementById('metaCadastros').textContent = totalEleitores.toLocaleString('pt-BR') + ' cadastrados';
+
+        // Top 5
+        const top5 = [...DADOS.distritais].sort((a, b) => b.eleitores - a.eleitores).slice(0, 5);
+        const medals = ['🥇', '🥈', '🥉', '4️⃣', '5️⃣'];
+        document.getElementById('dashRanking').innerHTML = top5.map((d, i) => `
+            <div class="lb-item" ${i === 0 ? 'style="background:linear-gradient(90deg, rgba(255,214,0,0.15), transparent); border:1px solid rgba(255,214,0,0.3);"' : ''}>
+                <div class="lb-rank" style="font-size:1.1rem;">${medals[i]}</div>
+                <div class="lb-name">${d.nome} ${i === 0 ? '👑' : ''}</div>
+                <div class="lb-pts">${d.eleitores} eleitores</div>
+            </div>
+        `).join('');
+
+        // Alertas
+        const alertas = DADOS.distritais.filter(d => d.fidelidade !== 'alta');
+        document.getElementById('dashAlertas').innerHTML = alertas.length === 0
+            ? '<div class="card" style="text-align:center; color:var(--green);">✅ Todos os distritais estão fiéis ao Ibanes!</div>'
+            : alertas.map(d => {
+                const cor = d.fidelidade === 'baixa' ? 'var(--red)' : 'var(--gold)';
+                const icon = d.fidelidade === 'baixa' ? '🚨' : '⚠️';
+                const fed = DADOS.federais.find(f => f.distritais.includes(DADOS.distritais.indexOf(d)));
+                return `
+                    <div class="card" style="margin-bottom:8px; border-left:3px solid ${cor}; display:flex; align-items:center; gap:12px;">
+                        <span style="font-size:1.3rem;">${icon}</span>
+                        <div style="flex:1;">
+                            <div style="font-weight:700;">${d.nome} <span style="font-size:0.75rem; color:var(--muted);">· ${d.regiao}</span></div>
+                            <div style="font-size:0.8rem; color:${cor};">Fidelidade ${d.fidelidade} — Última atividade: ${d.ultimaAtividade}</div>
+                            ${fed ? `<div style="font-size:0.7rem; color:var(--muted);">Vinculado a: ${fed.nome}</div>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+    }
+
+    // ===== FEDERAIS =====
+    function renderFederais() {
+        document.getElementById('federaisGrid').innerHTML = DADOS.federais.map((f, i) => {
+            const totalEl = f.distritais.reduce((s, di) => s + DADOS.distritais[di].eleitores, 0);
+            const totalPts = f.distritais.reduce((s, di) => s + DADOS.distritais[di].pts, 0);
+            return `
+                <div class="card" style="cursor:pointer;" onclick="abrirFederal(${i})">
+                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+                        <div style="width:50px; height:50px; border-radius:50%; background:linear-gradient(135deg, var(--blue), var(--cyan)); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1rem;">${f.foto}</div>
+                        <div>
+                            <div style="font-weight:700; font-size:0.95rem;">${f.nome}</div>
+                            <div style="font-size:0.7rem; color:var(--gold);">${f.partido} · Coordenador Geral</div>
+                        </div>
+                    </div>
+                    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; text-align:center;">
+                        <div>
+                            <div style="font-weight:800; color:var(--purple); font-size:1.1rem;">${f.distritais.length}</div>
+                            <div style="font-size:0.65rem; color:var(--muted);">Distritais</div>
+                        </div>
+                        <div>
+                            <div style="font-weight:800; color:var(--green); font-size:1.1rem;">${totalEl}</div>
+                            <div style="font-size:0.65rem; color:var(--muted);">Eleitores</div>
+                        </div>
+                        <div>
+                            <div style="font-weight:800; color:var(--gold); font-size:1.1rem;">${totalPts.toLocaleString('pt-BR')}</div>
+                            <div style="font-size:0.65rem; color:var(--muted);">Pts Total</div>
+                        </div>
+                    </div>
+                    <div style="margin-top:10px; font-size:0.7rem; color:var(--muted);">
+                        💰 Investimento: <span style="color:var(--gold); font-weight:700;">R$ ${f.investimento.toLocaleString('pt-BR')}</span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // Botões de filtro por federal
+        document.getElementById('filtroFederalBtns').innerHTML = DADOS.federais.map((f, i) => `
+            <button class="btn btn-sm" style="background:var(--surface); border:1px solid var(--border); color:var(--text);" onclick="filtrarDistritais(${i})">${f.foto}</button>
+        `).join('');
+    }
+
+    function abrirFederal(idx) {
+        const f = DADOS.federais[idx];
+        const distritais = f.distritais.map(di => DADOS.distritais[di]);
+        document.getElementById('modalTitle').textContent = f.nome;
+        document.getElementById('modalBody').innerHTML = `
+            <div style="text-align:center; margin-bottom:16px;">
+                <div style="width:70px; height:70px; border-radius:50%; background:linear-gradient(135deg, var(--blue), var(--cyan)); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.5rem; margin:0 auto 8px;">${f.foto}</div>
+                <div style="font-size:0.85rem; color:var(--gold);">${f.partido} · Coordenador Geral</div>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:16px;">
+                <div style="background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:10px; text-align:center;">
+                    <div style="font-weight:800; color:var(--gold); font-size:1.5rem;">R$ ${f.investimento.toLocaleString('pt-BR')}</div>
+                    <div style="font-size:0.7rem; color:var(--muted);">Investimento</div>
+                </div>
+                <div style="background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:10px; text-align:center;">
+                    <div style="font-weight:800; color:var(--green); font-size:1.5rem;">${distritais.reduce((s,d) => s + d.eleitores, 0)}</div>
+                    <div style="font-size:0.7rem; color:var(--muted);">Eleitores da Rede</div>
+                </div>
+            </div>
+            <div style="font-weight:700; color:var(--green); margin-bottom:8px;">Distritais vinculados:</div>
+            ${distritais.map(d => {
+                const fidCor = d.fidelidade === 'alta' ? 'var(--green)' : d.fidelidade === 'media' ? 'var(--gold)' : 'var(--red)';
+                return `
+                    <div style="display:flex; align-items:center; gap:10px; padding:8px; background:var(--surface); border-radius:8px; margin-bottom:6px; border-left:3px solid ${fidCor};">
+                        <div style="flex:1;">
+                            <div style="font-weight:600;">${d.nome} <span style="font-size:0.7rem; color:var(--muted);">· ${d.regiao}</span></div>
+                            <div style="font-size:0.75rem; color:var(--muted);">🗳️ ${d.eleitores} eleitores · ${d.pts} pts</div>
+                        </div>
+                        <span class="badge ${d.fidelidade === 'alta' ? 'badge-success' : d.fidelidade === 'media' ? 'badge-warning' : 'badge-danger'}">${d.fidelidade}</span>
+                    </div>
+                `;
+            }).join('')}
+        `;
+        document.getElementById('modal').classList.add('active');
+    }
+
+    // ===== DISTRITAIS =====
+    function renderDistritais() {
+        const lista = filtroFederalAtual === 'todos'
+            ? DADOS.distritais
+            : DADOS.distritais.filter((_, i) => DADOS.federais[filtroFederalAtual].distritais.includes(i));
+
+        document.getElementById('distritaisGrid').innerHTML = lista.map((d, i) => {
+            const idx = DADOS.distritais.indexOf(d);
+            const fed = DADOS.federais.find(f => f.distritais.includes(idx));
+            const fidCor = d.fidelidade === 'alta' ? 'var(--green)' : d.fidelidade === 'media' ? 'var(--gold)' : 'var(--red)';
+            const fidClass = d.fidelidade === 'alta' ? 'fidelidade-alta' : d.fidelidade === 'media' ? 'fidelidade-media' : 'fidelidade-baixa';
+            return `
+                <div class="card ${fidClass}" style="margin-bottom:10px; display:flex; align-items:center; gap:14px; cursor:pointer;" onclick="abrirDistrital(${idx})">
+                    <div style="width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg, var(--purple), var(--cyan)); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.85rem; flex-shrink:0;">${d.nome.charAt(0)}</div>
+                    <div style="flex:1;">
+                        <div style="font-weight:700;">${d.nome} <span style="font-size:0.7rem; color:var(--muted);">· ${d.partido}</span></div>
+                        <div style="font-size:0.8rem; color:var(--muted);">📍 ${d.regiao} · 🗳️ ${d.eleitores} eleitores · ⭐ ${d.pts} pts</div>
+                        ${fed ? `<div style="font-size:0.7rem; color:var(--blue);">🏛️ ${fed.nome}</div>` : ''}
+                    </div>
+                    <div style="text-align:right;">
+                        <span class="badge ${d.fidelidade === 'alta' ? 'badge-success' : d.fidelidade === 'media' ? 'badge-warning' : 'badge-danger'}">${d.fidelidade}</span>
+                        <div style="font-size:0.65rem; color:var(--muted); margin-top:4px;">${d.ultimaAtividade}</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function filtrarDistritais(filtro) {
+        filtroFederalAtual = filtro;
+        renderDistritais();
+    }
+
+    function abrirDistrital(idx) {
+        const d = DADOS.distritais[idx];
+        const fed = DADOS.federais.find(f => f.distritais.includes(idx));
+        const mencoes = DADOS.monitoramento.filter(m => m.distrital === d.nome);
+
+        document.getElementById('modalTitle').textContent = d.nome;
+        document.getElementById('modalBody').innerHTML = `
+            <div style="text-align:center; margin-bottom:16px;">
+                <div style="width:70px; height:70px; border-radius:50%; background:linear-gradient(135deg, var(--purple), var(--cyan)); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.8rem; margin:0 auto 8px;">${d.nome.charAt(0)}</div>
+                <div style="font-size:0.85rem; color:var(--muted);">${d.partido} · ${d.regiao}</div>
+                <div style="font-size:0.75rem; color:var(--cyan);">${d.instagram}</div>
+                ${fed ? `<div style="font-size:0.7rem; color:var(--blue); margin-top:4px;">🏛️ Vinculado a: ${fed.nome}</div>` : ''}
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:16px;">
+                <div style="background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:10px; text-align:center;">
+                    <div style="font-weight:800; color:var(--green); font-size:1.3rem;">${d.eleitores}</div>
+                    <div style="font-size:0.65rem; color:var(--muted);">Eleitores</div>
+                </div>
+                <div style="background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:10px; text-align:center;">
+                    <div style="font-weight:800; color:var(--gold); font-size:1.3rem;">${d.pts}</div>
+                    <div style="font-size:0.65rem; color:var(--muted);">Pontos</div>
+                </div>
+                <div style="background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:10px; text-align:center;">
+                    <div style="font-weight:800; color:${d.fidelidade === 'alta' ? 'var(--green)' : d.fidelidade === 'media' ? 'var(--gold)' : 'var(--red)'}; font-size:1.3rem;">${d.fidelidade.toUpperCase()}</div>
+                    <div style="font-size:0.65rem; color:var(--muted);">Fidelidade</div>
+                </div>
+            </div>
+            ${mencoes.length > 0 ? `
+                <div style="font-weight:700; color:var(--cyan); margin-bottom:8px;">📡 Atividade nas Redes:</div>
+                ${mencoes.map(m => {
+                    const cor = m.tipo === 'positivo' ? 'var(--green)' : m.tipo === 'suspeito' ? 'var(--gold)' : 'var(--red)';
+                    const icon = m.tipo === 'positivo' ? '✅' : m.tipo === 'suspeito' ? '⚠️' : '🚨';
+                    return `
+                        <div style="padding:6px 8px; background:var(--surface); border-radius:8px; margin-bottom:4px; border-left:3px solid ${cor}; font-size:0.8rem;">
+                            <span>${icon} ${m.rede}</span> · <span style="color:var(--muted);">${m.data}</span><br>
+                            <span style="color:var(--text);">${m.msg}</span>
+                        </div>
+                    `;
+                }).join('')}
+            ` : '<div style="color:var(--muted); font-size:0.8rem;">Sem atividades monitoradas recentes.</div>'}
+        `;
+        document.getElementById('modal').classList.add('active');
+    }
+
+    // ===== ELEITORES =====
+    function renderEleitores() {
+        const totalEleitores = DADOS.distritais.reduce((s, d) => s + d.eleitores, 0);
+        document.getElementById('totalEleitoresLabel').textContent = `Total: ${totalEleitores.toLocaleString('pt-BR')} eleitores`;
+
+        // Agrupar por distrital
+        document.getElementById('eleitoresGrid').innerHTML = DADOS.distritais
+            .sort((a, b) => b.eleitores - a.eleitores)
+            .map(d => {
+                const fed = DADOS.federais.find(f => f.distritais.includes(DADOS.distritais.indexOf(d)));
+                return `
+                    <div class="card" style="margin-bottom:8px; display:flex; align-items:center; gap:12px;">
+                        <div style="width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg, var(--purple), var(--green)); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.85rem; flex-shrink:0;">${d.nome.charAt(0)}</div>
+                        <div style="flex:1;">
+                            <div style="font-weight:700;">${d.nome} <span style="font-size:0.7rem; color:var(--muted);">· ${d.regiao}</span></div>
+                            ${fed ? `<div style="font-size:0.7rem; color:var(--blue);">🏛️ ${fed.nome}</div>` : ''}
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-weight:800; color:var(--green); font-size:1.3rem;">${d.eleitores}</div>
+                            <div style="font-size:0.65rem; color:var(--muted);">eleitores</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+    }
+
+    // ===== RANKING GAMIFICAÇÃO =====
+    function renderRanking() {
+        const sorted = [...DADOS.distritais].sort((a, b) => b.pts - a.pts);
+        const medals = ['🥇', '🥈', '🥉'];
+        document.getElementById('rankingCompleto').innerHTML = sorted.map((d, i) => `
+            <div class="lb-item" ${i === 0 ? 'style="background:linear-gradient(90deg, rgba(255,214,0,0.15), transparent); border:1px solid rgba(255,214,0,0.3);"' : ''}>
+                <div class="lb-rank" style="font-size:${i < 3 ? '1.1rem' : '0.8rem'}; ${i >= 3 ? 'background:var(--surface); color:var(--text);' : ''}">${i < 3 ? medals[i] : '#' + (i+1)}</div>
+                <div class="lb-name">${d.nome} ${i === 0 ? '👑' : ''} <span style="font-size:0.7rem; color:var(--muted);">· ${d.regiao}</span></div>
+                <div style="text-align:right;">
+                    <div class="lb-pts">${d.pts.toLocaleString('pt-BR')} pts</div>
+                    <div style="font-size:0.65rem; color:var(--muted);">${d.eleitores} eleitores</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // ===== MONITORAMENTO =====
+    function renderMonitoramento() {
+        const fieis = DADOS.distritais.filter(d => d.fidelidade === 'alta').length;
+        const suspeitos = DADOS.distritais.filter(d => d.fidelidade === 'media').length;
+        const traidores = DADOS.distritais.filter(d => d.fidelidade === 'baixa').length;
+
+        document.getElementById('monitorFieis').textContent = fieis;
+        document.getElementById('monitorSuspeitos').textContent = suspeitos;
+        document.getElementById('monitorTraidores').textContent = traidores;
+
+        document.getElementById('monitoramentoFeed').innerHTML = DADOS.monitoramento.map(m => {
+            const cor = m.tipo === 'positivo' ? 'var(--green)' : m.tipo === 'suspeito' ? 'var(--gold)' : 'var(--red)';
+            const icon = m.tipo === 'positivo' ? '✅' : m.tipo === 'suspeito' ? '⚠️' : '🚨';
+            const redeIcon = m.rede === 'Instagram' ? '📷' : m.rede === 'Twitter/X' ? '🐦' : '📘';
+            return `
+                <div class="rede-card" style="border-left:3px solid ${cor};">
+                    <div class="rede-avatar">${redeIcon}</div>
+                    <div style="flex:1;">
+                        <div style="font-weight:600; font-size:0.85rem;">${icon} ${m.distrital} <span style="font-size:0.7rem; color:var(--muted);">· ${m.rede}</span></div>
+                        <div style="font-size:0.8rem; color:var(--text); margin-top:2px;">${m.msg}</div>
+                    </div>
+                    <div style="font-size:0.65rem; color:var(--muted); white-space:nowrap;">${m.data}</div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function executarMonitoramento() {
+        toast('📡 Varredura Apify iniciada...', 'Verificando redes sociais dos distritais');
+        setTimeout(() => {
+            toast('✅ Varredura concluída!', `${DADOS.monitoramento.length} atividades analisadas`);
+        }, 2000);
+    }
+
+    // ===== RECURSOS =====
+    function renderRecursos() {
+        document.getElementById('recursosGrid').innerHTML = DADOS.federais.map(f => {
+            const totalEl = f.distritais.reduce((s, di) => s + DADOS.distritais[di].eleitores, 0);
+            return `
+                <div class="card" style="margin-bottom:10px; display:flex; align-items:center; gap:14px;">
+                    <div style="width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg, var(--blue), var(--cyan)); display:flex; align-items:center; justify-content:center; font-weight:700; flex-shrink:0;">${f.foto}</div>
+                    <div style="flex:1;">
+                        <div style="font-weight:700;">${f.nome}</div>
+                        <div style="font-size:0.8rem; color:var(--muted);">${f.distritais.length} distritais · ${totalEl} eleitores</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="font-weight:800; color:var(--gold); font-size:1.1rem;">R$ ${f.investimento.toLocaleString('pt-BR')}</div>
+                        <div style="font-size:0.65rem; color:var(--muted);">investimento</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // ===== SIMULAR CADASTRO =====
+    function simularCadastro() {
+        const nomes = ['Maria Silva', 'João Oliveira', 'Ana Souza', 'Carlos Lima', 'Fernanda Costa', 'Paulo Neto', 'Camila Rocha'];
+        const idx = Math.floor(Math.random() * DADOS.distritais.length);
+        const d = DADOS.distritais[idx];
+        d.eleitores += 1;
+        d.pts += 20;
+
+        toast(`🗳️ +1 eleitor cadastrado!`, `${nomes[Math.floor(Math.random() * nomes.length)]} por ${d.nome} (${d.regiao})`);
+
+        renderDashboard();
+        renderDistritais();
+        renderEleitores();
+        renderRanking();
+    }
+
+    // ===== RODA DA SORTE =====
+    function desenharRoda() {
+        const canvas = document.getElementById('rodaCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const cx = 120, cy = 120, raio = 110;
+        const total = DADOS.premiosRoda.length;
+        const ang = (2 * Math.PI) / total;
+
+        ctx.clearRect(0, 0, 240, 240);
+        DADOS.premiosRoda.forEach((p, i) => {
+            const inicio = anguloAtual + i * ang - Math.PI / 2;
+            const fim = inicio + ang;
+            ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, raio, inicio, fim); ctx.closePath();
+            ctx.fillStyle = p.cor; ctx.fill();
+            ctx.strokeStyle = '#1a1a2e'; ctx.lineWidth = 2; ctx.stroke();
+
+            ctx.save(); ctx.translate(cx, cy); ctx.rotate(inicio + ang / 2);
+            ctx.textAlign = 'center'; ctx.fillStyle = '#000'; ctx.font = 'bold 10px Poppins, sans-serif';
+            const palavras = p.nome.split(' ');
+            if (palavras.length <= 2) { ctx.fillText(p.nome, raio * 0.6, 3); }
+            else { ctx.fillText(palavras.slice(0, 2).join(' '), raio * 0.6, -4); ctx.fillText(palavras.slice(2).join(' '), raio * 0.6, 9); }
+            ctx.restore();
+        });
+        ctx.beginPath(); ctx.arc(cx, cy, 30, 0, 2 * Math.PI);
+        ctx.fillStyle = '#1a1a2e'; ctx.fill(); ctx.strokeStyle = '#ffd600'; ctx.lineWidth = 3; ctx.stroke();
+    }
+
+    function girarRoda() {
+        if (rodaGirando || !rodaDesbloqueada) return;
+        rodaGirando = true;
+        document.getElementById('rodaResultado').style.display = 'none';
+
+        const total = DADOS.premiosRoda.length;
+        const ang = (2 * Math.PI) / total;
+        const voltas = 5 + Math.random() * 3;
+        const sorteado = Math.floor(Math.random() * total);
+        const anguloFinal = voltas * 2 * Math.PI + (total - sorteado - 0.5) * ang;
+        const duracao = 4000;
+        const inicio = performance.now();
+        const angInicial = anguloAtual;
+
+        function animar(agora) {
+            const prog = Math.min((agora - inicio) / duracao, 1);
+            const ease = 1 - Math.pow(1 - prog, 3);
+            anguloAtual = angInicial + anguloFinal * ease;
+            desenharRoda();
+            if (prog < 1) { requestAnimationFrame(animar); }
+            else {
+                rodaGirando = false;
+                const p = DADOS.premiosRoda[sorteado];
+                document.getElementById('rodaEmoji').textContent = p.emoji;
+                document.getElementById('rodaTexto').textContent = p.nome;
+                document.getElementById('rodaDesc').textContent = 'Parabéns! Prêmio desbloqueado para sua campanha!';
+                document.getElementById('rodaResultado').style.display = 'block';
+                rodaDesbloqueada = false;
+                document.getElementById('rodaBloqueio').style.display = 'flex';
+            }
+        }
+        requestAnimationFrame(animar);
+    }
+
+    function desbloquearRoda() {
+        rodaDesbloqueada = true;
+        document.getElementById('rodaBloqueio').style.display = 'none';
+    }
+
+    // ===== MODAL =====
+    function fecharModal() {
+        document.getElementById('modal').classList.remove('active');
+    }
+    document.getElementById('modal').addEventListener('click', function(e) {
+        if (e.target === this) fecharModal();
+    });
+
+    // ===== TOAST =====
+    function toast(titulo, msg) {
+        const container = document.getElementById('toasts');
+        const el = document.createElement('div');
+        el.className = 'toast';
+        el.innerHTML = `<div style="flex:1;"><div style="font-weight:700; font-size:0.8rem;">${titulo}</div><div style="font-size:0.7rem; color:var(--muted);">${msg}</div></div>`;
+        container.appendChild(el);
+        setTimeout(() => el.remove(), 4000);
+    }
+    </script>
+</body>
+</html>
