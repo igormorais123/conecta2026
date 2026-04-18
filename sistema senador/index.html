@@ -347,6 +347,29 @@
                 </div>
             </div>
 
+            <!-- Cadastro Rápido -->
+            <h2 class="section-title" style="margin-top:0;">⚡ Cadastro Rápido</h2>
+            <div class="grid grid-3" style="margin-bottom:16px;">
+                <div class="card stat-card" style="border-left:3px solid var(--gold); cursor:pointer;" onclick="abrirCadastro('senador')">
+                    <div style="font-size:1.8rem;">🎖️</div>
+                    <div class="stat-label" style="color:var(--gold);">Senador</div>
+                    <div style="font-size:0.7rem; color:var(--muted); margin-top:4px;">Cadastrar novo senador</div>
+                    <button class="btn btn-primary btn-sm" style="margin-top:10px; background:var(--gold); color:#000;">+ Novo Senador</button>
+                </div>
+                <div class="card stat-card" style="border-left:3px solid var(--blue); cursor:pointer;" onclick="abrirCadastro('federal')">
+                    <div style="font-size:1.8rem;">🏛️</div>
+                    <div class="stat-label" style="color:var(--blue);">Dep. Federal</div>
+                    <div style="font-size:0.7rem; color:var(--muted); margin-top:4px;">Cadastrar coordenador geral</div>
+                    <button class="btn btn-primary btn-sm" style="margin-top:10px;">+ Novo Federal</button>
+                </div>
+                <div class="card stat-card" style="border-left:3px solid var(--purple); cursor:pointer;" onclick="abrirCadastro('distrital')">
+                    <div style="font-size:1.8rem;">🏢</div>
+                    <div class="stat-label" style="color:var(--purple);">Dep. Distrital</div>
+                    <div style="font-size:0.7rem; color:var(--muted); margin-top:4px;">Cadastrar linha de frente</div>
+                    <button class="btn btn-primary btn-sm" style="margin-top:10px; background:var(--purple); color:#fff;">+ Novo Distrital</button>
+                </div>
+            </div>
+
             <!-- Stats principais -->
             <div class="grid grid-4">
                 <div class="card stat-card" style="border-left:3px solid var(--primary);" onclick="navegar('eleitores')">
@@ -683,6 +706,7 @@
             { distrital: 'Gabriela Nunes', rede: 'Facebook', tipo: 'alerta', msg: 'Comentário negativo sobre Celina Leão no perfil pessoal — investigar', data: 'Ontem 19:30' },
             { distrital: 'Priscila Maciel', rede: 'Instagram', tipo: 'positivo', msg: 'Vídeo institucional com Celina Leão atinge 12k views no Lago Sul', data: 'Hoje 09:00' }
         ],
+        senadores: [],
         premiosRoda: [
             { nome: '5 mil Santinhos', cor: '#3b82f6', emoji: '📄' },
             { nome: '10 mil Santinhos', cor: '#ffd600', emoji: '📄' },
@@ -697,6 +721,29 @@
     let rodaGirando = false;
     let rodaDesbloqueada = false;
     let anguloAtual = 0;
+
+    // ===== PERSISTÊNCIA DE CADASTROS =====
+    const STORAGE_KEY = 'sistema_senador_celina_2026';
+
+    function carregarCadastros() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) return;
+            const salvo = JSON.parse(raw);
+            if (Array.isArray(salvo.senadores)) DADOS.senadores.push(...salvo.senadores);
+            if (Array.isArray(salvo.federaisExtras)) DADOS.federais.push(...salvo.federaisExtras);
+            if (Array.isArray(salvo.distritaisExtras)) DADOS.distritais.push(...salvo.distritaisExtras);
+        } catch (e) { console.warn('Falha ao carregar cadastros', e); }
+    }
+
+    function salvarCadastros() {
+        const payload = {
+            senadores: DADOS.senadores,
+            federaisExtras: DADOS.federais.filter(f => f._custom),
+            distritaisExtras: DADOS.distritais.filter(d => d._custom)
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    }
     let filtroFederalAtual = 'todos';
 
     // ===== INICIALIZAÇÃO =====
@@ -706,6 +753,7 @@
     }
 
     function inicializar() {
+        carregarCadastros();
         atualizarContagem();
         setInterval(atualizarContagem, 60000);
         atualizarSaudacao();
@@ -1071,6 +1119,138 @@
                 </div>
             `;
         }).join('');
+    }
+
+    // ===== CADASTRO SENADOR / FEDERAL / DISTRITAL =====
+    function abrirCadastro(tipo) {
+        const titulos = {
+            senador: { icone: '🎖️', titulo: 'Cadastrar Senador', cor: 'var(--gold)' },
+            federal: { icone: '🏛️', titulo: 'Cadastrar Deputado Federal', cor: 'var(--blue)' },
+            distrital: { icone: '🏢', titulo: 'Cadastrar Deputado Distrital', cor: 'var(--purple)' }
+        };
+        const cfg = titulos[tipo];
+        document.getElementById('modalTitle').textContent = `${cfg.icone} ${cfg.titulo}`;
+
+        const campoEspecifico = tipo === 'senador'
+            ? `
+                <div style="margin-bottom:10px;">
+                    <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:4px;">Mandato / UF</label>
+                    <input id="fMandato" type="text" placeholder="Ex.: Senador DF · 2023-2031" style="width:100%; padding:9px 12px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:Poppins; font-size:0.85rem;">
+                </div>
+                <div style="margin-bottom:10px;">
+                    <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:4px;">Alinhamento com Celina Leão</label>
+                    <select id="fFidelidade" style="width:100%; padding:9px 12px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:Poppins; font-size:0.85rem;">
+                        <option value="alta">Alta — Apoio público</option>
+                        <option value="media">Média — Apoio moderado</option>
+                        <option value="baixa">Baixa — Instável</option>
+                    </select>
+                </div>`
+            : tipo === 'federal'
+            ? `
+                <div style="margin-bottom:10px;">
+                    <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:4px;">Investimento (R$)</label>
+                    <input id="fInvestimento" type="number" min="0" placeholder="Ex.: 100000" style="width:100%; padding:9px 12px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:Poppins; font-size:0.85rem;">
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
+                    <div>
+                        <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:4px;">Santinhos</label>
+                        <input id="fSantinhos" type="number" min="0" placeholder="0" style="width:100%; padding:9px 12px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:Poppins; font-size:0.85rem;">
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:4px;">Adesivos</label>
+                        <input id="fAdesivos" type="number" min="0" placeholder="0" style="width:100%; padding:9px 12px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:Poppins; font-size:0.85rem;">
+                    </div>
+                </div>`
+            : `
+                <div style="margin-bottom:10px;">
+                    <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:4px;">Região Administrativa</label>
+                    <input id="fRegiao" type="text" placeholder="Ex.: Taguatinga" style="width:100%; padding:9px 12px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:Poppins; font-size:0.85rem;">
+                </div>
+                <div style="margin-bottom:10px;">
+                    <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:4px;">Deputado Federal responsável</label>
+                    <select id="fFederalIdx" style="width:100%; padding:9px 12px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:Poppins; font-size:0.85rem;">
+                        ${DADOS.federais.map((f, i) => `<option value="${i}">${f.nome} · ${f.partido}</option>`).join('')}
+                    </select>
+                </div>
+                <div style="margin-bottom:10px;">
+                    <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:4px;">Instagram</label>
+                    <input id="fInstagram" type="text" placeholder="@perfil_df" style="width:100%; padding:9px 12px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:Poppins; font-size:0.85rem;">
+                </div>
+                <div style="margin-bottom:10px;">
+                    <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:4px;">Fidelidade</label>
+                    <select id="fFidelidade" style="width:100%; padding:9px 12px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:Poppins; font-size:0.85rem;">
+                        <option value="alta">Alta</option>
+                        <option value="media">Média</option>
+                        <option value="baixa">Baixa</option>
+                    </select>
+                </div>`;
+
+        document.getElementById('modalBody').innerHTML = `
+            <div style="font-size:0.8rem; color:var(--muted); margin-bottom:14px;">Preencha os dados para adicionar à rede da Celina Leão.</div>
+            <div style="margin-bottom:10px;">
+                <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:4px;">Nome completo *</label>
+                <input id="fNome" type="text" placeholder="Ex.: João da Silva" style="width:100%; padding:9px 12px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:Poppins; font-size:0.85rem;">
+            </div>
+            <div style="margin-bottom:10px;">
+                <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:4px;">Partido *</label>
+                <input id="fPartido" type="text" placeholder="Ex.: MDB" style="width:100%; padding:9px 12px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:Poppins; font-size:0.85rem;">
+            </div>
+            ${campoEspecifico}
+            <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:16px; padding-top:12px; border-top:1px solid var(--border);">
+                <button class="btn btn-sm" style="background:var(--surface); border:1px solid var(--border); color:var(--text);" onclick="fecharModal()">Cancelar</button>
+                <button class="btn btn-primary btn-sm" style="background:${cfg.cor}; color:#000;" onclick="salvarCadastro('${tipo}')">💾 Salvar</button>
+            </div>
+        `;
+        document.getElementById('modal').classList.add('active');
+    }
+
+    function salvarCadastro(tipo) {
+        const nome = document.getElementById('fNome').value.trim();
+        const partido = document.getElementById('fPartido').value.trim().toUpperCase();
+        if (!nome || !partido) { toast('⚠️ Campos obrigatórios', 'Preencha nome e partido'); return; }
+
+        const iniciais = nome.split(' ').filter(Boolean).map(p => p[0]).slice(0, 2).join('').toUpperCase() || nome[0].toUpperCase();
+
+        if (tipo === 'senador') {
+            const mandato = document.getElementById('fMandato').value.trim() || 'Senador DF';
+            const fidelidade = document.getElementById('fFidelidade').value;
+            DADOS.senadores.push({ nome, partido, mandato, fidelidade, foto: iniciais, _custom: true });
+            toast('🎖️ Senador cadastrado!', `${nome} (${partido}) adicionado à rede`);
+        } else if (tipo === 'federal') {
+            const investimento = parseInt(document.getElementById('fInvestimento').value) || 0;
+            const santinhos = parseInt(document.getElementById('fSantinhos').value) || 0;
+            const adesivos = parseInt(document.getElementById('fAdesivos').value) || 0;
+            DADOS.federais.push({
+                nome: nome.startsWith('Dep. Fed.') ? nome : `Dep. Fed. ${nome}`,
+                partido, foto: iniciais, distritais: [], investimento,
+                material: { santinhos, adesivos }, _custom: true
+            });
+            toast('🏛️ Deputado Federal cadastrado!', `${nome} (${partido}) é novo coordenador geral`);
+        } else {
+            const regiao = document.getElementById('fRegiao').value.trim() || 'DF';
+            const instagram = document.getElementById('fInstagram').value.trim() || '@semperfil';
+            const fidelidade = document.getElementById('fFidelidade').value;
+            const fedIdx = parseInt(document.getElementById('fFederalIdx').value);
+            const novoDistrital = {
+                nome, partido, regiao, eleitores: 0, pts: 0, fidelidade,
+                instagram, ultimaAtividade: 'agora', _custom: true
+            };
+            DADOS.distritais.push(novoDistrital);
+            const novoIdx = DADOS.distritais.length - 1;
+            if (!isNaN(fedIdx) && DADOS.federais[fedIdx]) {
+                DADOS.federais[fedIdx].distritais.push(novoIdx);
+            }
+            toast('🏢 Deputado Distrital cadastrado!', `${nome} (${regiao}) adicionado à linha de frente`);
+        }
+
+        salvarCadastros();
+        fecharModal();
+        renderDashboard();
+        renderFederais();
+        renderDistritais();
+        renderEleitores();
+        renderRanking();
+        renderRecursos();
     }
 
     // ===== SIMULAR CADASTRO =====
