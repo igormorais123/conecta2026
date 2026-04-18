@@ -378,6 +378,13 @@
                     <div style="font-weight:700; color:var(--gold); margin-bottom:12px; font-size:0.9rem;">🏆 Top 5 Distritais — Cadastros</div>
                     <div id="dashRanking"></div>
                 </div>
+                <!-- Top 5 Federais -->
+                <div class="card">
+                    <div style="font-weight:700; color:var(--gold); margin-bottom:12px; font-size:0.9rem;">🏆 Top 5 Dep. Federais — Cadastros</div>
+                    <div id="dashRankingFederais"></div>
+                </div>
+            </div>
+            <div style="margin-top:12px;">
                 <!-- Meta de votos -->
                 <div class="card">
                     <div style="font-weight:700; color:var(--gold); margin-bottom:12px; font-size:0.9rem;">🎯 Meta Governo DF 2026</div>
@@ -757,6 +764,23 @@
                 <div class="lb-rank" style="font-size:1.1rem;">${medals[i]}</div>
                 <div class="lb-name">${d.nome} ${i === 0 ? '👑' : ''}</div>
                 <div class="lb-pts">${d.eleitores} eleitores</div>
+            </div>
+        `).join('');
+
+        // Top 5 Federais
+        const top5Fed = DADOS.federais
+            .map(f => ({
+                nome: f.nome,
+                partido: f.partido,
+                total: f.distritais.reduce((s, di) => s + DADOS.distritais[di].eleitores, 0)
+            }))
+            .sort((a, b) => b.total - a.total)
+            .slice(0, 5);
+        document.getElementById('dashRankingFederais').innerHTML = top5Fed.map((f, i) => `
+            <div class="lb-item" ${i === 0 ? 'style="background:linear-gradient(90deg, rgba(255,214,0,0.15), transparent); border:1px solid rgba(255,214,0,0.3);"' : ''}>
+                <div class="lb-rank" style="font-size:1.1rem;">${medals[i]}</div>
+                <div class="lb-name">${f.nome} <span style="font-size:0.7rem; color:var(--muted);">· ${f.partido}</span> ${i === 0 ? '👑' : ''}</div>
+                <div class="lb-pts">${f.total} eleitores</div>
             </div>
         `).join('');
 
