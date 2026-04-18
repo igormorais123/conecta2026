@@ -454,11 +454,50 @@
         <!-- ========== ELEITORES ========== -->
         <div class="page" id="page-eleitores">
             <p style="color:var(--muted); margin-bottom:16px; font-size:0.85rem;">
-                Eleitores cadastrados pela rede de distritais. Cada eleitor está vinculado ao distrital que o cadastrou.
+                Eleitores podem ser cadastrados por <strong style="color:var(--gold);">🎖️ Governadora Celina</strong>, <strong style="color:var(--blue);">🏛️ Deputados Federais</strong> ou <strong style="color:var(--purple);">🏢 Deputados Distritais</strong>. O cadastro sempre é creditado a um distrital beneficiário, registrando a origem.
             </p>
+
+            <!-- Botões de origem -->
+            <div class="grid grid-3" style="margin-bottom:16px;">
+                <div class="card stat-card" style="border-left:3px solid var(--gold); cursor:pointer;" onclick="cadastrarEleitor('governadora')">
+                    <div style="font-size:1.6rem;">🎖️</div>
+                    <div class="stat-label" style="color:var(--gold);">Pela Governadora</div>
+                    <div style="font-size:0.7rem; color:var(--muted); margin-top:4px;">Celina Leão cadastra</div>
+                    <button class="btn btn-primary btn-sm" style="margin-top:10px; background:var(--gold); color:#000;">+ Cadastrar Eleitor</button>
+                </div>
+                <div class="card stat-card" style="border-left:3px solid var(--blue); cursor:pointer;" onclick="cadastrarEleitor('federal')">
+                    <div style="font-size:1.6rem;">🏛️</div>
+                    <div class="stat-label" style="color:var(--blue);">Por Dep. Federal</div>
+                    <div style="font-size:0.7rem; color:var(--muted); margin-top:4px;">Coordenador geral cadastra</div>
+                    <button class="btn btn-primary btn-sm" style="margin-top:10px;">+ Cadastrar Eleitor</button>
+                </div>
+                <div class="card stat-card" style="border-left:3px solid var(--purple); cursor:pointer;" onclick="cadastrarEleitor('distrital')">
+                    <div style="font-size:1.6rem;">🏢</div>
+                    <div class="stat-label" style="color:var(--purple);">Por Dep. Distrital</div>
+                    <div style="font-size:0.7rem; color:var(--muted); margin-top:4px;">Linha de frente cadastra</div>
+                    <button class="btn btn-primary btn-sm" style="margin-top:10px; background:var(--purple); color:#fff;">+ Cadastrar Eleitor</button>
+                </div>
+            </div>
+
+            <!-- Resumo por origem -->
+            <div class="grid grid-3" style="margin-bottom:16px;">
+                <div class="card" style="padding:10px;">
+                    <div style="font-size:0.7rem; color:var(--muted);">🎖️ Pela Governadora</div>
+                    <div style="font-size:1.4rem; font-weight:800; color:var(--gold);" id="cadGovernadora">0</div>
+                </div>
+                <div class="card" style="padding:10px;">
+                    <div style="font-size:0.7rem; color:var(--muted);">🏛️ Por Federais</div>
+                    <div style="font-size:1.4rem; font-weight:800; color:var(--blue);" id="cadFederais">0</div>
+                </div>
+                <div class="card" style="padding:10px;">
+                    <div style="font-size:0.7rem; color:var(--muted);">🏢 Por Distritais</div>
+                    <div style="font-size:1.4rem; font-weight:800; color:var(--purple);" id="cadDistritais">0</div>
+                </div>
+            </div>
+
             <div style="margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
                 <span style="font-size:0.85rem; color:var(--muted);" id="totalEleitoresLabel">Total: 0</span>
-                <button class="btn btn-primary btn-sm" onclick="simularCadastro()">+ Simular Cadastro</button>
+                <button class="btn btn-sm" style="background:var(--surface); border:1px solid var(--border); color:var(--muted);" onclick="simularCadastro()">🎲 Simular aleatório</button>
             </div>
             <div id="eleitoresGrid"></div>
         </div>
@@ -707,6 +746,7 @@
             { distrital: 'Priscila Maciel', rede: 'Instagram', tipo: 'positivo', msg: 'Vídeo institucional com Celina Leão atinge 12k views no Lago Sul', data: 'Hoje 09:00' }
         ],
         senadores: [],
+        cadastros: [],
         premiosRoda: [
             { nome: '5 mil Santinhos', cor: '#3b82f6', emoji: '📄' },
             { nome: '10 mil Santinhos', cor: '#ffd600', emoji: '📄' },
@@ -733,6 +773,15 @@
             if (Array.isArray(salvo.senadores)) DADOS.senadores.push(...salvo.senadores);
             if (Array.isArray(salvo.federaisExtras)) DADOS.federais.push(...salvo.federaisExtras);
             if (Array.isArray(salvo.distritaisExtras)) DADOS.distritais.push(...salvo.distritaisExtras);
+            if (Array.isArray(salvo.cadastros)) DADOS.cadastros.push(...salvo.cadastros);
+            if (salvo.distritaisEleitores) {
+                salvo.distritaisEleitores.forEach((e, i) => {
+                    if (DADOS.distritais[i]) {
+                        DADOS.distritais[i].eleitores = e.eleitores;
+                        DADOS.distritais[i].pts = e.pts;
+                    }
+                });
+            }
         } catch (e) { console.warn('Falha ao carregar cadastros', e); }
     }
 
@@ -740,7 +789,9 @@
         const payload = {
             senadores: DADOS.senadores,
             federaisExtras: DADOS.federais.filter(f => f._custom),
-            distritaisExtras: DADOS.distritais.filter(d => d._custom)
+            distritaisExtras: DADOS.distritais.filter(d => d._custom),
+            cadastros: DADOS.cadastros,
+            distritaisEleitores: DADOS.distritais.map(d => ({ eleitores: d.eleitores, pts: d.pts }))
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
     }
@@ -1032,6 +1083,16 @@
         const totalEleitores = DADOS.distritais.reduce((s, d) => s + d.eleitores, 0);
         document.getElementById('totalEleitoresLabel').textContent = `Total: ${totalEleitores.toLocaleString('pt-BR')} eleitores`;
 
+        // Contadores por origem (a partir de DADOS.cadastros)
+        const porOrigem = { governadora: 0, federal: 0, distrital: 0 };
+        DADOS.cadastros.forEach(c => { if (porOrigem[c.origem] !== undefined) porOrigem[c.origem]++; });
+        const elGov = document.getElementById('cadGovernadora');
+        const elFed = document.getElementById('cadFederais');
+        const elDis = document.getElementById('cadDistritais');
+        if (elGov) elGov.textContent = porOrigem.governadora.toLocaleString('pt-BR');
+        if (elFed) elFed.textContent = porOrigem.federal.toLocaleString('pt-BR');
+        if (elDis) elDis.textContent = porOrigem.distrital.toLocaleString('pt-BR');
+
         // Agrupar por distrital
         document.getElementById('eleitoresGrid').innerHTML = DADOS.distritais
             .sort((a, b) => b.eleitores - a.eleitores)
@@ -1270,15 +1331,137 @@
         renderRecursos();
     }
 
-    // ===== SIMULAR CADASTRO =====
+    // ===== CADASTRO DE ELEITOR (Governadora / Federal / Distrital) =====
+    function cadastrarEleitor(origem) {
+        const cfgs = {
+            governadora: { icone: '🎖️', titulo: 'Cadastrar Eleitor (Governadora)', cor: 'var(--gold)', pts: 30 },
+            federal:     { icone: '🏛️', titulo: 'Cadastrar Eleitor (Dep. Federal)', cor: 'var(--blue)', pts: 25 },
+            distrital:   { icone: '🏢', titulo: 'Cadastrar Eleitor (Dep. Distrital)', cor: 'var(--purple)', pts: 20 }
+        };
+        const cfg = cfgs[origem];
+        document.getElementById('modalTitle').textContent = `${cfg.icone} ${cfg.titulo}`;
+
+        // Seletor de Federal (só para origem federal) — filtra distritais abaixo
+        const blocoFederal = origem === 'federal'
+            ? `
+                <div style="margin-bottom:10px;">
+                    <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:4px;">Deputado Federal responsável *</label>
+                    <select id="eFederalIdx" onchange="atualizarDistritaisDoFederal()" style="width:100%; padding:9px 12px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:Poppins; font-size:0.85rem;">
+                        <option value="">— Selecione o federal —</option>
+                        ${DADOS.federais.map((f, i) => `<option value="${i}">${f.nome} · ${f.partido}</option>`).join('')}
+                    </select>
+                </div>`
+            : '';
+
+        // Lista inicial de distritais
+        const opcoesDistritais = origem === 'federal'
+            ? '<option value="">— Selecione primeiro o federal —</option>'
+            : '<option value="">— Selecione o distrital beneficiário —</option>' +
+              DADOS.distritais.map((d, i) => `<option value="${i}">${d.nome} · ${d.regiao} (${d.partido})</option>`).join('');
+
+        document.getElementById('modalBody').innerHTML = `
+            <div style="font-size:0.8rem; color:var(--muted); margin-bottom:14px;">Origem: <strong style="color:${cfg.cor};">${cfg.icone} ${origem === 'governadora' ? 'Governadora Celina Leão' : origem === 'federal' ? 'Deputado Federal' : 'Deputado Distrital'}</strong> · Pontos concedidos: <strong>${cfg.pts}</strong></div>
+
+            <div style="margin-bottom:10px;">
+                <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:4px;">Nome do eleitor *</label>
+                <input id="eNome" type="text" placeholder="Ex.: Maria da Silva" style="width:100%; padding:9px 12px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:Poppins; font-size:0.85rem;">
+            </div>
+
+            <div style="margin-bottom:10px;">
+                <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:4px;">WhatsApp *</label>
+                <input id="eWhatsapp" type="tel" placeholder="Ex.: (61) 99999-9999" maxlength="16" oninput="formatarWhatsapp(this)" style="width:100%; padding:9px 12px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:Poppins; font-size:0.85rem;">
+            </div>
+
+            <div style="margin-bottom:10px;">
+                <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:4px;">Bairro / Região</label>
+                <input id="eBairro" type="text" placeholder="Ex.: Ceilândia Sul" style="width:100%; padding:9px 12px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:Poppins; font-size:0.85rem;">
+            </div>
+
+            ${blocoFederal}
+
+            <div style="margin-bottom:10px;">
+                <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:4px;">Distrital beneficiário (recebe os pontos) *</label>
+                <select id="eDistritalIdx" style="width:100%; padding:9px 12px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:Poppins; font-size:0.85rem;">
+                    ${opcoesDistritais}
+                </select>
+            </div>
+
+            <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:16px; padding-top:12px; border-top:1px solid var(--border);">
+                <button class="btn btn-sm" style="background:var(--surface); border:1px solid var(--border); color:var(--text);" onclick="fecharModal()">Cancelar</button>
+                <button class="btn btn-primary btn-sm" style="background:${cfg.cor}; color:${origem === 'distrital' ? '#fff' : '#000'};" onclick="salvarEleitor('${origem}')">💾 Salvar Cadastro</button>
+            </div>
+        `;
+        document.getElementById('modal').classList.add('active');
+    }
+
+    function atualizarDistritaisDoFederal() {
+        const fedIdx = parseInt(document.getElementById('eFederalIdx').value);
+        const sel = document.getElementById('eDistritalIdx');
+        if (isNaN(fedIdx) || !DADOS.federais[fedIdx]) {
+            sel.innerHTML = '<option value="">— Selecione primeiro o federal —</option>';
+            return;
+        }
+        const lista = DADOS.federais[fedIdx].distritais;
+        sel.innerHTML = '<option value="">— Selecione o distrital beneficiário —</option>' +
+            lista.map(i => `<option value="${i}">${DADOS.distritais[i].nome} · ${DADOS.distritais[i].regiao} (${DADOS.distritais[i].partido})</option>`).join('');
+    }
+
+    function salvarEleitor(origem) {
+        const nome = document.getElementById('eNome').value.trim();
+        const whatsapp = document.getElementById('eWhatsapp').value.trim();
+        const bairro = document.getElementById('eBairro').value.trim();
+        const distritalIdx = parseInt(document.getElementById('eDistritalIdx').value);
+
+        if (!nome) { toast('⚠️ Nome obrigatório', 'Informe o nome do eleitor'); return; }
+        if (!whatsapp || whatsapp.replace(/\D/g, '').length < 10) { toast('⚠️ WhatsApp inválido', 'Informe um número com DDD'); return; }
+        if (isNaN(distritalIdx) || !DADOS.distritais[distritalIdx]) { toast('⚠️ Distrital obrigatório', 'Selecione o distrital beneficiário'); return; }
+
+        const pts = origem === 'governadora' ? 30 : origem === 'federal' ? 25 : 20;
+        const d = DADOS.distritais[distritalIdx];
+        d.eleitores += 1;
+        d.pts += pts;
+
+        let origemNome = 'Governadora Celina Leão';
+        if (origem === 'federal') {
+            const fedIdx = parseInt(document.getElementById('eFederalIdx').value);
+            origemNome = (!isNaN(fedIdx) && DADOS.federais[fedIdx]) ? DADOS.federais[fedIdx].nome : 'Dep. Federal';
+        } else if (origem === 'distrital') {
+            origemNome = d.nome;
+        }
+
+        DADOS.cadastros.push({
+            nome, whatsapp, bairro, origem, origemNome,
+            distrital: d.nome, distritalIdx,
+            pts, data: new Date().toISOString()
+        });
+
+        salvarCadastros();
+        fecharModal();
+        toast(`🗳️ +1 eleitor cadastrado!`, `${nome} — creditado a ${d.nome} (+${pts} pts) · origem: ${origemNome}`);
+        renderDashboard();
+        renderDistritais();
+        renderEleitores();
+        renderRanking();
+    }
+
+    // ===== SIMULAR CADASTRO (aleatório, mantido para teste) =====
     function simularCadastro() {
         const nomes = ['Maria Silva', 'João Oliveira', 'Ana Souza', 'Carlos Lima', 'Fernanda Costa', 'Paulo Neto', 'Camila Rocha'];
         const idx = Math.floor(Math.random() * DADOS.distritais.length);
         const d = DADOS.distritais[idx];
+        const nomeEleitor = nomes[Math.floor(Math.random() * nomes.length)];
         d.eleitores += 1;
         d.pts += 20;
 
-        toast(`🗳️ +1 eleitor cadastrado!`, `${nomes[Math.floor(Math.random() * nomes.length)]} por ${d.nome} (${d.regiao})`);
+        DADOS.cadastros.push({
+            nome: nomeEleitor, whatsapp: '', bairro: d.regiao,
+            origem: 'distrital', origemNome: d.nome,
+            distrital: d.nome, distritalIdx: idx,
+            pts: 20, data: new Date().toISOString(), _simulado: true
+        });
+        salvarCadastros();
+
+        toast(`🗳️ +1 eleitor cadastrado!`, `${nomeEleitor} por ${d.nome} (${d.regiao})`);
 
         renderDashboard();
         renderDistritais();
