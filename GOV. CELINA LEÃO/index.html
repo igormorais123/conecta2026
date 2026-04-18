@@ -347,39 +347,25 @@
                 </div>
             </div>
 
-            <!-- Cadastro de Eleitores pela Governadora -->
-            <h2 class="section-title" style="margin-top:0;">🗳️ Cadastro de Eleitores</h2>
-            <div style="margin-bottom:6px; font-size:0.78rem; color:var(--muted);">
-                Os eleitores são cadastrados pela <strong style="color:var(--gold);">🎖️ Governadora</strong>, pelos <strong style="color:var(--blue);">🏛️ Dep. Federais</strong> e pelos <strong style="color:var(--purple);">🏢 Dep. Distritais</strong>. Neste sistema, a Governadora registra seus próprios eleitores.
-            </div>
-            <div style="margin-bottom:16px;">
-                <div class="card stat-card" style="border-left:3px solid var(--gold); cursor:pointer;" onclick="cadastrarEleitor('governadora')">
-                    <div style="display:flex; align-items:center; gap:14px;">
-                        <div style="font-size:2rem;">🎖️</div>
-                        <div style="flex:1;">
-                            <div class="stat-label" style="color:var(--gold); font-weight:700;">Cadastrar Eleitor pela Governadora</div>
-                            <div style="font-size:0.72rem; color:var(--muted); margin-top:2px;">Celina Leão cadastra pessoalmente · +30 pts ao distrital beneficiário</div>
-                        </div>
-                        <button class="btn btn-primary btn-sm" style="background:var(--gold); color:#000;">+ Novo Eleitor</button>
+            <!-- Ações da Governadora (compactas) -->
+            <h2 class="section-title" style="margin-top:0;">✨ Ações da Governadora</h2>
+            <div class="grid grid-2" style="margin-bottom:16px; gap:10px;">
+                <div class="card" style="border-left:3px solid var(--gold); padding:10px 12px; cursor:pointer; display:flex; align-items:center; gap:10px; transition:transform .15s ease;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'" onclick="cadastrarEleitor('governadora')">
+                    <div style="width:32px; height:32px; border-radius:8px; background:linear-gradient(135deg, var(--gold), #b8860b); display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0;">🗳️</div>
+                    <div style="flex:1; min-width:0;">
+                        <div style="font-weight:700; color:var(--gold); font-size:0.78rem; line-height:1.2;">Cadastrar Eleitor</div>
+                        <div style="font-size:0.66rem; color:var(--muted); margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Pela Governadora · +30 pts</div>
                     </div>
+                    <div style="background:var(--gold); color:#000; padding:4px 10px; border-radius:14px; font-weight:800; font-size:0.72rem; flex-shrink:0;">+ Novo</div>
                 </div>
-            </div>
 
-            <!-- Cadastro de Missões / Gamificação -->
-            <h2 class="section-title">🎯 Gamificação · Missões</h2>
-            <div style="margin-bottom:6px; font-size:0.78rem; color:var(--muted);">
-                A Governadora define missões e ações premiadas. Distritais que cumprem ganham pontos e sobem no ranking.
-            </div>
-            <div style="margin-bottom:16px;">
-                <div class="card stat-card" style="border-left:3px solid var(--purple); cursor:pointer;" onclick="cadastrarMissao()">
-                    <div style="display:flex; align-items:center; gap:14px;">
-                        <div style="font-size:2rem;">🎯</div>
-                        <div style="flex:1;">
-                            <div class="stat-label" style="color:var(--purple); font-weight:700;">Cadastrar Missão / Ação de Gamificação</div>
-                            <div style="font-size:0.72rem; color:var(--muted); margin-top:2px;">Defina título, descrição e pontos — aparece imediatamente na aba Gamificação</div>
-                        </div>
-                        <button class="btn btn-primary btn-sm" style="background:var(--purple); color:#fff;">+ Nova Missão</button>
+                <div class="card" style="border-left:3px solid var(--purple); padding:10px 12px; cursor:pointer; display:flex; align-items:center; gap:10px; transition:transform .15s ease;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'" onclick="cadastrarMissao()">
+                    <div style="width:32px; height:32px; border-radius:8px; background:linear-gradient(135deg, var(--purple), #5a2d91); display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0;">🎯</div>
+                    <div style="flex:1; min-width:0;">
+                        <div style="font-weight:700; color:var(--purple); font-size:0.78rem; line-height:1.2;">Nova Missão</div>
+                        <div style="font-size:0.66rem; color:var(--muted); margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Gamificação · ação premiada</div>
                     </div>
+                    <div style="background:var(--purple); color:#fff; padding:4px 10px; border-radius:14px; font-weight:800; font-size:0.72rem; flex-shrink:0;">+ Nova</div>
                 </div>
             </div>
 
@@ -758,7 +744,7 @@
         senadores: [],
         cadastros: [],
         missoes: [
-            { id: 1, titulo: '📋 Cadastrar 5 eleitores hoje', descricao: 'Meta diária por distrital', pontos: 100, cor: 'var(--primary)', badge: 'success', ativa: true },
+            { id: 1, titulo: '📋 Cadastrar 5 eleitores hoje', descricao: 'Meta diária por distrital', pontos: 100, cor: 'var(--cyan)', badge: 'info', ativa: true },
             { id: 2, titulo: '⚡ Relâmpago: 10 cadastros em 2h', descricao: 'Missão bônus limitada', pontos: 300, cor: 'var(--red)', badge: 'danger', ativa: true },
             { id: 3, titulo: '🏆 Alcançar 100 eleitores', descricao: 'Marco de conquista', pontos: 500, cor: 'var(--purple)', badge: 'info', ativa: true, extra: '+ 🎰 Roda' },
             { id: 4, titulo: '👥 Recrutar novo apoiador ativo', descricao: 'Eleitor que engaja nas redes', pontos: 200, cor: 'var(--gold)', badge: 'warning', ativa: true }
@@ -1532,10 +1518,10 @@
             <div style="margin-bottom:10px;">
                 <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:4px;">Cor / Categoria</label>
                 <select id="mCor" style="width:100%; padding:9px 12px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:Poppins; font-size:0.85rem;">
-                    <option value="success">🟢 Verde — Meta diária</option>
-                    <option value="info">🔵 Azul — Conquista / Marco</option>
-                    <option value="warning">🟡 Dourado — Bônus especial</option>
-                    <option value="danger">🔴 Vermelho — Relâmpago / Urgente</option>
+                    <option value="info">🟦 Turquesa — Meta diária / Recorrente</option>
+                    <option value="primary">🔷 Azul Celina — Conquista / Marco</option>
+                    <option value="warning">🟨 Dourado — Bônus especial</option>
+                    <option value="danger">🟥 Vermelho — Relâmpago / Urgente</option>
                 </select>
             </div>
 
@@ -1556,7 +1542,7 @@
         if (!titulo) { toast('⚠️ Título obrigatório', 'Informe o título da missão'); return; }
         if (!pontos || pontos < 1) { toast('⚠️ Pontos inválidos', 'Informe um valor positivo de pontos'); return; }
 
-        const corMap = { success: 'var(--primary)', info: 'var(--purple)', warning: 'var(--gold)', danger: 'var(--red)' };
+        const corMap = { info: 'var(--cyan)', primary: 'var(--blue)', warning: 'var(--gold)', danger: 'var(--red)' };
         const novaId = DADOS.missoes.length ? Math.max(...DADOS.missoes.map(m => m.id || 0)) + 1 : 1;
 
         DADOS.missoes.push({
