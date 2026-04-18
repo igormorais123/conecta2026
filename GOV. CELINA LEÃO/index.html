@@ -578,7 +578,7 @@
         <!-- ========== MONITORAMENTO REDES ========== -->
         <div class="page" id="page-monitoramento">
             <p style="color:var(--muted); margin-bottom:16px; font-size:0.85rem;">
-                Monitoramento via <strong style="color:var(--cyan);">Apify</strong> das redes sociais dos distritais. Verifica se estão apoiando a Celina Leão ou mencionando outros candidatos ao Governo do DF.
+                Monitoramento das redes sociais dos distritais. Verifica se estão apoiando a Celina Leão ou mencionando outros candidatos ao Governo do DF.
             </p>
 
             <!-- Resumo -->
@@ -603,25 +603,6 @@
             </div>
             <div id="monitoramentoFeed"></div>
 
-            <!-- Configuração Apify -->
-            <h2 class="section-title">⚙️ Configuração Apify</h2>
-            <div class="card" style="font-size:0.85rem;">
-                <div style="margin-bottom:10px;">
-                    <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:3px;">Token Apify</label>
-                    <input type="password" id="apifyToken" placeholder="apify_api_xxxxxxx" style="width:100%; padding:8px 12px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:Poppins; font-size:0.8rem;">
-                </div>
-                <div style="margin-bottom:10px;">
-                    <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:3px;">Frequência de varredura</label>
-                    <select style="width:100%; padding:8px 12px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:Poppins; font-size:0.8rem;">
-                        <option>A cada 6 horas</option>
-                        <option>A cada 12 horas</option>
-                        <option>Diário</option>
-                    </select>
-                </div>
-                <div style="font-size:0.7rem; color:var(--muted);">
-                    O Apify monitora Instagram, Twitter/X e Facebook dos distritais cadastrados, buscando menções a candidatos rivais ao Governo do DF.
-                </div>
-            </div>
         </div>
 
         <!-- ========== RECURSOS ========== -->
@@ -1162,7 +1143,7 @@
     }
 
     function executarMonitoramento() {
-        toast('📡 Varredura Apify iniciada...', 'Verificando redes sociais dos distritais');
+        toast('📡 Varredura iniciada...', 'Verificando redes sociais dos distritais');
         setTimeout(() => {
             toast('✅ Varredura concluída!', `${DADOS.monitoramento.length} atividades analisadas`);
         }, 2000);
