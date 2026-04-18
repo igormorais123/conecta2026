@@ -920,6 +920,7 @@
             <div style="text-align:center; margin-bottom:16px;">
                 <div style="width:70px; height:70px; border-radius:50%; background:linear-gradient(135deg, var(--blue), var(--cyan)); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.5rem; margin:0 auto 8px;">${f.foto}</div>
                 <div style="font-size:0.85rem; color:var(--gold);">${f.partido} · Coordenador Geral</div>
+                ${f.whatsapp ? `<a href="https://wa.me/55${f.whatsapp.replace(/\D/g,'')}" target="_blank" style="display:inline-flex; align-items:center; gap:6px; margin-top:6px; font-size:0.75rem; color:#25d366; text-decoration:none;">📱 ${f.whatsapp}</a>` : ''}
             </div>
             <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:16px;">
                 <div style="background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:10px; text-align:center;">
@@ -992,6 +993,7 @@
                 <div style="width:70px; height:70px; border-radius:50%; background:linear-gradient(135deg, var(--purple), var(--cyan)); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.8rem; margin:0 auto 8px;">${d.nome.charAt(0)}</div>
                 <div style="font-size:0.85rem; color:var(--muted);">${d.partido} · ${d.regiao}</div>
                 <div style="font-size:0.75rem; color:var(--cyan);">${d.instagram}</div>
+                ${d.whatsapp ? `<a href="https://wa.me/55${d.whatsapp.replace(/\D/g,'')}" target="_blank" style="display:inline-flex; align-items:center; gap:6px; margin-top:4px; font-size:0.75rem; color:#25d366; text-decoration:none;">📱 ${d.whatsapp}</a>` : ''}
                 ${fed ? `<div style="font-size:0.7rem; color:var(--blue); margin-top:4px;">🏛️ Vinculado a: ${fed.nome}</div>` : ''}
             </div>
             <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:16px;">
@@ -1195,6 +1197,10 @@
                 <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:4px;">Partido *</label>
                 <input id="fPartido" type="text" placeholder="Ex.: MDB" style="width:100%; padding:9px 12px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:Poppins; font-size:0.85rem;">
             </div>
+            <div style="margin-bottom:10px;">
+                <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:4px;">WhatsApp *</label>
+                <input id="fWhatsapp" type="tel" placeholder="Ex.: (61) 99999-9999" maxlength="16" oninput="formatarWhatsapp(this)" style="width:100%; padding:9px 12px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:Poppins; font-size:0.85rem;">
+            </div>
             ${campoEspecifico}
             <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:16px; padding-top:12px; border-top:1px solid var(--border);">
                 <button class="btn btn-sm" style="background:var(--surface); border:1px solid var(--border); color:var(--text);" onclick="fecharModal()">Cancelar</button>
@@ -1204,17 +1210,28 @@
         document.getElementById('modal').classList.add('active');
     }
 
+    function formatarWhatsapp(input) {
+        let v = input.value.replace(/\D/g, '').slice(0, 11);
+        if (v.length > 10) v = v.replace(/^(\d{2})(\d{5})(\d{0,4}).*/, '($1) $2-$3');
+        else if (v.length > 6) v = v.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, '($1) $2-$3');
+        else if (v.length > 2) v = v.replace(/^(\d{2})(\d{0,5}).*/, '($1) $2');
+        else if (v.length > 0) v = v.replace(/^(\d{0,2})/, '($1');
+        input.value = v;
+    }
+
     function salvarCadastro(tipo) {
         const nome = document.getElementById('fNome').value.trim();
         const partido = document.getElementById('fPartido').value.trim().toUpperCase();
+        const whatsapp = document.getElementById('fWhatsapp').value.trim();
         if (!nome || !partido) { toast('⚠️ Campos obrigatórios', 'Preencha nome e partido'); return; }
+        if (!whatsapp || whatsapp.replace(/\D/g, '').length < 10) { toast('⚠️ WhatsApp inválido', 'Informe um número com DDD'); return; }
 
         const iniciais = nome.split(' ').filter(Boolean).map(p => p[0]).slice(0, 2).join('').toUpperCase() || nome[0].toUpperCase();
 
         if (tipo === 'senador') {
             const mandato = document.getElementById('fMandato').value.trim() || 'Senador DF';
             const fidelidade = document.getElementById('fFidelidade').value;
-            DADOS.senadores.push({ nome, partido, mandato, fidelidade, foto: iniciais, _custom: true });
+            DADOS.senadores.push({ nome, partido, mandato, fidelidade, whatsapp, foto: iniciais, _custom: true });
             toast('🎖️ Senador cadastrado!', `${nome} (${partido}) adicionado à rede`);
         } else if (tipo === 'federal') {
             const investimento = parseInt(document.getElementById('fInvestimento').value) || 0;
@@ -1222,7 +1239,7 @@
             const adesivos = parseInt(document.getElementById('fAdesivos').value) || 0;
             DADOS.federais.push({
                 nome: nome.startsWith('Dep. Fed.') ? nome : `Dep. Fed. ${nome}`,
-                partido, foto: iniciais, distritais: [], investimento,
+                partido, whatsapp, foto: iniciais, distritais: [], investimento,
                 material: { santinhos, adesivos }, _custom: true
             });
             toast('🏛️ Deputado Federal cadastrado!', `${nome} (${partido}) é novo coordenador geral`);
@@ -1233,7 +1250,7 @@
             const fedIdx = parseInt(document.getElementById('fFederalIdx').value);
             const novoDistrital = {
                 nome, partido, regiao, eleitores: 0, pts: 0, fidelidade,
-                instagram, ultimaAtividade: 'agora', _custom: true
+                instagram, whatsapp, ultimaAtividade: 'agora', _custom: true
             };
             DADOS.distritais.push(novoDistrital);
             const novoIdx = DADOS.distritais.length - 1;
