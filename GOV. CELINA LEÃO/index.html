@@ -347,8 +347,26 @@
                 </div>
             </div>
 
+            <!-- Cadastro de Eleitores pela Governadora -->
+            <h2 class="section-title" style="margin-top:0;">🗳️ Cadastro de Eleitores</h2>
+            <div style="margin-bottom:6px; font-size:0.78rem; color:var(--muted);">
+                Os eleitores são cadastrados pela <strong style="color:var(--gold);">🎖️ Governadora</strong>, pelos <strong style="color:var(--blue);">🏛️ Dep. Federais</strong> e pelos <strong style="color:var(--purple);">🏢 Dep. Distritais</strong>. Neste sistema, a Governadora registra seus próprios eleitores.
+            </div>
+            <div style="margin-bottom:16px;">
+                <div class="card stat-card" style="border-left:3px solid var(--gold); cursor:pointer;" onclick="cadastrarEleitor('governadora')">
+                    <div style="display:flex; align-items:center; gap:14px;">
+                        <div style="font-size:2rem;">🎖️</div>
+                        <div style="flex:1;">
+                            <div class="stat-label" style="color:var(--gold); font-weight:700;">Cadastrar Eleitor pela Governadora</div>
+                            <div style="font-size:0.72rem; color:var(--muted); margin-top:2px;">Celina Leão cadastra pessoalmente · +30 pts ao distrital beneficiário</div>
+                        </div>
+                        <button class="btn btn-primary btn-sm" style="background:var(--gold); color:#000;">+ Novo Eleitor</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Cadastro Rápido -->
-            <h2 class="section-title" style="margin-top:0;">⚡ Cadastro Rápido</h2>
+            <h2 class="section-title">⚡ Cadastro Rápido</h2>
             <div class="grid grid-3" style="margin-bottom:16px;">
                 <div class="card stat-card" style="border-left:3px solid var(--gold); cursor:pointer;" onclick="abrirCadastro('senador')">
                     <div style="font-size:1.8rem;">🎖️</div>
@@ -454,32 +472,25 @@
         <!-- ========== ELEITORES ========== -->
         <div class="page" id="page-eleitores">
             <p style="color:var(--muted); margin-bottom:16px; font-size:0.85rem;">
-                Eleitores podem ser cadastrados por <strong style="color:var(--gold);">🎖️ Governadora Celina</strong>, <strong style="color:var(--blue);">🏛️ Deputados Federais</strong> ou <strong style="color:var(--purple);">🏢 Deputados Distritais</strong>. O cadastro sempre é creditado a um distrital beneficiário, registrando a origem.
+                Os eleitores podem ser cadastrados pela <strong style="color:var(--gold);">🎖️ Governadora Celina Leão</strong>, pelos <strong style="color:var(--blue);">🏛️ Deputados Federais</strong> e pelos <strong style="color:var(--purple);">🏢 Deputados Distritais</strong>. <em>Este sistema é da Governadora</em> — aqui ela cadastra seus próprios eleitores. Federais e distritais utilizam seus respectivos sistemas, e os números consolidados são exibidos abaixo.
             </p>
 
-            <!-- Botões de origem -->
-            <div class="grid grid-3" style="margin-bottom:16px;">
+            <!-- Botão único: Cadastro pela Governadora -->
+            <div style="margin-bottom:16px;">
                 <div class="card stat-card" style="border-left:3px solid var(--gold); cursor:pointer;" onclick="cadastrarEleitor('governadora')">
-                    <div style="font-size:1.6rem;">🎖️</div>
-                    <div class="stat-label" style="color:var(--gold);">Pela Governadora</div>
-                    <div style="font-size:0.7rem; color:var(--muted); margin-top:4px;">Celina Leão cadastra</div>
-                    <button class="btn btn-primary btn-sm" style="margin-top:10px; background:var(--gold); color:#000;">+ Cadastrar Eleitor</button>
-                </div>
-                <div class="card stat-card" style="border-left:3px solid var(--blue); cursor:pointer;" onclick="cadastrarEleitor('federal')">
-                    <div style="font-size:1.6rem;">🏛️</div>
-                    <div class="stat-label" style="color:var(--blue);">Por Dep. Federal</div>
-                    <div style="font-size:0.7rem; color:var(--muted); margin-top:4px;">Coordenador geral cadastra</div>
-                    <button class="btn btn-primary btn-sm" style="margin-top:10px;">+ Cadastrar Eleitor</button>
-                </div>
-                <div class="card stat-card" style="border-left:3px solid var(--purple); cursor:pointer;" onclick="cadastrarEleitor('distrital')">
-                    <div style="font-size:1.6rem;">🏢</div>
-                    <div class="stat-label" style="color:var(--purple);">Por Dep. Distrital</div>
-                    <div style="font-size:0.7rem; color:var(--muted); margin-top:4px;">Linha de frente cadastra</div>
-                    <button class="btn btn-primary btn-sm" style="margin-top:10px; background:var(--purple); color:#fff;">+ Cadastrar Eleitor</button>
+                    <div style="display:flex; align-items:center; gap:14px;">
+                        <div style="font-size:2rem;">🎖️</div>
+                        <div style="flex:1;">
+                            <div class="stat-label" style="color:var(--gold); font-weight:700;">Cadastrar Eleitor pela Governadora</div>
+                            <div style="font-size:0.75rem; color:var(--muted); margin-top:2px;">Celina Leão cadastra pessoalmente (+30 pts ao distrital beneficiário)</div>
+                        </div>
+                        <button class="btn btn-primary btn-sm" style="background:var(--gold); color:#000;">+ Novo Eleitor</button>
+                    </div>
                 </div>
             </div>
 
             <!-- Resumo por origem -->
+            <h2 class="section-title">📊 Cadastros por Origem</h2>
             <div class="grid grid-3" style="margin-bottom:16px;">
                 <div class="card" style="padding:10px;">
                     <div style="font-size:0.7rem; color:var(--muted);">🎖️ Pela Governadora</div>
@@ -497,7 +508,6 @@
 
             <div style="margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
                 <span style="font-size:0.85rem; color:var(--muted);" id="totalEleitoresLabel">Total: 0</span>
-                <button class="btn btn-sm" style="background:var(--surface); border:1px solid var(--border); color:var(--muted);" onclick="simularCadastro()">🎲 Simular aleatório</button>
             </div>
             <div id="eleitoresGrid"></div>
         </div>
