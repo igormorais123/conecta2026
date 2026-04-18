@@ -1128,15 +1128,15 @@
         document.getElementById('monitorSuspeitos').textContent = suspeitos;
         document.getElementById('monitorTraidores').textContent = traidores;
 
-        document.getElementById('monitoramentoFeed').innerHTML = DADOS.monitoramento.map(m => {
+        document.getElementById('monitoramentoFeed').innerHTML = DADOS.monitoramento.map((m, idx) => {
             const cor = m.tipo === 'positivo' ? 'var(--primary)' : m.tipo === 'suspeito' ? 'var(--gold)' : 'var(--red)';
             const icon = m.tipo === 'positivo' ? '✅' : m.tipo === 'suspeito' ? '⚠️' : '🚨';
             const redeIcon = m.rede === 'Instagram' ? '📷' : m.rede === 'Twitter/X' ? '🐦' : '📘';
             return `
-                <div class="rede-card" style="border-left:3px solid ${cor};">
+                <div class="rede-card" style="border-left:3px solid ${cor}; cursor:pointer;" onclick="abrirPostDetalhe(${idx})" title="Clique para ver detalhes da postagem">
                     <div class="rede-avatar">${redeIcon}</div>
-                    <div style="flex:1;">
-                        <div style="font-weight:600; font-size:0.85rem;">${icon} ${m.distrital} <span style="font-size:0.7rem; color:var(--muted);">· ${m.rede}</span></div>
+                    <div style="flex:1; min-width:0;">
+                        <div style="font-weight:600; font-size:0.85rem;">${icon} <span style="color:${cor}; text-decoration:underline; text-decoration-style:dotted;">${m.distrital}</span> <span style="font-size:0.7rem; color:var(--muted);">· ${m.rede}</span></div>
                         <div style="font-size:0.8rem; color:var(--text); margin-top:2px;">${m.msg}</div>
                     </div>
                     <div style="font-size:0.65rem; color:var(--muted); white-space:nowrap;">${m.data}</div>
@@ -1211,6 +1211,181 @@
             ${htmlAtividades}
 
             <div style="display:flex; justify-content:flex-end; margin-top:14px; padding-top:12px; border-top:1px solid var(--border);">
+                <button class="btn btn-sm" style="background:var(--surface); border:1px solid var(--border); color:var(--text);" onclick="fecharModal()">Fechar</button>
+            </div>
+        `;
+        document.getElementById('modal').classList.add('active');
+    }
+
+    // ===== DETALHE DA POSTAGEM (Feed de Monitoramento) =====
+    function _hashStr(s) { let h = 0; for (let i = 0; i < s.length; i++) { h = ((h << 5) - h) + s.charCodeAt(i); h |= 0; } return Math.abs(h); }
+    function _pick(arr, seed) { return arr[seed % arr.length]; }
+
+    function abrirPostDetalhe(idx) {
+        const m = DADOS.monitoramento[idx];
+        if (!m) return;
+
+        const tipoCfg = {
+            positivo: { cor: 'var(--primary)', icone: '✅', rotulo: 'Postagem Positiva', sentimento: 'Apoio explícito', clima: 'Favorável à campanha' },
+            suspeito: { cor: 'var(--gold)',    icone: '⚠️', rotulo: 'Postagem Suspeita', sentimento: 'Ambíguo / Inconsistente', clima: 'Monitorar de perto' },
+            alerta:   { cor: 'var(--red)',     icone: '🚨', rotulo: 'Alerta de Risco',    sentimento: 'Contrário / Hostil', clima: 'Risco de deserção' }
+        }[m.tipo] || { cor: 'var(--cyan)', icone: '📡', rotulo: 'Registro', sentimento: '—', clima: '—' };
+
+        const redeCfg = {
+            'Instagram': { icon: '📷', url: 'instagram.com', formato: 'Story / Reels / Post' },
+            'Twitter/X': { icon: '🐦', url: 'twitter.com',   formato: 'Tweet / Thread / Retweet' },
+            'Facebook':  { icon: '📘', url: 'facebook.com',  formato: 'Post / Live / Evento' }
+        }[m.rede] || { icon: '🔗', url: '', formato: 'Post' };
+
+        const distrital = DADOS.distritais.find(d => d.nome === m.distrital);
+        const federal = distrital ? DADOS.federais.find(f => f.distritais.includes(DADOS.distritais.indexOf(distrital))) : null;
+
+        const seed = _hashStr(m.distrital + m.rede + m.msg + m.data);
+        const matchViews = m.msg.match(/([\d.,]+)\s*k\s*(views|apoiadores|pessoas)/i);
+        const alcance = matchViews
+            ? parseFloat(matchViews[1].replace(',', '.')) * 1000
+            : (m.tipo === 'positivo' ? 800 + (seed % 4200) : 150 + (seed % 850));
+        const curtidas = Math.round(alcance * (m.tipo === 'positivo' ? 0.08 : 0.03));
+        const comentarios = Math.round(alcance * (m.tipo === 'positivo' ? 0.015 : 0.02));
+        const compartilhamentos = Math.round(alcance * (m.tipo === 'positivo' ? 0.025 : 0.005));
+
+        const hashtagsPos = ['#CelinaGovernadora', '#CelinaLeao2026', '#DFNossoLar', '#GovernoDF', '#CelinaNoDF'];
+        const hashtagsNeu = ['#DF', '#Brasília', '#Política2026', '#Eleicoes2026'];
+        const hashtagsNeg = ['#MudancaDF', '#NovoGoverno', '#ForaCelina', '#OposicaoDF'];
+        const tagsAtiva = m.tipo === 'positivo' ? hashtagsPos : m.tipo === 'alerta' ? hashtagsNeg : hashtagsNeu;
+        const tags = [tagsAtiva[seed % tagsAtiva.length], tagsAtiva[(seed + 1) % tagsAtiva.length], hashtagsNeu[seed % hashtagsNeu.length]];
+
+        const recomendacoesPos = [
+            'Reforçar agradecimento público no próximo evento da região.',
+            'Repostar a publicação nas redes oficiais da Governadora.',
+            'Enviar material extra (santinhos/adesivos) para potencializar alcance.',
+            'Convidar o distrital para compor palanque em evento regional.'
+        ];
+        const recomendacoesSusp = [
+            'Solicitar conversa reservada com o distrital — alinhar discurso.',
+            'Monitorar próximas 48h com prioridade alta.',
+            'Pedir ao Dep. Federal responsável que faça contato direto.',
+            'Revisar histórico de postagens dos últimos 30 dias.'
+        ];
+        const recomendacoesAlerta = [
+            'Acionar o federal coordenador imediatamente para resposta.',
+            'Avaliar redistribuição de recursos para distritais mais fiéis.',
+            'Considerar substituição ou reforço na região afetada.',
+            'Preparar contranarrativa para o próximo ciclo de postagens.'
+        ];
+        const recList = m.tipo === 'positivo' ? recomendacoesPos : m.tipo === 'suspeito' ? recomendacoesSusp : recomendacoesAlerta;
+        const recomendacao = recList[seed % recList.length];
+
+        const horaMatch = m.data.match(/(\d{1,2}):(\d{2})/);
+        const horario = horaMatch ? horaMatch[0] : '—';
+        const diaRef = m.data.toLowerCase().includes('ontem') ? 'Ontem (17/04/2026)' :
+                       m.data.toLowerCase().includes('hoje')  ? 'Hoje (18/04/2026)' : m.data;
+
+        const linkFake = `${redeCfg.url}/${m.distrital.toLowerCase().replace(/\s+/g, '')}/post/${seed.toString(36).slice(0,8)}`;
+
+        document.getElementById('modalTitle').textContent = `${tipoCfg.icone} Detalhes da Postagem`;
+        document.getElementById('modalBody').innerHTML = `
+            <!-- Cabeçalho da postagem -->
+            <div style="padding:12px; background:var(--surface); border-left:3px solid ${tipoCfg.cor}; border-radius:8px; margin-bottom:14px;">
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                    <div style="font-size:1.4rem;">${redeCfg.icon}</div>
+                    <div style="flex:1;">
+                        <div style="font-weight:700; font-size:0.92rem;">${m.distrital}</div>
+                        <div style="font-size:0.7rem; color:var(--muted);">${m.rede} · ${redeCfg.formato}</div>
+                    </div>
+                    <span class="badge" style="background:${tipoCfg.cor}; color:#fff; padding:3px 8px; border-radius:10px; font-size:0.68rem; font-weight:700;">${tipoCfg.rotulo}</span>
+                </div>
+                <div style="font-size:0.88rem; color:var(--text); padding:8px 0; border-top:1px solid var(--border);">"${m.msg}"</div>
+            </div>
+
+            <!-- Quando ocorreu -->
+            <h3 class="section-title" style="font-size:0.78rem; color:${tipoCfg.cor}; margin:0 0 8px;">🕐 Quando aconteceu</h3>
+            <div class="grid grid-2" style="gap:8px; margin-bottom:14px;">
+                <div class="card" style="padding:8px 12px;">
+                    <div style="font-size:0.65rem; color:var(--muted);">Data</div>
+                    <div style="font-weight:700; font-size:0.85rem;">${diaRef}</div>
+                </div>
+                <div class="card" style="padding:8px 12px;">
+                    <div style="font-size:0.65rem; color:var(--muted);">Horário</div>
+                    <div style="font-weight:700; font-size:0.85rem;">${horario}</div>
+                </div>
+            </div>
+
+            <!-- Métricas -->
+            <h3 class="section-title" style="font-size:0.78rem; color:${tipoCfg.cor}; margin:0 0 8px;">📊 Métricas estimadas</h3>
+            <div class="grid grid-2" style="gap:8px; margin-bottom:14px;">
+                <div class="card" style="padding:8px 12px;">
+                    <div style="font-size:0.65rem; color:var(--muted);">👁️ Alcance</div>
+                    <div style="font-weight:800; font-size:1rem; color:${tipoCfg.cor};">${alcance.toLocaleString('pt-BR')}</div>
+                </div>
+                <div class="card" style="padding:8px 12px;">
+                    <div style="font-size:0.65rem; color:var(--muted);">❤️ Curtidas</div>
+                    <div style="font-weight:800; font-size:1rem;">${curtidas.toLocaleString('pt-BR')}</div>
+                </div>
+                <div class="card" style="padding:8px 12px;">
+                    <div style="font-size:0.65rem; color:var(--muted);">💬 Comentários</div>
+                    <div style="font-weight:800; font-size:1rem;">${comentarios.toLocaleString('pt-BR')}</div>
+                </div>
+                <div class="card" style="padding:8px 12px;">
+                    <div style="font-size:0.65rem; color:var(--muted);">🔁 Compartilhamentos</div>
+                    <div style="font-weight:800; font-size:1rem;">${compartilhamentos.toLocaleString('pt-BR')}</div>
+                </div>
+            </div>
+
+            <!-- Contexto do distrital -->
+            ${distrital ? `
+            <h3 class="section-title" style="font-size:0.78rem; color:${tipoCfg.cor}; margin:0 0 8px;">🏢 Contexto do Distrital</h3>
+            <div class="card" style="padding:10px 12px; margin-bottom:14px;">
+                <div style="display:flex; justify-content:space-between; font-size:0.78rem;">
+                    <span style="color:var(--muted);">Partido</span>
+                    <strong>${distrital.partido}</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:0.78rem; margin-top:4px;">
+                    <span style="color:var(--muted);">Região</span>
+                    <strong>${distrital.regiao}</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:0.78rem; margin-top:4px;">
+                    <span style="color:var(--muted);">Fidelidade atual</span>
+                    <strong style="color:${distrital.fidelidade === 'alta' ? 'var(--primary)' : distrital.fidelidade === 'media' ? 'var(--gold)' : 'var(--red)'};">${distrital.fidelidade}</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:0.78rem; margin-top:4px;">
+                    <span style="color:var(--muted);">Eleitores cadastrados</span>
+                    <strong>${distrital.eleitores.toLocaleString('pt-BR')}</strong>
+                </div>
+                ${federal ? `
+                <div style="display:flex; justify-content:space-between; font-size:0.78rem; margin-top:4px;">
+                    <span style="color:var(--muted);">Coordenador Federal</span>
+                    <strong style="color:var(--blue);">${federal.nome}</strong>
+                </div>` : ''}
+            </div>` : ''}
+
+            <!-- Sentimento e tags -->
+            <h3 class="section-title" style="font-size:0.78rem; color:${tipoCfg.cor}; margin:0 0 8px;">🧭 Análise de Sentimento</h3>
+            <div class="card" style="padding:10px 12px; margin-bottom:14px;">
+                <div style="display:flex; justify-content:space-between; font-size:0.78rem;">
+                    <span style="color:var(--muted);">Sentimento</span>
+                    <strong style="color:${tipoCfg.cor};">${tipoCfg.sentimento}</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:0.78rem; margin-top:4px;">
+                    <span style="color:var(--muted);">Clima geral</span>
+                    <strong>${tipoCfg.clima}</strong>
+                </div>
+                <div style="margin-top:8px; font-size:0.72rem; color:var(--muted);">Hashtags / termos identificados:</div>
+                <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:4px;">
+                    ${tags.map(t => `<span style="background:var(--surface); border:1px solid var(--border); color:${tipoCfg.cor}; padding:3px 8px; border-radius:10px; font-size:0.68rem; font-weight:600;">${t}</span>`).join('')}
+                </div>
+            </div>
+
+            <!-- Recomendação -->
+            <h3 class="section-title" style="font-size:0.78rem; color:${tipoCfg.cor}; margin:0 0 8px;">💡 Recomendação para a Governadora</h3>
+            <div class="card" style="padding:10px 12px; margin-bottom:14px; border-left:3px solid ${tipoCfg.cor};">
+                <div style="font-size:0.85rem; color:var(--text); line-height:1.4;">${recomendacao}</div>
+            </div>
+
+            <!-- Link simulado -->
+            <div style="font-size:0.7rem; color:var(--muted); margin-bottom:6px;">🔗 Referência: <span style="color:var(--cyan);">${linkFake}</span></div>
+
+            <div style="display:flex; justify-content:flex-end; margin-top:10px; padding-top:12px; border-top:1px solid var(--border); gap:8px;">
                 <button class="btn btn-sm" style="background:var(--surface); border:1px solid var(--border); color:var(--text);" onclick="fecharModal()">Fechar</button>
             </div>
         `;
