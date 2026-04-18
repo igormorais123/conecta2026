@@ -583,17 +583,20 @@
 
             <!-- Resumo -->
             <div class="grid grid-3" style="margin-bottom:16px;">
-                <div class="card stat-card" style="border-left:3px solid var(--primary);">
+                <div class="card stat-card" style="border-left:3px solid var(--primary); cursor:pointer;" onclick="abrirMonitorDetalhe('fieis')" title="Ver lista de fiéis">
                     <div class="stat-label">✅ Fiéis</div>
                     <div class="stat-number" style="font-size:1.8rem;" id="monitorFieis">0</div>
+                    <div style="font-size:0.65rem; color:var(--cyan); margin-top:3px;">clique para detalhes</div>
                 </div>
-                <div class="card stat-card" style="border-left:3px solid var(--gold);">
+                <div class="card stat-card" style="border-left:3px solid var(--gold); cursor:pointer;" onclick="abrirMonitorDetalhe('suspeitos')" title="Ver lista de suspeitos">
                     <div class="stat-label">⚠️ Suspeitos</div>
                     <div class="stat-number" style="font-size:1.8rem; color:var(--gold);" id="monitorSuspeitos">0</div>
+                    <div style="font-size:0.65rem; color:var(--cyan); margin-top:3px;">clique para detalhes</div>
                 </div>
-                <div class="card stat-card" style="border-left:3px solid var(--red);">
+                <div class="card stat-card" style="border-left:3px solid var(--red); cursor:pointer;" onclick="abrirMonitorDetalhe('traidores')" title="Ver lista de traidores">
                     <div class="stat-label">🚨 Traidores</div>
                     <div class="stat-number" style="font-size:1.8rem; color:var(--red);" id="monitorTraidores">0</div>
+                    <div style="font-size:0.65rem; color:var(--cyan); margin-top:3px;">clique para detalhes</div>
                 </div>
             </div>
 
@@ -1147,6 +1150,71 @@
         setTimeout(() => {
             toast('✅ Varredura concluída!', `${DADOS.monitoramento.length} atividades analisadas`);
         }, 2000);
+    }
+
+    function abrirMonitorDetalhe(tipo) {
+        const filtros = {
+            fieis:     { fidelidade: 'alta',  titulo: '✅ Distritais Fiéis',       cor: 'var(--primary)', desc: 'Apoio confirmado à Celina Leão',           monitor: 'positivo' },
+            suspeitos: { fidelidade: 'media', titulo: '⚠️ Distritais Suspeitos',   cor: 'var(--gold)',    desc: 'Posicionamento instável — monitorar',      monitor: 'suspeito' },
+            traidores: { fidelidade: 'baixa', titulo: '🚨 Possíveis Traidores',    cor: 'var(--red)',     desc: 'Atenção máxima — risco de deserção',       monitor: 'alerta'   }
+        };
+        const f = filtros[tipo];
+        if (!f) return;
+
+        const lista = DADOS.distritais.filter(d => d.fidelidade === f.fidelidade);
+        const atividades = DADOS.monitoramento.filter(m => m.tipo === f.monitor);
+
+        const htmlDistritais = lista.length === 0
+            ? '<div style="font-size:0.8rem; color:var(--muted); padding:10px; text-align:center;">Nenhum distrital nesta categoria.</div>'
+            : lista.map(d => {
+                const idx = DADOS.distritais.indexOf(d);
+                const fed = DADOS.federais.find(f2 => f2.distritais.includes(idx));
+                return `
+                    <div class="card" style="margin-bottom:6px; padding:8px 12px; border-left:3px solid ${f.cor}; display:flex; align-items:center; gap:10px;">
+                        <div style="width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg, var(--purple), var(--cyan)); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.75rem;">${d.nome.charAt(0)}</div>
+                        <div style="flex:1; min-width:0;">
+                            <div style="font-weight:700; font-size:0.82rem;">${d.nome} <span style="font-size:0.7rem; color:var(--muted);">· ${d.partido}</span></div>
+                            <div style="font-size:0.7rem; color:var(--muted);">📍 ${d.regiao}${fed ? ' · 🏛️ ' + fed.nome : ''}</div>
+                        </div>
+                        <div style="text-align:right; font-size:0.7rem;">
+                            <div style="color:${f.cor}; font-weight:700;">${d.eleitores.toLocaleString('pt-BR')} el.</div>
+                            <div style="color:var(--muted);">${d.ultimaAtividade}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+        const htmlAtividades = atividades.length === 0
+            ? '<div style="font-size:0.8rem; color:var(--muted); padding:10px; text-align:center;">Nenhuma atividade registrada nesta categoria.</div>'
+            : atividades.map(m => {
+                const redeIcon = m.rede === 'Instagram' ? '📷' : m.rede === 'Twitter/X' ? '🐦' : '📘';
+                return `
+                    <div class="rede-card" style="border-left:3px solid ${f.cor}; margin-bottom:6px;">
+                        <div class="rede-avatar">${redeIcon}</div>
+                        <div style="flex:1; min-width:0;">
+                            <div style="font-weight:600; font-size:0.82rem;">${m.distrital} <span style="font-size:0.68rem; color:var(--muted);">· ${m.rede}</span></div>
+                            <div style="font-size:0.78rem; color:var(--text); margin-top:2px;">${m.msg}</div>
+                        </div>
+                        <div style="font-size:0.62rem; color:var(--muted); white-space:nowrap;">${m.data}</div>
+                    </div>
+                `;
+            }).join('');
+
+        document.getElementById('modalTitle').textContent = f.titulo;
+        document.getElementById('modalBody').innerHTML = `
+            <div style="font-size:0.8rem; color:var(--muted); margin-bottom:14px;">${f.desc} · <strong style="color:${f.cor};">${lista.length} distritais</strong></div>
+
+            <h3 class="section-title" style="font-size:0.8rem; color:${f.cor}; margin:0 0 8px;">🏢 Distritais nesta categoria</h3>
+            ${htmlDistritais}
+
+            <h3 class="section-title" style="font-size:0.8rem; color:${f.cor}; margin:14px 0 8px;">📡 Atividades recentes em redes sociais</h3>
+            ${htmlAtividades}
+
+            <div style="display:flex; justify-content:flex-end; margin-top:14px; padding-top:12px; border-top:1px solid var(--border);">
+                <button class="btn btn-sm" style="background:var(--surface); border:1px solid var(--border); color:var(--text);" onclick="fecharModal()">Fechar</button>
+            </div>
+        `;
+        document.getElementById('modal').classList.add('active');
     }
 
     // ===== RECURSOS =====
