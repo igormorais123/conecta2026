@@ -365,6 +365,24 @@
                 </div>
             </div>
 
+            <!-- Cadastro de Missões / Gamificação -->
+            <h2 class="section-title">🎯 Gamificação · Missões</h2>
+            <div style="margin-bottom:6px; font-size:0.78rem; color:var(--muted);">
+                A Governadora define missões e ações premiadas. Distritais que cumprem ganham pontos e sobem no ranking.
+            </div>
+            <div style="margin-bottom:16px;">
+                <div class="card stat-card" style="border-left:3px solid var(--purple); cursor:pointer;" onclick="cadastrarMissao()">
+                    <div style="display:flex; align-items:center; gap:14px;">
+                        <div style="font-size:2rem;">🎯</div>
+                        <div style="flex:1;">
+                            <div class="stat-label" style="color:var(--purple); font-weight:700;">Cadastrar Missão / Ação de Gamificação</div>
+                            <div style="font-size:0.72rem; color:var(--muted); margin-top:2px;">Defina título, descrição e pontos — aparece imediatamente na aba Gamificação</div>
+                        </div>
+                        <button class="btn btn-primary btn-sm" style="background:var(--purple); color:#fff;">+ Nova Missão</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Cadastro Rápido -->
             <h2 class="section-title">⚡ Cadastro Rápido</h2>
             <div class="grid grid-3" style="margin-bottom:16px;">
@@ -523,29 +541,11 @@
             <div id="rankingCompleto"></div>
 
             <!-- Missões -->
-            <h2 class="section-title">🎯 Missões Ativas</h2>
-            <div class="grid grid-2" id="missoesGrid">
-                <div class="card" style="border-left:3px solid var(--primary);">
-                    <div style="font-weight:700; margin-bottom:6px;">📋 Cadastrar 5 eleitores hoje</div>
-                    <div style="font-size:0.8rem; color:var(--muted); margin-bottom:8px;">Meta diária por distrital</div>
-                    <span class="badge badge-success">+100 pts</span>
-                </div>
-                <div class="card" style="border-left:3px solid var(--red);">
-                    <div style="font-weight:700; margin-bottom:6px;">⚡ Relâmpago: 10 cadastros em 2h</div>
-                    <div style="font-size:0.8rem; color:var(--muted); margin-bottom:8px;">Missão bônus limitada</div>
-                    <span class="badge badge-danger">+300 pts</span>
-                </div>
-                <div class="card" style="border-left:3px solid var(--purple);">
-                    <div style="font-weight:700; margin-bottom:6px;">🏆 Alcançar 100 eleitores</div>
-                    <div style="font-size:0.8rem; color:var(--muted); margin-bottom:8px;">Marco de conquista</div>
-                    <span class="badge badge-info">+500 pts + 🎰 Roda</span>
-                </div>
-                <div class="card" style="border-left:3px solid var(--gold);">
-                    <div style="font-weight:700; margin-bottom:6px;">👥 Recrutar novo apoiador ativo</div>
-                    <div style="font-size:0.8rem; color:var(--muted); margin-bottom:8px;">Eleitor que engaja nas redes</div>
-                    <span class="badge badge-warning">+200 pts</span>
-                </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; margin-bottom:10px;">
+                <h2 class="section-title" style="margin:0;">🎯 Missões Ativas</h2>
+                <button class="btn btn-primary btn-sm" style="background:var(--gold); color:#000;" onclick="cadastrarMissao()">+ Nova Missão</button>
             </div>
+            <div class="grid grid-2" id="missoesGrid"></div>
 
             <!-- Tabela de Pontos -->
             <h2 class="section-title">📊 Tabela de Pontos</h2>
@@ -757,6 +757,12 @@
         ],
         senadores: [],
         cadastros: [],
+        missoes: [
+            { id: 1, titulo: '📋 Cadastrar 5 eleitores hoje', descricao: 'Meta diária por distrital', pontos: 100, cor: 'var(--primary)', badge: 'success', ativa: true },
+            { id: 2, titulo: '⚡ Relâmpago: 10 cadastros em 2h', descricao: 'Missão bônus limitada', pontos: 300, cor: 'var(--red)', badge: 'danger', ativa: true },
+            { id: 3, titulo: '🏆 Alcançar 100 eleitores', descricao: 'Marco de conquista', pontos: 500, cor: 'var(--purple)', badge: 'info', ativa: true, extra: '+ 🎰 Roda' },
+            { id: 4, titulo: '👥 Recrutar novo apoiador ativo', descricao: 'Eleitor que engaja nas redes', pontos: 200, cor: 'var(--gold)', badge: 'warning', ativa: true }
+        ],
         premiosRoda: [
             { nome: '5 mil Santinhos', cor: '#3b82f6', emoji: '📄' },
             { nome: '10 mil Santinhos', cor: '#ffd600', emoji: '📄' },
@@ -784,6 +790,7 @@
             if (Array.isArray(salvo.federaisExtras)) DADOS.federais.push(...salvo.federaisExtras);
             if (Array.isArray(salvo.distritaisExtras)) DADOS.distritais.push(...salvo.distritaisExtras);
             if (Array.isArray(salvo.cadastros)) DADOS.cadastros.push(...salvo.cadastros);
+            if (Array.isArray(salvo.missoes)) { DADOS.missoes.length = 0; DADOS.missoes.push(...salvo.missoes); }
             if (salvo.distritaisEleitores) {
                 salvo.distritaisEleitores.forEach((e, i) => {
                     if (DADOS.distritais[i]) {
@@ -801,6 +808,7 @@
             federaisExtras: DADOS.federais.filter(f => f._custom),
             distritaisExtras: DADOS.distritais.filter(d => d._custom),
             cadastros: DADOS.cadastros,
+            missoes: DADOS.missoes,
             distritaisEleitores: DADOS.distritais.map(d => ({ eleitores: d.eleitores, pts: d.pts }))
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
@@ -823,6 +831,7 @@
         renderDistritais();
         renderEleitores();
         renderRanking();
+        renderMissoes();
         renderMonitoramento();
         renderRecursos();
         desenharRoda();
@@ -1477,6 +1486,100 @@
         renderDistritais();
         renderEleitores();
         renderRanking();
+    }
+
+    // ===== MISSÕES / GAMIFICAÇÃO =====
+    function renderMissoes() {
+        const grid = document.getElementById('missoesGrid');
+        if (!grid) return;
+        if (!DADOS.missoes.length) {
+            grid.innerHTML = `<div class="card" style="grid-column:1/-1; text-align:center; padding:20px;">
+                <div style="font-size:0.85rem; color:var(--muted);">Nenhuma missão cadastrada. Clique em <strong style="color:var(--gold);">+ Nova Missão</strong> para começar.</div>
+            </div>`;
+            return;
+        }
+        grid.innerHTML = DADOS.missoes.map(m => `
+            <div class="card" style="border-left:3px solid ${m.cor}; position:relative;">
+                <div style="font-weight:700; margin-bottom:6px; padding-right:24px;">${m.titulo}</div>
+                <div style="font-size:0.8rem; color:var(--muted); margin-bottom:8px;">${m.descricao || ''}</div>
+                <span class="badge badge-${m.badge || 'info'}">+${m.pontos} pts${m.extra ? ' ' + m.extra : ''}</span>
+                ${!m._seed ? `<button title="Excluir missão" onclick="excluirMissao(${m.id})" style="position:absolute; top:8px; right:8px; background:transparent; border:none; color:var(--muted); cursor:pointer; font-size:1rem;">✕</button>` : ''}
+            </div>
+        `).join('');
+    }
+
+    function cadastrarMissao() {
+        document.getElementById('modalTitle').textContent = '🎯 Nova Missão / Ação de Gamificação';
+        document.getElementById('modalBody').innerHTML = `
+            <div style="font-size:0.8rem; color:var(--muted); margin-bottom:14px;">Defina uma nova missão que distritais poderão cumprir para ganhar pontos.</div>
+
+            <div style="margin-bottom:10px;">
+                <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:4px;">Título da missão *</label>
+                <input id="mTitulo" type="text" placeholder="Ex.: 📋 Cadastrar 10 eleitores na semana" style="width:100%; padding:9px 12px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:Poppins; font-size:0.85rem;">
+                <div style="font-size:0.68rem; color:var(--muted); margin-top:4px;">Dica: comece com um emoji para destacar visualmente.</div>
+            </div>
+
+            <div style="margin-bottom:10px;">
+                <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:4px;">Descrição</label>
+                <input id="mDescricao" type="text" placeholder="Ex.: Meta semanal por distrital" style="width:100%; padding:9px 12px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:Poppins; font-size:0.85rem;">
+            </div>
+
+            <div style="margin-bottom:10px;">
+                <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:4px;">Pontos concedidos *</label>
+                <input id="mPontos" type="number" min="1" placeholder="Ex.: 150" style="width:100%; padding:9px 12px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:Poppins; font-size:0.85rem;">
+            </div>
+
+            <div style="margin-bottom:10px;">
+                <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:4px;">Cor / Categoria</label>
+                <select id="mCor" style="width:100%; padding:9px 12px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:Poppins; font-size:0.85rem;">
+                    <option value="success">🟢 Verde — Meta diária</option>
+                    <option value="info">🔵 Azul — Conquista / Marco</option>
+                    <option value="warning">🟡 Dourado — Bônus especial</option>
+                    <option value="danger">🔴 Vermelho — Relâmpago / Urgente</option>
+                </select>
+            </div>
+
+            <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:16px; padding-top:12px; border-top:1px solid var(--border);">
+                <button class="btn btn-sm" style="background:var(--surface); border:1px solid var(--border); color:var(--text);" onclick="fecharModal()">Cancelar</button>
+                <button class="btn btn-primary btn-sm" style="background:var(--gold); color:#000;" onclick="salvarMissao()">💾 Salvar Missão</button>
+            </div>
+        `;
+        document.getElementById('modal').classList.add('active');
+    }
+
+    function salvarMissao() {
+        const titulo = document.getElementById('mTitulo').value.trim();
+        const descricao = document.getElementById('mDescricao').value.trim();
+        const pontos = parseInt(document.getElementById('mPontos').value);
+        const badge = document.getElementById('mCor').value;
+
+        if (!titulo) { toast('⚠️ Título obrigatório', 'Informe o título da missão'); return; }
+        if (!pontos || pontos < 1) { toast('⚠️ Pontos inválidos', 'Informe um valor positivo de pontos'); return; }
+
+        const corMap = { success: 'var(--primary)', info: 'var(--purple)', warning: 'var(--gold)', danger: 'var(--red)' };
+        const novaId = DADOS.missoes.length ? Math.max(...DADOS.missoes.map(m => m.id || 0)) + 1 : 1;
+
+        DADOS.missoes.push({
+            id: novaId, titulo, descricao, pontos,
+            cor: corMap[badge], badge, ativa: true,
+            criadaEm: new Date().toISOString()
+        });
+
+        salvarCadastros();
+        fecharModal();
+        toast('🎯 Missão criada!', `"${titulo}" vale ${pontos} pts`);
+        renderMissoes();
+    }
+
+    function excluirMissao(id) {
+        if (!confirm('Remover esta missão?')) return;
+        const idx = DADOS.missoes.findIndex(m => m.id === id);
+        if (idx >= 0) {
+            const removida = DADOS.missoes.splice(idx, 1)[0];
+            salvarCadastros();
+            toast('🗑️ Missão removida', removida.titulo);
+            renderMissoes();
+        }
     }
 
     // ===== RODA DA SORTE =====
