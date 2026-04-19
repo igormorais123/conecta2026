@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comando do Senador · Aliado Celina Leão 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a1a; --surface:rgba(255,255,255,0.04); --surface2:rgba(255,255,255,0.08);
+  --border:rgba(255,255,255,0.1); --text:#e8e8f0; --muted:#8a8aa0;
+  --primary:#3b82f6; --gold:#ffd600; --cyan:#00e5ff; --green:#00e676;
+  --purple:#b388ff; --red:#ff5252; --blue:#448aff;
+  --sidebar-w:240px; --header-h:64px; --radius:14px;
+}
+html,body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 0%,rgba(59,130,246,.08),transparent 50%),radial-gradient(ellipse at 80% 100%,rgba(255,214,0,.06),transparent 50%);pointer-events:none;z-index:0}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:var(--primary);border-radius:3px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes neonPulse{0%,100%{text-shadow:0 0 10px var(--gold)}50%{text-shadow:0 0 28px var(--gold)}}
+
+/* ===== SPLASH ===== */
+.splash{position:fixed;inset:0;background:linear-gradient(135deg,#0a0a1a,#1a2a4e 50%,#0a0a1a);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:99999;cursor:pointer;transition:opacity .6s}
+.splash.hidden{opacity:0;pointer-events:none}
+.splash-avatar{width:180px;height:180px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:4.5rem;color:#fff;font-weight:900;animation:float 3s ease-in-out infinite;filter:drop-shadow(0 0 24px rgba(59,130,246,.4));border:3px solid var(--gold)}
+.splash h1{font-size:2.6rem;font-weight:900;color:var(--gold);margin-top:18px;animation:neonPulse 2s infinite;letter-spacing:3px}
+.splash h2{font-size:1.1rem;color:var(--primary);font-weight:700;margin-top:6px;letter-spacing:2px}
+.splash-tag{display:inline-block;background:rgba(0,229,255,.2);color:var(--cyan);padding:8px 16px;border-radius:20px;font-size:.8rem;font-weight:600;margin-top:14px;text-transform:uppercase;letter-spacing:1px}
+.splash p{color:var(--muted);font-size:.85rem;margin-top:22px;animation:pulse 2s infinite}
+
+/* ===== SIDEBAR ===== */
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);background:rgba(10,10,26,.95);backdrop-filter:blur(10px);border-right:1px solid var(--border);z-index:1000;display:flex;flex-direction:column}
+.sidebar-brand{padding:20px 16px;text-align:center;border-bottom:1px solid var(--border);cursor:pointer}
+.sidebar-brand .brand-avatar{width:55px;height:55px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--cyan));display:inline-flex;align-items:center;justify-content:center;font-weight:900;font-size:1.4rem;color:#fff;border:2px solid var(--gold)}
+.sidebar-name{font-size:1rem;font-weight:900;color:var(--primary);letter-spacing:1.5px;margin-top:6px}
+.sidebar-title{font-size:.58rem;color:var(--gold);text-transform:uppercase;letter-spacing:1px;font-weight:600}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.nav-section{padding:12px 16px 4px;font-size:.55rem;text-transform:uppercase;letter-spacing:2px;color:var(--gold);font-weight:700;opacity:.7}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,.6);cursor:pointer;transition:all .3s;border-left:3px solid transparent;font-size:.85rem;font-weight:500}
+.nav-item:hover{color:#fff;transform:translateX(3px)}
+.nav-item.active{color:var(--primary);border-left-color:var(--primary);background:rgba(59,130,246,.08)}
+.nav-icon{font-size:1.1rem;width:24px;text-align:center}
+.sidebar-footer{padding:12px;border-top:1px solid var(--border);text-align:center;font-size:.65rem;color:var(--muted)}
+
+/* ===== HEADER ===== */
+.header{position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--header-h);background:rgba(10,10,26,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:999}
+.header-title{font-size:1rem;font-weight:700;color:var(--primary)}
+.btn-inicio{background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.4);color:var(--primary);padding:7px 14px;border-radius:8px;font-family:inherit;font-size:.8rem;font-weight:700;cursor:pointer;transition:all .3s;text-transform:uppercase;letter-spacing:.5px}
+.btn-inicio:hover{background:rgba(59,130,246,.3);border-color:var(--gold)}
+.countdown{font-size:1rem;color:var(--gold);font-weight:700}
+
+/* ===== MAIN ===== */
+.main{margin-left:var(--sidebar-w);margin-top:var(--header-h);padding:24px;min-height:calc(100vh - var(--header-h));position:relative;z-index:1}
+.page{display:none;animation:fadeIn .4s ease}.page.active{display:block}
+.page-title{font-size:1.5rem;font-weight:800;color:var(--gold);margin-bottom:4px}
+.page-sub{color:var(--muted);font-size:.85rem;margin-bottom:22px}
+
+/* ===== CARDS ===== */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;transition:all .3s}
+.card:hover{transform:translateY(-3px);border-color:rgba(59,130,246,.3);box-shadow:0 6px 24px rgba(59,130,246,.1)}
+.grid{display:grid;gap:16px;margin-bottom:16px}
+.grid-2{grid-template-columns:repeat(2,1fr)}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.grid-4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:900px){.grid-4{grid-template-columns:repeat(2,1fr)}.grid-3{grid-template-columns:1fr}.grid-2{grid-template-columns:1fr}}
+
+.stat-card{text-align:center}
+.stat-icon{font-size:1.8rem;margin-bottom:6px}
+.stat-number{font-size:2.2rem;font-weight:900;color:var(--primary);margin:6px 0}
+.stat-label{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+
+.section-title{font-size:1.15rem;font-weight:700;color:var(--primary);margin:22px 0 12px;display:flex;align-items:center;gap:8px}
+.section-title::before{content:'';width:4px;height:20px;background:linear-gradient(180deg,var(--primary),var(--gold));border-radius:2px}
+
+.badge{display:inline-block;padding:3px 8px;border-radius:10px;font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.badge-info{background:rgba(0,229,255,.2);color:var(--cyan)}
+.badge-success{background:rgba(0,230,118,.2);color:var(--green)}
+.badge-warning{background:rgba(255,214,0,.2);color:var(--gold)}
+
+/* Person row */
+.pessoa{display:flex;gap:12px;align-items:center;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;transition:all .25s}
+.pessoa:hover{border-color:rgba(59,130,246,.35);transform:translateX(3px)}
+.pessoa-avatar{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--purple));display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;flex-shrink:0}
+.pessoa-info{flex:1;min-width:0}
+.pessoa-nome{font-weight:700;font-size:.92rem;color:var(--text)}
+.pessoa-meta{font-size:.72rem;color:var(--muted);margin-top:2px}
+.pessoa-right{text-align:right;font-size:.75rem}
+.pessoa-num{font-weight:800;color:var(--gold);font-size:1rem}
+
+/* Form */
+.form-row{margin-bottom:12px}
+.form-row label{display:block;font-size:.75rem;color:var(--muted);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.form-row input,.form-row select{width:100%;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:.9rem;outline:none;transition:all .25s}
+.form-row input:focus,.form-row select:focus{border-color:var(--primary);background:rgba(59,130,246,.06)}
+.btn{padding:10px 18px;border:none;border-radius:8px;font-family:inherit;font-weight:700;font-size:.85rem;cursor:pointer;text-transform:uppercase;letter-spacing:.5px;transition:all .25s}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--cyan));color:#fff}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(59,130,246,.35)}
+
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th,td{padding:10px;text-align:left;border-bottom:1px solid var(--border)}
+th{color:var(--gold);text-transform:uppercase;font-size:.68rem;letter-spacing:1px;font-weight:700}
+tbody tr:hover{background:rgba(59,130,246,.04)}
+
+.empty{text-align:center;padding:28px;color:var(--muted);font-size:.85rem}
+</style>
+</head>
+<body>
+
+<!-- ===== SPLASH ===== -->
+<div class="splash" id="splash" onclick="entrarSenador()">
+  <div class="splash-avatar">🎖️</div>
+  <h1>COMANDO DO SENADOR</h1>
+  <h2>ALIADO CELINA LEÃO 2026</h2>
+  <span class="splash-tag">Bancada do Senador</span>
+  <p>Clique para entrar no sistema</p>
+</div>
+
+<!-- ===== SIDEBAR ===== -->
+<nav class="sidebar">
+  <div class="sidebar-brand" onclick="navegar('dashboard')">
+    <div class="brand-avatar">🎖️</div>
+    <div class="sidebar-name">SENADOR</div>
+    <div class="sidebar-title">Aliado Celina Leão</div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section">PAINEL</div>
+    <div class="nav-item active" onclick="navegar('dashboard')"><span class="nav-icon">📊</span>Dashboard</div>
+
+    <div class="nav-section">MINHA BANCADA</div>
+    <div class="nav-item" onclick="navegar('federais')"><span class="nav-icon">🏛️</span>Dep. Federais</div>
+    <div class="nav-item" onclick="navegar('distritais')"><span class="nav-icon">🏢</span>Dep. Distritais</div>
+    <div class="nav-item" onclick="navegar('coordenadores')"><span class="nav-icon">🤝</span>Coordenadores</div>
+
+    <div class="nav-section">ELEITORES</div>
+    <div class="nav-item" onclick="navegar('eleitores')"><span class="nav-icon">🗳️</span>Cadastrar Eleitor</div>
+  </div>
+  <div class="sidebar-footer">Comando do Senador · Sob Celina Leão 2026</div>
+</nav>
+
+<!-- ===== HEADER ===== -->
+<header class="header">
+  <div style="display:flex;align-items:center;gap:14px">
+    <button class="btn-inicio" onclick="window.location.href='index.html'">← Início</button>
+    <span class="header-title" id="headerTitle">📊 Dashboard</span>
+  </div>
+  <div class="countdown" id="countdown">---</div>
+</header>
+
+<!-- ===== MAIN ===== -->
+<main class="main">
+
+  <!-- DASHBOARD -->
+  <section class="page active" id="page-dashboard">
+    <h1 class="page-title">🎖️ Painel do Senador</h1>
+    <p class="page-sub">Visão consolidada da bancada aliada Celina Leão — dep. federais, dep. distritais e coordenadores sob o Senador.</p>
+
+    <div class="grid grid-4">
+      <div class="card stat-card"><div class="stat-icon">🏛️</div><div class="stat-number" id="statFederais">0</div><div class="stat-label">Dep. Federais</div></div>
+      <div class="card stat-card"><div class="stat-icon">🏢</div><div class="stat-number" id="statDistritais">0</div><div class="stat-label">Dep. Distritais</div></div>
+      <div class="card stat-card"><div class="stat-icon">🤝</div><div class="stat-number" id="statCoords">0</div><div class="stat-label">Coordenadores</div></div>
+      <div class="card stat-card"><div class="stat-icon">🗳️</div><div class="stat-number" id="statEleitores">0</div><div class="stat-label">Eleitores Cadastrados</div></div>
+    </div>
+
+    <div class="section-title">Composição da Bancada</div>
+    <div class="card">
+      <p style="color:var(--muted);font-size:.85rem;line-height:1.7">
+        Esta é a bancada que responde diretamente ao Senador, em aliança com a Governadora <b style="color:var(--gold)">Celina Leão</b>.
+        O Senador acompanha o desempenho da sua base — <b>deputados federais</b>, <b>deputados distritais</b> e <b>coordenadores</b> — e pode cadastrar eleitores diretamente.
+        O comando de gamificação, missões, recursos e monitoramento é exclusivo da Governadora.
+      </p>
+    </div>
+
+    <div class="section-title">Últimos eleitores cadastrados pelo Senador</div>
+    <div id="ultimosEleitores" class="card"><div class="empty">Nenhum eleitor cadastrado ainda.</div></div>
+  </section>
+
+  <!-- FEDERAIS -->
+  <section class="page" id="page-federais">
+    <h1 class="page-title">🏛️ Deputados Federais da Minha Bancada</h1>
+    <p class="page-sub">Federais vinculados ao Senador — acompanhe partido e região de atuação.</p>
+    <div id="federaisLista"></div>
+  </section>
+
+  <!-- DISTRITAIS -->
+  <section class="page" id="page-distritais">
+    <h1 class="page-title">🏢 Deputados Distritais da Minha Bancada</h1>
+    <p class="page-sub">Distritais vinculados ao Senador — distribuídos pelas regiões administrativas do DF.</p>
+    <div id="distritaisLista"></div>
+  </section>
+
+  <!-- COORDENADORES -->
+  <section class="page" id="page-coordenadores">
+    <h1 class="page-title">🤝 Coordenadores da Minha Base</h1>
+    <p class="page-sub">Coordenadores regionais que operam a mobilização territorial sob o Senador.</p>
+    <div id="coordsLista"></div>
+  </section>
+
+  <!-- ELEITORES -->
+  <section class="page" id="page-eleitores">
+    <h1 class="page-title">🗳️ Cadastrar Eleitor</h1>
+    <p class="page-sub">Registre eleitores conquistados pelo Senador. Os dados ficam salvos neste navegador.</p>
+
+    <div class="card" style="max-width:560px;margin-bottom:22px">
+      <div class="form-row"><label>Nome completo</label><input type="text" id="elNome" placeholder="Nome do eleitor"></div>
+      <div class="form-row"><label>WhatsApp</label><input type="text" id="elWhats" placeholder="(61) 9XXXX-XXXX"></div>
+      <div class="form-row"><label>Região Administrativa</label>
+        <select id="elRegiao">
+          <option value="">Selecione…</option>
+          <option>Ceilândia</option><option>Taguatinga</option><option>Samambaia</option><option>Gama</option>
+          <option>Planaltina</option><option>Sobradinho</option><option>Águas Claras</option><option>Plano Piloto</option>
+          <option>Santa Maria</option><option>Recanto das Emas</option><option>São Sebastião</option><option>Paranoá</option>
+          <option>Brazlândia</option><option>Núcleo Bandeirante</option><option>Riacho Fundo</option><option>Guará</option>
+          <option>Candangolândia</option><option>Cruzeiro</option><option>Lago Norte</option><option>Lago Sul</option>
+          <option>Jardim Botânico</option><option>Varjão</option><option>Itapoã</option><option>Sudoeste</option>
+          <option>Vicente Pires</option><option>Arniqueira</option><option>Estrutural</option><option>Outra</option>
+        </select>
+      </div>
+      <div class="form-row"><label>Observação (opcional)</label><input type="text" id="elObs" placeholder="Como conheceu o senador, vínculo…"></div>
+      <button class="btn btn-primary" onclick="cadastrarEleitor()">✓ Cadastrar eleitor</button>
+    </div>
+
+    <div class="section-title">Eleitores cadastrados (<span id="contadorEleitores">0</span>)</div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <table id="tabelaEleitores">
+        <thead><tr><th>#</th><th>Nome</th><th>WhatsApp</th><th>Região</th><th>Data</th></tr></thead>
+        <tbody id="corpoEleitores"></tbody>
+      </table>
+      <div id="vazioEleitores" class="empty">Nenhum eleitor cadastrado ainda. Use o formulário acima.</div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+// ===== DADOS DA BANCADA DO SENADOR =====
+const DADOS = {
+  federais: [
+    { nome: 'Dep. Fed. Rafael Prudente', partido: 'MDB', foto: 'RP', regiao: 'Brasília / Plano Piloto' },
+    { nome: 'Dep. Fed. Daniel Donizete', partido: 'PP', foto: 'DD', regiao: 'Ceilândia / Taguatinga' },
+    { nome: 'Dep. Fed. Fred Linhares', partido: 'REPUBLICANOS', foto: 'FL', regiao: 'Santa Maria / Gama' }
+  ],
+  distritais: [
+    { nome: 'Wellington Luiz', partido: 'MDB', regiao: 'Ceilândia' },
+    { nome: 'Jaqueline Silva', partido: 'MDB', regiao: 'Taguatinga' },
+    { nome: 'Eduardo Pedrosa', partido: 'MDB', regiao: 'Samambaia' },
+    { nome: 'Roberio Negreiros', partido: 'MDB', regiao: 'Gama' },
+    { nome: 'Joaquim Roriz Neto', partido: 'PP', regiao: 'Planaltina' },
+    { nome: 'João Cardoso', partido: 'PP', regiao: 'Sobradinho' },
+    { nome: 'Jane Cleber', partido: 'PP', regiao: 'Águas Claras' },
+    { nome: 'Daniel de Castro', partido: 'PP', regiao: 'Plano Piloto' },
+    { nome: 'Rogerio Morro da Cruz', partido: 'REPUBLICANOS', regiao: 'Santa Maria' },
+    { nome: 'Jorge Viana', partido: 'REPUBLICANOS', regiao: 'Recanto das Emas' },
+    { nome: 'Martins Machado', partido: 'REPUBLICANOS', regiao: 'São Sebastião' },
+    { nome: 'Iolando', partido: 'REPUBLICANOS', regiao: 'Paranoá' }
+  ],
+  coordenadores: [
+    { nome: 'Rogério Lima', regiao: 'Taguatinga Centro', contato: '(61) 9 9100-1111' },
+    { nome: 'Camila Rezende', regiao: 'Ceilândia Sul', contato: '(61) 9 9100-2222' },
+    { nome: 'Pedro Vasconcelos', regiao: 'Samambaia Norte', contato: '(61) 9 9100-3333' },
+    { nome: 'Luciana Martins', regiao: 'Gama Leste', contato: '(61) 9 9100-4444' },
+    { nome: 'Anderson Silva', regiao: 'Planaltina', contato: '(61) 9 9100-5555' },
+    { nome: 'Mariana Dias', regiao: 'Sobradinho II', contato: '(61) 9 9100-6666' },
+    { nome: 'Fabio Oliveira', regiao: 'Santa Maria', contato: '(61) 9 9100-7777' },
+    { nome: 'Juliana Costa', regiao: 'Paranoá', contato: '(61) 9 9100-8888' }
+  ]
+};
+
+const STORAGE_KEY = 'senador_celina_eleitores_2026';
+let eleitores = [];
+
+function carregarEleitores(){
+  try { eleitores = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e){ eleitores = []; }
+}
+function salvarEleitores(){
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(eleitores)); } catch(e){}
+}
+
+function entrarSenador(){
+  document.getElementById('splash').classList.add('hidden');
+  inicializar();
+}
+
+function inicializar(){
+  carregarEleitores();
+  renderDashboard();
+  renderFederais();
+  renderDistritais();
+  renderCoords();
+  renderEleitores();
+  atualizarContagem();
+  setInterval(atualizarContagem, 60000);
+}
+
+function navegar(pagina){
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const el = document.getElementById('page-' + pagina);
+  if (el) el.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const nav = document.querySelector(`[onclick="navegar('${pagina}')"]`);
+  if (nav) nav.classList.add('active');
+  const titulos = {
+    dashboard: '📊 Dashboard',
+    federais: '🏛️ Dep. Federais',
+    distritais: '🏢 Dep. Distritais',
+    coordenadores: '🤝 Coordenadores',
+    eleitores: '🗳️ Cadastrar Eleitor'
+  };
+  document.getElementById('headerTitle').textContent = titulos[pagina] || pagina;
+}
+
+function atualizarContagem(){
+  const eleicao = new Date(2026, 9, 4);
+  const dias = Math.floor((eleicao - new Date()) / (1000*60*60*24));
+  document.getElementById('countdown').textContent = dias > 0 ? `${dias} dias p/ eleição` : 'Dia da eleição!';
+}
+
+function renderDashboard(){
+  document.getElementById('statFederais').textContent = DADOS.federais.length;
+  document.getElementById('statDistritais').textContent = DADOS.distritais.length;
+  document.getElementById('statCoords').textContent = DADOS.coordenadores.length;
+  document.getElementById('statEleitores').textContent = eleitores.length;
+
+  const div = document.getElementById('ultimosEleitores');
+  if (!eleitores.length) {
+    div.innerHTML = '<div class="empty">Nenhum eleitor cadastrado ainda. Vá em <b>Cadastrar Eleitor</b>.</div>';
+    return;
+  }
+  const ultimos = eleitores.slice(-5).reverse();
+  div.innerHTML = ultimos.map(e => `
+    <div class="pessoa">
+      <div class="pessoa-avatar" style="background:linear-gradient(135deg,var(--green),var(--cyan))">${(e.nome||'?').charAt(0).toUpperCase()}</div>
+      <div class="pessoa-info">
+        <div class="pessoa-nome">${escapar(e.nome)}</div>
+        <div class="pessoa-meta">${escapar(e.regiao || '—')} · ${escapar(e.whats || 'sem WhatsApp')}</div>
+      </div>
+      <div class="pessoa-right"><div class="pessoa-num">${new Date(e.data).toLocaleDateString('pt-BR')}</div></div>
+    </div>
+  `).join('');
+}
+
+function renderFederais(){
+  document.getElementById('federaisLista').innerHTML = DADOS.federais.map(f => `
+    <div class="pessoa">
+      <div class="pessoa-avatar">${f.foto}</div>
+      <div class="pessoa-info">
+        <div class="pessoa-nome">${escapar(f.nome)}</div>
+        <div class="pessoa-meta">${escapar(f.regiao)} <span class="badge badge-info" style="margin-left:6px">${escapar(f.partido)}</span></div>
+      </div>
+      <div class="pessoa-right"><span class="badge badge-success">Ativo</span></div>
+    </div>
+  `).join('');
+}
+
+function renderDistritais(){
+  document.getElementById('distritaisLista').innerHTML = DADOS.distritais.map(d => `
+    <div class="pessoa">
+      <div class="pessoa-avatar" style="background:linear-gradient(135deg,var(--purple),var(--primary))">${(d.nome||'?').charAt(0)}</div>
+      <div class="pessoa-info">
+        <div class="pessoa-nome">${escapar(d.nome)}</div>
+        <div class="pessoa-meta">${escapar(d.regiao)} <span class="badge badge-info" style="margin-left:6px">${escapar(d.partido)}</span></div>
+      </div>
+      <div class="pessoa-right"><span class="badge badge-success">Ativo</span></div>
+    </div>
+  `).join('');
+}
+
+function renderCoords(){
+  document.getElementById('coordsLista').innerHTML = DADOS.coordenadores.map(c => `
+    <div class="pessoa">
+      <div class="pessoa-avatar" style="background:linear-gradient(135deg,var(--gold),var(--red))">${(c.nome||'?').charAt(0)}</div>
+      <div class="pessoa-info">
+        <div class="pessoa-nome">${escapar(c.nome)}</div>
+        <div class="pessoa-meta">${escapar(c.regiao)} · ${escapar(c.contato)}</div>
+      </div>
+      <div class="pessoa-right"><span class="badge badge-warning">Base</span></div>
+    </div>
+  `).join('');
+}
+
+function renderEleitores(){
+  document.getElementById('contadorEleitores').textContent = eleitores.length;
+  const tbody = document.getElementById('corpoEleitores');
+  const vazio = document.getElementById('vazioEleitores');
+  if (!eleitores.length) {
+    tbody.innerHTML = '';
+    vazio.style.display = 'block';
+    return;
+  }
+  vazio.style.display = 'none';
+  tbody.innerHTML = eleitores.map((e,i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td>${escapar(e.nome)}</td>
+      <td>${escapar(e.whats || '—')}</td>
+      <td>${escapar(e.regiao || '—')}</td>
+      <td>${new Date(e.data).toLocaleDateString('pt-BR')}</td>
+    </tr>
+  `).join('');
+}
+
+function cadastrarEleitor(){
+  const nome = document.getElementById('elNome').value.trim();
+  const whats = document.getElementById('elWhats').value.trim();
+  const regiao = document.getElementById('elRegiao').value;
+  const obs = document.getElementById('elObs').value.trim();
+  if (!nome) { alert('Informe o nome do eleitor.'); return; }
+  eleitores.push({ nome, whats, regiao, obs, data: new Date().toISOString() });
+  salvarEleitores();
+  document.getElementById('elNome').value = '';
+  document.getElementById('elWhats').value = '';
+  document.getElementById('elRegiao').value = '';
+  document.getElementById('elObs').value = '';
+  renderEleitores();
+  renderDashboard();
+  alert('✓ Eleitor cadastrado na base do Senador.');
+}
+
+function escapar(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+</script>
+</body>
+</html>
