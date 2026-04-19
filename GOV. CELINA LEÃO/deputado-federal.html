@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marcelo Andrade · Federal MDB-DF · Comando Ibaneis 2026 (Demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a1a;--surface:rgba(255,255,255,0.04);--surface2:rgba(255,255,255,0.07);
+--border:rgba(255,255,255,0.09);--text:#e8e8f0;--muted:#8a8aa0;--green:#00e676;
+--gold:#ffd600;--purple:#b388ff;--cyan:#00e5ff;--red:#ff5252;--orange:#ff9100;
+--blue:#448aff;--sidebar-w:240px;--header-h:64px;--radius:14px}
+html,body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;
+background:radial-gradient(ellipse at 20% 0%,rgba(0,230,118,0.07),transparent 50%),
+radial-gradient(ellipse at 80% 100%,rgba(255,214,0,0.05),transparent 50%);pointer-events:none;z-index:0}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:var(--green);border-radius:3px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes neonPulse{0%,100%{text-shadow:0 0 10px var(--gold)}50%{text-shadow:0 0 28px var(--gold)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(1800deg)}}
+@keyframes sparkle{0%,100%{opacity:0.3;transform:scale(1)}50%{opacity:1;transform:scale(1.4)}}
+
+.splash{position:fixed;inset:0;background:linear-gradient(135deg,#0a0a1a,#1a0a2e 50%,#0a0a1a);
+display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:99999;cursor:pointer;transition:opacity .6s}
+.splash.hidden{opacity:0;pointer-events:none}
+.splash svg{width:160px;height:160px;animation:float 3s infinite;filter:drop-shadow(0 0 24px rgba(0,230,118,.4))}
+.splash h1{font-size:2.4rem;font-weight:900;color:var(--gold);letter-spacing:3px;margin-top:14px;animation:neonPulse 2s infinite}
+.splash h2{font-size:.95rem;color:var(--green);font-weight:700;margin-top:4px;letter-spacing:2px}
+.splash-tag{display:inline-block;background:rgba(0,229,255,0.15);color:var(--cyan);padding:6px 14px;border-radius:20px;
+font-size:.7rem;font-weight:600;margin-top:14px;letter-spacing:2px;text-transform:uppercase;border:1px solid rgba(0,229,255,.3)}
+
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);background:rgba(10,10,26,.96);
+backdrop-filter:blur(12px);border-right:1px solid var(--border);z-index:1000;display:flex;flex-direction:column}
+.sidebar-brand{padding:18px 14px;text-align:center;border-bottom:1px solid var(--border)}
+.sidebar-brand svg{width:54px;height:54px;margin-bottom:4px}
+.sidebar-name{font-size:.95rem;font-weight:900;color:var(--green);letter-spacing:1.5px}
+.sidebar-title{font-size:.58rem;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;font-weight:700}
+.sidebar-user{padding:10px 14px;border-bottom:1px solid var(--border);font-size:.78rem}
+.sidebar-user b{color:var(--cyan);font-size:.85rem;display:block}
+.sidebar-user small{color:var(--muted);font-size:.65rem}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.nav-section{padding:14px 16px 4px;font-size:.55rem;text-transform:uppercase;letter-spacing:2px;color:var(--gold);font-weight:700;opacity:.75}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,.6);
+cursor:pointer;transition:all .25s;border-left:3px solid transparent;font-size:.82rem;font-weight:500;user-select:none}
+.nav-item:hover{color:#fff;background:rgba(255,255,255,.03)}
+.nav-item.active{color:var(--green);border-left-color:var(--green);background:rgba(0,230,118,.08)}
+.nav-icon{font-size:1.05rem;width:22px;text-align:center}
+.nav-badge{margin-left:auto;background:var(--gold);color:#0a0a1a;font-size:.6rem;padding:2px 6px;border-radius:10px;font-weight:700}
+.sidebar-footer{padding:12px;border-top:1px solid var(--border);text-align:center;font-size:.62rem;color:var(--muted)}
+
+.header{position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--header-h);background:rgba(10,10,26,.96);
+backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;
+justify-content:space-between;padding:0 24px;z-index:999}
+.header-title{font-size:1rem;font-weight:700;color:var(--green);display:flex;gap:10px;align-items:center}
+.header-demo-badge{background:rgba(255,82,82,.15);color:var(--red);padding:3px 8px;border-radius:6px;
+font-size:.6rem;font-weight:700;letter-spacing:1px;border:1px solid rgba(255,82,82,.3)}
+.header-right{display:flex;align-items:center;gap:18px}
+.header-pts{font-size:1rem;color:var(--gold);font-weight:800}
+.header-pts small{color:var(--muted);font-size:.6rem;font-weight:500;display:block}
+
+.main{margin-left:var(--sidebar-w);margin-top:var(--header-h);padding:24px;position:relative;z-index:1}
+.page{display:none;animation:fadeIn .4s ease-out}
+.page.active{display:block}
+.page-title{font-size:1.4rem;font-weight:800;color:var(--gold);margin-bottom:4px}
+.page-sub{color:var(--muted);font-size:.82rem;margin-bottom:22px}
+
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:24px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;position:relative;overflow:hidden;transition:all .25s}
+.kpi:hover{border-color:var(--green);transform:translateY(-3px)}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--green),var(--gold))}
+.kpi-label{font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);font-weight:600}
+.kpi-value{font-size:1.9rem;font-weight:900;color:var(--green);margin:6px 0 2px;letter-spacing:-1px}
+.kpi-delta{font-size:.72rem;font-weight:600}
+.kpi-delta.up{color:var(--green)}.kpi-delta.down{color:var(--red)}
+.kpi-icon{position:absolute;top:14px;right:14px;font-size:1.6rem;opacity:.18}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:18px}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.card-title{font-size:.95rem;font-weight:700;color:var(--text);display:flex;gap:8px;align-items:center}
+.card-title-icon{color:var(--green)}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid-3{display:grid;grid-template-columns:2fr 1fr;gap:18px}
+@media(max-width:1100px){.grid-2,.grid-3{grid-template-columns:1fr}}
+
+.hero{background:linear-gradient(135deg,rgba(0,230,118,.06),rgba(255,214,0,.06));border:1px solid var(--border);
+border-radius:var(--radius);padding:22px 24px;margin-bottom:22px;display:flex;gap:20px;align-items:center}
+.hero-avatar{width:86px;height:86px;border-radius:50%;background:linear-gradient(135deg,#448aff,#00e5ff);
+display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;color:#0a0a1a;flex-shrink:0}
+.hero-text h2{font-size:1.3rem;font-weight:800;color:var(--gold);margin-bottom:4px}
+.hero-text p{color:var(--text);font-size:.88rem;line-height:1.5}
+.hero-text small{color:var(--muted);font-size:.72rem}
+
+.ranking{width:100%;border-collapse:collapse}
+.ranking th{text-align:left;padding:10px 8px;font-size:.62rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);border-bottom:1px solid var(--border);font-weight:700}
+.ranking td{padding:12px 8px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.85rem}
+.rank-pos{font-weight:900;color:var(--gold);width:32px}
+.rank-pos.top1{color:var(--gold)}.rank-pos.top2{color:#c0c0c0}.rank-pos.top3{color:#cd7f32}
+.rank-name{font-weight:600}.rank-sub{font-size:.7rem;color:var(--muted)}
+.rank-pts{color:var(--green);font-weight:800}
+.status-pill{display:inline-block;padding:3px 9px;border-radius:12px;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.pill-ok{background:rgba(0,230,118,.15);color:var(--green);border:1px solid rgba(0,230,118,.3)}
+.pill-warn{background:rgba(255,145,0,.15);color:var(--orange);border:1px solid rgba(255,145,0,.3)}
+.pill-danger{background:rgba(255,82,82,.15);color:var(--red);border:1px solid rgba(255,82,82,.3)}
+
+.bar{width:100%;height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;margin-top:6px}
+.bar-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--gold));transition:width .6s}
+
+.list-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.85rem}
+.list-item:last-child{border-bottom:none}
+.li-label{color:var(--text);font-weight:600}.li-sub{color:var(--muted);font-size:.7rem}.li-val{color:var(--gold);font-weight:800}
+
+.btn{padding:10px 18px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;font-size:.82rem;font-weight:600;transition:all .2s;font-family:inherit}
+.btn:hover{background:var(--surface2);border-color:var(--green)}
+.btn-primary{background:linear-gradient(135deg,var(--green),#00b359);color:#0a0a1a;border:none;font-weight:800}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,230,118,.4)}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#c9952a);color:#0a0a1a;border:none;font-weight:800}
+
+/* ROULETTE */
+.roulette-wrap{display:flex;gap:24px;align-items:center;flex-wrap:wrap;justify-content:center}
+.roulette{position:relative;width:300px;height:300px}
+.roulette-disc{width:100%;height:100%;border-radius:50%;position:relative;
+background:conic-gradient(
+  var(--gold) 0deg 45deg,
+  var(--green) 45deg 90deg,
+  var(--cyan) 90deg 135deg,
+  var(--purple) 135deg 180deg,
+  var(--orange) 180deg 225deg,
+  var(--red) 225deg 270deg,
+  var(--blue) 270deg 315deg,
+  #ff6ec7 315deg 360deg);
+box-shadow:0 0 40px rgba(255,214,0,.3),inset 0 0 20px rgba(0,0,0,.5);
+border:4px solid var(--gold);transition:transform 4s cubic-bezier(.17,.67,.21,1)}
+.roulette-disc.spinning{animation:spin 4s cubic-bezier(.17,.67,.21,1) forwards}
+.roulette-labels{position:absolute;inset:0;pointer-events:none}
+.roulette-labels span{position:absolute;font-size:.62rem;font-weight:800;color:#0a0a1a;
+top:50%;left:50%;transform-origin:0 0}
+.roulette-pointer{position:absolute;top:-10px;left:50%;transform:translateX(-50%);
+width:0;height:0;border-left:14px solid transparent;border-right:14px solid transparent;
+border-top:22px solid var(--gold);filter:drop-shadow(0 2px 4px rgba(0,0,0,.5));z-index:3}
+.roulette-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+width:60px;height:60px;border-radius:50%;background:radial-gradient(circle,#1a1a3a,#0a0a1a);
+border:3px solid var(--gold);display:flex;align-items:center;justify-content:center;z-index:2;
+font-size:1.4rem;color:var(--gold)}
+.roulette-info{max-width:280px}
+.roulette-info h3{color:var(--gold);font-size:1.1rem;margin-bottom:8px}
+.milestone{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.78rem}
+.milestone.done{color:var(--muted);text-decoration:line-through}
+.milestone.active{color:var(--gold);font-weight:700}
+.milestone.active::after{content:' ◀ próximo';color:var(--green);font-size:.65rem}
+
+.prize-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:14px}
+.prize{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;font-size:.78rem}
+.prize-icon{font-size:1.6rem;margin-bottom:4px}
+.prize-name{font-weight:700;color:var(--gold)}
+.prize-sub{color:var(--muted);font-size:.65rem;margin-top:3px}
+
+.formula-box{background:rgba(0,230,118,.06);border-left:3px solid var(--green);border-radius:6px;padding:14px;margin-top:12px;font-size:.85rem}
+.formula-box code{color:var(--green);font-weight:700;background:rgba(0,0,0,.3);padding:2px 8px;border-radius:4px}
+
+.monitor-row{display:flex;gap:10px;padding:10px;background:var(--surface2);border-radius:8px;margin-bottom:8px;align-items:center;font-size:.78rem}
+.monitor-network{width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:900;color:#fff;font-size:.65rem}
+.net-ig{background:linear-gradient(45deg,#f09433,#dc2743,#bc1888)}
+.net-fb{background:#1877f2}
+.net-wa{background:#25d366}
+
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:20000;display:none;align-items:center;justify-content:center;animation:fadeIn .3s}
+.modal-backdrop.show{display:flex}
+.modal{background:linear-gradient(135deg,#1a1a3a,#0a0a1a);border:2px solid var(--gold);border-radius:16px;padding:30px 36px;text-align:center;max-width:420px;
+box-shadow:0 0 60px rgba(255,214,0,.5)}
+.modal h2{color:var(--gold);font-size:1.4rem;margin-bottom:8px}
+.modal-emoji{font-size:4rem;margin-bottom:10px;animation:sparkle 1.5s infinite}
+.modal-prize{color:var(--green);font-size:1.6rem;font-weight:900;margin:14px 0}
+.modal-desc{color:var(--text);font-size:.88rem;line-height:1.5;margin-bottom:18px}
+
+.verba-timeline{position:relative;padding-left:24px}
+.verba-timeline::before{content:'';position:absolute;left:7px;top:0;bottom:0;width:2px;background:var(--border)}
+.verba-event{position:relative;padding:10px 0 14px}
+.verba-event::before{content:'';position:absolute;left:-22px;top:14px;width:14px;height:14px;border-radius:50%;background:var(--green);border:2px solid var(--bg)}
+.verba-event.pending::before{background:var(--muted)}
+.verba-event.future::before{background:transparent;border-color:var(--muted)}
+.verba-date{font-size:.7rem;color:var(--gold);font-weight:700}
+.verba-value{font-size:1.1rem;color:var(--green);font-weight:800}
+.verba-desc{font-size:.78rem;color:var(--muted)}
+
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:700px){.form-grid{grid-template-columns:1fr}}
+.form-group{display:flex;flex-direction:column;gap:4px}
+.form-group label{font-size:.72rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.form-group input,.form-group select,.form-group textarea{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:inherit;font-size:.88rem;outline:none;transition:border-color .2s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--green)}
+.form-group textarea{resize:vertical;min-height:80px}
+.form-row-full{grid-column:1 / -1}
+.toast-fix{position:fixed;bottom:20px;right:20px;background:linear-gradient(135deg,var(--green),#00b359);color:#0a0a1a;border-radius:12px;padding:14px 20px;font-size:.88rem;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,.5);z-index:10000;display:none}
+.toast-fix.show{display:block;animation:fadeIn .3s}
+</style>
+<script src="img/qrcode.js"></script>
+</head>
+<body>
+
+<a href="index.html" title="Voltar à tela principal"
+   style="position:fixed; top:14px; left:14px; z-index:999999;
+   background:rgba(59,130,246,0.2); border:1px solid rgba(59,130,246,0.5); color:#448aff;
+   padding:8px 14px; border-radius:8px; font-family:Poppins,sans-serif; font-size:0.8rem;
+   font-weight:700; text-decoration:none; text-transform:uppercase; letter-spacing:0.5px;
+   backdrop-filter:blur(8px); transition:all 0.3s;"
+   onmouseover="this.style.background='rgba(59,130,246,0.4)'; this.style.borderColor='#ffd600';"
+   onmouseout="this.style.background='rgba(59,130,246,0.2)'; this.style.borderColor='rgba(59,130,246,0.5)';">
+  ← Início
+</a>
+
+<div class="splash" id="splash" onclick="closeSplash()">
+  <svg viewBox="0 0 200 200">
+      <defs>
+        <linearGradient id="avgrad-M" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#ffe970"/>
+          <stop offset="55%" stop-color="#ffd600"/>
+          <stop offset="100%" stop-color="#c9952a"/>
+        </linearGradient>
+        <radialGradient id="avbg-M" cx="0.5" cy="0.35" r="0.8">
+          <stop offset="0%" stop-color="#1a1a3a"/>
+          <stop offset="100%" stop-color="#0a0a1a"/>
+        </radialGradient>
+      </defs>
+      <circle cx="100" cy="100" r="95" fill="url(#avbg-M)" stroke="url(#avgrad-M)" stroke-width="2.5"/>
+      <circle cx="100" cy="100" r="82" fill="none" stroke="#ffd600" stroke-width="0.6" opacity="0.35"/>
+      <line x1="100" y1="6" x2="100" y2="16" stroke="#ffd600" stroke-width="1.2"/>
+      <line x1="100" y1="184" x2="100" y2="194" stroke="#ffd600" stroke-width="1.2"/>
+      <line x1="6" y1="100" x2="16" y2="100" stroke="#ffd600" stroke-width="1.2"/>
+      <line x1="184" y1="100" x2="194" y2="100" stroke="#ffd600" stroke-width="1.2"/>
+      <text x="100" y="128" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="900" font-size="110" fill="url(#avgrad-M)" font-style="italic">M</text>
+    </svg>
+  <h1>COMANDO IBANEIS</h1>
+  <h2>Painel Deputado Federal</h2>
+  <div class="splash-tag">Marcelo Andrade · MDB-DF</div>
+</div>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <svg viewBox="0 0 200 200">
+      <defs>
+        <linearGradient id="avgrad-M" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#ffe970"/>
+          <stop offset="55%" stop-color="#ffd600"/>
+          <stop offset="100%" stop-color="#c9952a"/>
+        </linearGradient>
+        <radialGradient id="avbg-M" cx="0.5" cy="0.35" r="0.8">
+          <stop offset="0%" stop-color="#1a1a3a"/>
+          <stop offset="100%" stop-color="#0a0a1a"/>
+        </radialGradient>
+      </defs>
+      <circle cx="100" cy="100" r="95" fill="url(#avbg-M)" stroke="url(#avgrad-M)" stroke-width="2.5"/>
+      <circle cx="100" cy="100" r="82" fill="none" stroke="#ffd600" stroke-width="0.6" opacity="0.35"/>
+      <line x1="100" y1="6" x2="100" y2="16" stroke="#ffd600" stroke-width="1.2"/>
+      <line x1="100" y1="184" x2="100" y2="194" stroke="#ffd600" stroke-width="1.2"/>
+      <line x1="6" y1="100" x2="16" y2="100" stroke="#ffd600" stroke-width="1.2"/>
+      <line x1="184" y1="100" x2="194" y2="100" stroke="#ffd600" stroke-width="1.2"/>
+      <text x="100" y="128" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="900" font-size="110" fill="url(#avgrad-M)" font-style="italic">M</text>
+    </svg>
+    <div class="sidebar-name">COMANDO IBANEIS</div>
+    <div class="sidebar-title">Painel Federal</div>
+  </div>
+  <div class="sidebar-user">
+    <b>Marcelo Andrade</b>
+    <small>Federal MDB-DF · #1 na rede</small>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Meu Jogo</div>
+    <div class="nav-item active" data-page="home"><span class="nav-icon">◈</span>Minha Campanha</div>
+    <div class="nav-item" data-page="pontos"><span class="nav-icon">⬆</span>Pontuação Detalhada</div>
+    <div class="nav-item" data-page="roleta"><span class="nav-icon">⚡</span>Roleta<span class="nav-badge">2</span></div>
+    <div class="nav-item" data-page="verba"><span class="nav-icon">$</span>Verba Recebida</div>
+
+    <div class="nav-section">Base Direta</div>
+    <div class="nav-item" data-page="cadastrar"><span class="nav-icon">➕</span>Cadastrar Eleitor<span class="nav-badge">+1</span></div>
+    <div class="nav-item" data-page="meus-leads"><span class="nav-icon">⬢</span>Meus 18.200 Leads</div>
+
+    <div class="nav-section">Minha Rede</div>
+    <div class="nav-item" data-page="distritais"><span class="nav-icon">♦</span>Meus Distritais</div>
+    <div class="nav-item" data-page="missoes"><span class="nav-icon">◇</span>Missões Ativas</div>
+
+    <div class="nav-section">Distritais & Coordenadores</div>
+    <div class="nav-item" data-page="enviar-missoes"><span class="nav-icon">⚑</span>Missões para Distritais</div>
+    <div class="nav-item" data-page="qr"><span class="nav-icon">◻</span>QR Codes Campanha</div>
+
+    <div class="nav-section">Monitor</div>
+    <div class="nav-item" data-page="monitor"><span class="nav-icon">◉</span>Feed Redes</div>
+    <div class="nav-item" data-page="ranking"><span class="nav-icon">★</span>Ranking Federais</div>
+  </nav>
+  <div class="sidebar-footer">DEMO v1.0 · INTEIA</div>
+</aside>
+
+<header class="header">
+  <div class="header-title">
+    <span id="header-title">Minha Campanha</span>
+    <span class="header-demo-badge">DEMO · DADOS SIMULADOS</span>
+  </div>
+  <div class="header-right">
+    <div class="header-pts">32.500 pts<small>Total · 1º lugar</small></div>
+  </div>
+</header>
+
+<main class="main">
+
+<section class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-avatar">MA</div>
+    <div class="hero-text">
+      <h2>Você está em 1º lugar, Marcelo.</h2>
+      <p>Sua rede tem <b style="color:var(--green)">4 distritais</b> ativos e <b style="color:var(--green)">20 coordenadores</b>. Você já cadastrou <b style="color:var(--gold)">18.200 contatos</b> diretos e acumulou <b style="color:var(--gold)">32.500 pontos</b>. Próximo marco em <b style="color:var(--cyan)">2.500 pts</b> — libera rodada na Roleta.</p>
+      <small>Próximo repasse de verba: 25/04 · R$ 353.000 previstos</small>
+    </div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-icon">◈</div><div class="kpi-label">Pontos Próprios</div><div class="kpi-value">24.950</div><div class="kpi-delta up">cadastros + postagens</div></div>
+    <div class="kpi"><div class="kpi-icon">♦</div><div class="kpi-label">Pontos da Rede (25%)</div><div class="kpi-value">7.550</div><div class="kpi-delta up">4 distritais</div></div>
+    <div class="kpi"><div class="kpi-icon">⬢</div><div class="kpi-label">Contatos Confirmados <span style="cursor:pointer; color:var(--green)" onclick="explicarConfirmado()" title="Clique para saber mais">ⓘ</span></div><div class="kpi-value">18.200</div><div class="kpi-delta up">▲ 640 hoje</div></div>
+    <div class="kpi"><div class="kpi-icon">$</div><div class="kpi-label">Verba Acumulada</div><div class="kpi-value">R$ 780K</div><div class="kpi-delta up">35,3% do bolo</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><div class="card-title"><span class="card-title-icon">♦</span>Meus 4 Distritais</div></div>
+      <div class="list-item"><div><div class="li-label">Helena Cardoso</div><div class="li-sub">Taguatinga · 4.820 contatos · 284 posts</div></div><div class="li-val">9.400 pts</div></div>
+      <div class="list-item"><div><div class="li-label">Fábio Ribeiro</div><div class="li-sub">Ceilândia · 3.960 contatos · 241 posts</div></div><div class="li-val">8.100 pts</div></div>
+      <div class="list-item"><div><div class="li-label">Denise Pontes</div><div class="li-sub">Guará/SIA · 3.180 contatos · 196 posts</div></div><div class="li-val">6.800 pts</div></div>
+      <div class="list-item"><div><div class="li-label">Tiago Moura</div><div class="li-sub">Samambaia · 2.710 contatos · 164 posts</div></div><div class="li-val">5.900 pts</div></div>
+      <div class="formula-box">
+        <b>Sua fórmula:</b> <code>1,0 × próprios + 0,25 × Σ distritais</code><br>
+        <small style="color:var(--muted)">24.950 + 0,25 × (9.400 + 8.100 + 6.800 + 5.900) = 24.950 + 7.550 = <b style="color:var(--green)">32.500 pts</b></small>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title"><span class="card-title-icon">⚡</span>Próximos Marcos</div></div>
+      <div class="milestone done">10.000 pts · 1º giro da Roleta ✓</div>
+      <div class="milestone done">20.000 pts · 2º giro ✓</div>
+      <div class="milestone done">30.000 pts · 3º giro ✓</div>
+      <div class="milestone active">35.000 pts · 4º giro (faltam 2.500)</div>
+      <div class="milestone">50.000 pts · Jantar Ibaneis + 5 convidados</div>
+      <div class="milestone">75.000 pts · Material impulsionado R$ 50K</div>
+      <div class="milestone">100.000 pts · Evento privado com Senador</div>
+      <div style="margin-top:14px; text-align:center">
+        <button class="btn btn-gold" onclick="go('roleta')">Ir para Roleta ⚡</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="card-title"><span class="card-title-icon">◉</span>Atividade Recente da sua Rede</div></div>
+    <div class="monitor-row"><div class="monitor-network net-ig">IG</div><div style="flex:1"><b>@helena.cardosodf</b> reel citando Ibaneis (2,4K views)<div style="font-size:.68rem;color:var(--muted)">há 12 min · +80 pts Helena · +20 seus (25%)</div></div><span class="status-pill pill-ok">+20</span></div>
+    <div class="monitor-row"><div class="monitor-network net-fb">FB</div><div style="flex:1"><b>Fábio Ribeiro</b> compartilhou card oficial do Comando<div style="font-size:.68rem;color:var(--muted)">há 28 min · +40 Fábio · +10 seus</div></div><span class="status-pill pill-ok">+10</span></div>
+    <div class="monitor-row"><div class="monitor-network net-wa">WA</div><div style="flex:1"><b>Denise Pontes</b> disparou material no grupo "MDB SIA" (143 membros)<div style="font-size:.68rem;color:var(--muted)">há 1h · +35 Denise · +9 seus</div></div><span class="status-pill pill-ok">+9</span></div>
+    <div class="monitor-row"><div class="monitor-network net-ig">IG</div><div style="flex:1"><b>@marceloandradedf</b> (você) live com 1,2K simultâneos<div style="font-size:.68rem;color:var(--muted)">há 3h · +160 pts diretos</div></div><span class="status-pill pill-ok">+160</span></div>
+  </div>
+</section>
+
+<section class="page" id="page-pontos">
+  <h1 class="page-title">Pontuação Detalhada</h1>
+  <p class="page-sub">Como seus 32.500 pontos foram construídos.</p>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><div class="card-title"><span class="card-title-icon">◈</span>Pontos Diretos (24.950)</div></div>
+      <div class="list-item"><div class="li-label">Cadastros próprios</div><div class="li-val">18.200 × 1 pt = 18.200</div></div>
+      <div class="list-item"><div class="li-label">Postagens Instagram</div><div class="li-val">142 × 25 pt = 3.550</div></div>
+      <div class="list-item"><div class="li-label">Postagens Facebook</div><div class="li-val">68 × 20 pt = 1.360</div></div>
+      <div class="list-item"><div class="li-label">Lives (3)</div><div class="li-val">3 × 160 pt = 480</div></div>
+      <div class="list-item"><div class="li-label">Disparos WhatsApp (grupos monitorados)</div><div class="li-val">164 × 8 pt = 1.312</div></div>
+      <div class="list-item"><div class="li-label">Bônus engajamento orgânico</div><div class="li-val">48</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title"><span class="card-title-icon">♦</span>Pontos da Rede (7.550 · 25%)</div></div>
+      <div class="list-item"><div class="li-label">Helena Cardoso</div><div class="li-val">9.400 × 25% = 2.350</div></div>
+      <div class="list-item"><div class="li-label">Fábio Ribeiro</div><div class="li-val">8.100 × 25% = 2.025</div></div>
+      <div class="list-item"><div class="li-label">Denise Pontes</div><div class="li-val">6.800 × 25% = 1.700</div></div>
+      <div class="list-item"><div class="li-label">Tiago Moura</div><div class="li-val">5.900 × 25% = 1.475</div></div>
+      <div class="formula-box">
+        <small><b>Por que 25%?</b> Cadastro feito por distrital tem taxa de conversão menor (0,58) vs. cadastro direto do federal (0,72). Peso 25% reflete essa diferença e evita double-counting no sistema do Ibaneis.</small>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="page-roleta">
+  <h1 class="page-title">Roleta</h1>
+  <p class="page-sub">A cada 5.000 pts a partir de 10K, você ganha 1 giro. Você tem <b style="color:var(--green)">2 giros disponíveis</b>.</p>
+
+  <div class="card">
+    <div class="roulette-wrap">
+      <div class="roulette">
+        <div class="roulette-pointer"></div>
+        <div class="roulette-disc" id="disc"></div>
+        <div class="roulette-center">⚡</div>
+      </div>
+      <div class="roulette-info">
+        <h3>Giros disponíveis: <span id="spins" style="color:var(--green)">2</span></h3>
+        <p style="color:var(--muted); font-size:.82rem; margin-bottom:14px">Clique para girar. Prêmios são reais — comunique à equipe do Senador após o giro.</p>
+        <button class="btn btn-gold" id="spinBtn" onclick="spin()" style="width:100%; padding:14px; font-size:1rem">⚡ GIRAR ROLETA</button>
+        <div style="margin-top:14px">
+          <div class="milestone done">10K · 1º giro ✓ (Material R$ 2K)</div>
+          <div class="milestone done">15K · 2º giro ✓ (Adesivos 5K un)</div>
+          <div class="milestone done">20K · 3º giro ✓ (Impulso IG R$ 500)</div>
+          <div class="milestone active">25K · 4º giro (disponível)</div>
+          <div class="milestone active">30K · 5º giro (disponível)</div>
+          <div class="milestone">35K · 6º giro</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="card-title"><span class="card-title-icon">◆</span>Prêmios Possíveis</div></div>
+    <div class="prize-list">
+      <div class="prize"><div class="prize-icon">🍽️</div><div class="prize-name">Jantar Ibaneis</div><div class="prize-sub">+ acompanhante</div></div>
+      <div class="prize"><div class="prize-icon">📣</div><div class="prize-name">Campanha Impulsionada</div><div class="prize-sub">3 posts INTEIA</div></div>
+      <div class="prize"><div class="prize-icon">🎨</div><div class="prize-name">Material Kit</div><div class="prize-sub">Santinho + adesivo</div></div>
+      <div class="prize"><div class="prize-icon">📸</div><div class="prize-name">Foto Oficial</div><div class="prize-sub">Com Senador</div></div>
+      <div class="prize"><div class="prize-icon">🎟️</div><div class="prize-name">Evento VIP</div><div class="prize-sub">Convite duplo</div></div>
+      <div class="prize"><div class="prize-icon">📱</div><div class="prize-name">Reels Produzido</div><div class="prize-sub">Estúdio INTEIA</div></div>
+      <div class="prize"><div class="prize-icon">🏆</div><div class="prize-name">Troféu Federal Destaque</div><div class="prize-sub">Reconhecimento oficial</div></div>
+      <div class="prize"><div class="prize-icon">🏆</div><div class="prize-name">Coroa de Ouro</div><div class="prize-sub">Prêmio raro</div></div>
+      <div class="prize"><div class="prize-icon">🎁</div><div class="prize-name">Caixa Secreta</div><div class="prize-sub">Surpresa!</div></div>
+    </div>
+    <div style="margin-top:14px; padding:10px; background:rgba(255,82,82,.08); border-left:3px solid var(--red); border-radius:6px; font-size:.78rem">
+      <b style="color:var(--red)">Aviso legal:</b> Durante o período eleitoral, prêmios monetários ficam em custódia e são entregues após o pleito, conforme normas do TSE. Pontos não são conversíveis em dinheiro no período regulado.
+    </div>
+  </div>
+</section>
+
+<section class="page" id="page-verba">
+  <h1 class="page-title">Verba Recebida</h1>
+  <p class="page-sub">Repasses do Fundo Partidário MDB + Fundo Ibaneis (pessoal).</p>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-label">Total Recebido</div><div class="kpi-value">R$ 780K</div><div class="kpi-delta up">35,3% do bolo total</div></div>
+    <div class="kpi"><div class="kpi-label">Próximo Repasse</div><div class="kpi-value">R$ 353K</div><div class="kpi-delta">25/04 · 11 dias</div></div>
+    <div class="kpi"><div class="kpi-label">Consumido</div><div class="kpi-value">R$ 420K</div><div class="kpi-delta">54% executado</div></div>
+    <div class="kpi"><div class="kpi-label">Saldo</div><div class="kpi-value">R$ 360K</div><div class="kpi-delta up">disponível</div></div>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-title"><span class="card-title-icon">$</span>Linha do Tempo</div></div>
+    <div class="verba-timeline">
+      <div class="verba-event"><div class="verba-date">25/03/2026</div><div class="verba-value">R$ 120.000</div><div class="verba-desc">Primeiro repasse · Fundo MDB</div></div>
+      <div class="verba-event"><div class="verba-date">01/04/2026</div><div class="verba-value">R$ 180.000</div><div class="verba-desc">Repasse Ibaneis (pessoal) · marco 25K pts</div></div>
+      <div class="verba-event"><div class="verba-date">08/04/2026</div><div class="verba-value">R$ 210.000</div><div class="verba-desc">Segundo repasse MDB · proporcional aos pontos</div></div>
+      <div class="verba-event"><div class="verba-date">14/04/2026</div><div class="verba-value">R$ 270.000</div><div class="verba-desc">Bônus liderança · Top 1 do mês</div></div>
+      <div class="verba-event future"><div class="verba-date">25/04/2026</div><div class="verba-value">R$ 353.000</div><div class="verba-desc" style="color:var(--gold)">Próximo repasse previsto · depende de manter Top 3</div></div>
+      <div class="verba-event future"><div class="verba-date">10/05/2026</div><div class="verba-value">R$ 420.000</div><div class="verba-desc">Projeção · se atingir 45K pts</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="page-distritais">
+  <h1 class="page-title">Meus Distritais</h1>
+  <p class="page-sub">Você recebe 25% dos pontos de cada um deles.</p>
+  <div class="card">
+    <table class="ranking">
+      <thead><tr><th>#</th><th>Distrital</th><th>RA</th><th>Contatos</th><th>Posts</th><th>Pontos</th><th>Sua parcela</th></tr></thead>
+      <tbody>
+        <tr><td class="rank-pos top1">1</td><td class="rank-name">Helena Cardoso</td><td>Taguatinga</td><td>4.820</td><td>284</td><td class="rank-pts">9.400</td><td class="li-val">2.350</td></tr>
+        <tr><td class="rank-pos top2">2</td><td class="rank-name">Fábio Ribeiro</td><td>Ceilândia</td><td>3.960</td><td>241</td><td class="rank-pts">8.100</td><td class="li-val">2.025</td></tr>
+        <tr><td class="rank-pos top3">3</td><td class="rank-name">Denise Pontes</td><td>Guará/SIA</td><td>3.180</td><td>196</td><td class="rank-pts">6.800</td><td class="li-val">1.700</td></tr>
+        <tr><td class="rank-pos">4</td><td class="rank-name">Tiago Moura</td><td>Samambaia</td><td>2.710</td><td>164</td><td class="rank-pts">5.900</td><td class="li-val">1.475</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-title"><span class="card-title-icon">◇</span>Ações Disponíveis</div></div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="abrirWhats('5561999990000','Oi Helena, novo material em anexo para distribuir')">📱 WhatsApp Helena</button>
+      <button class="btn" onclick="abrirWhats('5561999990001','Material no Drive: link')">📤 Enviar material</button>
+      <button class="btn" onclick="go('enviar-missoes')">⚑ Criar missão</button>
+      <button class="btn" onclick="abrirWhats('5561999990000','Relatório desta semana')">📊 Solicitar relatório</button>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="page-missoes">
+  <h1 class="page-title">Missões Ativas</h1>
+  <p class="page-sub">Tarefas que o Senador delegou — com bônus ao completar.</p>
+  <div class="card">
+    <div style="margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid var(--border)">
+      <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:8px">
+        <div><div class="li-label">🎯 Cadastrar 1.000 novos contatos</div><div class="li-sub">640 / 1.000 · Até 30/04 · +2.500 pts</div></div>
+        <button class="btn" style="padding:6px 10px; font-size:.72rem" onclick="document.getElementById('fileCadastro').click()">📎 Anexar</button>
+        <input type="file" id="fileCadastro" style="display:none" accept="image/*,.pdf">
+      </div>
+      <div class="bar"><div class="bar-fill" style="width:64%"></div></div>
+    </div>
+    <div style="margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid var(--border)">
+      <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:8px">
+        <div><div class="li-label">📱 5 lives no Instagram</div><div class="li-sub">3 / 5 · Abril · +800 pts</div></div>
+        <button class="btn" style="padding:6px 10px; font-size:.72rem" onclick="abrirWhats('5561999990000','Completei a missão de lives!')">📱 Confirmar via WA</button>
+      </div>
+      <div class="bar"><div class="bar-fill" style="width:60%"></div></div>
+    </div>
+    <div style="margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid var(--border)">
+      <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:8px">
+        <div><div class="li-label">♦ Manter distritais acima de 5K pts</div><div class="li-sub">4 / 4 · Status OK · +1.200 pts</div></div>
+        <button class="btn" style="padding:6px 10px; font-size:.72rem; background:rgba(0,230,118,.15); border-color:var(--green); color:var(--green)">✓ Completa</button>
+      </div>
+      <div class="bar"><div class="bar-fill" style="width:100%; background:var(--green)"></div></div>
+    </div>
+    <div style="display:flex; justify-content:space-between; align-items:start">
+      <div><div class="li-label">🎪 Realizar 2 eventos presenciais</div><div class="li-sub">1 / 2 · Até final maio · +1.500 pts</div></div>
+      <button class="btn" style="padding:6px 10px; font-size:.72rem" onclick="document.getElementById('fileFoto').click()">📎 Anexar</button>
+      <input type="file" id="fileFoto" style="display:none" accept="image/*">
+    </div>
+    <div class="bar"><div class="bar-fill" style="width:50%"></div></div>
+  </div>
+</section>
+
+<section class="page" id="page-monitor">
+  <h1 class="page-title">Monitor Redes Sociais</h1>
+  <p class="page-sub">Sistema monitora sua rede. Postagens pró-Ibaneis pontuam, postagens pró-adversário penalizam.</p>
+  <div class="card">
+    <div class="monitor-row"><div class="monitor-network net-ig">IG</div><div style="flex:1"><b>@helena.cardosodf</b> reel Ibaneis (2,4K views)<div style="font-size:.68rem;color:var(--muted)">há 12 min</div></div><span class="status-pill pill-ok">+80</span></div>
+    <div class="monitor-row"><div class="monitor-network net-fb">FB</div><div style="flex:1"><b>Fábio Ribeiro</b> card oficial MDB<div style="font-size:.68rem;color:var(--muted)">há 28 min</div></div><span class="status-pill pill-ok">+40</span></div>
+    <div class="monitor-row"><div class="monitor-network net-wa">WA</div><div style="flex:1"><b>Denise Pontes</b> disparo grupo MDB SIA<div style="font-size:.68rem;color:var(--muted)">há 1h</div></div><span class="status-pill pill-ok">+35</span></div>
+    <div class="monitor-row"><div class="monitor-network net-ig">IG</div><div style="flex:1"><b>@marceloandradedf</b> (você) live 1,2K viewers<div style="font-size:.68rem;color:var(--muted)">há 3h</div></div><span class="status-pill pill-ok">+160</span></div>
+    <div class="monitor-row"><div class="monitor-network net-ig">IG</div><div style="flex:1"><b>Tiago Moura</b> story evento Samambaia<div style="font-size:.68rem;color:var(--muted)">há 5h</div></div><span class="status-pill pill-ok">+25</span></div>
+    <div class="monitor-row"><div class="monitor-network net-fb">FB</div><div style="flex:1"><b>Helena Cardoso</b> transmissão rua 15<div style="font-size:.68rem;color:var(--muted)">há 6h</div></div><span class="status-pill pill-ok">+95</span></div>
+  </div>
+</section>
+
+<section class="page" id="page-ranking">
+  <h1 class="page-title">Ranking dos 4 Federais</h1>
+  <p class="page-sub">Sua posição na competição pela verba MDB-DF.</p>
+  <div class="card">
+    <table class="ranking">
+      <thead><tr><th>#</th><th>Federal</th><th>Pts</th><th>Verba %</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr style="background:rgba(0,230,118,.06)"><td class="rank-pos top1">1</td><td class="rank-name">Marcelo Andrade (você)</td><td class="rank-pts">32.500</td><td class="li-val">35,3%</td><td><span class="status-pill pill-ok">Líder</span></td></tr>
+        <tr><td class="rank-pos top2">2</td><td class="rank-name">Cristina Vieira</td><td class="rank-pts">28.100</td><td class="li-val">30,5%</td><td><span class="status-pill pill-ok">Leal</span></td></tr>
+        <tr><td class="rank-pos top3">3</td><td class="rank-name">Rogério Teixeira</td><td class="rank-pts">19.800</td><td class="li-val">21,5%</td><td><span class="status-pill pill-warn">Moderado</span></td></tr>
+        <tr><td class="rank-pos">4</td><td class="rank-name">Paulo H. Melo</td><td class="rank-pts">12.400</td><td class="li-val">12,7%</td><td><span class="status-pill pill-danger">Suspeito</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="page" id="page-cadastrar">
+  <h1 class="page-title">Cadastrar Eleitor</h1>
+  <p class="page-sub">Cadastro próprio = <b style="color:var(--green)">+1 pt direto</b> (sem diluição). Contatos feitos por você têm taxa de conversão histórica de 72% (vs. 58% dos distritais) — por isso peso maior.</p>
+  <div class="card">
+    <div class="form-grid">
+      <div class="form-group"><label>Nome completo *</label><input type="text" placeholder="Ex: Maria dos Santos"></div>
+      <div class="form-group"><label>WhatsApp *</label><input type="tel" placeholder="(61) 9xxxx-xxxx"></div>
+      <div class="form-group"><label>Email</label><input type="email" placeholder="opcional"></div>
+      <div class="form-group"><label>Data de nascimento</label><input type="date"></div>
+      <div class="form-group"><label>RA · Região Administrativa</label>
+        <select>
+          <option>Taguatinga</option><option>Ceilândia</option><option>Guará/SIA</option>
+          <option>Samambaia</option><option>Plano Piloto</option><option>Águas Claras</option>
+          <option>Outras</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Profissão</label><input type="text" placeholder="Ex: Comerciante"></div>
+      <div class="form-group"><label>Perfil político</label>
+        <select><option>Base fiel</option><option>Simpatizante</option><option>Indeciso</option><option>Influenciador</option></select>
+      </div>
+      <div class="form-group"><label>Atribuir a qual distrital?</label>
+        <select>
+          <option>Nenhum · meu cadastro direto</option>
+          <option>Helena Cardoso (Taguatinga)</option>
+          <option>Fábio Ribeiro (Ceilândia)</option>
+          <option>Denise Pontes (Guará/SIA)</option>
+          <option>Tiago Moura (Samambaia)</option>
+        </select>
+      </div>
+      <div class="form-group form-row-full"><label>Observações</label><textarea placeholder="Ex: liderança comunitária, empresário, contato de evento"></textarea></div>
+      <div class="form-group form-row-full"><label>Consentimento (LGPD) *</label>
+        <label style="display:flex; gap:8px; align-items:center; font-size:.82rem; color:var(--muted); font-weight:400; text-transform:none; letter-spacing:0">
+          <input type="checkbox" style="width:18px; height:18px"> Confirmo consentimento do eleitor para material de campanha.
+        </label>
+      </div>
+    </div>
+    <div style="margin-top:18px; display:flex; gap:10px">
+      <button class="btn btn-primary" style="padding:12px 24px" onclick="toastFix('Eleitor cadastrado! +1 pt · total 24.951 pts próprios')">✓ Cadastrar (+1 pt direto)</button>
+      <button class="btn">Cancelar</button>
+    </div>
+  </div>
+  <div class="card" style="background:rgba(0,230,118,.06); border-color:var(--green)">
+    <div style="font-size:.88rem; line-height:1.6">
+      <b style="color:var(--green)">💡 Dica estratégica:</b> cadastros <b>diretos</b> ficam na sua trilha pessoal (sem passar por distrital). Use para lideranças, doadores, multiplicadores. Se atribuir a um distrital, o ponto vai para ele e você ganha 0,25 via fórmula — prefira direto para contatos VIP.
+    </div>
+  </div>
+</section>
+
+<section class="page" id="page-meus-leads">
+  <h1 class="page-title">Meus 18.200 Leads</h1>
+  <p class="page-sub">Base pessoal do Federal Marcelo Andrade — contatos diretos + herdados da rede.</p>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-label">Total na sua base</div><div class="kpi-value">18.200</div><div class="kpi-delta up">▲ 640 hoje</div></div>
+    <div class="kpi"><div class="kpi-label">Cadastro direto (você)</div><div class="kpi-value">3.420</div><div class="kpi-delta">conv. 72%</div></div>
+    <div class="kpi"><div class="kpi-label">Via distritais</div><div class="kpi-value">14.780</div><div class="kpi-delta">conv. 58%</div></div>
+    <div class="kpi"><div class="kpi-label">WhatsApp Validado</div><div class="kpi-value">15.940</div><div class="kpi-delta up">87%</div></div>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-title"><span class="card-title-icon">⬢</span>Últimos cadastros diretos</div></div>
+    <table class="ranking">
+      <thead><tr><th>Nome</th><th>RA</th><th>Perfil</th><th>Origem</th></tr></thead>
+      <tbody>
+        <tr><td class="rank-name">Dr. Ricardo Vasques</td><td>Taguatinga</td><td>Influenciador</td><td>Evento câmara</td></tr>
+        <tr><td class="rank-name">Sandra Meirelles</td><td>Ceilândia</td><td>Liderança comunitária</td><td>Indicação</td></tr>
+        <tr><td class="rank-name">Prof. Eduardo Lira</td><td>Plano Piloto</td><td>Multiplicador</td><td>Evento oficial</td></tr>
+        <tr><td class="rank-name">Empresário J. Batista</td><td>Águas Claras</td><td>Doador potencial</td><td>Reunião privada</td></tr>
+        <tr><td class="rank-name">Maria Fátima Silva</td><td>Samambaia</td><td>Base fiel</td><td>Cadastro de rua</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
+
+<section class="page" id="page-enviar-missoes">
+  <h1 class="page-title">Missões para Distritais</h1>
+  <p class="page-sub">Crie tarefas com metas, prazos e bônus de pontos.</p>
+  <div class="card">
+    <h3 style="margin-bottom:14px; color:var(--gold)">Criar Nova Missão</h3>
+    <div class="form-grid">
+      <div class="form-group"><label>Destinatário *</label>
+        <select><option>Helena Cardoso</option><option>Fábio Ribeiro</option><option>Denise Pontes</option><option>Tiago Moura</option></select>
+      </div>
+      <div class="form-group"><label>Tipo *</label>
+        <select><option>Cadastrar X contatos</option><option>Realizar X postagens</option><option>Evento</option></select>
+      </div>
+      <div class="form-group"><label>Meta</label><input type="number" placeholder="500" min="1"></div>
+      <div class="form-group"><label>Prazo</label><input type="date"></div>
+      <div class="form-group"><label>Bônus (pts)</label><input type="number" placeholder="500" min="0"></div>
+      <div class="form-group"><label>Prioridade</label>
+        <select><option>Normal</option><option>Alta</option><option>Urgente</option></select>
+      </div>
+      <div class="form-group form-row-full"><label>Descrição</label><textarea placeholder="Detalhes..."></textarea></div>
+      <div class="form-group form-row-full"><label>Anexar Material</label><input type="file" accept="image/*,.pdf"></div>
+    </div>
+    <button class="btn btn-primary" style="margin-top:14px" onclick="toastFix('Missão enviada!')">⚑ Enviar</button>
+  </div>
+</section>
+
+<section class="page" id="page-qr">
+  <h1 class="page-title">QR Codes da Campanha</h1>
+  <p class="page-sub">Distribua em eventos e conversas. Cada scan = pontos pra você.</p>
+  <div class="grid-2">
+    <div class="card" style="text-align:center">
+      <h3 style="color:var(--gold); margin-bottom:10px">Instagram Ibaneis</h3>
+      <img src="" data-src-fallback="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https%3A%2F%2Finstagram.com%2Fibaneisoficialdf" data-qr-url="https://instagram.com/ibaneisoficialdf" data-qr-size="180" class="qr-auto" alt="QR" style="max-width:180px; border:2px solid var(--gold); padding:8px; background:#fff">
+      <p style="font-size:.75rem; margin:8px 0">@ibaneisoficialdf</p>
+      <button class="btn btn-gold" style="width:100%; margin-top:8px" onclick="window.print()">🖨️ Imprimir</button>
+    </div>
+    <div class="card" style="text-align:center">
+      <h3 style="color:var(--gold); margin-bottom:10px">Facebook Ibaneis</h3>
+      <img src="" data-src-fallback="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https%3A%2F%2Ffacebook.com%2Fibaneisoficial" data-qr-url="https://facebook.com/ibaneisoficial" data-qr-size="180" class="qr-auto" alt="QR" style="max-width:180px; border:2px solid var(--gold); padding:8px; background:#fff">
+      <p style="font-size:.75rem; margin:8px 0">Ibaneis Oficial</p>
+      <button class="btn btn-gold" style="width:100%; margin-top:8px" onclick="window.print()">🖨️ Imprimir</button>
+    </div>
+    <div class="card" style="text-align:center">
+      <h3 style="color:var(--gold); margin-bottom:10px">Cadastro Apoiador</h3>
+      <img src="" data-src-fallback="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https%3A%2F%2Fcampanha.ibaneis.df%2Fcadastro%3Fref%3Dfederal-marcelo" data-qr-url="https://campanha.ibaneis.df/cadastro?ref=federal-marcelo" data-qr-size="180" class="qr-auto" alt="QR" style="max-width:180px; border:2px solid var(--gold); padding:8px; background:#fff">
+      <p style="font-size:.75rem; margin:8px 0">Formulário público</p>
+      <button class="btn btn-gold" style="width:100%; margin-top:8px" onclick="window.print()">🖨️ Imprimir</button>
+    </div>
+    <div class="card" style="background:rgba(0,230,118,.06); border-color:var(--green)">
+      <b style="color:var(--green)">Como funciona:</b>
+      <p style="font-size:.78rem; margin:8px 0; color:var(--text)">Cada pessoa que escaneia e realiza a ação (segue, cadastra) é registrada como sua referência. +10 pts por follow, +50 pts por cadastro.</p>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="modal-backdrop" id="modal">
+  <div class="modal">
+    <div class="modal-emoji" id="mEmoji">🎉</div>
+    <h2 id="mTitle">Você ganhou!</h2>
+    <div class="modal-prize" id="mPrize">Jantar com Ibaneis</div>
+    <div class="modal-desc" id="mDesc">A equipe do Senador entrará em contato em até 48h para agendar.</div>
+    <button class="btn btn-primary" onclick="closeModal()">Fechar</button>
+  </div>
+</div>
+
+<script>
+function abrirWhats(phone, msg){
+  const m = msg || 'Olá, mensagem da campanha Ibaneis.';
+  if(confirm('📱 MODO DEMO — WhatsApp\n\nMensagem que seria enviada:\n\n"'+m+'"\n\nNa versão ativa, este botão abre direto o contato real. Abrir o WhatsApp com número fictício de demo?')){
+    const n = (phone || '5561999990000').replace(/\D/g,'');
+    window.open('https://wa.me/'+n+'?text='+encodeURIComponent(m), '_blank');
+  }
+}
+function explicarConfirmado(){
+  alert('Eleitor confirmado:\n\nPessoa cadastrada na base com WhatsApp validado e que autorizou (LGPD) receber material da campanha.\n\nÉ um voto contado para Ibaneis. A campanha sabe quem é, onde mora e por qual canal falar com ela. Diferente de simpatizante anônimo das redes.');
+}
+function gerarQR(texto, tamanho){
+  const t = tamanho || 180;
+  try {
+    if (typeof qrcode !== 'undefined') {
+      const qr = qrcode(0, 'L');
+      qr.addData(texto);
+      qr.make();
+      return qr.createDataURL(4, 0);
+    }
+  } catch(e) { console.warn('QR local falhou, fallback online', e); }
+  return 'https://api.qrserver.com/v1/create-qr-code/?size='+t+'x'+t+'&data='+encodeURIComponent(texto);
+}
+
+function closeSplash(){ document.getElementById('splash').classList.add('hidden'); }
+setTimeout(closeSplash, 3000);
+
+const pageTitles = {home:'Minha Campanha', pontos:'Pontuação Detalhada', roleta:'Roleta',
+verba:'Verba Recebida', distritais:'Meus Distritais', missoes:'Missões Ativas',
+monitor:'Monitor Redes', ranking:'Ranking Federais',
+cadastrar:'Cadastrar Eleitor', 'meus-leads':'Meus Leads', 'enviar-missoes':'Missões para Distritais', qr:'QR Codes'};
+function toastFix(msg){const e=document.getElementById('toastFix');if(e)e.remove();const t=document.createElement('div');t.id='toastFix';t.className='toast-fix show';t.textContent='✓ '+msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2800);}
+function go(p){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const n=document.querySelector('.nav-item[data-page="'+p+'"]'); if(n)n.classList.add('active');
+  document.getElementById('header-title').textContent=pageTitles[p]||'';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('.nav-item').forEach(n=>n.addEventListener('click',()=>go(n.dataset.page)));
+
+let spins = 2;
+const prizes = [
+  {e:'🍽️', n:'Jantar com Ibaneis', d:'Convite duplo com acompanhante em restaurante selecionado.', color:'gold'},
+  {e:'📣', n:'Campanha Impulsionada INTEIA', d:'3 posts profissionais produzidos e publicados pela equipe INTEIA no perfil oficial do candidato.', color:'green'},
+  {e:'🎨', n:'Kit Material Premium', d:'2.000 santinhos + 500 adesivos + 100 flyers entregues.', color:'cyan'},
+  {e:'📸', n:'Foto Oficial com Ibaneis', d:'Ensaio com fotógrafo profissional, uso livre na sua campanha.', color:'purple'},
+  {e:'🎟️', n:'Evento VIP Exclusivo', d:'Convite para jantar fechado com apoiadores de Brasília.', color:'orange'},
+  {e:'📱', n:'Reels Produzido INTEIA', d:'Estúdio produz 3 reels profissionais para seu Instagram.', color:'red'},
+  {e:'🏆', n:'Troféu Federal Destaque', d:'Reconhecimento oficial do Senador em cerimônia pública pós-campanha. Simbólico, sem valor monetário.', color:'gold'},
+  {e:'👑', n:'Coroa de Ouro — RARO', d:'Posição VIP no palanque oficial do Ibaneis em todos eventos da campanha.', color:'gold'},
+  {e:'🎁', n:'Caixa Secreta da Sorte', d:'Prêmio surpresa — a equipe do Senador revela o conteúdo no momento da entrega.', color:'blue'}
+];
+
+function spin(){
+  if(spins<=0){ alert('Sem giros disponíveis. Acumule mais pontos!'); return; }
+  const btn=document.getElementById('spinBtn');
+  const disc=document.getElementById('disc');
+  btn.disabled=true; btn.textContent='Girando...';
+  disc.style.transform='rotate(0deg)'; void disc.offsetWidth;
+  const winIdx=Math.floor(Math.random()*prizes.length);
+  const deg = 1800 + (360 - winIdx*45 - 22);
+  disc.style.transform='rotate('+deg+'deg)';
+  setTimeout(()=>{
+    spins--;
+    document.getElementById('spins').textContent=spins;
+    const p=prizes[winIdx];
+    document.getElementById('mEmoji').textContent=p.e;
+    document.getElementById('mPrize').textContent=p.n;
+    document.getElementById('mDesc').textContent=p.d;
+    document.getElementById('modal').classList.add('show');
+    btn.disabled=false; btn.textContent='⚡ GIRAR ROLETA';
+  }, 4100);
+}
+function closeModal(){ document.getElementById('modal').classList.remove('show'); }
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('img.qr-auto').forEach(img => {
+    const url = img.dataset.qrUrl;
+    const size = parseInt(img.dataset.qrSize || '180', 10);
+    if (url) img.src = gerarQR(url, size);
+  });
+});
+</script>
+</body>
+</html>

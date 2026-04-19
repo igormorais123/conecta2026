@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Helena Cardoso · Distrital · Comando Ibaneis 2026 (Demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a1a;--surface:rgba(255,255,255,.04);--surface2:rgba(255,255,255,.07);
+--border:rgba(255,255,255,.09);--text:#e8e8f0;--muted:#8a8aa0;--green:#00e676;
+--gold:#ffd600;--purple:#b388ff;--cyan:#00e5ff;--red:#ff5252;--orange:#ff9100;
+--blue:#448aff;--sidebar-w:240px;--header-h:64px;--radius:14px}
+html,body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 0%,rgba(0,230,118,.07),transparent 50%),radial-gradient(ellipse at 80% 100%,rgba(255,214,0,.05),transparent 50%);pointer-events:none;z-index:0}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:var(--green);border-radius:3px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes neonPulse{0%,100%{text-shadow:0 0 10px var(--gold)}50%{text-shadow:0 0 28px var(--gold)}}
+@keyframes sparkle{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:1;transform:scale(1.4)}}
+
+.splash{position:fixed;inset:0;background:linear-gradient(135deg,#0a0a1a,#1a0a2e 50%,#0a0a1a);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:99999;cursor:pointer;transition:opacity .6s}
+.splash.hidden{opacity:0;pointer-events:none}
+.splash svg{width:160px;height:160px;animation:float 3s infinite;filter:drop-shadow(0 0 24px rgba(0,230,118,.4))}
+.splash h1{font-size:2.2rem;font-weight:900;color:var(--gold);letter-spacing:3px;margin-top:14px;animation:neonPulse 2s infinite}
+.splash h2{font-size:.9rem;color:var(--green);font-weight:700;margin-top:4px;letter-spacing:2px}
+.splash-tag{display:inline-block;background:rgba(0,229,255,.15);color:var(--cyan);padding:6px 14px;border-radius:20px;font-size:.7rem;font-weight:600;margin-top:14px;letter-spacing:2px;text-transform:uppercase;border:1px solid rgba(0,229,255,.3)}
+
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);background:rgba(10,10,26,.96);backdrop-filter:blur(12px);border-right:1px solid var(--border);z-index:1000;display:flex;flex-direction:column}
+.sidebar-brand{padding:18px 14px;text-align:center;border-bottom:1px solid var(--border)}
+.sidebar-brand svg{width:54px;height:54px;margin-bottom:4px}
+.sidebar-name{font-size:.95rem;font-weight:900;color:var(--green);letter-spacing:1.5px}
+.sidebar-title{font-size:.58rem;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;font-weight:700}
+.sidebar-user{padding:10px 14px;border-bottom:1px solid var(--border);font-size:.78rem}
+.sidebar-user b{color:var(--cyan);font-size:.85rem;display:block}
+.sidebar-user small{color:var(--muted);font-size:.65rem}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.nav-section{padding:14px 16px 4px;font-size:.55rem;text-transform:uppercase;letter-spacing:2px;color:var(--gold);font-weight:700;opacity:.75}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,.6);cursor:pointer;transition:all .25s;border-left:3px solid transparent;font-size:.82rem;font-weight:500;user-select:none}
+.nav-item:hover{color:#fff;background:rgba(255,255,255,.03)}
+.nav-item.active{color:var(--green);border-left-color:var(--green);background:rgba(0,230,118,.08)}
+.nav-icon{font-size:1.05rem;width:22px;text-align:center}
+.nav-badge{margin-left:auto;background:var(--gold);color:#0a0a1a;font-size:.6rem;padding:2px 6px;border-radius:10px;font-weight:700}
+.sidebar-footer{padding:12px;border-top:1px solid var(--border);text-align:center;font-size:.62rem;color:var(--muted)}
+
+.header{position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--header-h);background:rgba(10,10,26,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:999}
+.header-title{font-size:1rem;font-weight:700;color:var(--green);display:flex;gap:10px;align-items:center}
+.header-demo-badge{background:rgba(255,82,82,.15);color:var(--red);padding:3px 8px;border-radius:6px;font-size:.6rem;font-weight:700;letter-spacing:1px;border:1px solid rgba(255,82,82,.3)}
+.header-right{display:flex;align-items:center;gap:18px}
+.level-badge{display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--gold),#c9952a);color:#0a0a1a;padding:6px 14px;border-radius:20px;font-weight:800;font-size:.82rem}
+.level-badge small{font-size:.6rem;font-weight:600}
+
+.main{margin-left:var(--sidebar-w);margin-top:var(--header-h);padding:24px;position:relative;z-index:1}
+.page{display:none;animation:fadeIn .4s ease-out}.page.active{display:block}
+.page-title{font-size:1.4rem;font-weight:800;color:var(--gold);margin-bottom:4px}
+.page-sub{color:var(--muted);font-size:.82rem;margin-bottom:22px}
+
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-bottom:24px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;position:relative;overflow:hidden;transition:all .25s}
+.kpi:hover{border-color:var(--green);transform:translateY(-3px)}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--green),var(--gold))}
+.kpi-label{font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);font-weight:600}
+.kpi-value{font-size:1.9rem;font-weight:900;color:var(--green);margin:6px 0 2px;letter-spacing:-1px}
+.kpi-delta{font-size:.72rem;font-weight:600}
+.kpi-delta.up{color:var(--green)}.kpi-delta.down{color:var(--red)}
+.kpi-icon{position:absolute;top:14px;right:14px;font-size:1.6rem;opacity:.18}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:18px}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.card-title{font-size:.95rem;font-weight:700;color:var(--text);display:flex;gap:8px;align-items:center}
+.card-title-icon{color:var(--green)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:1100px){.grid-2{grid-template-columns:1fr}}
+
+.hero{background:linear-gradient(135deg,rgba(0,230,118,.06),rgba(255,214,0,.06));border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;margin-bottom:22px;display:flex;gap:20px;align-items:center}
+.hero-avatar{width:86px;height:86px;border-radius:50%;background:linear-gradient(135deg,#b388ff,#ff6ec7);display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;color:#0a0a1a;flex-shrink:0}
+.hero-text h2{font-size:1.3rem;font-weight:800;color:var(--gold);margin-bottom:4px}
+.hero-text p{color:var(--text);font-size:.88rem;line-height:1.5}
+.hero-text small{color:var(--muted);font-size:.72rem}
+
+.progress-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:18px}
+.progress-top{display:flex;justify-content:space-between;margin-bottom:8px;font-size:.82rem}
+.progress-label{color:var(--muted);font-weight:600}
+.progress-val{color:var(--green);font-weight:800}
+.progress{height:14px;background:rgba(255,255,255,.06);border-radius:7px;overflow:hidden;position:relative}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--gold));border-radius:7px;transition:width 1s;position:relative}
+.progress-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);animation:pulse 2s infinite}
+.progress-scale{display:flex;justify-content:space-between;margin-top:6px;font-size:.6rem;color:var(--muted)}
+
+.dual-dim{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}
+.dim-card{background:linear-gradient(135deg,rgba(0,230,118,.06),transparent);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
+.dim-card.qual{background:linear-gradient(135deg,rgba(255,214,0,.06),transparent)}
+.dim-head{font-size:.68rem;text-transform:uppercase;letter-spacing:2px;color:var(--gold);font-weight:700;margin-bottom:8px}
+.dim-value{font-size:2.2rem;font-weight:900;color:var(--green);letter-spacing:-1px}
+.dim-card.qual .dim-value{color:var(--gold)}
+.dim-sub{font-size:.78rem;color:var(--muted);margin-top:4px}
+.dim-details{margin-top:14px;font-size:.78rem}
+.dim-line{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+
+.ranking{width:100%;border-collapse:collapse}
+.ranking th{text-align:left;padding:10px 8px;font-size:.62rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);border-bottom:1px solid var(--border);font-weight:700}
+.ranking td{padding:12px 8px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.85rem}
+.rank-pos{font-weight:900;color:var(--gold);width:32px}
+.rank-pos.top1{color:var(--gold)}.rank-pos.top2{color:#c0c0c0}.rank-pos.top3{color:#cd7f32}
+.rank-name{font-weight:600}.rank-sub{font-size:.7rem;color:var(--muted)}
+.rank-pts{color:var(--green);font-weight:800}
+.status-pill{display:inline-block;padding:3px 9px;border-radius:12px;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.pill-ok{background:rgba(0,230,118,.15);color:var(--green);border:1px solid rgba(0,230,118,.3)}
+.pill-warn{background:rgba(255,145,0,.15);color:var(--orange);border:1px solid rgba(255,145,0,.3)}
+.pill-danger{background:rgba(255,82,82,.15);color:var(--red);border:1px solid rgba(255,82,82,.3)}
+
+.bar{width:100%;height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;margin-top:6px}
+.bar-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--gold));transition:width .6s}
+
+.list-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.85rem}
+.list-item:last-child{border-bottom:none}
+.li-label{color:var(--text);font-weight:600}.li-sub{color:var(--muted);font-size:.7rem}.li-val{color:var(--gold);font-weight:800}
+
+.btn{padding:10px 18px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;font-size:.82rem;font-weight:600;transition:all .2s;font-family:inherit}
+.btn:hover{background:var(--surface2);border-color:var(--green)}
+.btn-primary{background:linear-gradient(135deg,var(--green),#00b359);color:#0a0a1a;border:none;font-weight:800}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#c9952a);color:#0a0a1a;border:none;font-weight:800}
+
+.roulette-wrap{display:flex;gap:24px;align-items:center;flex-wrap:wrap;justify-content:center}
+.roulette{position:relative;width:300px;height:300px}
+.roulette-disc{width:100%;height:100%;border-radius:50%;position:relative;
+background:conic-gradient(var(--gold) 0deg 45deg,var(--green) 45deg 90deg,var(--cyan) 90deg 135deg,
+var(--purple) 135deg 180deg,var(--orange) 180deg 225deg,var(--red) 225deg 270deg,
+var(--blue) 270deg 315deg,#ff6ec7 315deg 360deg);
+box-shadow:0 0 40px rgba(255,214,0,.3),inset 0 0 20px rgba(0,0,0,.5);border:4px solid var(--gold);transition:transform 4s cubic-bezier(.17,.67,.21,1)}
+.roulette-pointer{position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:14px solid transparent;border-right:14px solid transparent;border-top:22px solid var(--gold);filter:drop-shadow(0 2px 4px rgba(0,0,0,.5));z-index:3}
+.roulette-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:60px;height:60px;border-radius:50%;background:radial-gradient(circle,#1a1a3a,#0a0a1a);border:3px solid var(--gold);display:flex;align-items:center;justify-content:center;z-index:2;font-size:1.4rem;color:var(--gold)}
+.roulette-info{max-width:280px}
+.roulette-info h3{color:var(--gold);font-size:1.1rem;margin-bottom:8px}
+.milestone{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.78rem}
+.milestone.done{color:var(--muted);text-decoration:line-through}
+.milestone.active{color:var(--gold);font-weight:700}
+
+.prize-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:14px}
+.prize{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;font-size:.78rem}
+.prize-icon{font-size:1.6rem;margin-bottom:4px}
+.prize-name{font-weight:700;color:var(--gold)}
+.prize-sub{color:var(--muted);font-size:.65rem;margin-top:3px}
+
+.monitor-row{display:flex;gap:10px;padding:10px;background:var(--surface2);border-radius:8px;margin-bottom:8px;align-items:center;font-size:.78rem}
+.monitor-network{width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:900;color:#fff;font-size:.65rem}
+.net-ig{background:linear-gradient(45deg,#f09433,#dc2743,#bc1888)}
+.net-fb{background:#1877f2}
+.net-wa{background:#25d366}
+
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:20000;display:none;align-items:center;justify-content:center;animation:fadeIn .3s}
+.modal-backdrop.show{display:flex}
+.modal{background:linear-gradient(135deg,#1a1a3a,#0a0a1a);border:2px solid var(--gold);border-radius:16px;padding:30px 36px;text-align:center;max-width:420px;box-shadow:0 0 60px rgba(255,214,0,.5)}
+.modal h2{color:var(--gold);font-size:1.4rem;margin-bottom:8px}
+.modal-emoji{font-size:4rem;margin-bottom:10px;animation:sparkle 1.5s infinite}
+.modal-prize{color:var(--green);font-size:1.6rem;font-weight:900;margin:14px 0}
+.modal-desc{color:var(--text);font-size:.88rem;line-height:1.5;margin-bottom:18px}
+
+.mission{display:flex;gap:14px;padding:14px;background:var(--surface2);border-radius:10px;margin-bottom:10px;border-left:3px solid var(--green)}
+.mission.locked{border-left-color:var(--muted);opacity:.6}
+.mission-ico{font-size:1.8rem;flex-shrink:0}
+.mission-body{flex:1}
+.mission-title{font-weight:700;margin-bottom:3px;font-size:.88rem}
+.mission-reward{color:var(--gold);font-size:.72rem;font-weight:700;margin-top:4px}
+
+.coord-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px}
+.coord-top{display:flex;justify-content:space-between;align-items:center}
+.coord-name{font-weight:700;color:var(--cyan)}
+.coord-sub{font-size:.7rem;color:var(--muted)}
+.coord-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.coord-stat{text-align:center;background:var(--surface);padding:6px;border-radius:6px;font-size:.7rem}
+.coord-stat b{display:block;color:var(--green);font-size:1rem;font-weight:800}
+
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:700px){.form-grid{grid-template-columns:1fr}}
+.form-group{display:flex;flex-direction:column;gap:4px}
+.form-group label{font-size:.72rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.form-group input,.form-group select,.form-group textarea{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:inherit;font-size:.88rem;outline:none;transition:border-color .2s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--green)}
+.form-group textarea{resize:vertical;min-height:80px}
+.form-row-full{grid-column:1 / -1}
+.toast-fix{position:fixed;bottom:20px;right:20px;background:linear-gradient(135deg,var(--green),#00b359);color:#0a0a1a;border-radius:12px;padding:14px 20px;font-size:.88rem;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,.5);z-index:10000;display:none}
+.toast-fix.show{display:block;animation:fadeIn .3s}
+</style>
+<script src="img/qrcode.js"></script>
+</head>
+<body>
+
+<a href="index.html" title="Voltar à tela principal"
+   style="position:fixed; top:14px; left:14px; z-index:999999;
+   background:rgba(59,130,246,0.2); border:1px solid rgba(59,130,246,0.5); color:#448aff;
+   padding:8px 14px; border-radius:8px; font-family:Poppins,sans-serif; font-size:0.8rem;
+   font-weight:700; text-decoration:none; text-transform:uppercase; letter-spacing:0.5px;
+   backdrop-filter:blur(8px); transition:all 0.3s;"
+   onmouseover="this.style.background='rgba(59,130,246,0.4)'; this.style.borderColor='#ffd600';"
+   onmouseout="this.style.background='rgba(59,130,246,0.2)'; this.style.borderColor='rgba(59,130,246,0.5)';">
+  ← Início
+</a>
+
+<div class="splash" id="splash" onclick="closeSplash()">
+  <svg viewBox="0 0 200 200">
+      <defs>
+        <linearGradient id="avgrad-H" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#ffe970"/>
+          <stop offset="55%" stop-color="#ffd600"/>
+          <stop offset="100%" stop-color="#c9952a"/>
+        </linearGradient>
+        <radialGradient id="avbg-H" cx="0.5" cy="0.35" r="0.8">
+          <stop offset="0%" stop-color="#1a1a3a"/>
+          <stop offset="100%" stop-color="#0a0a1a"/>
+        </radialGradient>
+      </defs>
+      <circle cx="100" cy="100" r="95" fill="url(#avbg-H)" stroke="url(#avgrad-H)" stroke-width="2.5"/>
+      <circle cx="100" cy="100" r="82" fill="none" stroke="#ffd600" stroke-width="0.6" opacity="0.35"/>
+      <line x1="100" y1="6" x2="100" y2="16" stroke="#ffd600" stroke-width="1.2"/>
+      <line x1="100" y1="184" x2="100" y2="194" stroke="#ffd600" stroke-width="1.2"/>
+      <line x1="6" y1="100" x2="16" y2="100" stroke="#ffd600" stroke-width="1.2"/>
+      <line x1="184" y1="100" x2="194" y2="100" stroke="#ffd600" stroke-width="1.2"/>
+      <text x="100" y="128" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="900" font-size="110" fill="url(#avgrad-H)" font-style="italic">H</text>
+    </svg>
+  <h1>COMANDO IBANEIS</h1>
+  <h2>Painel Distrital</h2>
+  <div class="splash-tag">Helena Cardoso · Taguatinga</div>
+</div>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <svg viewBox="0 0 200 200">
+      <defs>
+        <linearGradient id="avgrad-H" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#ffe970"/>
+          <stop offset="55%" stop-color="#ffd600"/>
+          <stop offset="100%" stop-color="#c9952a"/>
+        </linearGradient>
+        <radialGradient id="avbg-H" cx="0.5" cy="0.35" r="0.8">
+          <stop offset="0%" stop-color="#1a1a3a"/>
+          <stop offset="100%" stop-color="#0a0a1a"/>
+        </radialGradient>
+      </defs>
+      <circle cx="100" cy="100" r="95" fill="url(#avbg-H)" stroke="url(#avgrad-H)" stroke-width="2.5"/>
+      <circle cx="100" cy="100" r="82" fill="none" stroke="#ffd600" stroke-width="0.6" opacity="0.35"/>
+      <line x1="100" y1="6" x2="100" y2="16" stroke="#ffd600" stroke-width="1.2"/>
+      <line x1="100" y1="184" x2="100" y2="194" stroke="#ffd600" stroke-width="1.2"/>
+      <line x1="6" y1="100" x2="16" y2="100" stroke="#ffd600" stroke-width="1.2"/>
+      <line x1="184" y1="100" x2="194" y2="100" stroke="#ffd600" stroke-width="1.2"/>
+      <text x="100" y="128" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="900" font-size="110" fill="url(#avgrad-H)" font-style="italic">H</text>
+    </svg>
+    <div class="sidebar-name">COMANDO IBANEIS</div>
+    <div class="sidebar-title">Painel Distrital</div>
+  </div>
+  <div class="sidebar-user">
+    <b>Helena Cardoso</b>
+    <small>Distrital · Taguatinga · #1</small>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Meu Jogo</div>
+    <div class="nav-item active" data-page="home"><span class="nav-icon">◈</span>Minha Campanha</div>
+    <div class="nav-item" data-page="pontos"><span class="nav-icon">⬆</span>Pontuação</div>
+    <div class="nav-item" data-page="roleta"><span class="nav-icon">⚡</span>Roleta<span class="nav-badge">3</span></div>
+    <div class="nav-item" data-page="missoes"><span class="nav-icon">🎯</span>Missões</div>
+
+    <div class="nav-section">Minha Equipe</div>
+    <div class="nav-item" data-page="coordenadores"><span class="nav-icon">👥</span>5 Coordenadores</div>
+    <div class="nav-item" data-page="cadastrar"><span class="nav-icon">➕</span>Cadastrar Eleitor<span class="nav-badge">+1</span></div>
+    <div class="nav-item" data-page="eleitores"><span class="nav-icon">⬢</span>Eleitores (4.820)</div>
+
+    <div class="nav-section">Conteúdo</div>
+    <div class="nav-item" data-page="material"><span class="nav-icon">📣</span>Material Ibaneis</div>
+    <div class="nav-item" data-page="grupos"><span class="nav-icon">◇</span>Grupos WhatsApp</div>
+    <div class="nav-item" data-page="ranking"><span class="nav-icon">★</span>Ranking Distritais</div>
+  </nav>
+  <div class="sidebar-footer">DEMO v1.0 · INTEIA</div>
+</aside>
+
+<header class="header">
+  <div class="header-title">
+    <span id="header-title">Minha Campanha</span>
+    <span class="header-demo-badge">DEMO · DADOS SIMULADOS</span>
+  </div>
+  <div class="header-right">
+    <div class="level-badge">⚡ Nível 9<small>9.400 pts</small></div>
+  </div>
+</header>
+
+<main class="main">
+
+<section class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-avatar">HC</div>
+    <div class="hero-text">
+      <h2>Você está em 1º lugar entre os 16 distritais.</h2>
+      <p>Sua equipe tem <b style="color:var(--cyan)">5 coordenadores</b> ativos. Você tem <b style="color:var(--gold)">4.820 eleitores confirmados</b> em Taguatinga e já fez <b style="color:var(--gold)">284 postagens</b> pró-Ibaneis nas redes. <b style="color:var(--green)">9.400 pontos</b> acumulados.</p>
+      <small>Federal responsável: Marcelo Andrade · Repasse próximo: 25/04 (R$ 62K previstos)</small>
+    </div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-top">
+      <div class="progress-label">Próximo marco · Nível 10</div>
+      <div class="progress-val">9.400 / 10.000 pts (94%)</div>
+    </div>
+    <div class="progress"><div class="progress-fill" style="width:94%"></div></div>
+    <div class="progress-scale"><span>0</span><span>2.5K</span><span>5K</span><span>7.5K</span><span>10K</span></div>
+    <div style="margin-top:8px; font-size:.72rem; color:var(--muted)">Faltam apenas <b style="color:var(--green)">600 pts</b> para liberar novo giro na Roleta (aprox. 60 novos cadastros ou 24 postagens).</div>
+  </div>
+
+  <div class="dual-dim">
+    <div class="dim-card">
+      <div class="dim-head">📊 Dimensão 1 · Quantitativa</div>
+      <div class="dim-value">4.820</div>
+      <div class="dim-sub">eleitores cadastrados · +1 pt cada = 4.820 pts</div>
+      <div class="dim-details">
+        <div class="dim-line"><span>Meta abril</span><b>5.200</b></div>
+        <div class="dim-line"><span>Ritmo atual</span><b style="color:var(--green)">+142/dia</b></div>
+        <div class="dim-line"><span>Projeção 30/04</span><b style="color:var(--green)">5.460 ✓</b></div>
+      </div>
+    </div>
+    <div class="dim-card qual">
+      <div class="dim-head">📱 Dimensão 2 · Qualitativa</div>
+      <div class="dim-value">4.580</div>
+      <div class="dim-sub">pts de postagens monitoradas · Sistema de Monitoramento</div>
+      <div class="dim-details">
+        <div class="dim-line"><span>Posts Instagram</span><b>142 · 3.550 pts</b></div>
+        <div class="dim-line"><span>Posts Facebook</span><b>68 · 1.360 pts</b></div>
+        <div class="dim-line"><span>Disparos WhatsApp</span><b>164 · 1.312 pts</b></div>
+        <div class="dim-line"><span>Penalidades</span><b style="color:var(--green)">0 · limpo</b></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><div class="card-title"><span class="card-title-icon">👥</span>Top Coordenadores</div></div>
+      <div class="list-item"><div><div class="li-label">Rogério Lima</div><div class="li-sub">1.820 eleitores · 62 posts</div></div><div class="li-val">2.180 pts</div></div>
+      <div class="list-item"><div><div class="li-label">Marina Castro</div><div class="li-sub">1.240 eleitores · 58 posts</div></div><div class="li-val">1.820 pts</div></div>
+      <div class="list-item"><div><div class="li-label">Pedro Vasconcelos</div><div class="li-sub">940 eleitores · 51 posts</div></div><div class="li-val">1.480 pts</div></div>
+      <div class="list-item"><div><div class="li-label">Juliana Reis</div><div class="li-sub">560 eleitores · 42 posts</div></div><div class="li-val">1.140 pts</div></div>
+      <div class="list-item"><div><div class="li-label">Eduardo Nunes</div><div class="li-sub">260 eleitores · 34 posts · ⚠ abaixo meta</div></div><div class="li-val" style="color:var(--orange)">780 pts</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title"><span class="card-title-icon">🎯</span>Missões do Dia</div></div>
+      <div class="mission">
+        <div class="mission-ico">📝</div>
+        <div class="mission-body">
+          <div class="mission-title">Cadastrar 30 novos eleitores</div>
+          <div class="bar"><div class="bar-fill" style="width:80%"></div></div>
+          <div class="mission-reward">24 / 30 · +300 pts bônus</div>
+        </div>
+      </div>
+      <div class="mission">
+        <div class="mission-ico">📸</div>
+        <div class="mission-body">
+          <div class="mission-title">Postar 3 stories Instagram pró-Ibaneis</div>
+          <div class="bar"><div class="bar-fill" style="width:66%; background:var(--gold)"></div></div>
+          <div class="mission-reward">2 / 3 · +150 pts bônus</div>
+        </div>
+      </div>
+      <div class="mission">
+        <div class="mission-ico">💬</div>
+        <div class="mission-body">
+          <div class="mission-title">Disparar material em 4 grupos WhatsApp</div>
+          <div class="bar"><div class="bar-fill" style="width:100%; background:var(--green)"></div></div>
+          <div class="mission-reward">4 / 4 ✓ · +200 pts RECEBIDOS</div>
+        </div>
+      </div>
+      <div class="mission locked">
+        <div class="mission-ico">🎪</div>
+        <div class="mission-body">
+          <div class="mission-title">Evento presencial em Taguatinga (dom 20/04)</div>
+          <div class="mission-reward">0 / 1 · +1.200 pts bônus · desbloqueia Nível 10</div>
+        </div>
+      </div>
+          <div class="prize"><div class="prize-icon">🎁</div><div class="prize-name">Caixa Secreta</div><div class="prize-sub">Surpresa!</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="card-title"><span class="card-title-icon">◉</span>Sua Rede em Movimento (últimas 2h)</div></div>
+    <div class="monitor-row"><div class="monitor-network net-ig">IG</div><div style="flex:1"><b>@helena.cardosodf</b> (você) reel citando Ibaneis (2,4K views)<div style="font-size:.68rem;color:var(--muted)">há 12 min · +80 pts</div></div><span class="status-pill pill-ok">+80</span></div>
+    <div class="monitor-row"><div class="monitor-network net-wa">WA</div><div style="flex:1"><b>Rogério Lima</b> disparou no grupo "Ibaneis Taguatinga Centro"<div style="font-size:.68rem;color:var(--muted)">há 28 min · +8 pts Rogério</div></div><span class="status-pill pill-ok">+8</span></div>
+    <div class="monitor-row"><div class="monitor-network net-fb">FB</div><div style="flex:1"><b>Marina Castro</b> compartilhou card oficial<div style="font-size:.68rem;color:var(--muted)">há 1h · +20 pts Marina</div></div><span class="status-pill pill-ok">+20</span></div>
+    <div class="monitor-row"><div class="monitor-network net-ig">IG</div><div style="flex:1"><b>Pedro Vasconcelos</b> story de rua com Ibaneis<div style="font-size:.68rem;color:var(--muted)">há 1h · +25 pts Pedro</div></div><span class="status-pill pill-ok">+25</span></div>
+  </div>
+</section>
+
+<section class="page" id="page-pontos">
+  <h1 class="page-title">Pontuação Detalhada</h1>
+  <p class="page-sub">Como seus 9.400 pontos foram construídos.</p>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><div class="card-title"><span class="card-title-icon">📊</span>Dimensão Quantitativa</div></div>
+      <div class="list-item"><div class="li-label">Cadastros diretos (você)</div><div class="li-val">420 · +420</div></div>
+      <div class="list-item"><div class="li-label">Cadastros Rogério</div><div class="li-val">1.820 · +1.820</div></div>
+      <div class="list-item"><div class="li-label">Cadastros Marina</div><div class="li-val">1.240 · +1.240</div></div>
+      <div class="list-item"><div class="li-label">Cadastros Pedro</div><div class="li-val">940 · +940</div></div>
+      <div class="list-item"><div class="li-label">Cadastros Juliana</div><div class="li-val">560 · +560</div></div>
+      <div class="list-item"><div class="li-label">Cadastros Eduardo</div><div class="li-val">260 · +260</div></div>
+      <div class="list-item"><div class="li-label"><b>Subtotal</b></div><div class="li-val"><b>4.820 pts</b></div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title"><span class="card-title-icon">📱</span>Dimensão Qualitativa</div></div>
+      <div class="list-item"><div class="li-label">Seus posts Instagram (25 pts)</div><div class="li-val">142 × 25 = 3.550</div></div>
+      <div class="list-item"><div class="li-label">Seus posts Facebook (20 pts)</div><div class="li-val">68 × 20 = 1.360</div></div>
+      <div class="list-item"><div class="li-label">Disparos WhatsApp você (8 pts)</div><div class="li-val">74 × 8 = 592</div></div>
+      <div class="list-item"><div class="li-label">Disparos coord. (5 pts repasse)</div><div class="li-val">90 × 5 = 450</div></div>
+      <div class="list-item"><div class="li-label">Bônus engajamento orgânico</div><div class="li-val">+128</div></div>
+      <div class="list-item"><div class="li-label">Penalidades</div><div class="li-val" style="color:var(--green)">0</div></div>
+      <div class="list-item"><div class="li-label"><b>Subtotal</b></div><div class="li-val"><b>4.580 pts</b></div></div>
+    </div>
+  </div>
+  <div class="card" style="background:rgba(0,230,118,.06); border-color:var(--green)">
+    <div style="font-size:.9rem; line-height:1.6">
+      <b style="color:var(--green)">Total Geral: 9.400 pts</b> · Equivalência para Marcelo (Federal): 0,25 × 9.400 = <b style="color:var(--gold)">2.350 pts</b> somam na conta dele.<br>
+      <small style="color:var(--muted)">Você é a maior fonte de pontos dele. Se você parar de produzir, Marcelo perde 2.350 pts e pode sair do Top 1.</small>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="page-roleta">
+  <h1 class="page-title">Roleta de Prêmios</h1>
+  <p class="page-sub">Você tem <b style="color:var(--green)">3 giros disponíveis</b>. Gire para ganhar.</p>
+  <div class="card">
+    <div class="roulette-wrap">
+      <div class="roulette">
+        <div class="roulette-pointer"></div>
+        <div class="roulette-disc" id="disc"></div>
+        <div class="roulette-center">⚡</div>
+      </div>
+      <div class="roulette-info">
+        <h3>Giros: <span id="spins" style="color:var(--green)">3</span></h3>
+        <p style="color:var(--muted); font-size:.82rem; margin-bottom:14px">Você ganha 1 giro a cada 3.000 pts. Próximo em 600 pts.</p>
+        <button class="btn btn-gold" id="spinBtn" onclick="spin()" style="width:100%; padding:14px; font-size:1rem">⚡ GIRAR ROLETA</button>
+        <div style="margin-top:14px">
+          <div class="milestone done">3K · ✓ Material Kit</div>
+          <div class="milestone done">6K · ✓ Campanha impulsionada INTEIA</div>
+          <div class="milestone done">9K · ✓ Sessão fotos</div>
+          <div class="milestone active">12K · (faltam 2.600)</div>
+          <div class="milestone">15K · Jantar regional</div>
+          <div class="milestone">20K · Convite palanque Ibaneis</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-title"><span class="card-title-icon">◆</span>Prêmios</div></div>
+    <div class="prize-list">
+      <div class="prize"><div class="prize-icon">🍽️</div><div class="prize-name">Jantar Ibaneis</div><div class="prize-sub">+ acompanhante</div></div>
+      <div class="prize"><div class="prize-icon">📣</div><div class="prize-name">Campanha Impulsionada</div><div class="prize-sub">2 posts INTEIA</div></div>
+      <div class="prize"><div class="prize-icon">🎨</div><div class="prize-name">Kit Material</div><div class="prize-sub">1.000 santinhos</div></div>
+      <div class="prize"><div class="prize-icon">📸</div><div class="prize-name">Foto c/ Ibaneis</div><div class="prize-sub">Ensaio profissional</div></div>
+      <div class="prize"><div class="prize-icon">🎟️</div><div class="prize-name">Evento VIP</div><div class="prize-sub">Convite duplo</div></div>
+      <div class="prize"><div class="prize-icon">📱</div><div class="prize-name">Reels Produzido</div><div class="prize-sub">INTEIA Studio</div></div>
+      <div class="prize"><div class="prize-icon">🎤</div><div class="prize-name">Palanque Ibaneis</div><div class="prize-sub">Posição VIP</div></div>
+      <div class="prize"><div class="prize-icon">🏆</div><div class="prize-name">Medalha de Ouro</div><div class="prize-sub">Raro · +500 pts</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="page-missoes">
+  <h1 class="page-title">Missões</h1>
+  <p class="page-sub">Complete para ganhar pontos extras e desbloquear giros na Roleta.</p>
+  <div class="card">
+    <div class="mission">
+      <div class="mission-ico">📝</div>
+      <div class="mission-body">
+        <div class="mission-title">Cadastrar 30 novos eleitores hoje</div>
+        <div class="li-sub">24 / 30 · diária</div>
+        <div class="bar"><div class="bar-fill" style="width:80%"></div></div>
+        <div class="mission-reward">+300 pts</div>
+      </div>
+    </div>
+    <div class="mission">
+      <div class="mission-ico">📸</div>
+      <div class="mission-body">
+        <div class="mission-title">Postar 3 stories Instagram pró-Ibaneis</div>
+        <div class="li-sub">2 / 3 · diária</div>
+        <div class="bar"><div class="bar-fill" style="width:66%; background:var(--gold)"></div></div>
+        <div class="mission-reward">+150 pts</div>
+      </div>
+    </div>
+    <div class="mission">
+      <div class="mission-ico">💬</div>
+      <div class="mission-body">
+        <div class="mission-title">Disparar material em 4 grupos WhatsApp</div>
+        <div class="li-sub">4 / 4 · diária ✓ Concluída</div>
+        <div class="bar"><div class="bar-fill" style="width:100%; background:var(--green)"></div></div>
+        <div class="mission-reward">+200 pts RECEBIDOS</div>
+      </div>
+    </div>
+    <div class="mission">
+      <div class="mission-ico">🎪</div>
+      <div class="mission-body">
+        <div class="mission-title">Evento presencial em Taguatinga</div>
+        <div class="li-sub">0 / 1 · semanal · dom 20/04</div>
+        <div class="mission-reward">+1.200 pts · desbloqueia Nível 10</div>
+      </div>
+    </div>
+    <div class="mission">
+      <div class="mission-ico">📻</div>
+      <div class="mission-body">
+        <div class="mission-title">Participar de 1 entrevista rádio local</div>
+        <div class="li-sub">0 / 1 · mensal</div>
+        <div class="mission-reward">+800 pts</div>
+      </div>
+    </div>
+    <div class="mission locked">
+      <div class="mission-ico">🏅</div>
+      <div class="mission-body">
+        <div class="mission-title">🔒 Manter 5 coord. ativos 30 dias</div>
+        <div class="li-sub">bloqueada · Nível 10+</div>
+        <div class="mission-reward">+2.500 pts</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="page-coordenadores">
+  <h1 class="page-title">Meus Coordenadores</h1>
+  <p class="page-sub">5 coordenadores ativos. Cada um cuida de um grupo de eleitores em Taguatinga.</p>
+
+  <div class="coord-card">
+    <div class="coord-top"><div><div class="coord-name">🥇 Rogério Lima</div><div class="coord-sub">Taguatinga Centro · Nível 8 · 2.180 pts</div></div><button class="btn btn-primary" style="padding:6px 12px; font-size:.72rem">Enviar Material</button></div>
+    <div class="coord-stats">
+      <div class="coord-stat"><b>1.820</b><div class="coord-sub">eleitores</div></div>
+      <div class="coord-stat"><b>62</b><div class="coord-sub">postagens</div></div>
+      <div class="coord-stat"><b>4</b><div class="coord-sub">grupos WA</div></div>
+    </div>
+  </div>
+  <div class="coord-card">
+    <div class="coord-top"><div><div class="coord-name">🥈 Marina Castro</div><div class="coord-sub">Taguatinga Norte · Nível 7 · 1.820 pts</div></div><button class="btn btn-primary" style="padding:6px 12px; font-size:.72rem">Enviar Material</button></div>
+    <div class="coord-stats">
+      <div class="coord-stat"><b>1.240</b><div class="coord-sub">eleitores</div></div>
+      <div class="coord-stat"><b>58</b><div class="coord-sub">postagens</div></div>
+      <div class="coord-stat"><b>3</b><div class="coord-sub">grupos WA</div></div>
+    </div>
+  </div>
+  <div class="coord-card">
+    <div class="coord-top"><div><div class="coord-name">🥉 Pedro Vasconcelos</div><div class="coord-sub">Taguatinga Sul · Nível 6 · 1.480 pts</div></div><button class="btn btn-primary" style="padding:6px 12px; font-size:.72rem">Enviar Material</button></div>
+    <div class="coord-stats">
+      <div class="coord-stat"><b>940</b><div class="coord-sub">eleitores</div></div>
+      <div class="coord-stat"><b>51</b><div class="coord-sub">postagens</div></div>
+      <div class="coord-stat"><b>3</b><div class="coord-sub">grupos WA</div></div>
+    </div>
+  </div>
+  <div class="coord-card">
+    <div class="coord-top"><div><div class="coord-name">Juliana Reis</div><div class="coord-sub">Areal · Nível 5 · 1.140 pts</div></div><button class="btn btn-primary" style="padding:6px 12px; font-size:.72rem">Enviar Material</button></div>
+    <div class="coord-stats">
+      <div class="coord-stat"><b>560</b><div class="coord-sub">eleitores</div></div>
+      <div class="coord-stat"><b>42</b><div class="coord-sub">postagens</div></div>
+      <div class="coord-stat"><b>2</b><div class="coord-sub">grupos WA</div></div>
+    </div>
+  </div>
+  <div class="coord-card" style="border-left:3px solid var(--orange)">
+    <div class="coord-top"><div><div class="coord-name" style="color:var(--orange)">⚠ Eduardo Nunes</div><div class="coord-sub">Vicente Pires · Nível 3 · 780 pts · abaixo da meta</div></div><button class="btn" style="padding:6px 12px; font-size:.72rem">Cobrar</button></div>
+    <div class="coord-stats">
+      <div class="coord-stat"><b style="color:var(--orange)">260</b><div class="coord-sub">eleitores</div></div>
+      <div class="coord-stat"><b style="color:var(--orange)">34</b><div class="coord-sub">postagens</div></div>
+      <div class="coord-stat"><b style="color:var(--orange)">1</b><div class="coord-sub">grupos WA</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="page-cadastrar">
+  <h1 class="page-title">Cadastrar Eleitor</h1>
+  <p class="page-sub">Cadastro direto seu = <b style="color:var(--green)">+1 pt próprio</b>. Você pode também atribuir o cadastro a um coordenador (o ponto vai para ele, e você recebe via Σ da equipe).</p>
+  <div class="card">
+    <div class="form-grid">
+      <div class="form-group"><label>Nome completo *</label><input type="text" placeholder="Ex: Maria dos Santos"></div>
+      <div class="form-group"><label>WhatsApp *</label><input type="tel" placeholder="(61) 9xxxx-xxxx"></div>
+      <div class="form-group"><label>Email</label><input type="email" placeholder="opcional"></div>
+      <div class="form-group"><label>Data de nascimento</label><input type="date"></div>
+      <div class="form-group"><label>Bairro · Taguatinga</label>
+        <select>
+          <option>Taguatinga Centro</option><option>Taguatinga Norte</option>
+          <option>Taguatinga Sul</option><option>Areal</option><option>Vicente Pires</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Profissão</label><input type="text" placeholder="Ex: Comerciante"></div>
+      <div class="form-group"><label>Perfil político</label>
+        <select><option>Base fiel</option><option>Simpatizante</option><option>Indeciso</option><option>Influenciador local</option></select>
+      </div>
+      <div class="form-group"><label>Atribuir a qual coordenador?</label>
+        <select>
+          <option>Nenhum · meu cadastro direto (+1 pt)</option>
+          <option>Rogério Lima (Taguatinga Centro)</option>
+          <option>Marina Castro (Taguatinga Norte)</option>
+          <option>Pedro Vasconcelos (Taguatinga Sul)</option>
+          <option>Juliana Reis (Areal)</option>
+          <option>Eduardo Nunes (Vicente Pires)</option>
+        </select>
+      </div>
+      <div class="form-group form-row-full"><label>Observações</label><textarea placeholder="Ex: conhecida do bairro, lê jornal, reclama de obra parada"></textarea></div>
+      <div class="form-group form-row-full"><label>Consentimento (LGPD) *</label>
+        <label style="display:flex; gap:8px; align-items:center; font-size:.82rem; color:var(--muted); font-weight:400; text-transform:none; letter-spacing:0">
+          <input type="checkbox" style="width:18px; height:18px"> Eleitor autorizou material de campanha.
+        </label>
+      </div>
+    </div>
+    <div style="margin-top:18px; display:flex; gap:10px">
+      <button class="btn btn-primary" style="padding:12px 24px" onclick="toastFix('Eleitor cadastrado! +1 pt · total 4.821 eleitores')">✓ Cadastrar (+1 pt)</button>
+      <button class="btn">Cancelar</button>
+    </div>
+  </div>
+  <div class="card" style="background:rgba(255,214,0,.06); border-color:var(--gold)">
+    <div style="font-size:.88rem; line-height:1.6">
+      <b style="color:var(--gold)">💡 Quando cadastrar direto?</b> Use para lideranças de alto valor (empresária local, presidente de associação, comerciante influente). Seu Federal Marcelo Andrade herda 0,25 × 1 = 0,25 pt. Quando atribuir a um coordenador, incentiva competição entre eles — bom para volume, ruim para VIPs.
+    </div>
+  </div>
+</section>
+
+<section class="page" id="page-eleitores">
+  <h1 class="page-title">Eleitores Confirmados</h1>
+  <p class="page-sub">4.820 contatos cadastrados pelo seu time em Taguatinga.</p>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-label">Total</div><div class="kpi-value">4.820</div><div class="kpi-delta up">▲ 142 hoje</div></div>
+    <div class="kpi"><div class="kpi-label">WhatsApp Validado</div><div class="kpi-value">4.210</div><div class="kpi-delta">87%</div></div>
+    <div class="kpi"><div class="kpi-label">Email Validado</div><div class="kpi-value">2.840</div><div class="kpi-delta">59%</div></div>
+    <div class="kpi"><div class="kpi-label">Engajamento Médio</div><div class="kpi-value">42%</div><div class="kpi-delta up">lendo material</div></div>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-title"><span class="card-title-icon">⬢</span>Últimos Cadastros</div></div>
+    <table class="ranking">
+      <thead><tr><th>Nome</th><th>Bairro</th><th>WA</th><th>Coord.</th><th>Perfil</th></tr></thead>
+      <tbody>
+        <tr><td class="rank-name">Maria dos Santos</td><td>Taguatinga Norte</td><td>✓</td><td>Marina</td><td>Aposentada · 62 anos</td></tr>
+        <tr><td class="rank-name">João Paulo Ribeiro</td><td>Taguatinga Sul</td><td>✓</td><td>Pedro</td><td>Motorista · 41 anos</td></tr>
+        <tr><td class="rank-name">Fernanda Alves</td><td>Areal</td><td>✓</td><td>Juliana</td><td>Professora · 38 anos</td></tr>
+        <tr><td class="rank-name">Carlos Eduardo Lima</td><td>Taguatinga Centro</td><td>✓</td><td>Rogério</td><td>Comerciante · 54 anos</td></tr>
+        <tr><td class="rank-name">Ana Beatriz Rocha</td><td>Taguatinga Centro</td><td>✓</td><td>Rogério</td><td>Estudante · 22 anos</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="page" id="page-material">
+  <h1 class="page-title">Material de Campanha</h1>
+  <p class="page-sub">Banco oficial da coordenação do Senador. Use nas redes e nos grupos.</p>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><div class="card-title"><span class="card-title-icon">📣</span>Cards Disponíveis</div></div>
+      <div class="list-item"><div><div class="li-label">📱 Card segurança pública</div><div class="li-sub">IG + FB · 1080×1350</div></div><button class="btn">Baixar</button></div>
+      <div class="list-item"><div><div class="li-label">🏥 Card saúde GDF</div><div class="li-sub">IG + FB · 1080×1080</div></div><button class="btn">Baixar</button></div>
+      <div class="list-item"><div><div class="li-label">🎥 Reel institucional 30s</div><div class="li-sub">IG Reels · 1080×1920</div></div><button class="btn">Baixar</button></div>
+      <div class="list-item"><div><div class="li-label">💬 Áudio WhatsApp 45s</div><div class="li-sub">MP3 · voz Ibaneis</div></div><button class="btn">Baixar</button></div>
+      <div class="list-item"><div><div class="li-label">🎨 Santinho Taguatinga</div><div class="li-sub">PDF · impressão gráfica</div></div><button class="btn">Baixar</button></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title"><span class="card-title-icon">🎯</span>Conteúdo Sugerido Hoje</div></div>
+      <div class="list-item"><div><div class="li-label">📸 Story: Ibaneis na CEASA</div><div class="li-sub">melhor horário: 12h-13h</div></div><button class="btn btn-primary">Postar</button></div>
+      <div class="list-item"><div><div class="li-label">💬 Áudio nos grupos WA</div><div class="li-sub">grupos pré-selecionados: 4</div></div><button class="btn btn-primary">Disparar</button></div>
+      <div class="list-item"><div><div class="li-label">📝 Card obras Taguatinga</div><div class="li-sub">personalizado sua RA</div></div><button class="btn btn-primary">Postar</button></div>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="page-grupos">
+  <h1 class="page-title">Grupos WhatsApp Monitorados</h1>
+  <p class="page-sub">O número da IA (+55 61 9xxxx-0001) está em todos os grupos e pontua cada disparo válido.</p>
+  <div class="card">
+    <table class="ranking">
+      <thead><tr><th>Grupo</th><th>Membros</th><th>Responsável</th><th>Disparos 7d</th><th>Pts</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td class="rank-name">MDB Taguatinga Oficial</td><td>280</td><td>Você</td><td>42</td><td class="rank-pts">336</td><td><span class="status-pill pill-ok">Top</span></td></tr>
+        <tr><td class="rank-name">Taguatinga Centro Ibaneis</td><td>184</td><td>Rogério</td><td>28</td><td class="rank-pts">224</td><td><span class="status-pill pill-ok">OK</span></td></tr>
+        <tr><td class="rank-name">Apoio Taguatinga Norte</td><td>156</td><td>Marina</td><td>24</td><td class="rank-pts">192</td><td><span class="status-pill pill-ok">OK</span></td></tr>
+        <tr><td class="rank-name">Taguatinga Sul Conservador</td><td>142</td><td>Pedro</td><td>22</td><td class="rank-pts">176</td><td><span class="status-pill pill-ok">OK</span></td></tr>
+        <tr><td class="rank-name">Areal MDB</td><td>98</td><td>Juliana</td><td>18</td><td class="rank-pts">144</td><td><span class="status-pill pill-ok">OK</span></td></tr>
+        <tr><td class="rank-name">Vicente Pires Urgente</td><td>74</td><td>Eduardo</td><td>6</td><td class="rank-pts">48</td><td><span class="status-pill pill-warn">Baixo</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="page" id="page-ranking">
+  <h1 class="page-title">Ranking Distritais</h1>
+  <p class="page-sub">Você vs. os outros 15 distritais da rede Ibaneis.</p>
+  <div class="card">
+    <table class="ranking">
+      <thead><tr><th>#</th><th>Distrital</th><th>RA</th><th>Federal</th><th>Pts</th></tr></thead>
+      <tbody>
+        <tr style="background:rgba(0,230,118,.06)"><td class="rank-pos top1">1</td><td class="rank-name">Helena Cardoso (você)</td><td>Taguatinga</td><td>Marcelo A.</td><td class="rank-pts">9.400</td></tr>
+        <tr><td class="rank-pos top2">2</td><td class="rank-name">Renata Sales</td><td>Águas Claras</td><td>Cristina V.</td><td class="rank-pts">8.900</td></tr>
+        <tr><td class="rank-pos top3">3</td><td class="rank-name">Fábio Ribeiro</td><td>Ceilândia</td><td>Marcelo A.</td><td class="rank-pts">8.100</td></tr>
+        <tr><td class="rank-pos">4</td><td class="rank-name">Júlio Campos</td><td>Recanto das Emas</td><td>Cristina V.</td><td class="rank-pts">7.200</td></tr>
+        <tr><td class="rank-pos">5</td><td class="rank-name">Denise Pontes</td><td>Guará/SIA</td><td>Marcelo A.</td><td class="rank-pts">6.800</td></tr>
+        <tr><td class="rank-pos">6</td><td class="rank-name">Amanda Tolentino</td><td>Gama</td><td>Cristina V.</td><td class="rank-pts">6.400</td></tr>
+        <tr><td class="rank-pos">7</td><td class="rank-name">Carla Menezes</td><td>Sobradinho</td><td>Rogério T.</td><td class="rank-pts">6.100</td></tr>
+        <tr><td class="rank-pos">8</td><td class="rank-name">Tiago Moura</td><td>Samambaia</td><td>Marcelo A.</td><td class="rank-pts">5.900</td></tr>
+        <tr><td class="rank-pos">9</td><td class="rank-name">Bruno Siqueira</td><td>Planaltina</td><td>Cristina V.</td><td class="rank-pts">5.600</td></tr>
+        <tr><td class="rank-pos">10</td><td class="rank-name">Diego Rocha</td><td>São Sebastião</td><td>Rogério T.</td><td class="rank-pts">5.400</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
+
+<section class="page" id="page-missoes-coords">
+  <h1 class="page-title">Missões para Coordenadores</h1>
+  <p class="page-sub">Delegue tarefas com metas e bônus aos seus 5 coordenadores.</p>
+  <div class="card">
+    <h3 style="margin-bottom:14px; color:var(--gold)">Criar Nova Missão</h3>
+    <div class="form-grid">
+      <div class="form-group"><label>Coordenador *</label>
+        <select>
+          <option>Roberto Silva (Asa Norte)</option>
+          <option>Camila Costa (Asa Sul)</option>
+          <option>Lucas Ferreira (Sobradinho)</option>
+          <option>Marina Santos (Riacho Fundo)</option>
+          <option>Paulo Oliveira (Núcleo Bandeirante)</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Tipo *</label>
+        <select><option>Cadastrar X contatos</option><option>X postagens</option><option>Evento</option></select>
+      </div>
+      <div class="form-group"><label>Meta</label><input type="number" min="1" placeholder="500"></div>
+      <div class="form-group"><label>Prazo</label><input type="date"></div>
+      <div class="form-group"><label>Bônus (pts)</label><input type="number" min="0" placeholder="300"></div>
+      <div class="form-group form-row-full"><label>Descrição</label><textarea placeholder="Detalhes..."></textarea></div>
+      <div class="form-group form-row-full"><label>Anexar Material</label><input type="file" accept="image/*,.pdf"></div>
+    </div>
+    <button class="btn btn-primary" style="margin-top:14px" onclick="toastFix('Missão enviada!')">⚑ Enviar</button>
+  </div>
+</section>
+
+<section class="page" id="page-qr-cadastro">
+  <h1 class="page-title">Cadastro Público por QR Code</h1>
+  <p class="page-sub">Pessoas escanneam e se cadastram direto na sua base confirmada.</p>
+  <div class="grid-2">
+    <div class="card" style="text-align:center">
+      <h3 style="color:var(--gold); margin-bottom:10px">📲 Seu QR Code</h3>
+      <img src="" data-src-fallback="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fcampanha.ibaneis.df%2Fcadastro%3Fdistrital%3Dhelena" data-qr-url="https://campanha.ibaneis.df/cadastro?distrital=helena" data-qr-size="200" class="qr-auto" alt="QR" style="max-width:200px; border:2px solid var(--gold); padding:8px; background:#fff">
+      <p style="font-size:.75rem; margin:8px 0; color:var(--muted)">helena@taguatinga</p>
+      <div style="display:flex; gap:8px; margin-top:10px">
+        <button class="btn btn-gold" style="flex:1" onclick="window.print()">🖨️ Imprimir</button>
+        <button class="btn" style="flex:1" onclick="abrirWhats('5561999990000','Scan aqui!')">📱 WA</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--gold); margin-bottom:10px">Como Funciona</h3>
+      <div style="font-size:.82rem; line-height:1.6">
+        <p style="margin-bottom:8px"><b>1. Eleitor escaneia</b> o QR em evento, folheto ou conversa</p>
+        <p style="margin-bottom:8px"><b>2. Preenche formulário:</b> nome, WhatsApp, RA, profissão, LGPD</p>
+        <p><b>3. Cadastro cai</b> direto na sua base como "confirmado" — você ganha +50 pts</p>
+      </div>
+    </div>
+    <div class="card" style="grid-column:1/-1">
+      <h3 style="color:var(--gold); margin-bottom:10px">Prévia do Formulário</h3>
+      <div class="form-grid" style="background:var(--surface2); padding:12px; border-radius:8px">
+        <div style="font-size:.78rem; color:var(--muted)">
+          <p style="margin-bottom:8px"><b>Nome:</b> <input type="text" placeholder="Seu nome completo" style="width:100%; padding:4px; border-radius:4px; border:1px solid var(--border)"></p>
+          <p style="margin-bottom:8px"><b>WhatsApp:</b> <input type="tel" placeholder="(61) 9xxxx-xxxx" style="width:100%; padding:4px; border-radius:4px; border:1px solid var(--border)"></p>
+          <p style="margin-bottom:8px"><b>RA:</b> <select style="width:100%; padding:4px; border-radius:4px; border:1px solid var(--border)"><option>Taguatinga</option></select></p>
+          <p><label><input type="checkbox"> Autorizo receber material da campanha</label></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="modal-backdrop" id="modal">
+  <div class="modal">
+    <div class="modal-emoji" id="mEmoji">🎉</div>
+    <h2 id="mTitle">Você ganhou!</h2>
+    <div class="modal-prize" id="mPrize">Jantar com Ibaneis</div>
+    <div class="modal-desc" id="mDesc">A equipe entrará em contato.</div>
+    <button class="btn btn-primary" onclick="closeModal()">Fechar</button>
+  </div>
+</div>
+
+<script>
+function abrirWhats(phone, msg){
+  const m = msg || 'Olá, mensagem da campanha Ibaneis.';
+  if(confirm('📱 MODO DEMO — WhatsApp\n\nMensagem que seria enviada:\n\n"'+m+'"\n\nNa versão ativa, este botão abre direto o contato real. Abrir o WhatsApp com número fictício de demo?')){
+    const n = (phone || '5561999990000').replace(/\D/g,'');
+    window.open('https://wa.me/'+n+'?text='+encodeURIComponent(m), '_blank');
+  }
+}
+function explicarConfirmado(){
+  alert('Eleitor confirmado:\n\nPessoa cadastrada na base com WhatsApp validado e que autorizou (LGPD) receber material da campanha.\n\nÉ um voto contado para Ibaneis.');
+}
+
+function closeSplash(){document.getElementById('splash').classList.add('hidden')}
+setTimeout(closeSplash,3000);
+const pt={home:'Minha Campanha',pontos:'Pontuação',roleta:'Roleta',missoes:'Missões',coordenadores:'Coordenadores',eleitores:'Eleitores',material:'Material',grupos:'Grupos WhatsApp',ranking:'Ranking Distritais',cadastrar:'Cadastrar Eleitor'};
+function toastFix(msg){const e=document.getElementById('toastFix');if(e)e.remove();const t=document.createElement('div');t.id='toastFix';t.className='toast-fix show';t.textContent='✓ '+msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2800);}
+function go(p){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById('page-'+p).classList.add('active');document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));const n=document.querySelector('.nav-item[data-page="'+p+'"]');if(n)n.classList.add('active');document.getElementById('header-title').textContent=pt[p]||'';window.scrollTo({top:0,behavior:'smooth'})}
+document.querySelectorAll('.nav-item').forEach(n=>n.addEventListener('click',()=>go(n.dataset.page)));
+
+let spins=3;
+const prizes=[
+  {e:'🍽️',n:'Jantar com Ibaneis',d:'Você e acompanhante em jantar exclusivo.'},
+  {e:'📣',n:'Campanha Impulsionada INTEIA',d:'2 posts profissionais produzidos e publicados pela equipe INTEIA no seu perfil oficial.'},
+  {e:'🎨',n:'Kit Material Premium',d:'1.000 santinhos + 300 adesivos.'},
+  {e:'📸',n:'Foto oficial com Ibaneis',d:'Ensaio profissional uso livre.'},
+  {e:'🎟️',n:'Convite VIP evento',d:'Jantar fechado apoiadores.'},
+  {e:'📱',n:'Reels produzido INTEIA',d:'3 reels profissionais seu IG.'},
+  {e:'🎤',n:'Palanque Ibaneis',d:'Posição VIP próximo evento.'},
+  {e:'🏆',n:'Medalha de Ouro (RARO)',d:'+500 pts bônus imediato.'}
+];
+function spin(){
+  if(spins<=0){alert('Sem giros disponíveis.');return}
+  const btn=document.getElementById('spinBtn'),disc=document.getElementById('disc');
+  btn.disabled=true;btn.textContent='Girando...';disc.style.transform='rotate(0deg)';void disc.offsetWidth;
+  const w=Math.floor(Math.random()*8);const d=1800+(360-w*45-22);disc.style.transform='rotate('+d+'deg)';
+  setTimeout(()=>{spins--;document.getElementById('spins').textContent=spins;const p=prizes[w];
+  document.getElementById('mEmoji').textContent=p.e;document.getElementById('mPrize').textContent=p.n;
+  document.getElementById('mDesc').textContent=p.d;document.getElementById('modal').classList.add('show');
+  btn.disabled=false;btn.textContent='⚡ GIRAR ROLETA'},4100)
+}
+function closeModal(){document.getElementById('modal').classList.remove('show')}
+</script>
+<script>
+function gerarQR(texto, tamanho){
+  const t = tamanho || 180;
+  try {
+    if (typeof qrcode !== 'undefined') {
+      const qr = qrcode(0, 'L');
+      qr.addData(texto);
+      qr.make();
+      return qr.createDataURL(4, 0);
+    }
+  } catch(e) { console.warn('QR local falhou, fallback online', e); }
+  return 'https://api.qrserver.com/v1/create-qr-code/?size='+t+'x'+t+'&data='+encodeURIComponent(texto);
+}
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('img.qr-auto').forEach(img => {
+    const url = img.dataset.qrUrl;
+    const size = parseInt(img.dataset.qrSize || '180', 10);
+    if (url) img.src = gerarQR(url, size);
+  });
+});
+</script>
+</body>
+</html>

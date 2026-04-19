@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rogério Lima · Coordenador · Comando Ibaneis 2026 (Demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a1a;--surface:rgba(255,255,255,.04);--surface2:rgba(255,255,255,.07);
+--border:rgba(255,255,255,.09);--text:#e8e8f0;--muted:#8a8aa0;--green:#00e676;
+--gold:#ffd600;--purple:#b388ff;--cyan:#00e5ff;--red:#ff5252;--orange:#ff9100;
+--blue:#448aff;--sidebar-w:240px;--header-h:64px;--radius:14px}
+html,body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 0%,rgba(0,230,118,.07),transparent 50%),radial-gradient(ellipse at 80% 100%,rgba(255,214,0,.05),transparent 50%);pointer-events:none;z-index:0}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:var(--green);border-radius:3px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes neonPulse{0%,100%{text-shadow:0 0 10px var(--gold)}50%{text-shadow:0 0 28px var(--gold)}}
+@keyframes success{0%{transform:scale(.5);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+
+.splash{position:fixed;inset:0;background:linear-gradient(135deg,#0a0a1a,#1a0a2e 50%,#0a0a1a);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:99999;cursor:pointer;transition:opacity .6s}
+.splash.hidden{opacity:0;pointer-events:none}
+.splash svg{width:150px;height:150px;animation:float 3s infinite;filter:drop-shadow(0 0 24px rgba(0,230,118,.4))}
+.splash h1{font-size:2rem;font-weight:900;color:var(--gold);letter-spacing:3px;margin-top:14px;animation:neonPulse 2s infinite}
+.splash h2{font-size:.85rem;color:var(--green);font-weight:700;margin-top:4px;letter-spacing:2px}
+.splash-tag{display:inline-block;background:rgba(0,229,255,.15);color:var(--cyan);padding:6px 14px;border-radius:20px;font-size:.7rem;font-weight:600;margin-top:14px;letter-spacing:2px;text-transform:uppercase;border:1px solid rgba(0,229,255,.3)}
+
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);background:rgba(10,10,26,.96);backdrop-filter:blur(12px);border-right:1px solid var(--border);z-index:1000;display:flex;flex-direction:column}
+.sidebar-brand{padding:18px 14px;text-align:center;border-bottom:1px solid var(--border)}
+.sidebar-brand svg{width:54px;height:54px;margin-bottom:4px}
+.sidebar-name{font-size:.95rem;font-weight:900;color:var(--green);letter-spacing:1.5px}
+.sidebar-title{font-size:.58rem;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;font-weight:700}
+.sidebar-user{padding:10px 14px;border-bottom:1px solid var(--border);font-size:.78rem}
+.sidebar-user b{color:var(--cyan);font-size:.85rem;display:block}
+.sidebar-user small{color:var(--muted);font-size:.65rem}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.nav-section{padding:14px 16px 4px;font-size:.55rem;text-transform:uppercase;letter-spacing:2px;color:var(--gold);font-weight:700;opacity:.75}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,.6);cursor:pointer;transition:all .25s;border-left:3px solid transparent;font-size:.82rem;font-weight:500;user-select:none}
+.nav-item:hover{color:#fff;background:rgba(255,255,255,.03)}
+.nav-item.active{color:var(--green);border-left-color:var(--green);background:rgba(0,230,118,.08)}
+.nav-icon{font-size:1.05rem;width:22px;text-align:center}
+.nav-badge{margin-left:auto;background:var(--green);color:#0a0a1a;font-size:.6rem;padding:2px 6px;border-radius:10px;font-weight:700}
+.sidebar-footer{padding:12px;border-top:1px solid var(--border);text-align:center;font-size:.62rem;color:var(--muted)}
+
+.header{position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--header-h);background:rgba(10,10,26,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:999}
+.header-title{font-size:1rem;font-weight:700;color:var(--green);display:flex;gap:10px;align-items:center}
+.header-demo-badge{background:rgba(255,82,82,.15);color:var(--red);padding:3px 8px;border-radius:6px;font-size:.6rem;font-weight:700;letter-spacing:1px;border:1px solid rgba(255,82,82,.3)}
+.header-right{display:flex;align-items:center;gap:18px}
+.level-badge{display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--green),#00b359);color:#0a0a1a;padding:6px 14px;border-radius:20px;font-weight:800;font-size:.82rem}
+.level-badge small{font-size:.6rem;font-weight:600}
+
+.main{margin-left:var(--sidebar-w);margin-top:var(--header-h);padding:24px;position:relative;z-index:1}
+.page{display:none;animation:fadeIn .4s ease-out}.page.active{display:block}
+.page-title{font-size:1.4rem;font-weight:800;color:var(--gold);margin-bottom:4px}
+.page-sub{color:var(--muted);font-size:.82rem;margin-bottom:22px}
+
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;position:relative;overflow:hidden;transition:all .25s}
+.kpi:hover{border-color:var(--green);transform:translateY(-3px)}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--green),var(--gold))}
+.kpi-label{font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);font-weight:600}
+.kpi-value{font-size:1.9rem;font-weight:900;color:var(--green);margin:6px 0 2px;letter-spacing:-1px}
+.kpi-delta{font-size:.72rem;font-weight:600}
+.kpi-delta.up{color:var(--green)}.kpi-delta.down{color:var(--red)}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:18px}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.card-title{font-size:.95rem;font-weight:700;color:var(--text);display:flex;gap:8px;align-items:center}
+.card-title-icon{color:var(--green)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:1100px){.grid-2{grid-template-columns:1fr}}
+
+.hero{background:linear-gradient(135deg,rgba(0,230,118,.06),rgba(255,214,0,.06));border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;margin-bottom:22px;display:flex;gap:20px;align-items:center}
+.hero-avatar{width:86px;height:86px;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;color:#0a0a1a;flex-shrink:0}
+.hero-text h2{font-size:1.3rem;font-weight:800;color:var(--gold);margin-bottom:4px}
+.hero-text p{color:var(--text);font-size:.88rem;line-height:1.5}
+.hero-text small{color:var(--muted);font-size:.72rem}
+
+.progress-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:18px}
+.progress-top{display:flex;justify-content:space-between;margin-bottom:8px;font-size:.82rem}
+.progress-label{color:var(--muted);font-weight:600}
+.progress-val{color:var(--green);font-weight:800}
+.progress{height:14px;background:rgba(255,255,255,.06);border-radius:7px;overflow:hidden;position:relative}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--gold));border-radius:7px;transition:width 1s;position:relative}
+.progress-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);animation:pulse 2s infinite}
+
+.ranking{width:100%;border-collapse:collapse}
+.ranking th{text-align:left;padding:10px 8px;font-size:.62rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);border-bottom:1px solid var(--border);font-weight:700}
+.ranking td{padding:12px 8px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.85rem}
+.rank-pos{font-weight:900;color:var(--gold);width:32px}
+.rank-pos.top1{color:var(--gold)}.rank-pos.top2{color:#c0c0c0}.rank-pos.top3{color:#cd7f32}
+.rank-name{font-weight:600}.rank-sub{font-size:.7rem;color:var(--muted)}
+.rank-pts{color:var(--green);font-weight:800}
+.status-pill{display:inline-block;padding:3px 9px;border-radius:12px;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.pill-ok{background:rgba(0,230,118,.15);color:var(--green);border:1px solid rgba(0,230,118,.3)}
+.pill-warn{background:rgba(255,145,0,.15);color:var(--orange);border:1px solid rgba(255,145,0,.3)}
+
+.list-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.85rem}
+.list-item:last-child{border-bottom:none}
+.li-label{color:var(--text);font-weight:600}.li-sub{color:var(--muted);font-size:.7rem}.li-val{color:var(--gold);font-weight:800}
+
+.btn{padding:10px 18px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;font-size:.82rem;font-weight:600;transition:all .2s;font-family:inherit}
+.btn:hover{background:var(--surface2);border-color:var(--green)}
+.btn-primary{background:linear-gradient(135deg,var(--green),#00b359);color:#0a0a1a;border:none;font-weight:800}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#c9952a);color:#0a0a1a;border:none;font-weight:800}
+
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:700px){.form-grid{grid-template-columns:1fr}}
+.form-group{display:flex;flex-direction:column;gap:4px}
+.form-group label{font-size:.72rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.form-group input,.form-group select,.form-group textarea{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:inherit;font-size:.88rem;outline:none;transition:border-color .2s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--green)}
+.form-group textarea{resize:vertical;min-height:80px}
+.form-row-full{grid-column:1 / -1}
+
+.monitor-row{display:flex;gap:10px;padding:10px;background:var(--surface2);border-radius:8px;margin-bottom:8px;align-items:center;font-size:.78rem}
+.monitor-network{width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:900;color:#fff;font-size:.65rem}
+.net-ig{background:linear-gradient(45deg,#f09433,#dc2743,#bc1888)}
+.net-fb{background:#1877f2}
+.net-wa{background:#25d366}
+.net-em{background:#ea4335}
+
+.mission{display:flex;gap:14px;padding:14px;background:var(--surface2);border-radius:10px;margin-bottom:10px;border-left:3px solid var(--green)}
+.mission-ico{font-size:1.8rem;flex-shrink:0}
+.mission-body{flex:1}
+.mission-title{font-weight:700;margin-bottom:3px;font-size:.88rem}
+.mission-reward{color:var(--gold);font-size:.72rem;font-weight:700;margin-top:4px}
+.bar{width:100%;height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;margin-top:6px}
+.bar-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--gold));transition:width .6s}
+
+.toast{position:fixed;bottom:20px;right:20px;background:linear-gradient(135deg,var(--green),#00b359);color:#0a0a1a;border-radius:12px;padding:14px 20px;font-size:.88rem;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,.5);z-index:10000;animation:success .4s;display:none}
+.toast.show{display:block}
+
+.lead-card{display:flex;gap:12px;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;align-items:center}
+.lead-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--cyan));display:flex;align-items:center;justify-content:center;font-weight:800;color:#0a0a1a;flex-shrink:0;font-size:.82rem}
+.lead-body{flex:1;font-size:.82rem}
+.lead-name{font-weight:700}
+.lead-sub{font-size:.7rem;color:var(--muted)}
+.lead-channels{display:flex;gap:4px;margin-top:4px}
+.lead-ch{padding:2px 6px;border-radius:8px;font-size:.6rem;font-weight:700}
+.ch-wa{background:rgba(37,211,102,.15);color:#25d366;border:1px solid rgba(37,211,102,.3)}
+.ch-em{background:rgba(234,67,53,.15);color:#ea4335;border:1px solid rgba(234,67,53,.3)}
+.ch-ig{background:rgba(220,39,67,.15);color:#dc2743;border:1px solid rgba(220,39,67,.3)}
+
+.dispatch-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.dispatch-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .2s;text-align:center}
+.dispatch-card:hover{border-color:var(--green);transform:translateY(-3px)}
+.dispatch-ico{font-size:2.4rem;margin-bottom:6px}
+.dispatch-name{font-weight:700;font-size:.88rem;color:var(--text)}
+.dispatch-sub{font-size:.68rem;color:var(--muted);margin-top:4px}
+.dispatch-pts{color:var(--gold);font-size:.72rem;font-weight:700;margin-top:6px}
+</style>
+<script src="img/qrcode.js"></script>
+</head>
+<body>
+
+<a href="index.html" title="Voltar à tela principal"
+   style="position:fixed; top:14px; left:14px; z-index:999999;
+   background:rgba(59,130,246,0.2); border:1px solid rgba(59,130,246,0.5); color:#448aff;
+   padding:8px 14px; border-radius:8px; font-family:Poppins,sans-serif; font-size:0.8rem;
+   font-weight:700; text-decoration:none; text-transform:uppercase; letter-spacing:0.5px;
+   backdrop-filter:blur(8px); transition:all 0.3s;"
+   onmouseover="this.style.background='rgba(59,130,246,0.4)'; this.style.borderColor='#ffd600';"
+   onmouseout="this.style.background='rgba(59,130,246,0.2)'; this.style.borderColor='rgba(59,130,246,0.5)';">
+  ← Início
+</a>
+
+<div class="splash" id="splash" onclick="closeSplash()">
+  <svg viewBox="0 0 200 200">
+      <defs>
+        <linearGradient id="avgrad-R" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#ffe970"/>
+          <stop offset="55%" stop-color="#ffd600"/>
+          <stop offset="100%" stop-color="#c9952a"/>
+        </linearGradient>
+        <radialGradient id="avbg-R" cx="0.5" cy="0.35" r="0.8">
+          <stop offset="0%" stop-color="#1a1a3a"/>
+          <stop offset="100%" stop-color="#0a0a1a"/>
+        </radialGradient>
+      </defs>
+      <circle cx="100" cy="100" r="95" fill="url(#avbg-R)" stroke="url(#avgrad-R)" stroke-width="2.5"/>
+      <circle cx="100" cy="100" r="82" fill="none" stroke="#ffd600" stroke-width="0.6" opacity="0.35"/>
+      <line x1="100" y1="6" x2="100" y2="16" stroke="#ffd600" stroke-width="1.2"/>
+      <line x1="100" y1="184" x2="100" y2="194" stroke="#ffd600" stroke-width="1.2"/>
+      <line x1="6" y1="100" x2="16" y2="100" stroke="#ffd600" stroke-width="1.2"/>
+      <line x1="184" y1="100" x2="194" y2="100" stroke="#ffd600" stroke-width="1.2"/>
+      <text x="100" y="128" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="900" font-size="110" fill="url(#avgrad-R)" font-style="italic">R</text>
+    </svg>
+  <h1>COMANDO IBANEIS</h1>
+  <h2>Painel do Coordenador</h2>
+  <div class="splash-tag">Rogério Lima · Taguatinga Centro</div>
+</div>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <svg viewBox="0 0 200 200">
+      <defs>
+        <linearGradient id="avgrad-R" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#ffe970"/>
+          <stop offset="55%" stop-color="#ffd600"/>
+          <stop offset="100%" stop-color="#c9952a"/>
+        </linearGradient>
+        <radialGradient id="avbg-R" cx="0.5" cy="0.35" r="0.8">
+          <stop offset="0%" stop-color="#1a1a3a"/>
+          <stop offset="100%" stop-color="#0a0a1a"/>
+        </radialGradient>
+      </defs>
+      <circle cx="100" cy="100" r="95" fill="url(#avbg-R)" stroke="url(#avgrad-R)" stroke-width="2.5"/>
+      <circle cx="100" cy="100" r="82" fill="none" stroke="#ffd600" stroke-width="0.6" opacity="0.35"/>
+      <line x1="100" y1="6" x2="100" y2="16" stroke="#ffd600" stroke-width="1.2"/>
+      <line x1="100" y1="184" x2="100" y2="194" stroke="#ffd600" stroke-width="1.2"/>
+      <line x1="6" y1="100" x2="16" y2="100" stroke="#ffd600" stroke-width="1.2"/>
+      <line x1="184" y1="100" x2="194" y2="100" stroke="#ffd600" stroke-width="1.2"/>
+      <text x="100" y="128" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="900" font-size="110" fill="url(#avgrad-R)" font-style="italic">R</text>
+    </svg>
+    <div class="sidebar-name">COMANDO IBANEIS</div>
+    <div class="sidebar-title">Painel Coordenador</div>
+  </div>
+  <div class="sidebar-user">
+    <b>Rogério Lima</b>
+    <small>Coord · Taguatinga Centro</small>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Operação</div>
+    <div class="nav-item active" data-page="home"><span class="nav-icon">◈</span>Painel</div>
+    <div class="nav-item" data-page="cadastrar"><span class="nav-icon">➕</span>Cadastrar Eleitor<span class="nav-badge">+10</span></div>
+    <div class="nav-item" data-page="eleitores"><span class="nav-icon">⬢</span>Meus Eleitores</div>
+    <div class="nav-item" data-page="disparo"><span class="nav-icon">📣</span>Disparar Material</div>
+
+    <div class="nav-section">Gamificação</div>
+    <div class="nav-item" data-page="missoes"><span class="nav-icon">🎯</span>Missões do Dia</div>
+    <div class="nav-item" data-page="ranking"><span class="nav-icon">★</span>Ranking Coord.</div>
+
+    <div class="nav-section">Ajuda</div>
+    <div class="nav-item" data-page="material"><span class="nav-icon">📚</span>Material Ibaneis</div>
+    <div class="nav-item" data-page="manual"><span class="nav-icon">◌</span>Como Funciona</div>
+    <div class="nav-item" data-page="roleta"><span class="nav-icon">⚡</span>Roleta Prêmios</div>
+    <div class="nav-item" data-page="qr"><span class="nav-icon">◻</span>QR Code</div>
+  </nav>
+  <div class="sidebar-footer">DEMO v1.0 · INTEIA</div>
+</aside>
+
+<header class="header">
+  <div class="header-title">
+    <span id="header-title">Painel</span>
+    <span class="header-demo-badge">DEMO · DADOS SIMULADOS</span>
+  </div>
+  <div class="header-right">
+    <div class="level-badge">🥇 Nível 8<small>2.180 pts</small></div>
+  </div>
+</header>
+
+<main class="main">
+
+<section class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-avatar">RL</div>
+    <div class="hero-text">
+      <h2>Bom dia, Rogério. Você é o coordenador #1 da Helena.</h2>
+      <p>Hoje você precisa cadastrar <b style="color:var(--green)">6 eleitores</b> (para fechar meta 30) e fazer <b style="color:var(--gold)">1 disparo de áudio</b> no seu grupo principal. <b style="color:var(--cyan)">2.180 pts</b> acumulados.</p>
+      <small>Distrital responsável: Helena Cardoso · Federal acima: Marcelo Andrade</small>
+    </div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-label">Meus Pontos</div><div class="kpi-value">2.180</div><div class="kpi-delta up">▲ 48 hoje</div></div>
+    <div class="kpi"><div class="kpi-label">Eleitores Cadastrados</div><div class="kpi-value">1.820</div><div class="kpi-delta up">▲ 24 hoje</div></div>
+    <div class="kpi"><div class="kpi-label">Postagens 7d</div><div class="kpi-value">18</div><div class="kpi-delta up">meta 20</div></div>
+    <div class="kpi"><div class="kpi-label">Grupos WA Ativos</div><div class="kpi-value">4</div><div class="kpi-delta">280 membros total</div></div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-top">
+      <div class="progress-label">Próximo marco · Nível 9</div>
+      <div class="progress-val">2.180 / 2.500 pts (87%)</div>
+    </div>
+    <div class="progress"><div class="progress-fill" style="width:87%"></div></div>
+    <div style="margin-top:8px; font-size:.72rem; color:var(--muted)">Faltam <b style="color:var(--green)">320 pts</b>. Ao atingir Nível 9, você sobe para a categoria <b style="color:var(--gold)">🥇 Ouro</b> — troféu físico + certificado assinado pelo Senador + destaque no feed oficial. Reconhecimento simbólico, em conformidade com a Lei 9.504/97.</div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><div class="card-title"><span class="card-title-icon">🎯</span>Missões do Dia</div></div>
+      <div class="mission">
+        <div class="mission-ico">📝</div>
+        <div class="mission-body">
+          <div class="mission-title">Cadastrar 30 eleitores hoje</div>
+          <div class="bar"><div class="bar-fill" style="width:80%"></div></div>
+          <div class="mission-reward">24 / 30 · +60 pts quando completar</div>
+        </div>
+      </div>
+      <div class="mission">
+        <div class="mission-ico">💬</div>
+        <div class="mission-body">
+          <div class="mission-title">Disparar material em grupo WA</div>
+          <div class="bar"><div class="bar-fill" style="width:50%; background:var(--gold)"></div></div>
+          <div class="mission-reward">1 / 2 · +16 pts</div>
+        </div>
+      </div>
+      <div class="mission">
+        <div class="mission-ico">📸</div>
+        <div class="mission-body">
+          <div class="mission-title">Postar 1 story pró-Ibaneis</div>
+          <div class="bar"><div class="bar-fill" style="width:100%; background:var(--green)"></div></div>
+          <div class="mission-reward">1 / 1 ✓ · +25 pts RECEBIDOS</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title"><span class="card-title-icon">⚡</span>Ações Rápidas</div></div>
+      <button class="btn btn-primary" style="width:100%; margin-bottom:10px; padding:14px" onclick="go('cadastrar')">➕ Cadastrar novo eleitor (+10 pts)</button>
+      <button class="btn btn-gold" style="width:100%; margin-bottom:10px; padding:14px" onclick="go('disparo')">📣 Disparar material agora (+8 pts)</button>
+      <button class="btn" style="width:100%; margin-bottom:10px" onclick="go('eleitores')">⬢ Ver meus eleitores</button>
+      <button class="btn" style="width:100%" onclick="go('ranking')">★ Minha posição no ranking</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="card-title"><span class="card-title-icon">◉</span>Atividade de Hoje</div></div>
+    <div class="monitor-row"><div class="monitor-network net-wa">WA</div><div style="flex:1"><b>Disparo áudio Ibaneis</b> no grupo "Taguatinga Centro" (184 membros)<div style="font-size:.68rem;color:var(--muted)">há 2h · validado pelo robô</div></div><span class="status-pill pill-ok">+8</span></div>
+    <div class="monitor-row"><div class="monitor-network net-ig">IG</div><div style="flex:1"><b>Story Ibaneis</b> (142 views)<div style="font-size:.68rem;color:var(--muted)">há 4h · Sistema de Monitoramento detectou</div></div><span class="status-pill pill-ok">+25</span></div>
+    <div class="monitor-row"><div class="monitor-network net-em">EM</div><div style="flex:1"><b>Email semanal</b> para 184 leads<div style="font-size:.68rem;color:var(--muted)">há 6h · abertura 38%</div></div><span class="status-pill pill-ok">+15</span></div>
+  </div>
+</section>
+
+<section class="page" id="page-cadastrar">
+  <h1 class="page-title">Cadastrar Novo Eleitor</h1>
+  <p class="page-sub">Cada cadastro válido = <b style="color:var(--green)">+10 pts</b> imediatos. WhatsApp obrigatório.</p>
+  <div class="card">
+    <div class="form-grid">
+      <div class="form-group"><label>Nome completo</label><input type="text" placeholder="Ex: Maria dos Santos"></div>
+      <div class="form-group"><label>WhatsApp *</label><input type="tel" placeholder="(61) 9xxxx-xxxx"></div>
+      <div class="form-group"><label>Email</label><input type="email" placeholder="opcional"></div>
+      <div class="form-group"><label>Data de nascimento</label><input type="date"></div>
+      <div class="form-group"><label>Bairro / Quadra</label>
+        <select>
+          <option>Taguatinga Centro</option>
+          <option>Taguatinga Norte</option>
+          <option>Taguatinga Sul</option>
+          <option>Areal</option>
+          <option>Vicente Pires</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Profissão</label><input type="text" placeholder="Ex: Comerciante"></div>
+      <div class="form-group"><label>Título de eleitor</label><input type="text" placeholder="opcional"></div>
+      <div class="form-group"><label>Zona / Seção</label><input type="text" placeholder="opcional"></div>
+      <div class="form-group form-row-full"><label>Observações / Interesses</label><textarea placeholder="Ex: defensor da segurança pública, reclama de transporte"></textarea></div>
+      <div class="form-group form-row-full"><label>Consentimento (LGPD) *</label>
+        <label style="display:flex; gap:8px; align-items:center; font-size:.82rem; color:var(--muted); font-weight:400; text-transform:none; letter-spacing:0">
+          <input type="checkbox" style="width:18px; height:18px"> Confirmo que o eleitor autorizou o recebimento de material de campanha via WhatsApp, email e redes sociais.
+        </label>
+      </div>
+    </div>
+    <div style="margin-top:18px; display:flex; gap:10px">
+      <button class="btn btn-primary" onclick="cadastrar()" style="padding:12px 24px">✓ Cadastrar e ganhar +10 pts</button>
+      <button class="btn">Cancelar</button>
+    </div>
+  </div>
+  <div class="card" style="background:rgba(0,230,118,.06); border-color:var(--green)">
+    <div style="font-size:.88rem; line-height:1.6">
+      <b style="color:var(--green)">💡 Dica:</b> eleitores cadastrados por você entram como <b>confirmados</b> na base (WhatsApp validado + consentimento LGPD). Recebem material Ibaneis por 3 canais (WA + email + rede social). Cada abertura/leitura gera engajamento que rastreamos, e você ganha bônus quando seu lead se torna multiplicador.
+    </div>
+  </div>
+</section>
+
+<section class="page" id="page-eleitores">
+  <h1 class="page-title">Meus Eleitores Confirmados <span style="cursor:help;color:var(--cyan);font-size:0.7em;" onclick="explicarConfirmado()">ⓘ</span></h1>
+  <p class="page-sub">1.820 cadastros sob sua responsabilidade.</p>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-label">Total</div><div class="kpi-value">1.820</div></div>
+    <div class="kpi"><div class="kpi-label">WA Ativo</div><div class="kpi-value">1.642</div><div class="kpi-delta">90%</div></div>
+    <div class="kpi"><div class="kpi-label">Lendo Material</div><div class="kpi-value">764</div><div class="kpi-delta up">42% engaj.</div></div>
+    <div class="kpi"><div class="kpi-label">Multiplicadores</div><div class="kpi-value">48</div><div class="kpi-delta up">compart. no grupo</div></div>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-title"><span class="card-title-icon">⬢</span>Últimos 8 cadastros</div></div>
+    <div class="lead-card"><div class="lead-avatar">CL</div><div class="lead-body"><div class="lead-name">Carlos Eduardo Lima</div><div class="lead-sub">Comerciante · 54 anos · Taguatinga Centro</div><div class="lead-channels"><span class="lead-ch ch-wa">WA</span><span class="lead-ch ch-em">EM</span></div></div><div class="li-val">+10</div></div>
+    <div class="lead-card"><div class="lead-avatar">AR</div><div class="lead-body"><div class="lead-name">Ana Beatriz Rocha</div><div class="lead-sub">Estudante · 22 anos · Taguatinga Centro</div><div class="lead-channels"><span class="lead-ch ch-wa">WA</span><span class="lead-ch ch-ig">IG</span></div></div><div class="li-val">+10</div></div>
+    <div class="lead-card"><div class="lead-avatar">RF</div><div class="lead-body"><div class="lead-name">Ricardo Fonseca</div><div class="lead-sub">Segurança · 48 anos · QNL 10</div><div class="lead-channels"><span class="lead-ch ch-wa">WA</span></div></div><div class="li-val">+10</div></div>
+    <div class="lead-card"><div class="lead-avatar">LM</div><div class="lead-body"><div class="lead-name">Luciana Matos</div><div class="lead-sub">Enfermeira · 37 anos · QNM 22</div><div class="lead-channels"><span class="lead-ch ch-wa">WA</span><span class="lead-ch ch-em">EM</span></div></div><div class="li-val">+10</div></div>
+    <div class="lead-card"><div class="lead-avatar">JT</div><div class="lead-body"><div class="lead-name">José Tavares</div><div class="lead-sub">Aposentado · 68 anos · CNB 5</div><div class="lead-channels"><span class="lead-ch ch-wa">WA</span></div></div><div class="li-val">+10</div></div>
+    <div class="lead-card"><div class="lead-avatar">PS</div><div class="lead-body"><div class="lead-name">Patrícia Soares</div><div class="lead-sub">Cabeleireira · 35 anos · QSC 17</div><div class="lead-channels"><span class="lead-ch ch-wa">WA</span><span class="lead-ch ch-em">EM</span><span class="lead-ch ch-ig">IG</span></div></div><div class="li-val">+10</div></div>
+    <div class="lead-card"><div class="lead-avatar">RN</div><div class="lead-body"><div class="lead-name">Rafael Neves</div><div class="lead-sub">Motoboy · 29 anos · QSA 14</div><div class="lead-channels"><span class="lead-ch ch-wa">WA</span></div></div><div class="li-val">+10</div></div>
+    <div class="lead-card"><div class="lead-avatar">MO</div><div class="lead-body"><div class="lead-name">Marta Oliveira</div><div class="lead-sub">Doméstica · 51 anos · QNM 40</div><div class="lead-channels"><span class="lead-ch ch-wa">WA</span><span class="lead-ch ch-em">EM</span></div></div><div class="li-val">+10</div></div>
+  </div>
+</section>
+
+<section class="page" id="page-disparo">
+  <h1 class="page-title">Disparar Material</h1>
+  <p class="page-sub">Escolha o canal e o conteúdo. Cada disparo validado pelo robô gera pontos.</p>
+  <div class="card">
+    <div class="card-header"><div class="card-title"><span class="card-title-icon">📣</span>Canais Disponíveis</div></div>
+    <div class="dispatch-grid">
+      <div class="dispatch-card" onclick="disparar('WhatsApp grupo')">
+        <div class="dispatch-ico">💬</div>
+        <div class="dispatch-name">WhatsApp Grupo</div>
+        <div class="dispatch-sub">4 grupos · 280 membros</div>
+        <div class="dispatch-pts">+8 pts / disparo</div>
+      </div>
+      <div class="dispatch-card" onclick="disparar('WhatsApp lista')">
+        <div class="dispatch-ico">📱</div>
+        <div class="dispatch-name">WhatsApp Lista</div>
+        <div class="dispatch-sub">1.642 contatos</div>
+        <div class="dispatch-pts">+15 pts / disparo</div>
+      </div>
+      <div class="dispatch-card" onclick="disparar('Email')">
+        <div class="dispatch-ico">📧</div>
+        <div class="dispatch-name">Email</div>
+        <div class="dispatch-sub">1.080 emails validados</div>
+        <div class="dispatch-pts">+15 pts / disparo</div>
+      </div>
+      <div class="dispatch-card" onclick="disparar('Story IG')">
+        <div class="dispatch-ico">📸</div>
+        <div class="dispatch-name">Story Instagram</div>
+        <div class="dispatch-sub">seu perfil pessoal</div>
+        <div class="dispatch-pts">+25 pts / story</div>
+      </div>
+      <div class="dispatch-card" onclick="disparar('Post FB')">
+        <div class="dispatch-ico">👥</div>
+        <div class="dispatch-name">Post Facebook</div>
+        <div class="dispatch-sub">perfil + 3 grupos</div>
+        <div class="dispatch-pts">+20 pts / post</div>
+      </div>
+      <div class="dispatch-card" onclick="disparar('Impulsionamento')">
+        <div class="dispatch-ico">🚀</div>
+        <div class="dispatch-name">Impulsionar</div>
+        <div class="dispatch-sub">Meta Ads · saldo R$ 120</div>
+        <div class="dispatch-pts">+40 pts / campanha</div>
+      </div>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><div class="card-title"><span class="card-title-icon">🎨</span>Material Pronto Hoje</div></div>
+      <div class="list-item"><div><div class="li-label">🎥 Reel Ibaneis na CEASA 30s</div><div class="li-sub">novo · sugerido para IG</div></div><button class="btn btn-primary">Usar</button></div>
+      <div class="list-item"><div><div class="li-label">💬 Áudio WA 45s · voz Ibaneis</div><div class="li-sub">ótimo engajamento</div></div><button class="btn btn-primary">Usar</button></div>
+      <div class="list-item"><div><div class="li-label">📱 Card obras Taguatinga</div><div class="li-sub">personalizado sua RA</div></div><button class="btn btn-primary">Usar</button></div>
+      <div class="list-item"><div><div class="li-label">📧 Template email semanal</div><div class="li-sub">tema: saúde GDF</div></div><button class="btn btn-primary">Usar</button></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title"><span class="card-title-icon">◇</span>Meus Grupos</div></div>
+      <div class="list-item"><div><div class="li-label">Taguatinga Centro Ibaneis</div><div class="li-sub">184 membros · robô ativo ✓</div></div><div class="li-val">28 disparos</div></div>
+      <div class="list-item"><div><div class="li-label">QNL 10 Apoio Senador</div><div class="li-sub">72 membros · robô ativo ✓</div></div><div class="li-val">18 disparos</div></div>
+      <div class="list-item"><div><div class="li-label">Comércio Taguatinga</div><div class="li-sub">94 membros · robô ativo ✓</div></div><div class="li-val">22 disparos</div></div>
+      <div class="list-item"><div><div class="li-label">CNB Pró-Segurança</div><div class="li-sub">54 membros · robô ativo ✓</div></div><div class="li-val">14 disparos</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="page-missoes">
+  <h1 class="page-title">Missões</h1>
+  <p class="page-sub">Complete para ganhar pontos extras. Helena vê quem bate meta todo dia.</p>
+  <div class="card">
+    <div class="mission">
+      <div class="mission-ico">📝</div>
+      <div class="mission-body">
+        <div class="mission-title">Cadastrar 30 eleitores hoje</div>
+        <div class="li-sub">24 / 30 · diária</div>
+        <div class="bar"><div class="bar-fill" style="width:80%"></div></div>
+        <div class="mission-reward">+60 pts + elogio Helena</div>
+      </div>
+    </div>
+    <div class="mission">
+      <div class="mission-ico">💬</div>
+      <div class="mission-body">
+        <div class="mission-title">Fazer 2 disparos WA hoje</div>
+        <div class="li-sub">1 / 2 · diária</div>
+        <div class="bar"><div class="bar-fill" style="width:50%; background:var(--gold)"></div></div>
+        <div class="mission-reward">+16 pts</div>
+      </div>
+    </div>
+    <div class="mission">
+      <div class="mission-ico">📸</div>
+      <div class="mission-body">
+        <div class="mission-title">1 story Instagram pró-Ibaneis</div>
+        <div class="li-sub">1 / 1 ✓</div>
+        <div class="bar"><div class="bar-fill" style="width:100%; background:var(--green)"></div></div>
+        <div class="mission-reward">+25 pts RECEBIDOS</div>
+      </div>
+    </div>
+    <div class="mission">
+      <div class="mission-ico">🎪</div>
+      <div class="mission-body">
+        <div class="mission-title">Levar 5 pessoas ao evento de Helena (dom 20/04)</div>
+        <div class="li-sub">0 / 5 · semanal</div>
+        <div class="mission-reward">+150 pts · destaque no ranking</div>
+      </div>
+    </div>
+    <div class="mission">
+      <div class="mission-ico">🏆</div>
+      <div class="mission-body">
+        <div class="mission-title">Atingir 2.500 pts (Nível 9)</div>
+        <div class="li-sub">2.180 / 2.500</div>
+        <div class="bar"><div class="bar-fill" style="width:87%"></div></div>
+        <div class="mission-reward">+50 pts + convite reunião Helena</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="page-ranking">
+  <h1 class="page-title">Ranking Coordenadores · Helena Cardoso</h1>
+  <p class="page-sub">Sua posição entre os 5 coordenadores da distrital Helena.</p>
+  <div class="card">
+    <table class="ranking">
+      <thead><tr><th>#</th><th>Coord.</th><th>Bairro</th><th>Eleitores</th><th>Posts</th><th>Pts</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr style="background:rgba(0,230,118,.06)"><td class="rank-pos top1">1</td><td class="rank-name">Rogério Lima (você)</td><td>Taguatinga Centro</td><td>1.820</td><td>62</td><td class="rank-pts">2.180</td><td><span class="status-pill pill-ok">🥇 Líder</span></td></tr>
+        <tr><td class="rank-pos top2">2</td><td class="rank-name">Marina Castro</td><td>Taguatinga Norte</td><td>1.240</td><td>58</td><td class="rank-pts">1.820</td><td><span class="status-pill pill-ok">🥈</span></td></tr>
+        <tr><td class="rank-pos top3">3</td><td class="rank-name">Pedro Vasconcelos</td><td>Taguatinga Sul</td><td>940</td><td>51</td><td class="rank-pts">1.480</td><td><span class="status-pill pill-ok">🥉</span></td></tr>
+        <tr><td class="rank-pos">4</td><td class="rank-name">Juliana Reis</td><td>Areal</td><td>560</td><td>42</td><td class="rank-pts">1.140</td><td><span class="status-pill pill-ok">Ok</span></td></tr>
+        <tr><td class="rank-pos">5</td><td class="rank-name">Eduardo Nunes</td><td>Vicente Pires</td><td>260</td><td>34</td><td class="rank-pts">780</td><td><span class="status-pill pill-warn">Baixo</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card" style="background:rgba(255,214,0,.06); border-color:var(--gold)">
+    <div style="font-size:.9rem; line-height:1.6">
+      <b style="color:var(--gold)">🏆 Você é o #1 da equipe da Helena.</b> Continue assim — seus pontos determinam seu nível de reconhecimento (Bronze/Prata/Ouro) na campanha.
+    </div>
+  </div>
+</section>
+
+<section class="page" id="page-material">
+  <h1 class="page-title">Material Ibaneis</h1>
+  <p class="page-sub">Banco de conteúdo oficial da coordenação.</p>
+  <div class="card">
+    <div class="list-item"><div><div class="li-label">🎥 Reel institucional 30s</div><div class="li-sub">Novo · IG Reels 1080×1920</div></div><button class="btn btn-primary">Baixar</button></div>
+    <div class="list-item"><div><div class="li-label">💬 Áudio WA voz Ibaneis 45s</div><div class="li-sub">MP3 · ideal para grupos</div></div><button class="btn btn-primary">Baixar</button></div>
+    <div class="list-item"><div><div class="li-label">📱 Card segurança pública</div><div class="li-sub">IG + FB · 1080×1350</div></div><button class="btn btn-primary">Baixar</button></div>
+    <div class="list-item"><div><div class="li-label">🏥 Card saúde GDF</div><div class="li-sub">IG + FB · 1080×1080</div></div><button class="btn btn-primary">Baixar</button></div>
+    <div class="list-item"><div><div class="li-label">📧 Template email semanal</div><div class="li-sub">HTML responsivo</div></div><button class="btn btn-primary">Baixar</button></div>
+    <div class="list-item"><div><div class="li-label">🎨 Santinho Taguatinga</div><div class="li-sub">PDF · pronto p/ impressão</div></div><button class="btn btn-primary">Baixar</button></div>
+  </div>
+</section>
+
+<section class="page" id="page-manual">
+  <h1 class="page-title">Como Funciona o Sistema</h1>
+  <p class="page-sub">Guia rápido para coordenadores.</p>
+  <div class="card">
+    <h3 style="color:var(--green); margin-bottom:10px">Como você ganha pontos</h3>
+    <div class="list-item"><div class="li-label">Cadastrar novo eleitor (WA obrigatório)</div><div class="li-val">+10 pts</div></div>
+    <div class="list-item"><div class="li-label">Postar story Instagram pró-Ibaneis</div><div class="li-val">+25 pts</div></div>
+    <div class="list-item"><div class="li-label">Post Facebook pró-Ibaneis</div><div class="li-val">+20 pts</div></div>
+    <div class="list-item"><div class="li-label">Disparar material em grupo WhatsApp</div><div class="li-val">+8 pts</div></div>
+    <div class="list-item"><div class="li-label">Disparar material em lista WA</div><div class="li-val">+15 pts</div></div>
+    <div class="list-item"><div class="li-label">Email marketing para leads</div><div class="li-val">+15 pts</div></div>
+    <div class="list-item"><div class="li-label">Impulsionar conteúdo (Meta Ads)</div><div class="li-val">+40 pts</div></div>
+    <div class="list-item"><div class="li-label">Completar missão diária</div><div class="li-val">+60 a +300 pts</div></div>
+  </div>
+  <div class="card">
+    <h3 style="color:var(--gold); margin-bottom:10px">Como você é avaliado</h3>
+    <div style="font-size:.88rem; line-height:1.7">
+      Sua distrital (Helena Cardoso) vê diariamente:<br>
+      • Quantos eleitores você cadastrou<br>
+      • Quantas postagens pró-Ibaneis você fez (detectadas pelo Sistema de Monitoramento)<br>
+      • Quantos disparos WhatsApp você fez (validados pelo robô IA nos grupos)<br>
+      • Sua posição no ranking dos 5 coordenadores<br><br>
+      <b style="color:var(--gold)">Benefício direto:</b> os coordenadores melhor colocados têm prioridade em <b>indicações para cargos</b> caso Helena seja eleita. Helena discutirá isso em reunião trimestral.
+    </div>
+  </div>
+  <div class="card" style="background:rgba(255,82,82,.06); border-color:var(--red)">
+    <h3 style="color:var(--red); margin-bottom:10px">⚠ Atenção</h3>
+    <div style="font-size:.84rem; line-height:1.6">
+      • Postar material de adversários (Bia Kicis, Michelle, Izalci etc.) = <b>penalidade de −50 pts</b> e alerta imediato para Helena e senador.<br>
+      • Cadastro falso detectado = suspensão do sistema + investigação.<br>
+      • LGPD: sempre coletar consentimento do eleitor antes de cadastrar.<br>
+      • Pontos NÃO são conversíveis em dinheiro durante o período eleitoral (art. 41-A Lei 9.504/97).
+    </div>
+  </div>
+</section>
+
+
+
+<section class="page" id="page-roleta">
+  <h1 class="page-title">Roleta de Prêmios</h1>
+  <p class="page-sub">Reconhecimento não-monetário em conformidade com Lei 9.504/97. Você tem 1 giro disponível.</p>
+  
+  <div class="card">
+    <div class="roulette-wrap">
+      <div class="roulette">
+        <div class="roulette-pointer"></div>
+        <div class="roulette-disc" id="disc"></div>
+        <div class="roulette-center">⚡</div>
+      </div>
+      <div class="roulette-info">
+        <h3>Giros: <span id="spins" style="color:var(--green)">1</span></h3>
+        <p style="color:var(--muted); font-size:.82rem; margin-bottom:14px">Clique para girar. Prêmios são simbólicos e de reconhecimento.</p>
+        <button class="btn btn-gold" id="spinBtn" onclick="spin()" style="width:100%; padding:14px; font-size:1rem">⚡ GIRAR ROLETA</button>
+        <div style="margin-top:14px">
+          <div class="milestone done">2.500 pts · 1º giro ✓</div>
+          <div class="milestone">5.000 pts · 2º giro</div>
+          <div class="milestone">7.500 pts · 3º giro</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-bottom:10px; color:var(--gold)">Prêmios Possíveis</h3>
+    <div class="prize-list">
+      <div class="prize"><div class="prize-icon">🏆</div><div class="prize-name">Troféu</div><div class="prize-sub">Físico entregue</div></div>
+      <div class="prize"><div class="prize-icon">📜</div><div class="prize-name">Certificado</div><div class="prize-sub">Assinado</div></div>
+      <div class="prize"><div class="prize-icon">📢</div><div class="prize-name">Menção</div><div class="prize-sub">Grupo oficial</div></div>
+      <div class="prize"><div class="prize-icon">✉️</div><div class="prize-name">Carta</div><div class="prize-sub">Manuscrita</div></div>
+      <div class="prize"><div class="prize-icon">🥇</div><div class="prize-name">Selo Ouro</div><div class="prize-sub">Categoria +</div></div>
+      <div class="prize"><div class="prize-icon">📸</div><div class="prize-name">Foto</div><div class="prize-sub">Com Ibaneis</div></div>
+      <div class="prize"><div class="prize-icon">🎁</div><div class="prize-name">Caixa Secreta</div><div class="prize-sub">Surpresa!</div></div>
+      <div class="prize"><div class="prize-icon">📣</div><div class="prize-name">Destaque</div><div class="prize-sub">Feed INTEIA</div></div>
+    </div>
+    <div style="margin-top:14px; padding:10px; background:rgba(255,82,82,.08); border-left:3px solid var(--red); border-radius:6px; font-size:.78rem">
+      <b style="color:var(--red)">Conformidade Legal:</b> Todos os prêmios são simbólicos de reconhecimento. Sem conversão monetária no período eleitoral, em conformidade com Lei 9.504/97.
+    </div>
+  </div>
+</section>
+
+<section class="page" id="page-qr">
+  <h1 class="page-title">QR Code Instagram Ibaneis</h1>
+  <p class="page-sub">Compartilhe em eventos. Cada pessoa que escaneia e segue = +pontos pra você (monitorado).</p>
+  
+  <div class="grid-2">
+    <div class="card" style="text-align:center">
+      <h3 style="color:var(--gold); margin-bottom:10px">📱 Siga Ibaneis</h3>
+      <img src="" data-src-fallback="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Finstagram.com%2Fibaneisoficialdf" data-qr-url="https://instagram.com/ibaneisoficialdf" data-qr-size="200" class="qr-auto" alt="QR" style="max-width:200px; border:2px solid var(--gold); padding:8px; background:#fff">
+      <p style="font-size:.75rem; margin:8px 0">@ibaneisoficialdf</p>
+      <button class="btn btn-gold" style="width:100%; margin-top:10px" onclick="window.print()">🖨️ Imprimir Folheto</button>
+      <button class="btn" style="width:100%; margin-top:8px" onclick="abrirWhats('5561999990000','Siga Ibaneis: https://instagram.com/ibaneisoficialdf')">📱 Enviar WhatsApp</button>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--gold); margin-bottom:10px">Como Funciona</h3>
+      <div style="font-size:.82rem; line-height:1.6">
+        <p style="margin-bottom:8px"><b>1. Mostrar QR em eventos</b> — conversa, folheto, camiseta</p>
+        <p style="margin-bottom:8px"><b>2. Pessoa segue Ibaneis</b> — clica no link do QR</p>
+        <p style="margin-bottom:8px"><b>3. Sistema registra</b> — seu nome como origem do follow</p>
+        <p><b>+10 pts por follow validado</b> na sua pontuação</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<div class="modal-backdrop" id="modal">
+  <div class="modal">
+    <div class="modal-emoji" id="mEmoji">🎉</div>
+    <h2 id="mTitle">Você ganhou!</h2>
+    <div class="modal-prize" id="mPrize">Prêmio</div>
+    <div class="modal-desc" id="mDesc">Parabéns! A equipe entrará em contato em até 48h.</div>
+    <button class="btn btn-primary" onclick="closeModal()">Fechar</button>
+  </div>
+</div>
+</main>
+
+<div class="toast" id="toast">✓ Ação registrada!</div>
+
+<script>
+function abrirWhats(phone, msg){
+  const m = msg || 'Olá, mensagem da campanha Ibaneis.';
+  if(confirm('📱 MODO DEMO — WhatsApp\n\nMensagem que seria enviada:\n\n"'+m+'"\n\nNa versão ativa, este botão abre direto o contato real. Abrir o WhatsApp com número fictício de demo?')){
+    const n = (phone || '5561999990000').replace(/\D/g,'');
+    window.open('https://wa.me/'+n+'?text='+encodeURIComponent(m), '_blank');
+  }
+}
+function explicarConfirmado(){
+  alert('Eleitor confirmado: cadastrado na base com WhatsApp validado e que autorizou (LGPD) receber material.');
+}
+
+const prizes = [
+  {e:'🏆', n:'Troféu Multiplicador do Mês', d:'Prêmio físico entregue com cerimônia.'},
+  {e:'📜', n:'Certificado de Reconhecimento', d:'Assinado pelo Senador Ibaneis, PDF + impresso.'},
+  {e:'📢', n:'Menção Honrosa no Grupo', d:'Mensagem pública de reconhecimento do Senador no WhatsApp.'},
+  {e:'✉️', n:'Carta de Reconhecimento', d:'Manuscrita/impressa enviada para seu endereço.'},
+  {e:'🥇', n:'Selo Categoria Ouro', d:'Desbloqueia imediatamente a próxima categoria de pontos.'},
+  {e:'📸', n:'Foto Oficial com Ibaneis', d:'Ensaio profissional, uso livre na sua campanha.'},
+  {e:'🎁', n:'Caixa Secreta da Sorte', d:'Prêmio surpresa que a equipe revela na entrega.'},
+  {e:'📣', n:'Destaque no Feed Oficial', d:'Post INTEIA mencionando seu nome como destaque.'}
+];
+
+function closeSplash(){document.getElementById('splash').classList.add('hidden')}
+setTimeout(closeSplash,3000);
+const pt={home:'Painel',cadastrar:'Cadastrar Eleitor',eleitores:'Meus Eleitores',disparo:'Disparar Material',missoes:'Missões',ranking:'Ranking Coord.',material:'Material',manual:'Como Funciona'};
+function go(p){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById('page-'+p).classList.add('active');document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));const n=document.querySelector('.nav-item[data-page="'+p+'"]');if(n)n.classList.add('active');document.getElementById('header-title').textContent=pt[p]||'';window.scrollTo({top:0,behavior:'smooth'})}
+document.querySelectorAll('.nav-item').forEach(n=>n.addEventListener('click',()=>go(n.dataset.page)));
+
+function toast(msg){const t=document.getElementById('toast');t.textContent='✓ '+msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400)}
+function cadastrar(){toast('Eleitor cadastrado! +10 pts');setTimeout(()=>go('eleitores'),1200)}
+function disparar(canal){toast('Disparo via '+canal+' registrado!')}
+
+let spins = 1;
+function spin(){
+  if(spins<=0){ alert('Giros acabados!'); return; }
+  const btn=document.getElementById('spinBtn');
+  const disc=document.getElementById('disc');
+  btn.disabled=true; btn.textContent='Girando...';
+  disc.style.transform='rotate(0deg)'; void disc.offsetWidth;
+  const winIdx=Math.floor(Math.random()*prizes.length);
+  const deg = 1800 + (360 - winIdx*45 - 22);
+  disc.style.transform='rotate('+deg+'deg)';
+  setTimeout(()=>{
+    spins--;
+    document.getElementById('spins').textContent=spins;
+    const p=prizes[winIdx];
+    document.getElementById('mEmoji').textContent=p.e;
+    document.getElementById('mPrize').textContent=p.n;
+    document.getElementById('mDesc').textContent=p.d;
+    document.getElementById('modal').classList.add('show');
+    btn.disabled=false; btn.textContent='⚡ GIRAR ROLETA';
+  }, 4100);
+}
+function closeModal(){ document.getElementById('modal').classList.remove('show'); }
+
+</script>
+<script>
+function gerarQR(texto, tamanho){
+  const t = tamanho || 180;
+  try {
+    if (typeof qrcode !== 'undefined') {
+      const qr = qrcode(0, 'L');
+      qr.addData(texto);
+      qr.make();
+      return qr.createDataURL(4, 0);
+    }
+  } catch(e) { console.warn('QR local falhou, fallback online', e); }
+  return 'https://api.qrserver.com/v1/create-qr-code/?size='+t+'x'+t+'&data='+encodeURIComponent(texto);
+}
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('img.qr-auto').forEach(img => {
+    const url = img.dataset.qrUrl;
+    const size = parseInt(img.dataset.qrSize || '180', 10);
+    if (url) img.src = gerarQR(url, size);
+  });
+});
+</script>
+</body>
+</html>
