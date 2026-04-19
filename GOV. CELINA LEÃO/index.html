@@ -353,7 +353,17 @@
 
     <!-- ===== HEADER ===== -->
     <header class="header">
-        <span class="header-title" id="headerTitle">📊 Dashboard</span>
+        <div style="display:flex; align-items:center; gap:14px;">
+            <button onclick="voltarInicio()" title="Voltar à tela principal"
+                style="background:rgba(59,130,246,0.15); border:1px solid rgba(59,130,246,0.4); color:var(--primary);
+                padding:7px 14px; border-radius:8px; font-family:inherit; font-size:0.8rem; font-weight:700;
+                cursor:pointer; transition:all 0.3s; text-transform:uppercase; letter-spacing:0.5px;"
+                onmouseover="this.style.background='rgba(59,130,246,0.3)'; this.style.borderColor='var(--gold)';"
+                onmouseout="this.style.background='rgba(59,130,246,0.15)'; this.style.borderColor='rgba(59,130,246,0.4)';">
+                ← Início
+            </button>
+            <span class="header-title" id="headerTitle">📊 Dashboard</span>
+        </div>
         <div style="display:flex; align-items:center; gap:16px;">
             <div style="display:flex; align-items:center; gap:5px; font-size:0.75rem; color:var(--muted);">
                 <span style="width:7px;height:7px;border-radius:50%;background:var(--primary);animation:pulse 2s infinite;"></span> ao vivo
@@ -834,6 +844,11 @@
         if (pagina && pagina !== 'dashboard') {
             navegar(pagina);
         }
+    }
+
+    function voltarInicio() {
+        document.getElementById('splash').classList.remove('hidden');
+        navegar('dashboard');
     }
 
     function inicializar() {
