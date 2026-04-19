@@ -73,6 +73,27 @@
             padding: 8px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;
             margin-top: 12px; text-transform: uppercase; letter-spacing: 1px;
         }
+        .splash-botoes {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;
+            margin-top: 28px; width: 100%; max-width: 520px;
+        }
+        .splash-btn {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 6px; padding: 18px 14px; border: 1px solid rgba(59,130,246,0.35);
+            border-radius: 14px; background: rgba(10,10,26,0.65);
+            color: #fff; font-family: inherit; font-size: 0.9rem; font-weight: 700;
+            cursor: pointer; transition: all 0.3s; text-transform: uppercase; letter-spacing: 1px;
+            backdrop-filter: blur(8px);
+        }
+        .splash-btn:hover {
+            transform: translateY(-3px); border-color: var(--gold);
+            background: rgba(59,130,246,0.15); box-shadow: 0 8px 24px rgba(59,130,246,0.25);
+        }
+        .splash-btn .splash-btn-icon { font-size: 1.6rem; }
+        .splash-btn .splash-btn-sub { font-size: 0.65rem; font-weight: 500; color: var(--muted); letter-spacing: 0.5px; text-transform: none; }
+        @media (max-width: 560px) {
+            .splash-botoes { grid-template-columns: 1fr; }
+        }
 
         /* ===== SIDEBAR ===== */
         .sidebar {
@@ -256,14 +277,36 @@
 </head>
 <body>
     <!-- ===== SPLASH ===== -->
-    <div class="splash" id="splash" onclick="entrar()">
+    <div class="splash" id="splash">
         <div class="splash-avatar-container">
             <img src="celina.jpg" alt="Celina Leão" style="width:200px; height:200px; border-radius:50%; object-fit:cover; border:3px solid #3b82f6; animation:float 3s ease-in-out infinite; filter:drop-shadow(0 0 20px rgba(59,130,246,0.3));">
         </div>
         <h1>CELINA LEÃO 2026</h1>
         <h2>GOVERNADORA DO DISTRITO FEDERAL</h2>
         <span class="splash-tag">Comando de Campanha</span>
-        <p>Clique para entrar no sistema</p>
+        <p style="margin-top:18px;">Selecione o perfil de acesso</p>
+        <div class="splash-botoes">
+            <button class="splash-btn" onclick="entrar('dashboard')">
+                <span class="splash-btn-icon">👑</span>
+                Celina Leão
+                <span class="splash-btn-sub">Governadora</span>
+            </button>
+            <button class="splash-btn" onclick="entrar('federais')">
+                <span class="splash-btn-icon">🏛️</span>
+                Deputado Federal
+                <span class="splash-btn-sub">Bancada federal</span>
+            </button>
+            <button class="splash-btn" onclick="entrar('distritais')">
+                <span class="splash-btn-icon">🏢</span>
+                Deputado Distrital
+                <span class="splash-btn-sub">Bancada distrital</span>
+            </button>
+            <button class="splash-btn" onclick="entrar('gamificacao')">
+                <span class="splash-btn-icon">🤝</span>
+                Coordenador
+                <span class="splash-btn-sub">Base de mobilização</span>
+            </button>
+        </div>
     </div>
 
     <!-- ===== SIDEBAR ===== -->
@@ -785,9 +828,12 @@
     let filtroFederalAtual = 'todos';
 
     // ===== INICIALIZAÇÃO =====
-    function entrar() {
+    function entrar(pagina) {
         document.getElementById('splash').classList.add('hidden');
         inicializar();
+        if (pagina && pagina !== 'dashboard') {
+            navegar(pagina);
+        }
     }
 
     function inicializar() {
