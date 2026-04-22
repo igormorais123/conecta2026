@@ -232,14 +232,6 @@
         .fidelidade-media { border-left: 3px solid var(--gold); }
         .fidelidade-baixa { border-left: 3px solid var(--red); }
 
-        /* ===== RODA DA SORTE ===== */
-        .roda-container { text-align: center; position: relative; }
-        .roda-bloqueio {
-            position: absolute; inset: 0; background: rgba(0,0,0,0.7);
-            border-radius: var(--radius); display: flex; flex-direction: column;
-            align-items: center; justify-content: center; z-index: 10; backdrop-filter: blur(3px);
-        }
-
         /* ===== RESPONSIVE ===== */
         @media (max-width: 1200px) { .grid-4 { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 768px) {
@@ -346,9 +338,6 @@
             </div>
             <div class="nav-item" onclick="navegar('monitoramento')">
                 <span class="nav-icon">📡</span> Redes Sociais
-            </div>
-            <div class="nav-item" onclick="navegar('recursos')">
-                <span class="nav-icon">💰</span> Recursos
             </div>
         </div>
 
@@ -611,27 +600,6 @@
                 </div>
             </div>
 
-            <!-- Roda da Sorte -->
-            <h2 class="section-title">🎰 Roda da Sorte</h2>
-            <div class="card roda-container" style="padding:20px;">
-                <div class="roda-bloqueio" id="rodaBloqueio">
-                    <div style="font-size:2.2rem; margin-bottom:8px;">🔒</div>
-                    <div style="font-weight:800; color:var(--gold); font-size:0.95rem; margin-bottom:4px;">Roda Bloqueada</div>
-                    <div style="font-size:0.75rem; color:var(--muted); max-width:220px;">Complete missões para desbloquear!</div>
-                    <button onclick="desbloquearRoda()" style="margin-top:10px; padding:6px 16px; background:var(--gold); color:#000; border:none; border-radius:16px; font-weight:700; font-size:0.7rem; cursor:pointer; font-family:Poppins;">🔓 Simular desbloqueio</button>
-                </div>
-                <div style="font-size:0.75rem; color:var(--muted); margin-bottom:10px;">Prêmios: material de campanha da Celina Leão para os distritais</div>
-                <div style="position:relative; width:240px; height:240px; margin:0 auto 12px;">
-                    <canvas id="rodaCanvas" width="240" height="240" style="border-radius:50%; box-shadow:0 0 20px rgba(255,214,0,0.2);"></canvas>
-                    <div style="position:absolute; top:-8px; left:50%; transform:translateX(-50%); font-size:1.5rem; z-index:3;">▼</div>
-                    <button id="btnGirar" onclick="girarRoda()" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:70px; height:70px; border-radius:50%; background:#1a1a2e; border:3px solid var(--gold); color:var(--gold); font-size:1rem; font-weight:900; cursor:pointer; z-index:2; font-family:Poppins;">GIRAR</button>
-                </div>
-                <div id="rodaResultado" style="display:none; margin-top:12px; padding:12px; background:linear-gradient(135deg, rgba(255,214,0,0.15), rgba(59,130,246,0.1)); border-radius:10px; border:1px solid var(--gold);">
-                    <div style="font-size:1.3rem;" id="rodaEmoji"></div>
-                    <div style="font-weight:800; color:var(--gold);" id="rodaTexto"></div>
-                    <div style="font-size:0.7rem; color:var(--muted); margin-top:3px;" id="rodaDesc"></div>
-                </div>
-            </div>
         </div>
 
         <!-- ========== MONITORAMENTO REDES ========== -->
@@ -665,41 +633,6 @@
             </div>
             <div id="monitoramentoFeed"></div>
 
-        </div>
-
-        <!-- ========== RECURSOS ========== -->
-        <div class="page" id="page-recursos">
-            <p style="color:var(--muted); margin-bottom:16px; font-size:0.85rem;">
-                O Celina Leão remunera os deputados federais com <strong style="color:var(--gold);">dinheiro e material</strong> conforme a performance dos distritais vinculados.
-            </p>
-
-            <h2 class="section-title">💰 Distribuição por Federal</h2>
-            <div id="recursosGrid"></div>
-
-            <h2 class="section-title">📦 Materiais Disponíveis</h2>
-            <div class="grid grid-3" id="materiaisGrid">
-                <div class="card" style="text-align:center;">
-                    <div style="font-size:2rem; margin-bottom:6px;">📄</div>
-                    <div style="font-weight:700;">Santinhos</div>
-                    <div style="font-size:0.8rem; color:var(--muted);">50.000 disponíveis</div>
-                    <div class="progress-bar" style="margin-top:8px;"><div class="progress-fill" style="width:35%; background:var(--primary);"></div></div>
-                    <div style="font-size:0.7rem; color:var(--cyan); margin-top:4px;">17.500 distribuídos</div>
-                </div>
-                <div class="card" style="text-align:center;">
-                    <div style="font-size:2rem; margin-bottom:6px;">🏷️</div>
-                    <div style="font-weight:700;">Adesivos</div>
-                    <div style="font-size:0.8rem; color:var(--muted);">30.000 disponíveis</div>
-                    <div class="progress-bar" style="margin-top:8px;"><div class="progress-fill" style="width:22%; background:var(--gold);"></div></div>
-                    <div style="font-size:0.7rem; color:var(--cyan); margin-top:4px;">6.600 distribuídos</div>
-                </div>
-                <div class="card" style="text-align:center;">
-                    <div style="font-size:2rem; margin-bottom:6px;">🚩</div>
-                    <div style="font-weight:700;">Bandeiras</div>
-                    <div style="font-size:0.8rem; color:var(--muted);">2.000 disponíveis</div>
-                    <div class="progress-bar" style="margin-top:8px;"><div class="progress-fill" style="width:40%; background:var(--purple);"></div></div>
-                    <div style="font-size:0.7rem; color:var(--cyan); margin-top:4px;">800 distribuídas</div>
-                </div>
-            </div>
         </div>
 
     </main>
@@ -788,23 +721,10 @@
         missoes: [
             { id: 1, titulo: '📋 Cadastrar 5 eleitores hoje', descricao: 'Meta diária por distrital', pontos: 100, cor: 'var(--cyan)', badge: 'info', ativa: true },
             { id: 2, titulo: '⚡ Relâmpago: 10 cadastros em 2h', descricao: 'Missão bônus limitada', pontos: 300, cor: 'var(--red)', badge: 'danger', ativa: true },
-            { id: 3, titulo: '🏆 Alcançar 100 eleitores', descricao: 'Marco de conquista', pontos: 500, cor: 'var(--purple)', badge: 'info', ativa: true, extra: '+ 🎰 Roda' },
+            { id: 3, titulo: '🏆 Alcançar 100 eleitores', descricao: 'Marco de conquista', pontos: 500, cor: 'var(--purple)', badge: 'info', ativa: true },
             { id: 4, titulo: '👥 Recrutar novo apoiador ativo', descricao: 'Eleitor que engaja nas redes', pontos: 200, cor: 'var(--gold)', badge: 'warning', ativa: true }
-        ],
-        premiosRoda: [
-            { nome: '5 mil Santinhos', cor: '#3b82f6', emoji: '📄' },
-            { nome: '10 mil Santinhos', cor: '#ffd600', emoji: '📄' },
-            { nome: '1.000 Adesivos', cor: '#00e5ff', emoji: '🏷️' },
-            { nome: '5 mil Adesivos', cor: '#b388ff', emoji: '🏷️' },
-            { nome: 'Verba R$500', cor: '#ff5252', emoji: '💰' },
-            { nome: '2 mil Bandeiras', cor: '#ff9100', emoji: '🚩' }
         ]
     };
-
-    // ===== ESTADO =====
-    let rodaGirando = false;
-    let rodaDesbloqueada = false;
-    let anguloAtual = 0;
 
     // ===== PERSISTÊNCIA DE CADASTROS =====
     const STORAGE_KEY = 'sistema_senador_celina_2026';
@@ -869,8 +789,6 @@
         renderRanking();
         renderMissoes();
         renderMonitoramento();
-        renderRecursos();
-        desenharRoda();
     }
 
     // ===== NAVEGAÇÃO =====
@@ -889,8 +807,7 @@
             distritais: '🏢 Deputados Distritais',
             eleitores: '🗳️ Eleitores',
             gamificacao: '🎮 Gamificação',
-            monitoramento: '📡 Monitoramento de Redes',
-            recursos: '💰 Recursos'
+            monitoramento: '📡 Monitoramento de Redes'
         };
         document.getElementById('headerTitle').textContent = titulos[pagina] || pagina;
     }
@@ -1459,26 +1376,6 @@
         document.getElementById('modal').classList.add('active');
     }
 
-    // ===== RECURSOS =====
-    function renderRecursos() {
-        document.getElementById('recursosGrid').innerHTML = DADOS.federais.map(f => {
-            const totalEl = f.distritais.reduce((s, di) => s + DADOS.distritais[di].eleitores, 0);
-            return `
-                <div class="card" style="margin-bottom:10px; display:flex; align-items:center; gap:14px;">
-                    <div style="width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg, var(--blue), var(--cyan)); display:flex; align-items:center; justify-content:center; font-weight:700; flex-shrink:0;">${f.foto}</div>
-                    <div style="flex:1;">
-                        <div style="font-weight:700;">${f.nome}</div>
-                        <div style="font-size:0.8rem; color:var(--muted);">${f.distritais.length} distritais · ${totalEl} eleitores</div>
-                    </div>
-                    <div style="text-align:right;">
-                        <div style="font-weight:800; color:var(--gold); font-size:1.1rem;">R$ ${f.investimento.toLocaleString('pt-BR')}</div>
-                        <div style="font-size:0.65rem; color:var(--muted);">investimento</div>
-                    </div>
-                </div>
-            `;
-        }).join('');
-    }
-
     // ===== CADASTRO SENADOR / FEDERAL / DISTRITAL =====
     function abrirCadastro(tipo) {
         const titulos = {
@@ -1623,7 +1520,6 @@
         renderDistritais();
         renderEleitores();
         renderRanking();
-        renderRecursos();
     }
 
     // ===== CADASTRO DE ELEITOR (Governadora / Federal / Distrital) =====
@@ -1858,73 +1754,6 @@
             toast('🗑️ Missão removida', removida.titulo);
             renderMissoes();
         }
-    }
-
-    // ===== RODA DA SORTE =====
-    function desenharRoda() {
-        const canvas = document.getElementById('rodaCanvas');
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        const cx = 120, cy = 120, raio = 110;
-        const total = DADOS.premiosRoda.length;
-        const ang = (2 * Math.PI) / total;
-
-        ctx.clearRect(0, 0, 240, 240);
-        DADOS.premiosRoda.forEach((p, i) => {
-            const inicio = anguloAtual + i * ang - Math.PI / 2;
-            const fim = inicio + ang;
-            ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, raio, inicio, fim); ctx.closePath();
-            ctx.fillStyle = p.cor; ctx.fill();
-            ctx.strokeStyle = '#1a1a2e'; ctx.lineWidth = 2; ctx.stroke();
-
-            ctx.save(); ctx.translate(cx, cy); ctx.rotate(inicio + ang / 2);
-            ctx.textAlign = 'center'; ctx.fillStyle = '#000'; ctx.font = 'bold 10px Poppins, sans-serif';
-            const palavras = p.nome.split(' ');
-            if (palavras.length <= 2) { ctx.fillText(p.nome, raio * 0.6, 3); }
-            else { ctx.fillText(palavras.slice(0, 2).join(' '), raio * 0.6, -4); ctx.fillText(palavras.slice(2).join(' '), raio * 0.6, 9); }
-            ctx.restore();
-        });
-        ctx.beginPath(); ctx.arc(cx, cy, 30, 0, 2 * Math.PI);
-        ctx.fillStyle = '#1a1a2e'; ctx.fill(); ctx.strokeStyle = '#ffd600'; ctx.lineWidth = 3; ctx.stroke();
-    }
-
-    function girarRoda() {
-        if (rodaGirando || !rodaDesbloqueada) return;
-        rodaGirando = true;
-        document.getElementById('rodaResultado').style.display = 'none';
-
-        const total = DADOS.premiosRoda.length;
-        const ang = (2 * Math.PI) / total;
-        const voltas = 5 + Math.random() * 3;
-        const sorteado = Math.floor(Math.random() * total);
-        const anguloFinal = voltas * 2 * Math.PI + (total - sorteado - 0.5) * ang;
-        const duracao = 4000;
-        const inicio = performance.now();
-        const angInicial = anguloAtual;
-
-        function animar(agora) {
-            const prog = Math.min((agora - inicio) / duracao, 1);
-            const ease = 1 - Math.pow(1 - prog, 3);
-            anguloAtual = angInicial + anguloFinal * ease;
-            desenharRoda();
-            if (prog < 1) { requestAnimationFrame(animar); }
-            else {
-                rodaGirando = false;
-                const p = DADOS.premiosRoda[sorteado];
-                document.getElementById('rodaEmoji').textContent = p.emoji;
-                document.getElementById('rodaTexto').textContent = p.nome;
-                document.getElementById('rodaDesc').textContent = 'Parabéns! Prêmio desbloqueado para sua campanha!';
-                document.getElementById('rodaResultado').style.display = 'block';
-                rodaDesbloqueada = false;
-                document.getElementById('rodaBloqueio').style.display = 'flex';
-            }
-        }
-        requestAnimationFrame(animar);
-    }
-
-    function desbloquearRoda() {
-        rodaDesbloqueada = true;
-        document.getElementById('rodaBloqueio').style.display = 'none';
     }
 
     // ===== MODAL =====
