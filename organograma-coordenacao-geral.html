@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organograma Coordenação Geral — CONECTA Celina Leão 2026</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ffffff;
+            min-height: 100vh;
+            padding: 30px 20px 40px;
+            color: #1a1a1a;
+        }
+
+        .page-wrapper {
+            max-width: 980px;
+            margin: 0 auto;
+        }
+
+        /* ===== CABEÇALHO ===== */
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #2e7d32;
+        }
+        .header .titulo {
+            font-size: 1.9rem;
+            font-weight: 900;
+            color: #1b5e20;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+        .header .subtitulo {
+            font-size: 0.95rem;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 600;
+        }
+
+        /* ===== LAYOUT ===== */
+        .circle-layout {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 28px;
+            margin: 0 auto;
+            max-width: 980px;
+        }
+
+        .coord-grid-wrapper {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            width: 100%;
+            max-width: 940px;
+        }
+
+        /* ===== CARD CENTRAL CELINA ===== */
+        .circle-center-card {
+            text-align: center;
+            width: 100%;
+            max-width: 940px;
+        }
+        .circle-center-card .card-destaque {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border: 4px solid #2e7d32;
+            border-radius: 14px;
+            padding: 28px 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(46,125,50,0.15);
+        }
+        .circle-center-card .card-destaque .cargo {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            color: #2e7d32;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        .circle-center-card .card-destaque .nome {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #1b5e20;
+            line-height: 1.2;
+        }
+        .circle-center-card .card-destaque .subtitulo {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #388e3c;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        /* ===== CONECTOR VERTICAL ===== */
+        .conector {
+            width: 4px;
+            height: 30px;
+            background: #2e7d32;
+            margin: 0 auto;
+        }
+
+        /* ===== CARDS COORDENAÇÕES ===== */
+        .coord-grid-wrapper .card {
+            width: 100%;
+        }
+        .card {
+            background: #e3f2fd;
+            border: 2.5px solid #1565c0;
+            border-radius: 10px;
+            padding: 16px 14px;
+            text-align: center;
+            position: relative;
+            min-height: 90px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(21,101,192,0.10);
+        }
+        .card .cargo {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #1565c0;
+            margin-bottom: 6px;
+            font-weight: 700;
+            line-height: 1.4;
+        }
+        .card .nome {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #0d47a1;
+            line-height: 1.25;
+        }
+
+        /* ===== RODAPÉ ===== */
+        .footer {
+            margin-top: 40px;
+            padding-top: 18px;
+            border-top: 2px solid #e0e0e0;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #666;
+            letter-spacing: 0.5px;
+        }
+        .footer strong {
+            color: #1b5e20;
+        }
+
+        /* ===== RESPONSIVO ===== */
+        @media (max-width: 900px) {
+            .coord-grid-wrapper {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        @media (max-width: 640px) {
+            .coord-grid-wrapper {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .circle-center-card .card-destaque .nome { font-size: 1.5rem; }
+            .header .titulo { font-size: 1.4rem; }
+        }
+
+        /* ===== IMPRESSÃO / PDF ===== */
+        @media print {
+            body { padding: 10px; }
+            .coord-grid-wrapper { grid-template-columns: repeat(4, 1fr); gap: 12px; }
+            .card { box-shadow: none; min-height: 80px; }
+            .circle-center-card .card-destaque { box-shadow: none; }
+            .header { page-break-after: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-wrapper">
+
+        <div class="header">
+            <div class="titulo">Organograma da Coordenação Geral</div>
+            <div class="subtitulo">Campanha CONECTA · Celina Leão · Governadora 2026</div>
+        </div>
+
+        <div class="circle-layout">
+
+            <!-- TOPO: Celina Leão -->
+            <div class="circle-center-card">
+                <div class="card-destaque">
+                    <div class="cargo">Coordenação Geral</div>
+                    <div class="nome">Celina Leão</div>
+                    <div class="subtitulo">Conecta</div>
+                </div>
+            </div>
+
+            <div class="conector"></div>
+
+            <!-- GRID DE 11 COORDENADORES -->
+            <div class="coord-grid-wrapper">
+
+                <div class="card">
+                    <div class="cargo">Coord. de Comunicação</div>
+                    <div class="nome">Sabá</div>
+                </div>
+
+                <div class="card">
+                    <div class="cargo">Coord. Jurídica</div>
+                    <div class="nome">Marina Morais</div>
+                </div>
+
+                <div class="card">
+                    <div class="cargo">Programa de Governo</div>
+                    <div class="nome">Fernando Leite</div>
+                </div>
+
+                <div class="card">
+                    <div class="cargo">Coord. de Fiscalização</div>
+                    <div class="nome">Wanderci Camargo</div>
+                </div>
+
+                <div class="card">
+                    <div class="cargo">Tesouraria</div>
+                    <div class="nome">Luiz Felipe</div>
+                </div>
+
+                <div class="card">
+                    <div class="cargo">Coord. Política</div>
+                    <div class="nome">Tadeu Filipeli</div>
+                </div>
+
+                <div class="card">
+                    <div class="cargo">Coord. de Logística</div>
+                    <div class="nome">Sílvio Vieira</div>
+                </div>
+
+                <div class="card">
+                    <div class="cargo">Coord. Rural</div>
+                    <div class="nome">Márcio Leão e Sérgio Leão</div>
+                </div>
+
+                <div class="card">
+                    <div class="cargo">Coord. de Material</div>
+                    <div class="nome">André Fortes</div>
+                </div>
+
+                <div class="card">
+                    <div class="cargo">Coord. de Mobilização</div>
+                    <div class="nome">Benício Tavares</div>
+                </div>
+
+                <div class="card">
+                    <div class="cargo">Coord. Segmentos Sociais</div>
+                    <div class="nome">Maria Célia</div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="footer">
+            <strong>CONECTA Celina Leão 2026</strong> · Distrito Federal
+        </div>
+
+    </div>
+
+</body>
+</html>
