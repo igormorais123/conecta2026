@@ -690,6 +690,131 @@ function escapar(s) {
     return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 }
 
+function obterListaFiltrada() {
+    const fData = document.getElementById('filtroData').value;
+    const fSala = document.getElementById('filtroSala').value;
+    const fBusca = (document.getElementById('filtroBusca').value || '').toLowerCase().trim();
+    const ord = document.getElementById('ordenacao').value;
+
+    let lista = DADOS.slice();
+    if (fData) lista = lista.filter(r => r.data === fData);
+    if (fSala) lista = lista.filter(r => r.sala === fSala);
+    if (fBusca) lista = lista.filter(r => (r.solicitante || '').toLowerCase().includes(fBusca));
+
+    lista.sort((a, b) => {
+        if (ord === 'data-asc') return (a.data + a.horaInicio).localeCompare(b.data + b.horaInicio);
+        if (ord === 'data-desc') return (b.data + b.horaInicio).localeCompare(a.data + a.horaInicio);
+        if (ord === 'solicitante') return (a.solicitante || '').localeCompare(b.solicitante || '');
+        if (ord === 'pessoas') return (b.pessoas || 0) - (a.pessoas || 0);
+        return 0;
+    });
+    return lista;
+}
+
+function salvarPDF() {
+    const lista = obterListaFiltrada();
+    if (!lista.length) {
+        alert('Nenhuma reunião para exportar em PDF.');
+        return;
+    }
+    if (!window.jspdf || !window.jspdf.jsPDF) {
+        alert('Biblioteca de PDF não carregada. Verifique sua conexão e recarregue a página.');
+        return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+    const larguraPag = doc.internal.pageSize.getWidth();
+
+    doc.setFillColor(27, 58, 92);
+    doc.rect(0, 0, larguraPag, 22, 'F');
+    doc.setFillColor(212, 168, 67);
+    doc.rect(0, 22, larguraPag, 2, 'F');
+
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Agenda de Reuniões', 14, 12);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Comitê Central · Campanha Celina Leão 2026', 14, 18);
+
+    doc.setTextColor(60, 60, 60);
+    doc.setFontSize(9);
+    const agora = new Date().toLocaleString('pt-BR');
+    doc.text('Gerado em: ' + agora + '   |   Total de reuniões: ' + lista.length, 14, 30);
+
+    const linhas = lista.map(r => [
+        formatarData(r.data) + '\n' + diaSemana(r.data),
+        r.horaInicio + '\nàs ' + r.horaFim,
+        nomeSala(r.sala),
+        r.solicitante || '',
+        String(r.pessoas || ''),
+        r.observacoes || ''
+    ]);
+
+    doc.autoTable({
+        startY: 34,
+        head: [['Data', 'Horário', 'Sala', 'Solicitante', 'Nº Pess.', 'Observações']],
+        body: linhas,
+        theme: 'striped',
+        headStyles: { fillColor: [27, 58, 92], textColor: 255, fontStyle: 'bold', fontSize: 9 },
+        alternateRowStyles: { fillColor: [245, 247, 250] },
+        styles: { font: 'helvetica', fontSize: 9, cellPadding: 3, valign: 'middle' },
+        columnStyles: {
+            0: { cellWidth: 32 },
+            1: { cellWidth: 26, halign: 'center' },
+            2: { cellWidth: 50 },
+            3: { cellWidth: 55 },
+            4: { cellWidth: 18, halign: 'center' },
+            5: { cellWidth: 'auto' }
+        },
+        didDrawPage: function (data) {
+            const pageCount = doc.internal.getNumberOfPages();
+            const pageCurrent = doc.internal.getCurrentPageInfo().pageNumber;
+            doc.setFontSize(8);
+            doc.setTextColor(120, 120, 120);
+            doc.text('Página ' + pageCurrent + ' de ' + pageCount, larguraPag - 30, doc.internal.pageSize.getHeight() - 8);
+        }
+    });
+
+    doc.save('agenda-reunioes-' + hojeISO() + '.pdf');
+}
+
+function compartilharWhatsApp() {
+    const lista = obterListaFiltrada();
+    if (!lista.length) {
+        alert('Nenhuma reunião para compartilhar.');
+        return;
+    }
+
+    let texto = '*AGENDA DE REUNIÕES*\n';
+    texto += '_Comitê Central · Campanha Celina Leão 2026_\n';
+    texto += '_Total: ' + lista.length + ' reunião(ões)_\n\n';
+
+    const porData = {};
+    lista.forEach(r => {
+        if (!porData[r.data]) porData[r.data] = [];
+        porData[r.data].push(r);
+    });
+
+    Object.keys(porData).sort().forEach(data => {
+        texto += '📅 *' + formatarData(data) + ' — ' + diaSemana(data) + '*\n';
+        porData[data]
+            .sort((a, b) => a.horaInicio.localeCompare(b.horaInicio))
+            .forEach(r => {
+                texto += '• ⏰ ' + r.horaInicio + ' às ' + r.horaFim + '\n';
+                texto += '  🚪 ' + nomeSala(r.sala) + '\n';
+                texto += '  👤 ' + r.solicitante + ' (' + r.pessoas + ' pessoa' + (r.pessoas > 1 ? 's' : '') + ')\n';
+                if (r.observacoes) texto += '  📝 ' + r.observacoes + '\n';
+                texto += '\n';
+            });
+    });
+
+    const url = 'https://wa.me/?text=' + encodeURIComponent(texto.trim());
+    window.open(url, '_blank');
+}
+
 function exportarJSON() {
     const blob = new Blob([JSON.stringify(DADOS, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
