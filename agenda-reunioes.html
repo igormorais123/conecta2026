@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agenda de Reuniões - Comitê Central Celina Leão 2026</title>
+<link rel="icon" href="https://inteia.com.br/brand/escudo-v2-256.png" type="image/png">
+<style>
+:root {
+    --azul: #1B3A5C;
+    --azul-claro: #2a5380;
+    --azul-escuro: #122740;
+    --dourado: #D4A843;
+    --dourado-claro: #e6c46b;
+    --bg: #f5f7fa;
+    --card: #ffffff;
+    --border: #e1e5eb;
+    --text: #1a2332;
+    --text2: #5a6878;
+    --danger: #d64545;
+    --sucesso: #2e8b57;
+    --aviso: #e8a838;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0;
+}
+.header {
+    background: linear-gradient(135deg, var(--azul) 0%, var(--azul-escuro) 100%);
+    color: #fff;
+    padding: 18px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+    border-bottom: 4px solid var(--dourado);
+}
+.header-title { display: flex; align-items: center; gap: 14px; }
+.header-title h1 { font-size: 1.35rem; font-weight: 700; letter-spacing: 0.3px; }
+.header-title .sub { font-size: 0.78rem; opacity: 0.85; margin-top: 2px; }
+.logo-circle {
+    width: 46px; height: 46px;
+    background: var(--dourado);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    color: var(--azul-escuro);
+    font-size: 1.1rem;
+}
+.header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn {
+    border: none;
+    padding: 9px 16px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.btn-primary { background: var(--dourado); color: var(--azul-escuro); }
+.btn-primary:hover { background: var(--dourado-claro); transform: translateY(-1px); }
+.btn-secondary { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+.btn-secondary:hover { background: rgba(255,255,255,0.25); }
+.btn-sm { padding: 6px 10px; font-size: 0.75rem; }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-danger:hover { background: #b53838; }
+.btn-edit { background: var(--azul); color: #fff; }
+.btn-edit:hover { background: var(--azul-claro); }
+
+.container { max-width: 1400px; margin: 0 auto; padding: 22px; }
+
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin-bottom: 22px;
+}
+.stat-card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 16px 18px;
+    border-left: 4px solid var(--dourado);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.stat-card.azul { border-left-color: var(--azul); }
+.stat-card.verde { border-left-color: var(--sucesso); }
+.stat-card.laranja { border-left-color: var(--aviso); }
+.stat-label { font-size: 0.72rem; color: var(--text2); text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600; }
+.stat-value { font-size: 1.7rem; font-weight: 800; color: var(--azul); margin-top: 4px; }
+
+.toolbar {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 18px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.toolbar label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+.toolbar input, .toolbar select {
+    padding: 8px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-family: inherit;
+    color: var(--text);
+    background: #fff;
+    min-width: 150px;
+}
+.toolbar input:focus, .toolbar select:focus { outline: none; border-color: var(--azul); }
+.spacer { flex: 1; }
+
+.table-wrap {
+    background: var(--card);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+table { width: 100%; border-collapse: collapse; }
+thead { background: var(--azul); color: #fff; }
+thead th {
+    padding: 12px 14px;
+    text-align: left;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+tbody td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.88rem;
+    color: var(--text);
+    vertical-align: middle;
+}
+tbody tr:hover { background: #f9fafc; }
+tbody tr.conflito { background: #fff5f5; }
+tbody tr.conflito:hover { background: #ffeaea; }
+.empty-state {
+    text-align: center;
+    padding: 50px 20px;
+    color: var(--text2);
+    font-size: 0.9rem;
+}
+.empty-state .icon { font-size: 2.5rem; margin-bottom: 10px; opacity: 0.5; }
+
+.badge {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+.badge-sala { background: #eaf1f9; color: var(--azul); }
+.badge-hoje { background: var(--dourado); color: var(--azul-escuro); }
+.badge-futuro { background: #e8f5ee; color: var(--sucesso); }
+.badge-passado { background: #ecedef; color: var(--text2); }
+.badge-conflito { background: #ffd9d9; color: var(--danger); }
+
+.acoes { display: flex; gap: 6px; }
+
+/* Modal */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 25, 40, 0.55);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.modal-overlay.show { display: flex; }
+.modal {
+    background: #fff;
+    border-radius: 14px;
+    width: 100%;
+    max-width: 580px;
+    max-height: 92vh;
+    overflow-y: auto;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+    border-top: 5px solid var(--dourado);
+}
+.modal-header {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.modal-header h3 { color: var(--azul); font-size: 1.1rem; font-weight: 700; }
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text2);
+    padding: 0 4px;
+}
+.modal-body { padding: 22px 24px; }
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+.form-group { display: flex; flex-direction: column; }
+.form-group.full { grid-column: 1 / -1; }
+.form-group label {
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 5px;
+}
+.form-group input, .form-group select, .form-group textarea {
+    padding: 9px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    color: var(--text);
+    background: #fff;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    outline: none; border-color: var(--azul);
+}
+.form-group textarea { resize: vertical; min-height: 70px; }
+.modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    background: #fafbfc;
+}
+.btn-cancel { background: #e1e5eb; color: var(--text); }
+.btn-cancel:hover { background: #ccd2db; }
+.btn-save { background: var(--azul); color: #fff; }
+.btn-save:hover { background: var(--azul-claro); }
+
+.aviso-conflito {
+    background: #fff5f5;
+    border: 1px solid #fcc;
+    color: var(--danger);
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    margin-bottom: 14px;
+    display: none;
+}
+.aviso-conflito.show { display: block; }
+
+@media (max-width: 720px) {
+    .form-row { grid-template-columns: 1fr; }
+    thead { display: none; }
+    tbody td { display: block; border-bottom: none; padding: 4px 14px; }
+    tbody tr { border-bottom: 2px solid var(--border); padding: 12px 0; display: block; }
+    tbody td::before { content: attr(data-label); font-weight: 700; color: var(--azul); margin-right: 8px; }
+}
+
+@media print {
+    .header-actions, .toolbar, .acoes, .btn { display: none !important; }
+    .header { background: var(--azul) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .table-wrap { box-shadow: none; }
+    body { background: #fff; }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+    <div class="header-title">
+        <div class="logo-circle">CL</div>
+        <div>
+            <h1>Agenda de Reuniões</h1>
+            <div class="sub">Comitê Central · Campanha Celina Leão 2026</div>
+        </div>
+    </div>
+    <div class="header-actions">
+        <button class="btn btn-primary" onclick="abrirModal()">+ Nova Reunião</button>
+        <button class="btn btn-secondary" onclick="window.print()">Imprimir</button>
+        <button class="btn btn-secondary" onclick="exportarJSON()">Exportar</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('importInput').click()">Importar</button>
+        <input type="file" id="importInput" accept=".json" style="display:none" onchange="importarJSON(event)">
+    </div>
+</header>
+
+<div class="container">
+
+    <div class="stats-row">
+        <div class="stat-card azul">
+            <div class="stat-label">Total Cadastradas</div>
+            <div class="stat-value" id="statTotal">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Hoje</div>
+            <div class="stat-value" id="statHoje">0</div>
+        </div>
+        <div class="stat-card verde">
+            <div class="stat-label">Próximas (7 dias)</div>
+            <div class="stat-value" id="statProximas">0</div>
+        </div>
+        <div class="stat-card laranja">
+            <div class="stat-label">Total Participantes</div>
+            <div class="stat-value" id="statPessoas">0</div>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <label>Filtrar:</label>
+        <input type="date" id="filtroData" onchange="render()">
+        <select id="filtroSala" onchange="render()">
+            <option value="">Todas as salas</option>
+        </select>
+        <input type="text" id="filtroBusca" placeholder="Buscar por solicitante..." onkeyup="render()">
+        <button class="btn btn-sm btn-cancel" onclick="limparFiltros()">Limpar</button>
+        <div class="spacer"></div>
+        <select id="ordenacao" onchange="render()">
+            <option value="data-asc">Data (mais próxima)</option>
+            <option value="data-desc">Data (mais recente)</option>
+            <option value="solicitante">Solicitante (A-Z)</option>
+            <option value="pessoas">Nº Participantes</option>
+        </select>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Horário</th>
+                    <th>Sala</th>
+                    <th>Solicitante</th>
+                    <th>Participantes</th>
+                    <th>Observações</th>
+                    <th style="width:1%;white-space:nowrap;">Ações</th>
+                </tr>
+            </thead>
+            <tbody id="tabela"></tbody>
+        </table>
+    </div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="modalTitulo">Nova Reunião</h3>
+            <button class="modal-close" onclick="fecharModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="aviso-conflito" id="avisoConflito"></div>
+            <input type="hidden" id="campoId">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Data *</label>
+                    <input type="date" id="campoData" required>
+                </div>
+                <div class="form-group">
+                    <label>Sala *</label>
+                    <select id="campoSala" required></select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Hora Início *</label>
+                    <input type="time" id="campoHoraInicio" required>
+                </div>
+                <div class="form-group">
+                    <label>Hora Fim *</label>
+                    <input type="time" id="campoHoraFim" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Quem Solicitou *</label>
+                    <input type="text" id="campoSolicitante" placeholder="Nome do solicitante" required>
+                </div>
+                <div class="form-group">
+                    <label>Nº de Pessoas *</label>
+                    <input type="number" id="campoPessoas" min="1" placeholder="Ex: 10" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group full">
+                    <label>Observações</label>
+                    <textarea id="campoObservacoes" placeholder="Pauta, recursos necessários, etc. (opcional)"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-cancel" onclick="fecharModal()">Cancelar</button>
+            <button class="btn btn-save" onclick="salvar()">Salvar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'agenda_reunioes_comite_central';
+
+const SALAS = [
+    { grupo: 'Térreo', salas: [
+        { id: 'S1', nome: 'S1 - União' },
+        { id: 'S2', nome: 'S2' },
+        { id: 'S3', nome: 'S3' },
+        { id: 'S4', nome: 'S4' },
+        { id: 'S5', nome: 'S5 - Sala de Reunião' },
+        { id: 'S6', nome: 'S6 - Sala de Reuniões' },
+        { id: 'S7', nome: 'S7 - Recepção' },
+        { id: 'S8', nome: 'S8' },
+        { id: 'S9', nome: 'S9' },
+        { id: 'Convivencia', nome: 'Sala de Convivência' }
+    ]},
+    { grupo: '1º Andar', salas: [
+        { id: 'S10', nome: 'S10 - PP' },
+        { id: 'S11', nome: 'S11 - Celina' },
+        { id: 'S12', nome: 'S12 - Mídia Social / Podcast' },
+        { id: 'S14', nome: 'S14 - Sala de Reunião' },
+        { id: 'S15', nome: 'S15 - Ibaneis' },
+        { id: 'S16', nome: 'S16 - Sala de Reuniões' },
+        { id: 'S17', nome: 'S17 - Sala de Monitoramento' },
+        { id: 'S18', nome: 'S18 - Jurídico' },
+        { id: 'Auditorio', nome: 'Auditório' }
+    ]}
+];
+
+let DADOS = [];
+
+function carregar() {
+    try {
+        const json = localStorage.getItem(STORAGE_KEY);
+        DADOS = json ? JSON.parse(json) : [];
+    } catch (e) {
+        DADOS = [];
+    }
+}
+
+function salvarStorage() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(DADOS));
+}
+
+function popularSalas() {
+    const selToolbar = document.getElementById('filtroSala');
+    const selModal = document.getElementById('campoSala');
+    selModal.innerHTML = '<option value="">Selecione...</option>';
+    SALAS.forEach(g => {
+        const og1 = document.createElement('optgroup');
+        og1.label = g.grupo;
+        const og2 = document.createElement('optgroup');
+        og2.label = g.grupo;
+        g.salas.forEach(s => {
+            const o1 = document.createElement('option');
+            o1.value = s.id; o1.textContent = s.nome;
+            og1.appendChild(o1);
+            const o2 = document.createElement('option');
+            o2.value = s.id; o2.textContent = s.nome;
+            og2.appendChild(o2);
+        });
+        selToolbar.appendChild(og1);
+        selModal.appendChild(og2);
+    });
+}
+
+function nomeSala(id) {
+    for (const g of SALAS) {
+        const s = g.salas.find(x => x.id === id);
+        if (s) return s.nome;
+    }
+    return id || '—';
+}
+
+function hojeISO() {
+    const d = new Date();
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return yyyy + '-' + mm + '-' + dd;
+}
+
+function formatarData(iso) {
+    if (!iso) return '';
+    const [y, m, d] = iso.split('-');
+    return d + '/' + m + '/' + y;
+}
+
+function diaSemana(iso) {
+    if (!iso) return '';
+    const dias = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+    const [y, m, d] = iso.split('-').map(Number);
+    return dias[new Date(y, m - 1, d).getDay()];
+}
+
+function temConflito(reg, ignorarId) {
+    return DADOS.find(r => {
+        if (ignorarId && r.id === ignorarId) return false;
+        if (r.sala !== reg.sala) return false;
+        if (r.data !== reg.data) return false;
+        return reg.horaInicio < r.horaFim && reg.horaFim > r.horaInicio;
+    });
+}
+
+function abrirModal(id) {
+    document.getElementById('avisoConflito').classList.remove('show');
+    if (id) {
+        const r = DADOS.find(x => x.id === id);
+        if (!r) return;
+        document.getElementById('modalTitulo').textContent = 'Editar Reunião';
+        document.getElementById('campoId').value = r.id;
+        document.getElementById('campoData').value = r.data;
+        document.getElementById('campoSala').value = r.sala;
+        document.getElementById('campoHoraInicio').value = r.horaInicio;
+        document.getElementById('campoHoraFim').value = r.horaFim;
+        document.getElementById('campoSolicitante').value = r.solicitante;
+        document.getElementById('campoPessoas').value = r.pessoas;
+        document.getElementById('campoObservacoes').value = r.observacoes || '';
+    } else {
+        document.getElementById('modalTitulo').textContent = 'Nova Reunião';
+        document.getElementById('campoId').value = '';
+        document.getElementById('campoData').value = hojeISO();
+        document.getElementById('campoSala').value = '';
+        document.getElementById('campoHoraInicio').value = '09:00';
+        document.getElementById('campoHoraFim').value = '10:00';
+        document.getElementById('campoSolicitante').value = '';
+        document.getElementById('campoPessoas').value = '';
+        document.getElementById('campoObservacoes').value = '';
+    }
+    document.getElementById('modal').classList.add('show');
+}
+
+function fecharModal() {
+    document.getElementById('modal').classList.remove('show');
+}
+
+function salvar() {
+    const id = document.getElementById('campoId').value;
+    const reg = {
+        id: id || (Date.now().toString(36) + Math.random().toString(36).slice(2, 7)),
+        data: document.getElementById('campoData').value,
+        sala: document.getElementById('campoSala').value,
+        horaInicio: document.getElementById('campoHoraInicio').value,
+        horaFim: document.getElementById('campoHoraFim').value,
+        solicitante: document.getElementById('campoSolicitante').value.trim(),
+        pessoas: parseInt(document.getElementById('campoPessoas').value, 10),
+        observacoes: document.getElementById('campoObservacoes').value.trim()
+    };
+
+    if (!reg.data || !reg.sala || !reg.horaInicio || !reg.horaFim || !reg.solicitante || !reg.pessoas) {
+        alert('Preencha todos os campos obrigatórios.');
+        return;
+    }
+    if (reg.horaFim <= reg.horaInicio) {
+        alert('A hora de fim deve ser depois da hora de início.');
+        return;
+    }
+
+    const conflito = temConflito(reg, id);
+    if (conflito) {
+        const aviso = document.getElementById('avisoConflito');
+        aviso.textContent = 'Conflito: já existe reunião nesta sala (' + nomeSala(conflito.sala) + ') de ' + conflito.horaInicio + ' às ' + conflito.horaFim + ' (solicitante: ' + conflito.solicitante + '). Ajuste o horário ou a sala.';
+        aviso.classList.add('show');
+        return;
+    }
+
+    if (id) {
+        const idx = DADOS.findIndex(x => x.id === id);
+        if (idx >= 0) DADOS[idx] = reg;
+    } else {
+        DADOS.push(reg);
+    }
+    salvarStorage();
+    fecharModal();
+    render();
+}
+
+function excluir(id) {
+    const r = DADOS.find(x => x.id === id);
+    if (!r) return;
+    if (!confirm('Excluir a reunião de ' + r.solicitante + ' em ' + formatarData(r.data) + '?')) return;
+    DADOS = DADOS.filter(x => x.id !== id);
+    salvarStorage();
+    render();
+}
+
+function limparFiltros() {
+    document.getElementById('filtroData').value = '';
+    document.getElementById('filtroSala').value = '';
+    document.getElementById('filtroBusca').value = '';
+    document.getElementById('ordenacao').value = 'data-asc';
+    render();
+}
+
+function render() {
+    const fData = document.getElementById('filtroData').value;
+    const fSala = document.getElementById('filtroSala').value;
+    const fBusca = (document.getElementById('filtroBusca').value || '').toLowerCase().trim();
+    const ord = document.getElementById('ordenacao').value;
+
+    let lista = DADOS.slice();
+    if (fData) lista = lista.filter(r => r.data === fData);
+    if (fSala) lista = lista.filter(r => r.sala === fSala);
+    if (fBusca) lista = lista.filter(r => (r.solicitante || '').toLowerCase().includes(fBusca));
+
+    lista.sort((a, b) => {
+        if (ord === 'data-asc') return (a.data + a.horaInicio).localeCompare(b.data + b.horaInicio);
+        if (ord === 'data-desc') return (b.data + b.horaInicio).localeCompare(a.data + a.horaInicio);
+        if (ord === 'solicitante') return (a.solicitante || '').localeCompare(b.solicitante || '');
+        if (ord === 'pessoas') return (b.pessoas || 0) - (a.pessoas || 0);
+        return 0;
+    });
+
+    const hoje = hojeISO();
+    const tbody = document.getElementById('tabela');
+
+    if (!lista.length) {
+        tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><div class="icon">📅</div><div>Nenhuma reunião encontrada. Clique em <strong>Nova Reunião</strong> para começar.</div></div></td></tr>';
+    } else {
+        let html = '';
+        lista.forEach(r => {
+            const conflito = temConflito(r, r.id);
+            const isHoje = r.data === hoje;
+            const isFuturo = r.data > hoje;
+            let badge = '';
+            if (isHoje) badge = '<span class="badge badge-hoje">HOJE</span>';
+            else if (isFuturo) badge = '<span class="badge badge-futuro">Próxima</span>';
+            else badge = '<span class="badge badge-passado">Realizada</span>';
+            const conflitoBadge = conflito ? ' <span class="badge badge-conflito" title="Conflito de horário">⚠ CONFLITO</span>' : '';
+
+            html += '<tr class="' + (conflito ? 'conflito' : '') + '">';
+            html += '<td data-label="Data"><strong>' + formatarData(r.data) + '</strong><br><span style="font-size:.72rem;color:var(--text2);">' + diaSemana(r.data) + '</span> ' + badge + '</td>';
+            html += '<td data-label="Horário"><strong>' + r.horaInicio + '</strong> às <strong>' + r.horaFim + '</strong></td>';
+            html += '<td data-label="Sala"><span class="badge badge-sala">' + nomeSala(r.sala) + '</span>' + conflitoBadge + '</td>';
+            html += '<td data-label="Solicitante">' + escapar(r.solicitante) + '</td>';
+            html += '<td data-label="Participantes"><strong>' + r.pessoas + '</strong> pessoas</td>';
+            html += '<td data-label="Observações" style="max-width:280px;color:var(--text2);font-size:.82rem;">' + escapar(r.observacoes || '—') + '</td>';
+            html += '<td data-label="Ações"><div class="acoes">';
+            html += '<button class="btn btn-sm btn-edit" onclick="abrirModal(\'' + r.id + '\')">Editar</button>';
+            html += '<button class="btn btn-sm btn-danger" onclick="excluir(\'' + r.id + '\')">Excluir</button>';
+            html += '</div></td>';
+            html += '</tr>';
+        });
+        tbody.innerHTML = html;
+    }
+
+    document.getElementById('statTotal').textContent = DADOS.length;
+    document.getElementById('statHoje').textContent = DADOS.filter(r => r.data === hoje).length;
+    const em7 = new Date();
+    em7.setDate(em7.getDate() + 7);
+    const em7ISO = em7.toISOString().slice(0, 10);
+    document.getElementById('statProximas').textContent = DADOS.filter(r => r.data >= hoje && r.data <= em7ISO).length;
+    document.getElementById('statPessoas').textContent = DADOS.reduce((s, r) => s + (parseInt(r.pessoas, 10) || 0), 0);
+}
+
+function escapar(s) {
+    if (s == null) return '';
+    return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+}
+
+function exportarJSON() {
+    const blob = new Blob([JSON.stringify(DADOS, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'agenda-reunioes-comite-' + hojeISO() + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function importarJSON(evt) {
+    const file = evt.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+        try {
+            const arr = JSON.parse(e.target.result);
+            if (!Array.isArray(arr)) throw new Error('Formato inválido');
+            if (!confirm('Importar ' + arr.length + ' registro(s)? Isso substituirá os dados atuais.')) return;
+            DADOS = arr;
+            salvarStorage();
+            render();
+            alert('Importação concluída.');
+        } catch (err) {
+            alert('Erro ao importar: ' + err.message);
+        }
+    };
+    reader.readAsText(file);
+    evt.target.value = '';
+}
+
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') fecharModal();
+});
+
+document.getElementById('modal').addEventListener('click', e => {
+    if (e.target.id === 'modal') fecharModal();
+});
+
+carregar();
+popularSalas();
+render();
+</script>
+
+</body>
+</html>
