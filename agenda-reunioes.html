@@ -470,6 +470,23 @@ function carregar() {
     }
 }
 
+function limparReunioesRealizadas() {
+    const agora = new Date();
+    const antes = DADOS.length;
+    DADOS = DADOS.filter(r => {
+        if (!r.data || !r.horaFim) return true;
+        const [y, m, d] = r.data.split('-').map(Number);
+        const [h, min] = r.horaFim.split(':').map(Number);
+        const fim = new Date(y, m - 1, d, h, min);
+        return fim > agora;
+    });
+    const removidas = antes - DADOS.length;
+    if (removidas > 0) {
+        salvarStorage();
+    }
+    return removidas;
+}
+
 function salvarStorage() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(DADOS));
 }
