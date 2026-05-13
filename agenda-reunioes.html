@@ -872,8 +872,14 @@ document.getElementById('modal').addEventListener('click', e => {
 });
 
 carregar();
+limparReunioesRealizadas();
 popularSalas();
 render();
+
+setInterval(() => {
+    const removidas = limparReunioesRealizadas();
+    if (removidas > 0) render();
+}, 60000);
 </script>
 
 </body>
