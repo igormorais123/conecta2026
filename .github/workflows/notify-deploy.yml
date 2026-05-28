@@ -11,8 +11,8 @@ jobs:
       - name: Verificar segredos do deploy
         run: |
           if [ -z "${{ secrets.DEPLOY_TOKEN }}" ] || [ -z "${{ secrets.DEPLOY_REPO }}" ]; then
-            echo "::error::Configure DEPLOY_TOKEN e DEPLOY_REPO para disparar o repo de produção."
-            exit 1
+            echo "::notice::DEPLOY_TOKEN e DEPLOY_REPO não configurados; disparo para repo de produção ignorado."
+            exit 0
           fi
 
       - name: Disparar deploy no repo de producao
