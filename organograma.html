@@ -1418,7 +1418,7 @@
     <!-- BARRA DE BUSCA -->
     <div class="search-bar" id="searchBar" style="display:none;">
         <span class="search-label">BUSCAR</span>
-        <input type="text" id="searchInput" placeholder="Digite um nome..." autocomplete="off">
+        <input type="text" id="searchInput" placeholder="Digite cidade, segmento, base ou nome..." autocomplete="off">
         <span class="search-count" id="searchCount"></span>
         <div class="search-nav">
             <button id="btnPrev" onclick="navegarResultado(-1)" title="Anterior" disabled>&uarr;</button>
@@ -2807,7 +2807,7 @@
     </div>
 
     <button class="btn-salvar" onclick="salvarHTML()" title="Salvar todas as edições no arquivo HTML">SALVAR HTML</button>
-    <button class="btn-salvar" style="bottom:25px;left:25px;right:auto;background:#1a237e;" onclick="abrirBusca()" title="Buscar pessoa (Ctrl+B)">&#128269; BUSCAR</button>
+    <button class="btn-salvar" style="bottom:25px;left:25px;right:auto;background:#1a237e;" onclick="abrirBusca()" title="Buscar cidade, segmento, base ou pessoa (Ctrl+B)">&#128269; BUSCAR</button>
     <div class="btn-salvar-contador" id="contador-edicoes"></div>
 
 
@@ -4885,6 +4885,91 @@
                 }
             });
 
+            // 5a-bis. Buscar pelo NOME DA CIDADE (ex.: "Gama", "Planaltina")
+            document.querySelectorAll('.card-cidade .cidade-nome').forEach(function(el) {
+                var nome = el.textContent.trim();
+                var nomeLower = nome.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+                if (nomeLower.includes(termoLower)) {
+                    var card = el.closest('.card-cidade');
+                    var coordEl = card.querySelector('.cidade-coordenador');
+                    var coordNome = coordEl ? coordEl.textContent.trim() : '';
+                    searchResultados.push({
+                        nome: nome,
+                        telefone: '',
+                        local: 'Cidade' + (coordNome && coordNome !== '(A definir)' ? ' — Coord: ' + coordNome : ''),
+                        tipo: 'cidade',
+                        elemento: card
+                    });
+                }
+            });
+
+            // 5a-ter. Buscar pelo NOME DA BASE/SETOR (ex.: "Setor Tradicional")
+            document.querySelectorAll('.card-base .base-nome').forEach(function(el) {
+                var nome = el.textContent.trim();
+                var nomeLower = nome.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+                if (nomeLower.includes(termoLower)) {
+                    var card = el.closest('.card-base');
+                    var basesSection = card.closest('.bases-section');
+                    var cidadeNomeLoc = '';
+                    if (basesSection) {
+                        var cidadeCardPrev = basesSection.previousElementSibling;
+                        while (cidadeCardPrev && !cidadeCardPrev.classList.contains('card-cidade')) {
+                            cidadeCardPrev = cidadeCardPrev.previousElementSibling;
+                        }
+                        if (cidadeCardPrev) {
+                            var cidNomeEl = cidadeCardPrev.querySelector('.cidade-nome');
+                            cidadeNomeLoc = cidNomeEl ? cidNomeEl.textContent.trim() : '';
+                        }
+                    }
+                    searchResultados.push({
+                        nome: nome,
+                        telefone: '',
+                        local: 'Base' + (cidadeNomeLoc ? ' — ' + cidadeNomeLoc : ''),
+                        tipo: 'base',
+                        elemento: card
+                    });
+                }
+            });
+
+            // 5a-quater. Buscar pelo NOME DA REGIÃO/SUB (ex.: "RA I", "Plano Piloto")
+            document.querySelectorAll('.card-sub .sub-nome').forEach(function(el) {
+                var nome = el.textContent.trim();
+                var nomeLower = nome.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+                if (nomeLower.includes(termoLower)) {
+                    var card = el.closest('.card-sub');
+                    var coordEl = card.querySelector('.sub-coordenador');
+                    var coordNome = coordEl ? coordEl.textContent.trim() : '';
+                    searchResultados.push({
+                        nome: nome,
+                        telefone: '',
+                        local: 'Região' + (coordNome && coordNome !== '(A definir)' ? ' — Coord: ' + coordNome : ''),
+                        tipo: 'coordenador',
+                        elemento: card
+                    });
+                }
+            });
+
+            // 5a-penta. Buscar pelo NOME DO SEGMENTO (ex.: "Saúde", "Religioso")
+            document.querySelectorAll('.card-segmento .seg-nome').forEach(function(el) {
+                var nome = el.textContent.trim();
+                var nomeLower = nome.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+                if (nomeLower.includes(termoLower)) {
+                    var card = el.closest('.card-segmento');
+                    var jaExiste = searchResultados.some(function(r) { return r.elemento === card; });
+                    if (!jaExiste) {
+                        var coordEl = card.querySelector('.seg-coord');
+                        var coordNome = coordEl ? coordEl.textContent.trim() : '';
+                        searchResultados.push({
+                            nome: nome,
+                            telefone: '',
+                            local: 'Segmento' + (coordNome && coordNome !== '(A definir)' ? ' — Coord: ' + coordNome : ''),
+                            tipo: 'segmento',
+                            elemento: card
+                        });
+                    }
+                }
+            });
+
             // 5b. Buscar nos cards de segmento (teal) - inclui pessoas extras
             var dadosBusca = carregarDados();
             document.querySelectorAll('.card-segmento').forEach(function(el) {
@@ -4943,7 +5028,7 @@
                 searchResultados.forEach(function(r, i) {
                     var nomeHighlight = r.nome.replace(new RegExp('(' + termo.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi'), '<mark>$1</mark>');
                     var tipoClass = 'tipo-' + r.tipo;
-                    var tipoLabel = r.tipo === 'contato' ? 'Contato' : r.tipo === 'base' ? 'Base' : r.tipo === 'segmento' ? 'Segmento' : 'Coord.';
+                    var tipoLabel = r.tipo === 'contato' ? 'Contato' : r.tipo === 'cidade' ? 'Cidade' : r.tipo === 'base' ? 'Base' : r.tipo === 'segmento' ? 'Segmento' : 'Coord.';
                     html += '<div class="search-result-item" onclick="irParaResultado(' + i + ')">';
                     html += '<span class="search-result-type ' + tipoClass + '">' + tipoLabel + '</span>';
                     html += '<span class="search-result-location">' + r.local + '</span>';
