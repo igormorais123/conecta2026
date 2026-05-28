@@ -122,6 +122,12 @@
         font-weight: 700;
         color: #bf360c;
     }
+    .item.preenchido .tel-box {
+        background: #f3e5f5;
+        border-bottom-color: #8e24aa;
+        color: #4a148c;
+        font-weight: 600;
+    }
     .item.preenchido::before {
         content: "✓";
         color: #2e7d32;
@@ -174,22 +180,28 @@
     .legenda span { display: flex; align-items: center; gap: 5px; }
     .legenda .v::before { content: "✓"; color: #2e7d32; font-weight: 900; }
     .legenda .o::before { content: "○"; color: #bbb; }
-    .barra-imprimir {
+    .barra-acoes {
         position: fixed;
         top: 12px;
         right: 12px;
+        display: flex;
+        gap: 8px;
+        z-index: 1000;
+    }
+    .btn-acao {
         background: #1a237e;
         color: #fff;
         padding: 10px 18px;
         border: none;
         border-radius: 8px;
-        font-size: 11pt;
+        font-size: 10pt;
         font-weight: 700;
         cursor: pointer;
         box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        z-index: 1000;
     }
-    .barra-imprimir:hover { background: #283593; }
+    .btn-acao:hover { background: #283593; }
+    .btn-acao.secundario { background: #00695c; }
+    .btn-acao.secundario:hover { background: #00897b; }
     .nota {
         background: #e3f2fd;
         border-left: 4px solid #1565c0;
@@ -197,6 +209,11 @@
         margin: 12px 0;
         font-size: 10pt;
         color: #0d47a1;
+    }
+    .nota.alerta {
+        background: #fff3e0;
+        border-left-color: #e65100;
+        color: #bf360c;
     }
     .grupo-titulo-pdf {
         font-size: 10pt;
@@ -208,11 +225,32 @@
         padding-left: 8px;
         border-left: 3px solid #ce93d8;
     }
+    .contatos-extras {
+        margin: 6px 0 10px 24px;
+        padding: 8px 12px;
+        background: #fff8e1;
+        border-left: 3px solid #f57f17;
+        border-radius: 4px;
+        font-size: 9.5pt;
+    }
+    .contatos-extras .extra-titulo {
+        font-size: 8pt;
+        text-transform: uppercase;
+        color: #bf360c;
+        letter-spacing: 1px;
+        margin-bottom: 4px;
+        font-weight: 700;
+    }
+    .contatos-extras .extra-pessoa {
+        padding: 2px 0;
+        color: #4a148c;
+        font-weight: 600;
+    }
     @media print {
         body { background: #fff; padding: 0; }
         .pagina { box-shadow: none; max-width: 100%; margin: 0; padding: 18mm 14mm; page-break-after: always; }
         .pagina:last-child { page-break-after: avoid; }
-        .barra-imprimir { display: none; }
+        .barra-acoes { display: none; }
         h2.secao, h3.subsecao, h4.regiao, h5.cidade { page-break-after: avoid; }
         .item { page-break-inside: avoid; }
     }
@@ -221,660 +259,413 @@
 </head>
 <body>
 
-<button class="barra-imprimir" onclick="window.print()">🖨️ IMPRIMIR / SALVAR PDF</button>
-
-<!-- ============ CAPA ============ -->
-<div class="pagina capa">
-    <h1>ORGANOGRAMA</h1>
-    <h2>Campanha Celina Leão 2026</h2>
-    <div class="subtitulo">
-        <strong>Relatório de Coordenadores</strong><br>
-        Lista completa para preenchimento manual<br>
-        dos nomes e telefones em aberto.
-    </div>
-    <div class="data">
-        Distrito Federal · Eleição 2026<br>
-        Gerado em 28/05/2026
-    </div>
+<div class="barra-acoes">
+    <button class="btn-acao" onclick="window.print()">🖨️ IMPRIMIR / PDF</button>
+    <button class="btn-acao secundario" onclick="recarregarDados()">🔄 RECARREGAR DADOS</button>
 </div>
 
-<!-- ============ INSTRUÇÕES ============ -->
-<div class="pagina">
-    <h2 class="secao">Como usar este relatório</h2>
-    <div class="nota">
-        <strong>Objetivo:</strong> imprimir e preencher à mão os nomes e telefones dos coordenadores que ainda estão em aberto. Depois, basta digitar no organograma online em <strong>inteia.com.br/conecta2026</strong>.
-    </div>
-    <div class="legenda">
-        <span class="v"><strong>Preenchido</strong> — coordenador já definido (em laranja)</span>
-        <span class="o"><strong>Em aberto</strong> — preencher nome e telefone</span>
-    </div>
-    <div class="resumo">
-        <h3>📋 Estrutura do Organograma</h3>
-        <p><strong>1.</strong> Coordenação Geral — Celina Leão</p>
-        <p><strong>2.</strong> 12 Coordenações Gerais (Comunicação, Jurídica, Programa de Governo, Fiscalização, Tesouraria, Política, Logística, Rural, Material, Mobilização, Segmentos Sociais)</p>
-        <p><strong>3.</strong> 6 Subcoordenações da Logística (Estrutura de Eventos, Comunicação Visual, Credenciamento, Infraestrutura, Transportes, RH)</p>
-        <p><strong>4.</strong> 9 Regiões com cidades e bases (Norte, Sul, Leste, Oeste, Sudeste, Central, Samambaia/Recanto, Ceilândia/Pôr do Sol, Valparaíso/Luziânia/Ocidental, Entorno)</p>
-        <p><strong>5.</strong> Coordenação de Segmentos Sociais (Saúde, Educação, Segurança, Esporte, Cultura, Religiosa, Servidores Públicos e demais segmentos)</p>
-        <p><strong>6.</strong> Coordenação Rural (6 sub-regiões com núcleos rurais)</p>
-    </div>
-</div>
-
-<!-- ============ COORDENAÇÃO GERAL ============ -->
-<div class="pagina">
-    <h2 class="secao">1. Coordenação Geral</h2>
-    <div class="item preenchido">
-        <div class="cargo">Coordenação Geral</div>
-        <div class="campos">
-            <div class="nome-box">Celina Leão</div>
-            <div class="tel-box"><span class="label-mini">Tel:</span></div>
-        </div>
-    </div>
-
-    <h2 class="secao">2. Coordenações Gerais</h2>
-    <div class="item preenchido"><div class="cargo">Coord. de Comunicação</div><div class="campos"><div class="nome-box">Sabá</div><div class="tel-box"><span class="label-mini">Tel:</span></div></div></div>
-    <div class="item preenchido"><div class="cargo">Coord. Jurídica</div><div class="campos"><div class="nome-box">Marina Morais</div><div class="tel-box"><span class="label-mini">Tel:</span></div></div></div>
-    <div class="item preenchido"><div class="cargo">Programa de Governo</div><div class="campos"><div class="nome-box">Fernando Leite</div><div class="tel-box"><span class="label-mini">Tel:</span></div></div></div>
-    <div class="item preenchido"><div class="cargo">Coord. de Fiscalização</div><div class="campos"><div class="nome-box">Wanderci Camargo</div><div class="tel-box"><span class="label-mini">Tel:</span></div></div></div>
-    <div class="item preenchido"><div class="cargo">Tesouraria</div><div class="campos"><div class="nome-box">Luiz Felipe</div><div class="tel-box"><span class="label-mini">Tel:</span></div></div></div>
-    <div class="item preenchido"><div class="cargo">Coord. Política</div><div class="campos"><div class="nome-box">Tadeu Filipeli</div><div class="tel-box"><span class="label-mini">Tel:</span></div></div></div>
-    <div class="item preenchido"><div class="cargo">Coord. de Logística</div><div class="campos"><div class="nome-box">Sílvio Vieira</div><div class="tel-box"><span class="label-mini">Tel:</span></div></div></div>
-    <div class="item preenchido"><div class="cargo">Coord. Rural</div><div class="campos"><div class="nome-box">Márcio Leão e Sérgio Leão</div><div class="tel-box"><span class="label-mini">Tel:</span></div></div></div>
-    <div class="item preenchido"><div class="cargo">Coord. de Material</div><div class="campos"><div class="nome-box">André Fortes</div><div class="tel-box"><span class="label-mini">Tel:</span></div></div></div>
-    <div class="item preenchido"><div class="cargo">Coord. de Mobilização</div><div class="campos"><div class="nome-box">Benício Tavares</div><div class="tel-box"><span class="label-mini">Tel:</span></div></div></div>
-    <div class="item preenchido"><div class="cargo">Coord. Segmentos Sociais</div><div class="campos"><div class="nome-box">Maria Célia</div><div class="tel-box"><span class="label-mini">Tel:</span></div></div></div>
-
-    <h2 class="secao">3. Subcoordenações da Logística</h2>
-    <div class="item vazio"><div class="cargo">Estrutura de Eventos</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Comunicação Visual</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Credenciamento e Recepção</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Infraestrutura de Comitês</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Transportes</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">RH</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-</div>
-
-<!-- ============ REGIÃO NORTE ============ -->
-<div class="pagina">
-    <h2 class="secao">4. Coordenações Regionais</h2>
-
-    <h3 class="subsecao">🟣 Região Norte</h3>
-    <div class="item vazio"><div class="cargo amplo">Coord. Estratégica Norte</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Planaltina</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="grupo-titulo-pdf">Setores Urbanos</div>
-    <div class="item vazio"><div class="cargo">Setor Tradicional</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor Norte</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor Sul</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor Residencial Norte (SRN)</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor Residencial Leste (SRL)</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor Resid. Mestre D'Armas</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor Administrativo</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor Comercial Central</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor Hospitalar</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor de Educação</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor Recreativo e Cultural</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor de Hotéis e Diversões</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="grupo-titulo-pdf">Bairros e Vilas</div>
-    <div class="item vazio"><div class="cargo">Vale do Amanhecer</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Jardim Roriz</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Portal do Amanhecer</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Vila N. Sra. de Fátima</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Vila Vicentina</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="grupo-titulo-pdf">Condomínios e Áreas Residenciais</div>
-    <div class="item vazio"><div class="cargo">Cond. Residencial Lagoa</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Condomínio Girassol</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Cond. Sulamericano</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-</div>
-
-<div class="pagina">
-    <h5 class="cidade">Sobradinho I</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Quadras de 1 a 18</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Quadra Central</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor de Indústria</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Império dos Nobres</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Condomínio RK</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">DNOC's</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Nova Colina</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor de Expansão Econômica</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Cond. Alto da Boa Vista</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Rota do Cavalo</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Cond. Estância Vila Rica</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Sobradinho II</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Quadras AR1 a AR24</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Condomínios do Grande Colorado</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Condomínios DF 150</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Condomínios DF 425</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Condomínios DF 330</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Bairro Buritizinho</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Vila Rabelo I e II</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor de Mansões</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Vila Basevi</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Lago Oeste</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-</div>
-
-<div class="pagina">
-    <h5 class="cidade">Fercal</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Fercal Rural</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Fercal Urbana</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Arapoanga</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Cond. Mansões Arapoanga</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">SH Arapoanga - Etapa 1</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">SH Arapoanga - Etapa 2</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">SH Arapoanga - Etapa 3</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Varjão</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Quadras 01 a 05</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Quadras 06 a 11</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor de Chácaras</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Granja do Torto</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Vila Operária</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Vila Weslyan Roriz</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Cond. Mini Granjas do Torto</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Taquari</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Taquari I</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Taquari II</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Taquari III</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Lago Norte</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor de Mansões</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Centro de Atividades</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Península (QL/QI)</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Taquari (Lago Norte)</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-</div>
-
-<!-- ============ REGIÃO SUL ============ -->
-<div class="pagina">
-    <h3 class="subsecao">🟣 Região Sul</h3>
-    <div class="item vazio"><div class="cargo amplo">Coord. Estratégica Sul</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Gama</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor Norte</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor Sul</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor Leste</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor Oeste</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor Central</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor de Indústria</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Santa Maria</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Santa Maria Norte</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Santa Maria Sul</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor Hab. Ribeirão</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Res. Santos Dumont</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Total Ville</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Porto Rico</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Vila dos Carroceiros</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Riacho Fundo I</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Área Residencial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Colônia Agrícola / Chácaras</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Riacho Fundo II</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Quadras Norte (QN)</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Quadras Centrais (QC)</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Quadras Sul (QS)</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">CAUB I e II</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Granja Modelo</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Ponte Alta Norte</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Novo Gama</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Jardim Lago Azul</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Núcleo Habitacional</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Res. Alvorada</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Chácaras Araguaia</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Pedregal</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-</div>
-
-<!-- ============ REGIÃO LESTE ============ -->
-<div class="pagina">
-    <h3 class="subsecao">🟣 Região Leste</h3>
-    <div class="item vazio"><div class="cargo amplo">Coord. Estratégica Leste</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Paranoá</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Quadras Pares 2 a 20</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Quadras Pares 22 a 34</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Quadras Ímpares 3 a 21</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Quadras Ímpares 23 a 33</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Paranoá Parque</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Córrego do Bálsamo</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Itapoã</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Itapoã I</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Itapoã II</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Fazendinha</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Del Lago</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Del Lago II</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Mandala</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Itapoã Parque</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">São Sebastião</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Bairro Tradicional</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Bairro Centro</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Residencial Oeste</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Morro Azul</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">São Bartolomeu</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Bonsucesso</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Morro da Cruz</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Vila Nova</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Crixá</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Jardim Botânico</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">SH Jardim Botânico</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Mangueiral</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Tororó</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Altiplano Leste</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Jardim Mangueiral</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Lago Sul</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">SHIS QL (Quadras do Lago)</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">SHIS QI (Quadras Internas)</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor de Clubes Sul</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-</div>
-
-<!-- ============ REGIÃO OESTE ============ -->
-<div class="pagina">
-    <h3 class="subsecao">🟣 Região Oeste</h3>
-    <div class="item vazio"><div class="cargo amplo">Coord. Estratégica Oeste</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Taguatinga</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Taguatinga Norte</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Taguatinga Centro</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Taguatinga Sul</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor Industrial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Brazlândia</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor Tradicional</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor Norte</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor Sul</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Vila São José</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Bairro Veredas</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Incra 8</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Arniqueiras</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Park Way</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Quadras 1 a 14</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Quadras 15 a 29</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Vargem Bonita</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-</div>
-
-<!-- ============ REGIÃO SUDESTE ============ -->
-<div class="pagina">
-    <h3 class="subsecao">🟣 Região Sudeste</h3>
-    <div class="item vazio"><div class="cargo amplo">Coord. Estratégica Sudeste</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Águas Claras</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Águas Claras Vertical</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Areal</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Arniqueiras</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Guará</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Guará I</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Guará II</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">QELC (Lúcio Costa)</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Park Sul</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Estrutural</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor Norte</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor Sul</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor Leste</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor Oeste</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor Central</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Santa Luzia</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor de Chácaras</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">SCIA</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Vicente Pires</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">SH Vicente Pires</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Col. Agrícola Samambaia</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Jockey Clube</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Vila São José</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">SIA</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">26 de Setembro</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-</div>
-
-<!-- ============ REGIÃO CENTRAL ============ -->
-<div class="pagina">
-    <h3 class="subsecao">🟣 Região Central</h3>
-    <div class="item vazio"><div class="cargo amplo">Coord. Estratégica Central</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Asa Norte</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <h5 class="cidade">Asa Sul</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <h5 class="cidade">Noroeste</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <h5 class="cidade">Vila Planalto</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Cruzeiro</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Cruzeiro Velho (SRES)</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Cruzeiro Novo (SHCES)</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Candangolândia</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <h5 class="cidade">Sudoeste</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <h5 class="cidade">Octogonal</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <h5 class="cidade">SIG</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <h5 class="cidade">Vila Telebrasília</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Núcleo Bandeirantes</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">NB Tradicional</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Vila Metropolitana</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Vargem Bonita</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor Industrial Bernardo Sayão</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-</div>
-
-<!-- ============ SAMREQUENTE ============ -->
-<div class="pagina">
-    <h3 class="subsecao">🟣 Região Samambaia / Recanto / Água Quente</h3>
-    <div class="item vazio"><div class="cargo amplo">Coord. Estratégica</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Samambaia</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Samambaia Norte</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Samambaia Sul</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor de Mansões</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Recanto das Emas</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Quadras 100 a 300</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Quadras 400 a 600</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Quadras 800</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Monjolo</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Água Quente</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h3 class="subsecao">🟣 Região Ceilândia / Pôr do Sol / Sol Nascente</h3>
-    <div class="item vazio"><div class="cargo amplo">Coord. Estratégica</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Ceilândia</h5>
-    <div class="item preenchido"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box">Márcio Silva</div><div class="tel-box"><span class="label-mini">Tel:</span></div></div></div>
-    <div class="item preenchido"><div class="cargo">Ceilândia Norte</div><div class="campos"><div class="nome-box">João Gomes</div><div class="tel-box"><span class="label-mini">Tel:</span></div></div></div>
-    <div class="item vazio"><div class="cargo">Ceilândia Sul</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Ceilândia Centro</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Guariroba</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">P Norte</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">P Sul</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor O</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">QNQ / QNR</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor de Indústria</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Pôr do Sol</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Sol Nascente</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Trecho 1</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Trecho 2</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Trecho 3</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-</div>
-
-<!-- ============ VALUCIDENTAL ============ -->
-<div class="pagina">
-    <h3 class="subsecao">🟣 Região Valparaíso / Luziânia / Cidade Ocidental</h3>
-    <div class="item vazio"><div class="cargo amplo">Coord. Estratégica</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Valparaíso</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Etapa A</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Etapa B</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Etapa C</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Jardim Céu Azul</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Parque São Bernardo</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Chácaras Anhanguera</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Luziânia</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Centro</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Jardim do Ingá</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h5 class="cidade">Cidade Ocidental</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Centro (Super Quadras)</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Setor ABC</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Jardim ABC</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h3 class="subsecao">🟣 Região Entorno</h3>
-    <div class="item vazio"><div class="cargo amplo">Coord. Estratégica Entorno</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <h5 class="cidade">Águas Lindas</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <h5 class="cidade">Santo Antônio do Descoberto</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <h5 class="cidade">Planaltina de Goiás</h5>
-    <div class="item vazio"><div class="cargo">Coord. Setorial</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-</div>
-
-<!-- ============ SEGMENTOS SOCIAIS ============ -->
-<div class="pagina">
-    <h2 class="secao">5. Coordenação de Segmentos Sociais</h2>
-    <div class="nota">Coordenadora: <strong>Maria Célia</strong></div>
-
-    <h4 class="regiao">Saúde</h4>
-    <div class="item vazio"><div class="cargo">Saúde Pública</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Saúde Particular</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h4 class="regiao">Educação</h4>
-    <div class="item preenchido"><div class="cargo">Educação Pública</div><div class="campos"><div class="nome-box">Raniere</div><div class="tel-box"><span class="label-mini">Tel:</span></div></div></div>
-    <div class="item vazio"><div class="cargo">Educação Particular</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h4 class="regiao">Segurança Pública</h4>
-    <div class="item vazio"><div class="cargo">Bombeiros</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Policiais Civis</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Policiais Militares</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Policial Penal</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">DETRAN</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h4 class="regiao">Esporte</h4>
-    <div class="item vazio"><div class="cargo">Futebol</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Natação</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Vôlei</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Basquete</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Artes Marciais</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Atletismo</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Ciclismo</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Futsal</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Handebol</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Tênis</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">CrossFit / Musculação</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Skate</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-</div>
-
-<div class="pagina">
-    <h4 class="regiao">Cultura</h4>
-    <div class="item vazio"><div class="cargo">Carnaval</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Teatro</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Música</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Quadrilhas Juninas</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Dança</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Cinema</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Artesanato</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Literatura</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h4 class="regiao">Outros segmentos</h4>
-    <div class="item preenchido"><div class="cargo">Meio Ambiente</div><div class="campos"><div class="nome-box">Pedro Guimarães</div><div class="tel-box"><span class="label-mini">Tel:</span></div></div></div>
-    <div class="item vazio"><div class="cargo">Assistência Social</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Habitação</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Igualdade Social</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item preenchido"><div class="cargo">Mulheres</div><div class="campos"><div class="nome-box">Gisele (Sec. da Mulher)</div><div class="tel-box"><span class="label-mini">Tel:</span></div></div></div>
-    <div class="item preenchido"><div class="cargo">Juventude</div><div class="campos"><div class="nome-box">Luiz Eduardo</div><div class="tel-box"><span class="label-mini">Tel:</span></div></div></div>
-    <div class="item preenchido"><div class="cargo">60+</div><div class="campos"><div class="nome-box">Marco Lima</div><div class="tel-box"><span class="label-mini">Tel:</span></div></div></div>
-    <div class="item vazio"><div class="cargo">Pessoa com Deficiência</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Criança e Adolescência</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h4 class="regiao">Religiosa</h4>
-    <div class="item vazio"><div class="cargo">Evangélicos</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Católicos</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Espíritas</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Outras Religiões</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h4 class="regiao">Lideranças e outros</h4>
-    <div class="item preenchido"><div class="cargo">Hip Hop</div><div class="campos"><div class="nome-box">Wendel</div><div class="tel-box"><span class="label-mini">Tel:</span></div></div></div>
-    <div class="item vazio"><div class="cargo">Causa Animal</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Lideranças Comunitárias</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Síndicos</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Diversidade</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Cidades</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Torcida Organizada</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Indígenas</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-</div>
-
-<div class="pagina">
-    <h4 class="regiao">Servidores Públicos</h4>
-    <div class="item vazio"><div class="cargo">Auditores de Controle Interno</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Procuradores</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Médicos</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Enfermeiros</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Auditores Tributários</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Defensores Públicos</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h4 class="regiao">Categorias Profissionais</h4>
-    <div class="item vazio"><div class="cargo">Empresários</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Agronegócio</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Feirantes</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Ambulantes</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Microempreendedores</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Oficineiros</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Advogados</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Caminhoneiros</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Motoristas de Aplicativos</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Vigilantes</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Brigadistas</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h4 class="regiao">Comunicação e Mídia</h4>
-    <div class="item preenchido"><div class="cargo">Rádios Comunitárias</div><div class="campos"><div class="nome-box">Tony Radar</div><div class="tel-box"><span class="label-mini">Tel:</span></div></div></div>
-    <div class="item vazio"><div class="cargo">Influenciadores Digitais</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Universitários</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-</div>
-
-<!-- ============ RURAL ============ -->
-<div class="pagina">
-    <h2 class="secao">6. Coordenação Rural</h2>
-    <div class="nota">Coordenadores: <strong>Márcio Leão e Sérgio Leão</strong></div>
-
-    <h3 class="subsecao">🟢 Rural Norte</h3>
-    <div class="item vazio"><div class="cargo amplo">Coord. Estratégica Rural Norte</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">NR Taquara</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">NR Pipiripau</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">NR Tabatinga</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">NR Rio Preto</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">NR Santos Dumont</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">NR Rajadinha</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">NR Mestre d'Armas</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">NR Córrego do Urubu</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h3 class="subsecao">🟢 Rural Sobradinho / Fercal</h3>
-    <div class="item vazio"><div class="cargo amplo">Coord. Estratégica</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Lago Oeste</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Comunidades Rurais Fercal</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h3 class="subsecao">🟢 Rural Leste (PAD-DF)</h3>
-    <div class="item vazio"><div class="cargo amplo">Coord. Estratégica</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">PAD-DF</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">NR Jardim (Paranoá)</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">NR Capão Seco</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Rural São Sebastião</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">NR Sobradinho dos Melos</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-</div>
-
-<div class="pagina">
-    <h3 class="subsecao">🟢 Rural Oeste (Brazlândia)</h3>
-    <div class="item vazio"><div class="cargo amplo">Coord. Estratégica</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">INCRA 06</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">INCRA 07</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">INCRA 08</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">INCRA 09</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">NR Rodeador</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">NR Chapadinha</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h3 class="subsecao">🟢 Rural Sul (Gama)</h3>
-    <div class="item vazio"><div class="cargo amplo">Coord. Estratégica</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">NR Ponte Alta</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">NR Monjolo</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">NR Alagado</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">NR Engenho das Lajes</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h3 class="subsecao">🟢 Rural Central</h3>
-    <div class="item vazio"><div class="cargo amplo">Coord. Estratégica</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">NR Vargem Bonita</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Col. Agrícola Vicente Pires</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Col. Agrícola Samambaia</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Granja do Torto</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h3 class="subsecao">🟢 Rural Entorno</h3>
-    <div class="item vazio"><div class="cargo amplo">Coord. Estratégica</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Rural Novo Gama</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Rural Valparaíso</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Rural Luziânia</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Rural Cidade Ocidental</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-</div>
-
-<!-- ============ FECHAMENTO ============ -->
-<div class="pagina">
-    <h2 class="secao">📅 Agenda Extra</h2>
-    <div class="nota">Use este espaço para anotar contatos avulsos da agenda da campanha.</div>
-    <div class="item vazio"><div class="cargo">Contato 1</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Contato 2</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Contato 3</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Contato 4</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Contato 5</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Contato 6</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Contato 7</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Contato 8</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Contato 9</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-    <div class="item vazio"><div class="cargo">Contato 10</div><div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>
-
-    <h2 class="secao" style="margin-top:40px;">Observações Gerais</h2>
-    <div style="border: 1px solid #ccc; min-height: 200px; padding: 14px; background: #fafafa; border-radius: 6px;"></div>
-</div>
+<div id="aviso-dados"></div>
+<div id="conteudo"></div>
+
+<script>
+// ============ ESTRUTURA DO ORGANOGRAMA ============
+
+// Coordenações fixas no HTML (preenchidas)
+var COORDS_GERAIS = [
+    ['Coord. de Comunicação', 'Sabá'],
+    ['Coord. Jurídica', 'Marina Morais'],
+    ['Programa de Governo', 'Fernando Leite'],
+    ['Coord. de Fiscalização', 'Wanderci Camargo'],
+    ['Tesouraria', 'Luiz Felipe'],
+    ['Coord. Política', 'Tadeu Filipeli'],
+    ['Coord. de Logística', 'Sílvio Vieira'],
+    ['Coord. Rural', 'Márcio Leão e Sérgio Leão'],
+    ['Coord. de Material', 'André Fortes'],
+    ['Coord. de Mobilização', 'Benício Tavares'],
+    ['Coord. Segmentos Sociais', 'Maria Célia']
+];
+
+// Subcoordenações da Logística (no localStorage como tipo 'regiao')
+var SUBCOORDS_LOGISTICA = [
+    'Estrutura de Eventos', 'Comunicação Visual', 'Credenciamento e Recepção',
+    'Infraestrutura de Comitês', 'Transportes', 'RH'
+];
+
+// Regiões com cidades e bases (mesma estrutura do organograma)
+var REGIOES = [
+    { nome: 'Região Norte', cidades: [
+        { nome: 'Planaltina', bases: ['Setor Tradicional','Setor Norte','Setor Sul','Setor Residencial Norte (SRN)','Setor Residencial Leste (SRL)',"Setor Resid. Mestre D'Armas",'Setor Administrativo','Setor Comercial Central','Setor Hospitalar','Setor de Educação','Setor Recreativo e Cultural','Setor de Hotéis e Diversões','Vale do Amanhecer','Jardim Roriz','Portal do Amanhecer','Vila N. Sra. de Fátima','Vila Vicentina','Cond. Residencial Lagoa','Condomínio Girassol','Cond. Sulamericano'] },
+        { nome: 'Sobradinho I', bases: ['Quadras de 1 a 18','Quadra Central','Setor de Indústria','Império dos Nobres','Condomínio RK',"DNOC's",'Nova Colina','Setor de Expansão Econômica','Cond. Alto da Boa Vista','Rota do Cavalo','Cond. Estância Vila Rica'] },
+        { nome: 'Sobradinho II', bases: ['Quadras AR1 a AR24','Condomínios do Grande Colorado','Condomínios DF 150','Condomínios DF 425','Condomínios DF 330','Bairro Buritizinho','Vila Rabelo I e II','Setor de Mansões','Vila Basevi','Lago Oeste'] },
+        { nome: 'Fercal', bases: ['Fercal Rural','Fercal Urbana'] },
+        { nome: 'Arapoanga', bases: ['Cond. Mansões Arapoanga','SH Arapoanga - Etapa 1','SH Arapoanga - Etapa 2','SH Arapoanga - Etapa 3'] },
+        { nome: 'Varjão', bases: ['Quadras 01 a 05','Quadras 06 a 11','Setor de Chácaras'] },
+        { nome: 'Granja do Torto', bases: ['Vila Operária','Vila Weslyan Roriz','Cond. Mini Granjas do Torto'] },
+        { nome: 'Taquari', bases: ['Taquari I','Taquari II','Taquari III'] },
+        { nome: 'Lago Norte', bases: ['Setor de Mansões','Centro de Atividades','Península (QL/QI)','Taquari'] }
+    ]},
+    { nome: 'Região Sul', cidades: [
+        { nome: 'Gama', bases: ['Setor Norte','Setor Sul','Setor Leste','Setor Oeste','Setor Central','Setor de Indústria'] },
+        { nome: 'Santa Maria', bases: ['Santa Maria Norte','Santa Maria Sul','Setor Hab. Ribeirão','Res. Santos Dumont','Total Ville','Porto Rico','Vila dos Carroceiros'] },
+        { nome: 'Riacho Fundo I', bases: ['Área Residencial','Colônia Agrícola / Setor de Chácaras'] },
+        { nome: 'Riacho Fundo II', bases: ['Quadras Norte (QN)','Quadras Centrais (QC)','Quadras Sul (QS)','CAUB I e II','Granja Modelo'] },
+        { nome: 'Ponte Alta Norte', bases: [] },
+        { nome: 'Novo Gama', bases: ['Jardim Lago Azul','Núcleo Habitacional','Res. Alvorada','Chácaras Araguaia'] },
+        { nome: 'Pedregal', bases: [] }
+    ]},
+    { nome: 'Região Leste', cidades: [
+        { nome: 'Paranoá', bases: ['Quadras Pares 2 a 20','Quadras Pares 22 a 34','Quadras Ímpares 3 a 21','Quadras Ímpares 23 a 33','Paranoá Parque','Córrego do Bálsamo'] },
+        { nome: 'Itapoã', bases: ['Itapoã I','Itapoã II','Fazendinha','Del Lago','Del Lago II','Mandala','Itapoã Parque'] },
+        { nome: 'São Sebastião', bases: ['Bairro Tradicional','Bairro Centro','Residencial Oeste','Morro Azul','São Bartolomeu','Bonsucesso','Morro da Cruz','Vila Nova','Crixá'] },
+        { nome: 'Jardim Botânico', bases: ['SH Jardim Botânico','Mangueiral','Tororó','Altiplano Leste'] },
+        { nome: 'Jardim Mangueiral', bases: [] },
+        { nome: 'Lago Sul', bases: ['SHIS QL (Quadras do Lago)','SHIS QI (Quadras Internas)','Setor de Clubes Sul'] }
+    ]},
+    { nome: 'Região Oeste', cidades: [
+        { nome: 'Taguatinga', bases: ['Taguatinga Norte','Taguatinga Centro','Taguatinga Sul','Setor Industrial'] },
+        { nome: 'Brazlândia', bases: ['Setor Tradicional','Setor Norte','Setor Sul','Vila São José','Bairro Veredas','Incra 8'] },
+        { nome: 'Arniqueiras', bases: [] },
+        { nome: 'Park Way', bases: ['Quadras 1 a 14','Quadras 15 a 29','Vargem Bonita'] }
+    ]},
+    { nome: 'Região Sudeste', cidades: [
+        { nome: 'Águas Claras', bases: ['Águas Claras Vertical','Areal','Arniqueiras'] },
+        { nome: 'Guará', bases: ['Guará I','Guará II','QELC (Quadras Econômicas Lúcio Costa)','Park Sul'] },
+        { nome: 'Estrutural', bases: ['Setor Norte','Setor Sul','Setor Leste','Setor Oeste','Setor Central','Santa Luzia','Setor de Chácaras'] },
+        { nome: 'SCIA', bases: [] },
+        { nome: 'Vicente Pires', bases: ['SH Vicente Pires','Col. Agrícola Samambaia','Jockey Clube','Vila São José'] },
+        { nome: 'SIA', bases: [] },
+        { nome: '26 de Setembro', bases: [] }
+    ]},
+    { nome: 'Região Central', cidades: [
+        { nome: 'Asa Norte', bases: [] },
+        { nome: 'Asa Sul', bases: [] },
+        { nome: 'Noroeste', bases: [] },
+        { nome: 'Vila Planalto', bases: [] },
+        { nome: 'Cruzeiro', bases: ['Cruzeiro Velho (SRES)','Cruzeiro Novo (SHCES)'] },
+        { nome: 'Candangolândia', bases: [] },
+        { nome: 'Sudoeste', bases: [] },
+        { nome: 'Octogonal', bases: [] },
+        { nome: 'SIG', bases: [] },
+        { nome: 'Vila Telebrasília', bases: [] },
+        { nome: 'Núcleo Bandeirantes', bases: ['NB Tradicional','Vila Metropolitana','Vargem Bonita','Setor Industrial Bernardo Sayão'] }
+    ]},
+    { nome: 'Região SAMREQUENTE', cidades: [
+        { nome: 'Samambaia', bases: ['Samambaia Norte','Samambaia Sul','Setor de Mansões'] },
+        { nome: 'Recanto das Emas', bases: ['Quadras 100 a 300','Quadras 400 a 600','Quadras 800','Monjolo'] },
+        { nome: 'Água Quente', bases: [] }
+    ]},
+    { nome: 'Região CEIPORSOL', cidades: [
+        { nome: 'Ceilândia', bases: ['Ceilândia Norte','Ceilândia Sul','Ceilândia Centro','Guariroba','P Norte','P Sul','Setor O','QNQ / QNR','Setor de Indústria'] },
+        { nome: 'Pôr do Sol', bases: [] },
+        { nome: 'Sol Nascente', bases: ['Trecho 1','Trecho 2','Trecho 3'] }
+    ]},
+    { nome: 'Região VALUCIDENTAL', cidades: [
+        { nome: 'Valparaíso', bases: ['Etapa A','Etapa B','Etapa C','Jardim Céu Azul','Parque São Bernardo','Chácaras Anhanguera'] },
+        { nome: 'Luziânia', bases: ['Centro','Jardim do Ingá'] },
+        { nome: 'Cidade Ocidental', bases: ['Centro (Super Quadras)','Setor ABC','Jardim ABC'] }
+    ]},
+    { nome: 'Região Entorno', cidades: [
+        { nome: 'Águas Lindas', bases: [] },
+        { nome: 'Santo Antônio do Descoberto', bases: [] },
+        { nome: 'Planaltina de Goiás', bases: [] }
+    ]}
+];
+
+// Coordenação Rural (mesma estrutura)
+var RURAL = [
+    { nome: 'Rural Norte', cidades: [
+        { nome: 'NR Taquara' }, { nome: 'NR Pipiripau' }, { nome: 'NR Tabatinga' },
+        { nome: 'NR Rio Preto' }, { nome: 'NR Santos Dumont' }, { nome: 'NR Rajadinha' },
+        { nome: "NR Mestre d'Armas" }, { nome: 'NR Córrego do Urubu' }
+    ]},
+    { nome: 'Rural Sobradinho / Fercal', cidades: [
+        { nome: 'Lago Oeste' }, { nome: 'Comunidades Rurais Fercal' }
+    ]},
+    { nome: 'Rural Leste (PAD-DF)', cidades: [
+        { nome: 'PAD-DF' }, { nome: 'NR Jardim (Paranoá)' }, { nome: 'NR Capão Seco' },
+        { nome: 'Rural São Sebastião' }, { nome: 'NR Sobradinho dos Melos' }
+    ]},
+    { nome: 'Rural Oeste (Brazlândia)', cidades: [
+        { nome: 'INCRA 06' }, { nome: 'INCRA 07' }, { nome: 'INCRA 08' }, { nome: 'INCRA 09' },
+        { nome: 'NR Rodeador' }, { nome: 'NR Chapadinha' }
+    ]},
+    { nome: 'Rural Sul (Gama)', cidades: [
+        { nome: 'NR Ponte Alta' }, { nome: 'NR Monjolo' }, { nome: 'NR Alagado' }, { nome: 'NR Engenho das Lajes' }
+    ]},
+    { nome: 'Rural Central', cidades: [
+        { nome: 'NR Vargem Bonita' }, { nome: 'Col. Agrícola Vicente Pires' },
+        { nome: 'Col. Agrícola Samambaia' }, { nome: 'Granja do Torto' }
+    ]},
+    { nome: 'Rural Entorno', cidades: [
+        { nome: 'Rural Novo Gama' }, { nome: 'Rural Valparaíso' },
+        { nome: 'Rural Luziânia' }, { nome: 'Rural Cidade Ocidental' }
+    ]}
+];
+
+// Segmentos sociais (alguns já pré-cadastrados no HTML)
+var SEGMENTOS_HTML = {
+    'Educação Pública': 'Raniere',
+    'Meio Ambiente': 'Pedro Guimarães',
+    'Mulheres': 'Gisele (Sec. da Mulher)',
+    'Juventude': 'Luiz Eduardo',
+    '60+': 'Marco Lima',
+    'Hip Hop': 'Wendel',
+    'Rádios Comunitárias': 'Tony Radar'
+};
+
+var SEGMENTOS_GRUPOS = [
+    ['Saúde', ['Saúde Pública','Saúde Particular']],
+    ['Educação', ['Educação Pública','Educação Particular']],
+    ['Segurança Pública', ['Bombeiros','Policiais Civis','Policiais Militares','Policial Penal','DETRAN']],
+    ['Esporte', ['Futebol','Natação','Vôlei','Basquete','Artes Marciais','Atletismo','Ciclismo','Futsal','Handebol','Tênis','CrossFit / Musculação','Skate']],
+    ['Cultura', ['Carnaval','Teatro','Música','Quadrilhas Juninas','Dança','Cinema','Artesanato','Literatura']],
+    ['Outros Segmentos', ['Meio Ambiente','Assistência Social','Habitação','Igualdade Social','Mulheres','Juventude','60+','Pessoa com Deficiência','Criança e Adolescência']],
+    ['Religiosa', ['Evangélicos','Católicos','Espíritas','Outras Religiões']],
+    ['Lideranças e Outros', ['Hip Hop','Causa Animal','Lideranças Comunitárias','Síndicos','Diversidade','Cidades','Torcida Organizada','Indígenas']],
+    ['Servidores Públicos', ['Auditores de Controle Interno','Procuradores','Médicos','Enfermeiros','Auditores Tributários','Defensores Públicos']],
+    ['Categorias Profissionais', ['Empresários','Agronegócio','Feirantes','Ambulantes','Microempreendedores','Oficineiros','Advogados','Caminhoneiros','Motoristas de Aplicativos','Vigilantes','Brigadistas']],
+    ['Comunicação e Mídia', ['Rádios Comunitárias','Influenciadores Digitais','Universitários']]
+];
+
+// ============ RENDERIZAÇÃO ============
+
+var DADOS = {};
+var PESSOAS = {};
+
+function idDe(tipo, nome) {
+    return tipo + '_' + nome.replace(/\s+/g, '_').toLowerCase();
+}
+
+function obterRegistro(tipo, nome) {
+    var id = idDe(tipo, nome);
+    return DADOS[id] || null;
+}
+
+function renderItem(cargo, opts) {
+    opts = opts || {};
+    var nome = opts.nomeForcado || '';
+    var telefone = '';
+    var extras = [];
+    var cargoClass = opts.amplo ? 'cargo amplo' : 'cargo';
+
+    if (!nome && opts.tipoLS && opts.nomeChave) {
+        var reg = obterRegistro(opts.tipoLS, opts.nomeChave);
+        if (reg) {
+            nome = (reg.nome || '').trim();
+            telefone = (reg.telefone || '').trim();
+            if (Array.isArray(reg.pessoas_extras)) {
+                reg.pessoas_extras.forEach(function(p) {
+                    var t = (p.nome || '').trim();
+                    if (t) extras.push({ nome: t, telefone: (p.telefone || '').trim() });
+                });
+            }
+        }
+    }
+
+    var preenchido = nome && nome !== '(A definir)';
+    var classe = preenchido ? 'item preenchido' : 'item vazio';
+    var nomeBox = preenchido ? nome : '';
+    var telBox = preenchido && telefone ? telefone : (preenchido ? '<span class="label-mini">Tel:</span>' : '');
+
+    var html = '<div class="' + classe + '">' +
+        '<div class="' + cargoClass + '">' + cargo + '</div>' +
+        '<div class="campos">' +
+        '<div class="nome-box">' + escapar(nomeBox) + '</div>' +
+        '<div class="tel-box">' + telBox + '</div>' +
+        '</div>' +
+        '</div>';
+
+    if (extras.length > 0) {
+        html += '<div class="contatos-extras">';
+        html += '<div class="extra-titulo">+ Pessoas adicionais cadastradas</div>';
+        extras.forEach(function(p) {
+            html += '<div class="extra-pessoa">• ' + escapar(p.nome) + (p.telefone ? ' — ' + escapar(p.telefone) : '') + '</div>';
+        });
+        html += '</div>';
+    }
+
+    return html;
+}
+
+function renderPessoasLista(cidadeChave) {
+    var lista = PESSOAS[cidadeChave];
+    if (!lista || lista.length === 0) return '';
+    var html = '<div class="contatos-extras">';
+    html += '<div class="extra-titulo">📞 Contatos cadastrados nesta cidade</div>';
+    lista.forEach(function(p) {
+        var n = (p.nome || '').trim();
+        if (!n) return;
+        var t = (p.telefone || '').trim();
+        var e = (p.email || '').trim();
+        html += '<div class="extra-pessoa">• ' + escapar(n);
+        if (t) html += ' — ' + escapar(t);
+        if (e) html += ' · ' + escapar(e);
+        html += '</div>';
+    });
+    html += '</div>';
+    return html;
+}
+
+function escapar(s) {
+    if (!s) return '';
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function cidadeChaveDoOrganograma(cidadeNome) {
+    // Mapa especial baseado no array `cidades` do organograma.html (lista-pessoas-<chave>)
+    var mapa = {
+        'Planaltina': 'planaltina', 'Sobradinho I': 'sobradinho1', 'Sobradinho II': 'sobradinho2',
+        'Fercal': 'fercal', 'Gama': 'gama', 'Santa Maria': 'santamaria',
+        'Riacho Fundo I': 'riachofundo1', 'Riacho Fundo II': 'riachofundo2',
+        'Paranoá': 'paranoa', 'Itapoã': 'itapoa', 'São Sebastião': 'saosebastiao',
+        'Jardim Botânico': 'jardimbotanico', 'Lago Sul': 'lagosul', 'Lago Norte': 'lagonorte',
+        'Taguatinga': 'taguatinga', 'Brazlândia': 'brazlandia', 'Arniqueiras': 'arniqueiras',
+        'Águas Claras': 'aguasclaras', 'Guará': 'guara', 'Estrutural': 'estrutural',
+        'Vicente Pires': 'vicentepires', 'SIA': 'sia',
+        'Asa Norte': 'central', 'Asa Sul': 'central', 'Noroeste': 'central',
+        'Cruzeiro': 'cruzeiro', 'Candangolândia': 'candangolandia',
+        'Núcleo Bandeirantes': 'nucleobandeirante',
+        'Samambaia': 'samambaia', 'Recanto das Emas': 'recantodasemas', 'Água Quente': 'aguaquente',
+        'Ceilândia': 'ceilandia', 'Sol Nascente': 'solnascente',
+        'Valparaíso': 'valparaiso', 'Luziânia': 'luziania', 'Cidade Ocidental': 'cidadeocidental',
+        'Park Way': 'parkway', 'Arapoanga': 'arapoanga', 'Varjão': 'varjao',
+        'Granja do Torto': 'granjadotorto', 'Taquari': 'taquari',
+        'Novo Gama': 'novogama', 'Pedregal': 'pedregal',
+        'Jardim Mangueiral': 'jardimmangueiral'
+    };
+    return mapa[cidadeNome] || null;
+}
+
+function render() {
+    DADOS = JSON.parse(localStorage.getItem('organograma_dados') || '{}');
+    PESSOAS = JSON.parse(localStorage.getItem('organograma_pessoas') || '{}');
+
+    var total = Object.keys(DADOS).length + Object.keys(PESSOAS).length;
+    var aviso = document.getElementById('aviso-dados');
+    aviso.innerHTML = '';
+    if (total === 0) {
+        aviso.innerHTML = '<div class="pagina"><div class="nota alerta"><strong>⚠️ Nenhum dado carregado.</strong><br>' +
+            'Para que os nomes cadastrados apareçam, abra este relatório no mesmo navegador onde você usa o organograma. ' +
+            'Acesse em <strong>inteia.com.br/conecta2026/relatorio-organograma.html</strong> depois do deploy automático (~10 min).</div></div>';
+    }
+
+    var html = '';
+
+    // CAPA
+    html += '<div class="pagina capa">' +
+        '<h1>ORGANOGRAMA</h1>' +
+        '<h2>Campanha Celina Leão 2026</h2>' +
+        '<div class="subtitulo"><strong>Relatório de Coordenadores</strong><br>' +
+        'Nomes cadastrados + espaços para preencher à mão</div>' +
+        '<div class="data">Distrito Federal · Eleição 2026<br>Gerado em ' + new Date().toLocaleDateString('pt-BR') + '</div>' +
+        '</div>';
+
+    // INSTRUÇÕES
+    html += '<div class="pagina">' +
+        '<h2 class="secao">Como usar este relatório</h2>' +
+        '<div class="nota"><strong>Objetivo:</strong> imprimir e preencher à mão os nomes/telefones em aberto. ' +
+        'Os nomes já cadastrados no sistema aparecem destacados em laranja com ✓.</div>' +
+        '<div class="legenda">' +
+        '<span class="v"><strong>Preenchido</strong> — já cadastrado no sistema</span>' +
+        '<span class="o"><strong>Em aberto</strong> — preencher manualmente</span>' +
+        '</div></div>';
+
+    // 1. COORDENAÇÃO GERAL + COORDENAÇÕES + SUBCOORDS
+    html += '<div class="pagina">';
+    html += '<h2 class="secao">1. Coordenação Geral</h2>';
+    html += renderItem('Coordenação Geral', { nomeForcado: 'Celina Leão' });
+    html += '<h2 class="secao">2. Coordenações Gerais</h2>';
+    COORDS_GERAIS.forEach(function(c) {
+        html += renderItem(c[0], { nomeForcado: c[1] });
+    });
+    html += '<h2 class="secao">3. Subcoordenações da Logística</h2>';
+    SUBCOORDS_LOGISTICA.forEach(function(s) {
+        html += renderItem(s, { tipoLS: 'regiao', nomeChave: s });
+    });
+    html += '</div>';
+
+    // 4. COORDENAÇÕES REGIONAIS
+    html += '<div class="pagina"><h2 class="secao">4. Coordenações Regionais</h2></div>';
+    REGIOES.forEach(function(reg) {
+        html += '<div class="pagina">';
+        html += '<h3 class="subsecao">🟣 ' + reg.nome + '</h3>';
+        html += renderItem('Coord. Estratégica', { amplo: true, tipoLS: 'regiao', nomeChave: reg.nome });
+        reg.cidades.forEach(function(cid) {
+            html += '<h5 class="cidade">' + cid.nome + '</h5>';
+            html += renderItem('Coord. Setorial', { tipoLS: 'cidade', nomeChave: cid.nome });
+            // contatos da cidade (organograma_pessoas)
+            var chPessoas = cidadeChaveDoOrganograma(cid.nome);
+            if (chPessoas) html += renderPessoasLista(chPessoas);
+            // bases
+            (cid.bases || []).forEach(function(b) {
+                html += renderItem(b, { tipoLS: 'base', nomeChave: b });
+            });
+        });
+        html += '</div>';
+    });
+
+    // 5. SEGMENTOS SOCIAIS
+    html += '<div class="pagina">';
+    html += '<h2 class="secao">5. Coordenação de Segmentos Sociais</h2>';
+    html += '<div class="nota">Coordenadora: <strong>Maria Célia</strong></div>';
+    SEGMENTOS_GRUPOS.forEach(function(grp, i) {
+        if (i > 0 && i % 3 === 0) html += '</div><div class="pagina">';
+        html += '<h4 class="regiao">' + grp[0] + '</h4>';
+        grp[1].forEach(function(seg) {
+            var nomeHTML = SEGMENTOS_HTML[seg];
+            if (nomeHTML) {
+                html += renderItem(seg, { nomeForcado: nomeHTML, tipoLS: 'segmento', nomeChave: seg });
+            } else {
+                html += renderItem(seg, { tipoLS: 'segmento', nomeChave: seg });
+            }
+        });
+    });
+    html += '</div>';
+
+    // 6. COORDENAÇÃO RURAL
+    html += '<div class="pagina">';
+    html += '<h2 class="secao">6. Coordenação Rural</h2>';
+    html += '<div class="nota">Coordenadores: <strong>Márcio Leão e Sérgio Leão</strong></div>';
+    // Pessoas extras cadastradas no rural
+    if (PESSOAS['rural'] && PESSOAS['rural'].length > 0) {
+        html += renderPessoasLista('rural');
+    }
+    RURAL.forEach(function(reg, i) {
+        if (i > 0 && i % 2 === 0) html += '</div><div class="pagina">';
+        html += '<h3 class="subsecao">🟢 ' + reg.nome + '</h3>';
+        html += renderItem('Coord. Estratégica', { amplo: true, tipoLS: 'regiao', nomeChave: reg.nome });
+        reg.cidades.forEach(function(cid) {
+            html += renderItem(cid.nome, { tipoLS: 'cidade', nomeChave: cid.nome });
+        });
+    });
+    html += '</div>';
+
+    // AGENDA EXTRA + OBSERVAÇÕES
+    html += '<div class="pagina">';
+    html += '<h2 class="secao">📅 Agenda da Campanha</h2>';
+    if (PESSOAS['agenda'] && PESSOAS['agenda'].length > 0) {
+        html += '<div class="nota">Contatos já cadastrados na Agenda:</div>';
+        html += renderPessoasLista('agenda');
+    }
+    html += '<div class="nota">Use o espaço abaixo para anotar contatos avulsos:</div>';
+    for (var k = 1; k <= 10; k++) {
+        html += '<div class="item vazio"><div class="cargo">Contato ' + k + '</div>' +
+            '<div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>';
+    }
+    html += '<h2 class="secao" style="margin-top:40px;">Observações Gerais</h2>';
+    html += '<div style="border: 1px solid #ccc; min-height: 200px; padding: 14px; background: #fafafa; border-radius: 6px;"></div>';
+    html += '</div>';
+
+    document.getElementById('conteudo').innerHTML = html;
+}
+
+function recarregarDados() {
+    render();
+    alert('Dados recarregados do navegador!');
+}
+
+render();
+</script>
 
 </body>
 </html>
