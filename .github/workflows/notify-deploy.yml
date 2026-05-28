@@ -8,9 +8,16 @@ jobs:
   trigger-deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Verificar segredos do deploy
+        run: |
+          if [ -z "${{ secrets.DEPLOY_TOKEN }}" ] || [ -z "${{ secrets.DEPLOY_REPO }}" ]; then
+            echo "::error::Configure DEPLOY_TOKEN e DEPLOY_REPO para disparar o repo de produção."
+            exit 1
+          fi
+
       - name: Disparar deploy no repo de producao
         run: |
-          curl -X POST \
+          curl --fail-with-body -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ secrets.DEPLOY_TOKEN }}" \
