@@ -7,8 +7,8 @@
 - Nome: CONECTA Celina Leão 2026
 - Função: Sistema web de gestão de campanha política - Distrito Federal
 - URL Produção: https://inteia.com.br/conecta2026/
-- Repo: github.com/silviomvieira-hub/Conecta-2026
-- Branch: main (único - deploy direto)
+- Repo operacional atual: github.com/igormorais123/conecta2026
+- Branch local atual: master. Produção pública servida pela VPS/Nginx em `2.25.174.138`.
 - Dono: Silvio M. Vieira (silviomvieira-hub)
 
 ---
@@ -35,7 +35,7 @@ NUNCA exibir, logar ou commitar: Supabase URL/anon key, ELEXION_SERVICE_TOKEN, s
 
 ### 4. Git - Push Automático
 
-Após QUALQUER alteração de código: git add (arquivos específicos, NUNCA git add .) -> commit em português -> git push origin main. NÃO perguntar antes do push. NUNCA commitar: .env, CREDENCIAIS.md, node_modules/, screenshots.
+Após QUALQUER alteração de código: git add (arquivos específicos, NUNCA git add .) -> commit em português -> git push origin master. NÃO perguntar antes do push. NUNCA commitar: .env, CREDENCIAIS.md, node_modules/, screenshots.
 
 ### 5. Idioma
 
@@ -99,7 +99,7 @@ tarefas, materiais, fornecedores, equipe, subcoords, checklist, customChecklist,
 
 #### Fluxo de Atualização
 
-Silvio edita localmente -> Claude Code aplica skill safe-edit -> git add + commit + push -> deploy automático
+Silvio edita localmente -> Claude Code aplica skill safe-edit -> git add + commit + push -> sincronização controlada com a origem pública atual na VPS/Nginx.
 
 ---
 
@@ -121,15 +121,16 @@ cadastro-apoiador.html (PÚBLICO)
 
 ### Usuários: silvio2026 (admin), karla2026 (coordenador), igor2026 (admin). Login por USERNAME.
 
-### Deploy Automático (configurado por Igor em 01/04/2026)
+### Deploy Atual
 
-O deploy funciona 100% automático — basta fazer push:
+A produção atual não depende da Vercel. Em 2026-06-07, `inteia.com.br/conecta2026/` foi movido para a VPS/Nginx em `2.25.174.138` porque a Vercel ficou suspensa por falha de cobrança.
 
-1. Silvio (ou Claude Code) faz `git push origin main`
-2. GitHub Action no repo de deploy (`pesquisa-eleitoral-df`) verifica mudanças a cada 15 minutos
-3. Copia os arquivos para `frontend/public/conecta2026/`
-4. Vercel detecta e faz deploy automático em https://inteia.com.br/conecta2026/
-5. **Tempo total**: ~5-20 minutos após o push
+Fluxo operacional atual:
+
+1. Silvio (ou Claude Code) faz `git push origin master`.
+2. A publicação pública deve ser sincronizada para `/var/www/conecta2026` na VPS.
+3. Validar https://inteia.com.br/conecta2026/login.html após a sincronização.
+4. Vercel só deve ser reativada com decisão explícita de custo e novo token válido.
 
 **Suporte técnico**: Igor Morais (igormorais123@gmail.com) — se o site não atualizar em 30 minutos, avisar Igor.
 

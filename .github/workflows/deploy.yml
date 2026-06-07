@@ -1,17 +1,17 @@
 name: Deploy to Vercel
 
 on:
-  push:
-    branches: [master, main]
-  # Cron: roda a cada 15 minutos para garantir sincronização
-  schedule:
-    - cron: '*/15 * * * *'
-  # Permite rodar manualmente pelo GitHub
   workflow_dispatch:
+    inputs:
+      confirmar_vercel:
+        description: 'Digite REATIVAR_VERCEL para tentar deploy manual. Producao atual roda pela VPS.'
+        required: true
+        default: 'NAO'
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.confirmar_vercel == 'REATIVAR_VERCEL' }}
     steps:
       - name: Checkout código
         uses: actions/checkout@v4

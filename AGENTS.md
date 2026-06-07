@@ -5,7 +5,7 @@
 ## Regras Essenciais
 
 - **Stack**: HTML5 + CSS3 + JavaScript puro. SEM frameworks, SEM bundlers, SEM build step.
-- **Push automático**: Após qualquer alteração de código -> git add (arquivos específicos) -> commit em português -> git push origin main.
+- **Push automático**: Após qualquer alteração de código -> git add (arquivos específicos) -> commit em português -> git push origin master. Produção atual roda pela VPS/Nginx, não pela Vercel.
 - **Credenciais protegidas**: NUNCA exibir, logar ou commitar Supabase keys, tokens ou senhas.
 - **Paleta por página**: Cada página tem sua própria paleta de cores. Consultar tabela em CLAUDE.md.
 - **Arquivos sagrados**: js/supabase-config.js, js/conecta-db.js, js/elexion-client.js, setup/migration.sql, setup/migration_username_login.sql. LER inteiro antes de alterar.
@@ -18,4 +18,4 @@ Logistica Campanha.html - Standalone, ~3115 linhas, dark mode. 16 módulos. loca
 
 ## Deploy
 
-git push origin main -> auto-deploy em https://inteia.com.br/conecta2026/
+git push origin master atualiza o repositório. A produção atual em https://inteia.com.br/conecta2026/ está servida pela VPS/Nginx em `2.25.174.138`; Vercel está desativada por falha de cobrança e só deve ser reativada com decisão explícita de custo.
