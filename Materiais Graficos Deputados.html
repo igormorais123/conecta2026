@@ -343,7 +343,7 @@ function cardHTML(d){
       <span class="toggle-ico">▶</span>
       <div>
         <div class="dep-nome">${esc(d.nome)} <span class="chip chip-t${d.tipo}">Tipo ${d.tipo}</span></div>
-        <div class="dep-sub">${esc(d.partido||'—')} · ${esfChip}${d.dataEsfera?' · '+brData(d.dataEsfera):''}</div>
+        <div class="dep-sub">${esc(d.partido||'—')} · ${esfChip}</div>
       </div>
       <div class="dep-prog">
         <span class="qtd-badge">${totalQtd(d).toLocaleString('pt-BR')} itens</span>
