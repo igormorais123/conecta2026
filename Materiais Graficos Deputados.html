@@ -347,9 +347,9 @@ function cardHTML(d){
       </div>
       <div class="dep-prog">
         <span class="qtd-badge">${totalQtd(d).toLocaleString('pt-BR')} itens</span>
-        ${et(d.pedido.feito,'Pedido')}
-        ${et(d.grafica.feito,'Recebido')}
-        ${et(d.entregue.feito,'Entregue')}
+        ${et(d.pedido,'Pedido')}
+        ${et(d.grafica,'Recebido')}
+        ${et(d.entregue,'Entregue ao candidato')}
       </div>
     </div>
     <div class="dep-body">
