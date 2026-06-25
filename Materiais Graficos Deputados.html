@@ -404,9 +404,6 @@ function toggleDep(id){const d=getDep(id);d._open=!d._open;render();}
 
 function upd(id,campo,val){getDep(id)[campo]=val;salvar();render();}
 
-function updMat(id,i,campo,val){const d=getDep(id);d.materiais[i][campo]=campo==='quantidade'?(parseInt(val)||0):val;salvar();render();}
-function addMat(id){const d=getDep(id);d.materiais.push({nome:'',quantidade:0});salvar();render();}
-function delMat(id,i){const d=getDep(id);d.materiais.splice(i,1);salvar();render();}
 
 function toggleEtapa(id,key,checked){
   const d=getDep(id);d[key].feito=checked;
