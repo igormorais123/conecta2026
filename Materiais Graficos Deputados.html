@@ -501,32 +501,38 @@ function salvarPDF(){
   const grupos={'Distrital':[],'Federal':[]};
   ds.forEach(d=>{(grupos[d.esfera]||(grupos[d.esfera]=[])).push(d);});
 
-  let html=`<h1>Controle de Materiais Gráficos — Deputados</h1>
-    <div class="p-sub">Campanha Celina Leão 2026 · Relatório gerado em <b>${brDataHora(new Date().toISOString())}</b> · Última atualização salva: ${brDataHora(dados.lastSaved)}</div>`;
+  const corTipo={A:'#1f9d57',B:'#e08a00',C:'#2b6cb0'};
+  const badge=t=>`<span class="cat" style="background:${corTipo[t]||'#888'}">Categoria ${t}</span>`;
+
+  let html=`<div class="p-capa">
+      <h1>Controle de Materiais Gráficos — Pré-candidatos a Deputado</h1>
+      <div class="p-sub">Pré-campanha Celina Leão 2026<br>
+        Relatório gerado em <b>${brDataHora(new Date().toISOString())}</b><br>
+        Última atualização salva: ${brDataHora(dados.lastSaved)}</div>
+      <div class="p-legenda"><b>Categorias:</b> ${badge('A')} ${badge('B')} ${badge('C')}</div>
+    </div>`;
 
   for(const esf of Object.keys(grupos)){
     const arr=grupos[esf];if(!arr.length)continue;
     html+=`<div class="p-grupo">Pré-candidatos a Deputado ${esf} — ${arr.length}</div>`;
     html+=`<table><thead><tr>
-      <th>Pré-candidato</th><th>Partido</th><th>Tipo</th><th>Materiais (qtd)</th>
-      <th>Data que pedimos</th><th>Data que recebemos</th><th>Data que entregamos</th></tr></thead><tbody>`;
+      <th>Pré-candidato</th><th>Categoria</th><th>Partido</th><th>Pré-candidatura</th>
+      <th>Pedido</th><th>Recebido</th><th>Entregue ao candidato</th></tr></thead><tbody>`;
     arr.forEach(d=>{
-      const mats=(d.materiais||[]).filter(m=>m.nome||m.quantidade)
-        .map(m=>esc(m.nome||'(sem nome)')+': '+(parseInt(m.quantidade)||0)).join('<br>')||'—';
       const cel=e=>e.feito?`<span class="ok">✔ ${brData(e.data)||'sim'}</span>`:`<span class="no">—</span>`;
       html+=`<tr>
-        <td><b>${esc(d.nome)}</b>${d.obs?'<br><i style="color:#888;font-size:9px">'+esc(d.obs)+'</i>':''}</td>
+        <td><b>${esc(d.nome)}</b></td>
+        <td>${badge(d.tipo)}</td>
         <td>${esc(d.partido||'—')}</td>
-        <td>${d.tipo}</td>
-        <td>${mats}<br><b>Total: ${totalQtd(d)}</b></td>
+        <td>Pré ${esf}</td>
         <td>${cel(d.pedido)}</td>
         <td>${cel(d.grafica)}</td>
         <td>${cel(d.entregue)}</td></tr>`;
     });
     html+=`</tbody></table>`;
   }
-  if(!ds.length) html+=`<p>Nenhum deputado cadastrado.</p>`;
-  html+=`<div class="p-foot">Documento gerado pelo sistema de Controle de Materiais Gráficos · Campanha Celina Leão 2026</div>`;
+  if(!ds.length) html+=`<p>Nenhum pré-candidato cadastrado.</p>`;
+  html+=`<div class="p-foot">Documento gerado pelo sistema de Controle de Materiais Gráficos · Pré-campanha Celina Leão 2026</div>`;
 
   document.getElementById('print-area').innerHTML=html;
   window.print();
