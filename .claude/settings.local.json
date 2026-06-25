@@ -12,7 +12,22 @@
       "Bash(cp \"C:/Users/IgorPC/.claude/projects/Conecta 2026/cadastro-apoiador.html\" \"C:/Agentes/frontend/public/conecta/\")",
       "Bash(cp \"C:/Users/IgorPC/.claude/projects/Conecta 2026/qrcode-cartao.html\" \"C:/Agentes/frontend/public/conecta/\")",
       "Bash(cp \"C:/Users/IgorPC/.claude/projects/Conecta 2026/login.html\" \"C:/Agentes/frontend/public/conecta/\")",
-      "Bash(cp \"C:/Users/IgorPC/.claude/projects/Conecta 2026/js/\"* \"C:/Agentes/frontend/public/conecta/js/\")"
+      "Bash(cp \"C:/Users/IgorPC/.claude/projects/Conecta 2026/js/\"* \"C:/Agentes/frontend/public/conecta/js/\")",
+      "Skill(gsd:execute-phase)",
+      "Skill(gsd:plan-phase)",
+      "Bash(gh api:*)",
+      "Bash(gh workflow:*)",
+      "Bash(gh run:*)",
+      "Bash(gh auth:*)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_evaluate",
+      "Bash(grep -n 'innerHTML.*\\\\${' CONECTA.html)",
+      "Bash(curl -sL https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js)",
+      "Bash(openssl dgst:*)",
+      "Bash(openssl base64:*)"
     ]
   }
 }

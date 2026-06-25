@@ -1015,9 +1015,19 @@ tr:hover td { background:rgba(59,130,246,0.05); }
         <table>
             <thead><tr>
                 <th>Regiao / RA</th><th>Material</th><th style="text-align:right;">Quantidade</th>
-                <th>Responsavel</th><th>Data</th><th>Acoes</th>
+                <th>Recebedor</th><th>Responsavel</th><th>Data</th><th>Acoes</th>
             </tr></thead>
             <tbody id="distribuicaoBody"></tbody>
+        </table>
+    </div>
+    <div class="card" id="cardDistPessoa">
+        <div class="card-title" style="font-size:1.1rem;margin-bottom:4px;">Material recebido por pessoa</div>
+        <div class="card-subtitle" style="margin-bottom:12px;">Quanto cada pessoa já recebeu — para saber quem está com material de campanha</div>
+        <table>
+            <thead><tr>
+                <th>Recebedor</th><th style="text-align:right;">Total recebido</th><th>Materiais (qtd)</th>
+            </tr></thead>
+            <tbody id="distPessoaBody"></tbody>
         </table>
     </div>
 </div>
@@ -1046,9 +1056,12 @@ tr:hover td { background:rgba(59,130,246,0.05); }
     </div>
     <div class="grid-2">
         <div class="form-group"><label>Quantidade</label><input type="number" id="distQtd" min="1" placeholder="0"></div>
-        <div class="form-group"><label>Responsavel</label><input type="text" id="distResponsavel" placeholder="Quem distribuiu"></div>
+        <div class="form-group"><label>Recebedor (quem recebe o material)</label><input type="text" id="distRecebedor" placeholder="Nome de quem está recebendo"></div>
     </div>
-    <div class="form-group"><label>Data</label><input type="date" id="distData"></div>
+    <div class="grid-2">
+        <div class="form-group"><label>Responsavel (quem entregou)</label><input type="text" id="distResponsavel" placeholder="Quem distribuiu"></div>
+        <div class="form-group"><label>Data</label><input type="date" id="distData"></div>
+    </div>
     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px;">
         <button class="btn" style="background:var(--card2);color:var(--text);" onclick="closeModal('modalDistribuicao')">Cancelar</button>
         <button class="btn btn-primary" onclick="saveDistribuicao()">Salvar</button>
@@ -2652,6 +2665,7 @@ function openModalDistribuicao(id) {
         document.getElementById('distRegiao').value = d.regiao || '';
         document.getElementById('distMaterial').value = d.material || '';
         document.getElementById('distQtd').value = d.qtd || '';
+        document.getElementById('distRecebedor').value = d.recebedor || '';
         document.getElementById('distResponsavel').value = d.responsavel || '';
         document.getElementById('distData').value = d.data || '';
     } else {
@@ -2659,6 +2673,7 @@ function openModalDistribuicao(id) {
         document.getElementById('distRegiao').value = '';
         document.getElementById('distMaterial').value = '';
         document.getElementById('distQtd').value = '';
+        document.getElementById('distRecebedor').value = '';
         document.getElementById('distResponsavel').value = '';
         document.getElementById('distData').value = new Date().toISOString().split('T')[0];
     }
@@ -2673,6 +2688,7 @@ function saveDistribuicao() {
         regiao: document.getElementById('distRegiao').value,
         material: document.getElementById('distMaterial').value,
         qtd: parseInt(document.getElementById('distQtd').value) || 0,
+        recebedor: document.getElementById('distRecebedor').value,
         responsavel: document.getElementById('distResponsavel').value,
         data: document.getElementById('distData').value
     };
@@ -2691,6 +2707,7 @@ function saveDistribuicao() {
                 distId: item.id,
                 material: item.material,
                 qtd: item.qtd,
+                recebedor: item.recebedor,
                 responsavel: item.responsavel,
                 regiao: item.regiao,
                 dataSaida: item.data,
@@ -2711,11 +2728,17 @@ function delDistribuicao(id) {
 function renderDistribuicao() {
     if (!DATA.distribuicao) DATA.distribuicao = [];
     var items = DATA.distribuicao;
-    var totalQtd = 0; var regioes = {}; var materiais = {};
+    var totalQtd = 0; var regioes = {}; var materiais = {}; var pessoas = {};
     items.forEach(function(d) {
         totalQtd += d.qtd || 0;
         regioes[d.regiao] = (regioes[d.regiao] || 0) + (d.qtd || 0);
         materiais[d.material] = (materiais[d.material] || 0) + (d.qtd || 0);
+        var nome = (d.recebedor || '').trim();
+        if (nome) {
+            if (!pessoas[nome]) pessoas[nome] = { total: 0, itens: {} };
+            pessoas[nome].total += (d.qtd || 0);
+            pessoas[nome].itens[d.material] = (pessoas[nome].itens[d.material] || 0) + (d.qtd || 0);
+        }
     });
 
     document.getElementById('distStats').innerHTML =
@@ -2723,18 +2746,34 @@ function renderDistribuicao() {
         '<div class="card stat" style="background:var(--card2);"><div class="stat-num" style="color:var(--cyan);">' + Object.keys(regioes).length + '</div><div class="stat-label">Regioes Atendidas</div></div>' +
         '<div class="card stat" style="background:var(--card2);"><div class="stat-num" style="color:var(--green);">' + Object.keys(materiais).length + '</div><div class="stat-label">Tipos de Material</div></div>';
 
-    var html = items.length === 0 ? '<tr><td colspan="6" style="text-align:center;color:var(--text2);padding:30px;">Nenhuma distribuicao registrada</td></tr>' :
+    var html = items.length === 0 ? '<tr><td colspan="7" style="text-align:center;color:var(--text2);padding:30px;">Nenhuma distribuicao registrada</td></tr>' :
         items.sort(function(a,b) { return (b.data||'').localeCompare(a.data||''); }).map(function(d) {
             return '<tr>' +
                 '<td><strong>' + esc(d.regiao) + '</strong></td>' +
                 '<td>' + esc(d.material) + '</td>' +
                 '<td style="text-align:right;font-weight:600;">' + (d.qtd||0).toLocaleString('pt-BR') + '</td>' +
+                '<td>' + (d.recebedor ? esc(d.recebedor) : '<span style="color:var(--text2);">—</span>') + '</td>' +
                 '<td>' + esc(d.responsavel) + '</td>' +
                 '<td>' + formatDate(d.data) + '</td>' +
                 '<td><button class="btn btn-sm" style="background:var(--accent);color:#fff;" onclick="openModalDistribuicao(' + d.id + ')">Editar</button> <button class="btn btn-sm" style="background:var(--red);color:#fff;" onclick="delDistribuicao(' + d.id + ')">X</button></td>' +
                 '</tr>';
         }).join('');
     document.getElementById('distribuicaoBody').innerHTML = html;
+
+    var nomes = Object.keys(pessoas).sort(function(a,b) { return pessoas[b].total - pessoas[a].total; });
+    var pHtml = nomes.length === 0 ? '<tr><td colspan="3" style="text-align:center;color:var(--text2);padding:24px;">Nenhum recebedor informado ainda. Preencha o campo "Recebedor" ao registrar uma distribuicao.</td></tr>' :
+        nomes.map(function(nome) {
+            var p = pessoas[nome];
+            var detalhe = Object.keys(p.itens).map(function(mat) {
+                return esc(mat) + ' (' + p.itens[mat].toLocaleString('pt-BR') + ')';
+            }).join(', ');
+            return '<tr>' +
+                '<td><strong>' + esc(nome) + '</strong></td>' +
+                '<td style="text-align:right;font-weight:700;color:var(--accent);">' + p.total.toLocaleString('pt-BR') + '</td>' +
+                '<td style="color:var(--text2);font-size:.9rem;">' + detalhe + '</td>' +
+                '</tr>';
+        }).join('');
+    document.getElementById('distPessoaBody').innerHTML = pHtml;
 }
 
 // ==================== UTILS ====================

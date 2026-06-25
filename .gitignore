@@ -1,9 +1,13 @@
 node_modules/
 screenshot-*.png
+conecta-*.png
+test-*.png
+lh-*.json
 test-browser.js
 setup/CREDENCIAIS.md
 server-http.log
 
 .vercel
 .gstack/
+.playwright-mcp/
 _verify_*.js

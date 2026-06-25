@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Relatório do Organograma — Campanha Celina Leão 2026</title>
+<style>
+    * { box-sizing: border-box; }
+    body {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        color: #111;
+        background: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+        font-size: 11pt;
+        line-height: 1.35;
+    }
+    .pagina {
+        background: #fff;
+        max-width: 800px;
+        margin: 0 auto 18px;
+        padding: 28px 36px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .capa {
+        text-align: center;
+        padding: 80px 40px;
+    }
+    .capa h1 {
+        font-size: 28pt;
+        color: #1a237e;
+        margin: 0 0 10px;
+        letter-spacing: 2px;
+    }
+    .capa h2 {
+        font-size: 16pt;
+        color: #ff6f00;
+        margin: 0 0 30px;
+        font-weight: 500;
+    }
+    .capa .subtitulo {
+        font-size: 12pt;
+        color: #555;
+        margin-top: 30px;
+        line-height: 1.7;
+    }
+    .capa .data {
+        margin-top: 60px;
+        font-size: 10pt;
+        color: #999;
+    }
+    h2.secao {
+        font-size: 16pt;
+        color: #1a237e;
+        border-bottom: 3px solid #ff6f00;
+        padding-bottom: 6px;
+        margin: 28px 0 14px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+    }
+    h3.subsecao {
+        font-size: 13pt;
+        color: #4a148c;
+        background: linear-gradient(90deg, #ede7f6, transparent);
+        padding: 8px 12px;
+        margin: 22px 0 10px;
+        border-left: 4px solid #4a148c;
+    }
+    h4.regiao {
+        font-size: 12pt;
+        color: #6a1b9a;
+        margin: 14px 0 8px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    h5.cidade {
+        font-size: 11pt;
+        color: #e65100;
+        margin: 12px 0 6px;
+        font-weight: 700;
+        border-bottom: 1px dashed #ffb74d;
+        padding-bottom: 3px;
+    }
+    .item {
+        display: flex;
+        align-items: center;
+        margin: 5px 0;
+        padding: 4px 8px;
+        gap: 10px;
+        page-break-inside: avoid;
+    }
+    .item .cargo {
+        flex: 0 0 220px;
+        font-weight: 600;
+        color: #333;
+        font-size: 10pt;
+    }
+    .item .cargo.amplo { flex: 0 0 280px; }
+    .item .campos {
+        flex: 1;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+    }
+    .item .nome-box {
+        flex: 1.5;
+        min-height: 22px;
+        border-bottom: 1.5px solid #333;
+        padding: 0 6px 2px;
+        font-size: 11pt;
+    }
+    .item .tel-box {
+        flex: 1;
+        min-height: 22px;
+        border-bottom: 1.5px solid #333;
+        padding: 0 6px 2px;
+        font-size: 11pt;
+        color: #555;
+    }
+    .item.preenchido .nome-box {
+        background: #fff3e0;
+        border-bottom-color: #ff6f00;
+        font-weight: 700;
+        color: #bf360c;
+    }
+    .item.preenchido .tel-box {
+        background: #f3e5f5;
+        border-bottom-color: #8e24aa;
+        color: #4a148c;
+        font-weight: 600;
+    }
+    .item.preenchido::before {
+        content: "✓";
+        color: #2e7d32;
+        font-weight: 900;
+        font-size: 12pt;
+        flex: 0 0 16px;
+    }
+    .item.vazio::before {
+        content: "○";
+        color: #bbb;
+        flex: 0 0 16px;
+        font-size: 12pt;
+    }
+    .label-mini {
+        font-size: 8pt;
+        color: #777;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        margin-right: 4px;
+    }
+    .resumo {
+        background: #fff8e1;
+        border: 2px solid #f57f17;
+        border-radius: 8px;
+        padding: 14px 18px;
+        margin: 20px 0;
+    }
+    .resumo h3 {
+        margin: 0 0 8px;
+        color: #bf360c;
+        font-size: 11pt;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .resumo p {
+        margin: 4px 0;
+        font-size: 10pt;
+        line-height: 1.6;
+    }
+    .legenda {
+        display: flex;
+        gap: 18px;
+        font-size: 9pt;
+        color: #555;
+        margin-bottom: 12px;
+        padding: 8px;
+        background: #fafafa;
+        border-left: 3px solid #1a237e;
+    }
+    .legenda span { display: flex; align-items: center; gap: 5px; }
+    .legenda .v::before { content: "✓"; color: #2e7d32; font-weight: 900; }
+    .legenda .o::before { content: "○"; color: #bbb; }
+    .barra-acoes {
+        position: fixed;
+        top: 12px;
+        right: 12px;
+        display: flex;
+        gap: 8px;
+        z-index: 1000;
+    }
+    .btn-acao {
+        background: #1a237e;
+        color: #fff;
+        padding: 10px 18px;
+        border: none;
+        border-radius: 8px;
+        font-size: 10pt;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .btn-acao:hover { background: #283593; }
+    .btn-acao.secundario { background: #00695c; }
+    .btn-acao.secundario:hover { background: #00897b; }
+    .nota {
+        background: #e3f2fd;
+        border-left: 4px solid #1565c0;
+        padding: 10px 14px;
+        margin: 12px 0;
+        font-size: 10pt;
+        color: #0d47a1;
+    }
+    .nota.alerta {
+        background: #fff3e0;
+        border-left-color: #e65100;
+        color: #bf360c;
+    }
+    .grupo-titulo-pdf {
+        font-size: 10pt;
+        color: #6a1b9a;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin: 10px 0 4px;
+        padding-left: 8px;
+        border-left: 3px solid #ce93d8;
+    }
+    .contatos-extras {
+        margin: 6px 0 10px 24px;
+        padding: 8px 12px;
+        background: #fff8e1;
+        border-left: 3px solid #f57f17;
+        border-radius: 4px;
+        font-size: 9.5pt;
+    }
+    .contatos-extras .extra-titulo {
+        font-size: 8pt;
+        text-transform: uppercase;
+        color: #bf360c;
+        letter-spacing: 1px;
+        margin-bottom: 4px;
+        font-weight: 700;
+    }
+    .contatos-extras .extra-pessoa {
+        padding: 2px 0;
+        color: #4a148c;
+        font-weight: 600;
+    }
+    @media print {
+        body { background: #fff; padding: 0; }
+        .pagina { box-shadow: none; max-width: 100%; margin: 0; padding: 18mm 14mm; page-break-after: always; }
+        .pagina:last-child { page-break-after: avoid; }
+        .barra-acoes { display: none; }
+        h2.secao, h3.subsecao, h4.regiao, h5.cidade { page-break-after: avoid; }
+        .item { page-break-inside: avoid; }
+    }
+    @page { size: A4 portrait; margin: 0; }
+</style>
+</head>
+<body>
+
+<div class="barra-acoes">
+    <button class="btn-acao" onclick="window.print()">🖨️ IMPRIMIR / PDF</button>
+    <button class="btn-acao secundario" onclick="recarregarDados()">🔄 RECARREGAR DADOS</button>
+</div>
+
+<div id="aviso-dados"></div>
+<div id="conteudo"></div>
+
+<script>
+// ============ ESTRUTURA DO ORGANOGRAMA ============
+
+// Coordenações fixas no HTML (preenchidas)
+var COORDS_GERAIS = [
+    ['Coord. de Comunicação', 'Sabá'],
+    ['Coord. Jurídica', 'Marina Morais'],
+    ['Programa de Governo', 'Fernando Leite'],
+    ['Coord. de Fiscalização', 'Wanderci Camargo'],
+    ['Tesouraria', 'Luiz Felipe'],
+    ['Coord. Política', 'Tadeu Filipeli'],
+    ['Coord. de Logística', 'Sílvio Vieira'],
+    ['Coord. Rural', 'Márcio Leão e Sérgio Leão'],
+    ['Coord. de Material', 'André Fortes'],
+    ['Coord. de Mobilização', 'Benício Tavares'],
+    ['Coord. Segmentos Sociais', 'Maria Célia']
+];
+
+// Subcoordenações da Logística (no localStorage como tipo 'regiao')
+var SUBCOORDS_LOGISTICA = [
+    'Estrutura de Eventos', 'Comunicação Visual', 'Credenciamento e Recepção',
+    'Infraestrutura de Comitês', 'Transportes', 'RH'
+];
+
+// Regiões com cidades e bases (mesma estrutura do organograma)
+var REGIOES = [
+    { nome: 'Região Norte', cidades: [
+        { nome: 'Planaltina', bases: ['Setor Tradicional','Setor Norte','Setor Sul','Setor Residencial Norte (SRN)','Setor Residencial Leste (SRL)',"Setor Resid. Mestre D'Armas",'Setor Administrativo','Setor Comercial Central','Setor Hospitalar','Setor de Educação','Setor Recreativo e Cultural','Setor de Hotéis e Diversões','Vale do Amanhecer','Jardim Roriz','Portal do Amanhecer','Vila N. Sra. de Fátima','Vila Vicentina','Cond. Residencial Lagoa','Condomínio Girassol','Cond. Sulamericano'] },
+        { nome: 'Sobradinho I', bases: ['Quadras de 1 a 18','Quadra Central','Setor de Indústria','Império dos Nobres','Condomínio RK',"DNOC's",'Nova Colina','Setor de Expansão Econômica','Cond. Alto da Boa Vista','Rota do Cavalo','Cond. Estância Vila Rica'] },
+        { nome: 'Sobradinho II', bases: ['Quadras AR1 a AR24','Condomínios do Grande Colorado','Condomínios DF 150','Condomínios DF 425','Condomínios DF 330','Bairro Buritizinho','Vila Rabelo I e II','Setor de Mansões','Vila Basevi','Lago Oeste'] },
+        { nome: 'Fercal', bases: ['Fercal Rural','Fercal Urbana'] },
+        { nome: 'Arapoanga', bases: ['Cond. Mansões Arapoanga','SH Arapoanga - Etapa 1','SH Arapoanga - Etapa 2','SH Arapoanga - Etapa 3'] },
+        { nome: 'Varjão', bases: ['Quadras 01 a 05','Quadras 06 a 11','Setor de Chácaras'] },
+        { nome: 'Granja do Torto', bases: ['Vila Operária','Vila Weslyan Roriz','Cond. Mini Granjas do Torto'] },
+        { nome: 'Taquari', bases: ['Taquari I','Taquari II','Taquari III'] },
+        { nome: 'Lago Norte', bases: ['Setor de Mansões','Centro de Atividades','Península (QL/QI)','Taquari'] }
+    ]},
+    { nome: 'Região Sul', cidades: [
+        { nome: 'Gama', bases: ['Setor Norte','Setor Sul','Setor Leste','Setor Oeste','Setor Central','Setor de Indústria'] },
+        { nome: 'Santa Maria', bases: ['Santa Maria Norte','Santa Maria Sul','Setor Hab. Ribeirão','Res. Santos Dumont','Total Ville','Porto Rico','Vila dos Carroceiros'] },
+        { nome: 'Riacho Fundo I', bases: ['Área Residencial','Colônia Agrícola / Setor de Chácaras'] },
+        { nome: 'Riacho Fundo II', bases: ['Quadras Norte (QN)','Quadras Centrais (QC)','Quadras Sul (QS)','CAUB I e II','Granja Modelo'] },
+        { nome: 'Ponte Alta Norte', bases: [] },
+        { nome: 'Novo Gama', bases: ['Jardim Lago Azul','Núcleo Habitacional','Res. Alvorada','Chácaras Araguaia'] },
+        { nome: 'Pedregal', bases: [] }
+    ]},
+    { nome: 'Região Leste', cidades: [
+        { nome: 'Paranoá', bases: ['Quadras Pares 2 a 20','Quadras Pares 22 a 34','Quadras Ímpares 3 a 21','Quadras Ímpares 23 a 33','Paranoá Parque','Córrego do Bálsamo'] },
+        { nome: 'Itapoã', bases: ['Itapoã I','Itapoã II','Fazendinha','Del Lago','Del Lago II','Mandala','Itapoã Parque'] },
+        { nome: 'São Sebastião', bases: ['Bairro Tradicional','Bairro Centro','Residencial Oeste','Morro Azul','São Bartolomeu','Bonsucesso','Morro da Cruz','Vila Nova','Crixá'] },
+        { nome: 'Jardim Botânico', bases: ['SH Jardim Botânico','Mangueiral','Tororó','Altiplano Leste'] },
+        { nome: 'Jardim Mangueiral', bases: [] },
+        { nome: 'Lago Sul', bases: ['SHIS QL (Quadras do Lago)','SHIS QI (Quadras Internas)','Setor de Clubes Sul'] }
+    ]},
+    { nome: 'Região Oeste', cidades: [
+        { nome: 'Taguatinga', bases: ['Taguatinga Norte','Taguatinga Centro','Taguatinga Sul','Setor Industrial'] },
+        { nome: 'Brazlândia', bases: ['Setor Tradicional','Setor Norte','Setor Sul','Vila São José','Bairro Veredas','Incra 8'] },
+        { nome: 'Arniqueiras', bases: [] },
+        { nome: 'Park Way', bases: ['Quadras 1 a 14','Quadras 15 a 29','Vargem Bonita'] }
+    ]},
+    { nome: 'Região Sudeste', cidades: [
+        { nome: 'Águas Claras', bases: ['Águas Claras Vertical','Areal','Arniqueiras'] },
+        { nome: 'Guará', bases: ['Guará I','Guará II','QELC (Quadras Econômicas Lúcio Costa)','Park Sul'] },
+        { nome: 'Estrutural', bases: ['Setor Norte','Setor Sul','Setor Leste','Setor Oeste','Setor Central','Santa Luzia','Setor de Chácaras'] },
+        { nome: 'SCIA', bases: [] },
+        { nome: 'Vicente Pires', bases: ['SH Vicente Pires','Col. Agrícola Samambaia','Jockey Clube','Vila São José'] },
+        { nome: 'SIA', bases: [] },
+        { nome: '26 de Setembro', bases: [] }
+    ]},
+    { nome: 'Região Central', cidades: [
+        { nome: 'Asa Norte', bases: [] },
+        { nome: 'Asa Sul', bases: [] },
+        { nome: 'Noroeste', bases: [] },
+        { nome: 'Vila Planalto', bases: [] },
+        { nome: 'Cruzeiro', bases: ['Cruzeiro Velho (SRES)','Cruzeiro Novo (SHCES)'] },
+        { nome: 'Candangolândia', bases: [] },
+        { nome: 'Sudoeste', bases: [] },
+        { nome: 'Octogonal', bases: [] },
+        { nome: 'SIG', bases: [] },
+        { nome: 'Vila Telebrasília', bases: [] },
+        { nome: 'Núcleo Bandeirantes', bases: ['NB Tradicional','Vila Metropolitana','Vargem Bonita','Setor Industrial Bernardo Sayão'] }
+    ]},
+    { nome: 'Região SAMREQUENTE', cidades: [
+        { nome: 'Samambaia', bases: ['Samambaia Norte','Samambaia Sul','Setor de Mansões'] },
+        { nome: 'Recanto das Emas', bases: ['Quadras 100 a 300','Quadras 400 a 600','Quadras 800','Monjolo'] },
+        { nome: 'Água Quente', bases: [] }
+    ]},
+    { nome: 'Região CEIPORSOL', cidades: [
+        { nome: 'Ceilândia', bases: ['Ceilândia Norte','Ceilândia Sul','Ceilândia Centro','Guariroba','P Norte','P Sul','Setor O','QNQ / QNR','Setor de Indústria'] },
+        { nome: 'Pôr do Sol', bases: [] },
+        { nome: 'Sol Nascente', bases: ['Trecho 1','Trecho 2','Trecho 3'] }
+    ]},
+    { nome: 'Região VALUCIDENTAL', cidades: [
+        { nome: 'Valparaíso', bases: ['Etapa A','Etapa B','Etapa C','Jardim Céu Azul','Parque São Bernardo','Chácaras Anhanguera'] },
+        { nome: 'Luziânia', bases: ['Centro','Jardim do Ingá'] },
+        { nome: 'Cidade Ocidental', bases: ['Centro (Super Quadras)','Setor ABC','Jardim ABC'] }
+    ]},
+    { nome: 'Região Entorno', cidades: [
+        { nome: 'Águas Lindas', bases: [] },
+        { nome: 'Santo Antônio do Descoberto', bases: [] },
+        { nome: 'Planaltina de Goiás', bases: [] }
+    ]}
+];
+
+// Coordenação Rural (mesma estrutura)
+var RURAL = [
+    { nome: 'Rural Norte', cidades: [
+        { nome: 'NR Taquara' }, { nome: 'NR Pipiripau' }, { nome: 'NR Tabatinga' },
+        { nome: 'NR Rio Preto' }, { nome: 'NR Santos Dumont' }, { nome: 'NR Rajadinha' },
+        { nome: "NR Mestre d'Armas" }, { nome: 'NR Córrego do Urubu' }
+    ]},
+    { nome: 'Rural Sobradinho / Fercal', cidades: [
+        { nome: 'Lago Oeste' }, { nome: 'Comunidades Rurais Fercal' }
+    ]},
+    { nome: 'Rural Leste (PAD-DF)', cidades: [
+        { nome: 'PAD-DF' }, { nome: 'NR Jardim (Paranoá)' }, { nome: 'NR Capão Seco' },
+        { nome: 'Rural São Sebastião' }, { nome: 'NR Sobradinho dos Melos' }
+    ]},
+    { nome: 'Rural Oeste (Brazlândia)', cidades: [
+        { nome: 'INCRA 06' }, { nome: 'INCRA 07' }, { nome: 'INCRA 08' }, { nome: 'INCRA 09' },
+        { nome: 'NR Rodeador' }, { nome: 'NR Chapadinha' }
+    ]},
+    { nome: 'Rural Sul (Gama)', cidades: [
+        { nome: 'NR Ponte Alta' }, { nome: 'NR Monjolo' }, { nome: 'NR Alagado' }, { nome: 'NR Engenho das Lajes' }
+    ]},
+    { nome: 'Rural Central', cidades: [
+        { nome: 'NR Vargem Bonita' }, { nome: 'Col. Agrícola Vicente Pires' },
+        { nome: 'Col. Agrícola Samambaia' }, { nome: 'Granja do Torto' }
+    ]},
+    { nome: 'Rural Entorno', cidades: [
+        { nome: 'Rural Novo Gama' }, { nome: 'Rural Valparaíso' },
+        { nome: 'Rural Luziânia' }, { nome: 'Rural Cidade Ocidental' }
+    ]}
+];
+
+// Segmentos sociais (alguns já pré-cadastrados no HTML)
+var SEGMENTOS_HTML = {
+    'Educação Pública': 'Raniere',
+    'Meio Ambiente': 'Pedro Guimarães',
+    'Mulheres': 'Gisele (Sec. da Mulher)',
+    'Juventude': 'Luiz Eduardo',
+    '60+': 'Marco Lima',
+    'Hip Hop': 'Wendel',
+    'Rádios Comunitárias': 'Tony Radar'
+};
+
+var SEGMENTOS_GRUPOS = [
+    ['Saúde', ['Saúde Pública','Saúde Particular']],
+    ['Educação', ['Educação Pública','Educação Particular']],
+    ['Segurança Pública', ['Bombeiros','Policiais Civis','Policiais Militares','Policial Penal','DETRAN']],
+    ['Esporte', ['Futebol','Natação','Vôlei','Basquete','Artes Marciais','Atletismo','Ciclismo','Futsal','Handebol','Tênis','CrossFit / Musculação','Skate']],
+    ['Cultura', ['Carnaval','Teatro','Música','Quadrilhas Juninas','Dança','Cinema','Artesanato','Literatura']],
+    ['Outros Segmentos', ['Meio Ambiente','Assistência Social','Habitação','Igualdade Social','Mulheres','Juventude','60+','Pessoa com Deficiência','Criança e Adolescência']],
+    ['Religiosa', ['Evangélicos','Católicos','Espíritas','Outras Religiões']],
+    ['Lideranças e Outros', ['Hip Hop','Causa Animal','Lideranças Comunitárias','Síndicos','Diversidade','Cidades','Torcida Organizada','Indígenas']],
+    ['Servidores Públicos', ['Auditores de Controle Interno','Procuradores','Médicos','Enfermeiros','Auditores Tributários','Defensores Públicos']],
+    ['Categorias Profissionais', ['Empresários','Agronegócio','Feirantes','Ambulantes','Microempreendedores','Oficineiros','Advogados','Caminhoneiros','Motoristas de Aplicativos','Vigilantes','Brigadistas']],
+    ['Comunicação e Mídia', ['Rádios Comunitárias','Influenciadores Digitais','Universitários']]
+];
+
+// ============ RENDERIZAÇÃO ============
+
+var DADOS = {};
+var PESSOAS = {};
+
+function idDe(tipo, nome) {
+    return tipo + '_' + nome.replace(/\s+/g, '_').toLowerCase();
+}
+
+function obterRegistro(tipo, nome) {
+    var id = idDe(tipo, nome);
+    return DADOS[id] || null;
+}
+
+function renderItem(cargo, opts) {
+    opts = opts || {};
+    var nome = opts.nomeForcado || '';
+    var telefone = '';
+    var extras = [];
+    var cargoClass = opts.amplo ? 'cargo amplo' : 'cargo';
+
+    if (!nome && opts.tipoLS && opts.nomeChave) {
+        var reg = obterRegistro(opts.tipoLS, opts.nomeChave);
+        if (reg) {
+            nome = (reg.nome || '').trim();
+            telefone = (reg.telefone || '').trim();
+            if (Array.isArray(reg.pessoas_extras)) {
+                reg.pessoas_extras.forEach(function(p) {
+                    var t = (p.nome || '').trim();
+                    if (t) extras.push({ nome: t, telefone: (p.telefone || '').trim() });
+                });
+            }
+        }
+    }
+
+    var preenchido = nome && nome !== '(A definir)';
+    var classe = preenchido ? 'item preenchido' : 'item vazio';
+    var nomeBox = preenchido ? nome : '';
+    var telBox = preenchido && telefone ? telefone : (preenchido ? '<span class="label-mini">Tel:</span>' : '');
+
+    var html = '<div class="' + classe + '">' +
+        '<div class="' + cargoClass + '">' + cargo + '</div>' +
+        '<div class="campos">' +
+        '<div class="nome-box">' + escapar(nomeBox) + '</div>' +
+        '<div class="tel-box">' + telBox + '</div>' +
+        '</div>' +
+        '</div>';
+
+    if (extras.length > 0) {
+        html += '<div class="contatos-extras">';
+        html += '<div class="extra-titulo">+ Pessoas adicionais cadastradas</div>';
+        extras.forEach(function(p) {
+            html += '<div class="extra-pessoa">• ' + escapar(p.nome) + (p.telefone ? ' — ' + escapar(p.telefone) : '') + '</div>';
+        });
+        html += '</div>';
+    }
+
+    return html;
+}
+
+function renderPessoasLista(cidadeChave) {
+    var lista = PESSOAS[cidadeChave];
+    if (!lista || lista.length === 0) return '';
+    var html = '<div class="contatos-extras">';
+    html += '<div class="extra-titulo">📞 Contatos cadastrados nesta cidade</div>';
+    lista.forEach(function(p) {
+        var n = (p.nome || '').trim();
+        if (!n) return;
+        var t = (p.telefone || '').trim();
+        var e = (p.email || '').trim();
+        html += '<div class="extra-pessoa">• ' + escapar(n);
+        if (t) html += ' — ' + escapar(t);
+        if (e) html += ' · ' + escapar(e);
+        html += '</div>';
+    });
+    html += '</div>';
+    return html;
+}
+
+function escapar(s) {
+    if (!s) return '';
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function cidadeChaveDoOrganograma(cidadeNome) {
+    // Mapa especial baseado no array `cidades` do organograma.html (lista-pessoas-<chave>)
+    var mapa = {
+        'Planaltina': 'planaltina', 'Sobradinho I': 'sobradinho1', 'Sobradinho II': 'sobradinho2',
+        'Fercal': 'fercal', 'Gama': 'gama', 'Santa Maria': 'santamaria',
+        'Riacho Fundo I': 'riachofundo1', 'Riacho Fundo II': 'riachofundo2',
+        'Paranoá': 'paranoa', 'Itapoã': 'itapoa', 'São Sebastião': 'saosebastiao',
+        'Jardim Botânico': 'jardimbotanico', 'Lago Sul': 'lagosul', 'Lago Norte': 'lagonorte',
+        'Taguatinga': 'taguatinga', 'Brazlândia': 'brazlandia', 'Arniqueiras': 'arniqueiras',
+        'Águas Claras': 'aguasclaras', 'Guará': 'guara', 'Estrutural': 'estrutural',
+        'Vicente Pires': 'vicentepires', 'SIA': 'sia',
+        'Asa Norte': 'central', 'Asa Sul': 'central', 'Noroeste': 'central',
+        'Cruzeiro': 'cruzeiro', 'Candangolândia': 'candangolandia',
+        'Núcleo Bandeirantes': 'nucleobandeirante',
+        'Samambaia': 'samambaia', 'Recanto das Emas': 'recantodasemas', 'Água Quente': 'aguaquente',
+        'Ceilândia': 'ceilandia', 'Sol Nascente': 'solnascente',
+        'Valparaíso': 'valparaiso', 'Luziânia': 'luziania', 'Cidade Ocidental': 'cidadeocidental',
+        'Park Way': 'parkway', 'Arapoanga': 'arapoanga', 'Varjão': 'varjao',
+        'Granja do Torto': 'granjadotorto', 'Taquari': 'taquari',
+        'Novo Gama': 'novogama', 'Pedregal': 'pedregal',
+        'Jardim Mangueiral': 'jardimmangueiral'
+    };
+    return mapa[cidadeNome] || null;
+}
+
+function render() {
+    DADOS = JSON.parse(localStorage.getItem('organograma_dados') || '{}');
+    PESSOAS = JSON.parse(localStorage.getItem('organograma_pessoas') || '{}');
+
+    var total = Object.keys(DADOS).length + Object.keys(PESSOAS).length;
+    var aviso = document.getElementById('aviso-dados');
+    aviso.innerHTML = '';
+    if (total === 0) {
+        aviso.innerHTML = '<div class="pagina"><div class="nota alerta"><strong>⚠️ Nenhum dado carregado.</strong><br>' +
+            'Para que os nomes cadastrados apareçam, abra este relatório no mesmo navegador onde você usa o organograma. ' +
+            'Acesse em <strong>inteia.com.br/conecta2026/relatorio-organograma.html</strong> depois do deploy automático (~10 min).</div></div>';
+    }
+
+    var html = '';
+
+    // CAPA
+    html += '<div class="pagina capa">' +
+        '<h1>ORGANOGRAMA</h1>' +
+        '<h2>Campanha Celina Leão 2026</h2>' +
+        '<div class="subtitulo"><strong>Relatório de Coordenadores</strong><br>' +
+        'Nomes cadastrados + espaços para preencher à mão</div>' +
+        '<div class="data">Distrito Federal · Eleição 2026<br>Gerado em ' + new Date().toLocaleDateString('pt-BR') + '</div>' +
+        '</div>';
+
+    // INSTRUÇÕES
+    html += '<div class="pagina">' +
+        '<h2 class="secao">Como usar este relatório</h2>' +
+        '<div class="nota"><strong>Objetivo:</strong> imprimir e preencher à mão os nomes/telefones em aberto. ' +
+        'Os nomes já cadastrados no sistema aparecem destacados em laranja com ✓.</div>' +
+        '<div class="legenda">' +
+        '<span class="v"><strong>Preenchido</strong> — já cadastrado no sistema</span>' +
+        '<span class="o"><strong>Em aberto</strong> — preencher manualmente</span>' +
+        '</div></div>';
+
+    // 1. COORDENAÇÃO GERAL + COORDENAÇÕES + SUBCOORDS
+    html += '<div class="pagina">';
+    html += '<h2 class="secao">1. Coordenação Geral</h2>';
+    html += renderItem('Coordenação Geral', { nomeForcado: 'Celina Leão' });
+    html += '<h2 class="secao">2. Coordenações Gerais</h2>';
+    COORDS_GERAIS.forEach(function(c) {
+        html += renderItem(c[0], { nomeForcado: c[1] });
+    });
+    html += '<h2 class="secao">3. Subcoordenações da Logística</h2>';
+    SUBCOORDS_LOGISTICA.forEach(function(s) {
+        html += renderItem(s, { tipoLS: 'regiao', nomeChave: s });
+    });
+    html += '</div>';
+
+    // 4. COORDENAÇÕES REGIONAIS
+    html += '<div class="pagina"><h2 class="secao">4. Coordenações Regionais</h2></div>';
+    REGIOES.forEach(function(reg) {
+        html += '<div class="pagina">';
+        html += '<h3 class="subsecao">🟣 ' + reg.nome + '</h3>';
+        html += renderItem('Coord. Estratégica', { amplo: true, tipoLS: 'regiao', nomeChave: reg.nome });
+        reg.cidades.forEach(function(cid) {
+            html += '<h5 class="cidade">' + cid.nome + '</h5>';
+            html += renderItem('Coord. Setorial', { tipoLS: 'cidade', nomeChave: cid.nome });
+            // contatos da cidade (organograma_pessoas)
+            var chPessoas = cidadeChaveDoOrganograma(cid.nome);
+            if (chPessoas) html += renderPessoasLista(chPessoas);
+            // bases
+            (cid.bases || []).forEach(function(b) {
+                html += renderItem(b, { tipoLS: 'base', nomeChave: b });
+            });
+        });
+        html += '</div>';
+    });
+
+    // 5. SEGMENTOS SOCIAIS
+    html += '<div class="pagina">';
+    html += '<h2 class="secao">5. Coordenação de Segmentos Sociais</h2>';
+    html += '<div class="nota">Coordenadora: <strong>Maria Célia</strong></div>';
+    SEGMENTOS_GRUPOS.forEach(function(grp, i) {
+        if (i > 0 && i % 3 === 0) html += '</div><div class="pagina">';
+        html += '<h4 class="regiao">' + grp[0] + '</h4>';
+        grp[1].forEach(function(seg) {
+            var nomeHTML = SEGMENTOS_HTML[seg];
+            if (nomeHTML) {
+                html += renderItem(seg, { nomeForcado: nomeHTML, tipoLS: 'segmento', nomeChave: seg });
+            } else {
+                html += renderItem(seg, { tipoLS: 'segmento', nomeChave: seg });
+            }
+        });
+    });
+    html += '</div>';
+
+    // 6. COORDENAÇÃO RURAL
+    html += '<div class="pagina">';
+    html += '<h2 class="secao">6. Coordenação Rural</h2>';
+    html += '<div class="nota">Coordenadores: <strong>Márcio Leão e Sérgio Leão</strong></div>';
+    // Pessoas extras cadastradas no rural
+    if (PESSOAS['rural'] && PESSOAS['rural'].length > 0) {
+        html += renderPessoasLista('rural');
+    }
+    RURAL.forEach(function(reg, i) {
+        if (i > 0 && i % 2 === 0) html += '</div><div class="pagina">';
+        html += '<h3 class="subsecao">🟢 ' + reg.nome + '</h3>';
+        html += renderItem('Coord. Estratégica', { amplo: true, tipoLS: 'regiao', nomeChave: reg.nome });
+        reg.cidades.forEach(function(cid) {
+            html += renderItem(cid.nome, { tipoLS: 'cidade', nomeChave: cid.nome });
+        });
+    });
+    html += '</div>';
+
+    // AGENDA EXTRA + OBSERVAÇÕES
+    html += '<div class="pagina">';
+    html += '<h2 class="secao">📅 Agenda da Campanha</h2>';
+    if (PESSOAS['agenda'] && PESSOAS['agenda'].length > 0) {
+        html += '<div class="nota">Contatos já cadastrados na Agenda:</div>';
+        html += renderPessoasLista('agenda');
+    }
+    html += '<div class="nota">Use o espaço abaixo para anotar contatos avulsos:</div>';
+    for (var k = 1; k <= 10; k++) {
+        html += '<div class="item vazio"><div class="cargo">Contato ' + k + '</div>' +
+            '<div class="campos"><div class="nome-box"></div><div class="tel-box"></div></div></div>';
+    }
+    html += '<h2 class="secao" style="margin-top:40px;">Observações Gerais</h2>';
+    html += '<div style="border: 1px solid #ccc; min-height: 200px; padding: 14px; background: #fafafa; border-radius: 6px;"></div>';
+    html += '</div>';
+
+    document.getElementById('conteudo').innerHTML = html;
+}
+
+function recarregarDados() {
+    render();
+    alert('Dados recarregados do navegador!');
+}
+
+render();
+</script>
+
+</body>
+</html>
