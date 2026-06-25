@@ -359,6 +359,7 @@ function cardHTML(d){
         <div class="field"><label>Esfera</label><select onchange="upd(${d.id},'esfera',this.value)">
           <option ${d.esfera==='Distrital'?'selected':''}>Distrital</option>
           <option ${d.esfera==='Federal'?'selected':''}>Federal</option></select></div>
+        <div class="field"><label>Data da esfera</label><input type="date" value="${d.dataEsfera||''}" onchange="upd(${d.id},'dataEsfera',this.value)"></div>
         <div class="field"><label>Tipo</label><select onchange="upd(${d.id},'tipo',this.value)">
           <option ${d.tipo==='A'?'selected':''} value="A">Tipo A</option>
           <option ${d.tipo==='B'?'selected':''} value="B">Tipo B</option>
