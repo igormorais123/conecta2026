@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Controle de Materiais Gráficos — Deputados | Campanha Celina Leão 2026</title>
+<link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --azul:#1B3A5C; --azul2:#24507f; --azul-claro:#e8eef5;
+  --dourado:#D4A843; --dourado2:#b88f2e;
+  --bg:#f4f6f9; --card:#ffffff; --text:#1f2a37; --text2:#6b7280;
+  --border:#e3e8ef; --green:#1f9d57; --orange:#e08a00; --red:#d23b3b;
+  --shadow:0 2px 10px rgba(27,58,92,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* CABEÇALHO */
+header{background:linear-gradient(135deg,var(--azul),var(--azul2));color:#fff;padding:18px 24px;box-shadow:var(--shadow);}
+header .top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+header .brand{font-size:1.25rem;font-weight:800;line-height:1.1;}
+header .brand small{display:block;font-size:.72rem;font-weight:500;color:var(--dourado);letter-spacing:.5px;text-transform:uppercase;margin-top:2px;}
+header .logo{width:42px;height:42px;border-radius:10px;background:var(--dourado);color:var(--azul);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;flex-shrink:0;}
+.salvo-info{margin-left:auto;text-align:right;font-size:.74rem;color:#cdd9e6;}
+.salvo-info b{color:#fff;}
+
+.container{max-width:1500px;margin:0 auto;padding:20px 24px 60px;}
+
+/* RESUMO */
+.resumo{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:18px 0;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow);}
+.stat .n{font-size:1.7rem;font-weight:800;color:var(--azul);line-height:1;}
+.stat .l{font-size:.72rem;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-top:6px;font-weight:600;}
+.stat.alvo .n{color:var(--dourado2);}
+.stat.ok .n{color:var(--green);}
+.stat.pend .n{color:var(--orange);}
+
+/* TOOLBAR */
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px;}
+.toolbar input[type=search],.toolbar select{padding:9px 12px;border:1px solid var(--border);border-radius:9px;background:#fff;font-size:.85rem;font-family:inherit;color:var(--text);}
+.toolbar input[type=search]{min-width:220px;flex:1;max-width:340px;}
+.spacer{flex:1;}
+.btn{border:none;border-radius:9px;padding:9px 16px;font-size:.85rem;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:7px;transition:.15s;white-space:nowrap;}
+.btn:hover{transform:translateY(-1px);}
+.btn-primary{background:var(--azul);color:#fff;}
+.btn-gold{background:var(--dourado);color:var(--azul);}
+.btn-ghost{background:#fff;border:1px solid var(--border);color:var(--text);}
+.btn-sm{padding:6px 11px;font-size:.78rem;border-radius:7px;}
+.btn-danger{background:#fff;border:1px solid var(--red);color:var(--red);}
+
+/* TABELA / CARDS */
+.lista{display:flex;flex-direction:column;gap:12px;}
+.dep{background:var(--card);border:1px solid var(--border);border-left:5px solid var(--azul);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;}
+.dep.t-A{border-left-color:var(--dourado);}
+.dep.t-B{border-left-color:var(--azul);}
+.dep.t-C{border-left-color:#8a97a8;}
+.dep-head{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;flex-wrap:wrap;}
+.dep-head:hover{background:#fafbfd;}
+.dep-nome{font-weight:700;font-size:1rem;}
+.dep-sub{font-size:.78rem;color:var(--text2);margin-top:1px;}
+.chip{font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.4px;}
+.chip-tipo{background:var(--dourado);color:var(--azul);}
+.chip-esf{background:var(--azul-claro);color:var(--azul);}
+.chip-fed{background:#eef6ef;color:var(--green);}
+.dep-prog{display:flex;gap:6px;margin-left:auto;align-items:center;flex-wrap:wrap;}
+.etapa{font-size:.66rem;font-weight:700;padding:4px 9px;border-radius:7px;border:1px solid var(--border);color:var(--text2);background:#fff;white-space:nowrap;}
+.etapa.done{background:#eaf7ef;border-color:#bfe6cd;color:var(--green);}
+.qtd-badge{background:var(--azul);color:#fff;font-size:.72rem;font-weight:700;padding:4px 10px;border-radius:20px;}
+.toggle-ico{font-size:.8rem;color:var(--text2);transition:.2s;}
+.dep.open .toggle-ico{transform:rotate(90deg);}
+
+/* DETALHE EDITÁVEL */
+.dep-body{display:none;padding:4px 16px 18px;border-top:1px solid var(--border);}
+.dep.open .dep-body{display:block;}
+.grid-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:14px 0;}
+.field{display:flex;flex-direction:column;gap:4px;}
+.field label{font-size:.7rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;}
+.field input,.field select,.field textarea{padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;font-family:inherit;color:var(--text);background:#fff;}
+.field textarea{resize:vertical;min-height:42px;}
+
+.sec-titulo{font-size:.78rem;font-weight:700;color:var(--azul);text-transform:uppercase;letter-spacing:.6px;margin:16px 0 8px;display:flex;align-items:center;gap:8px;}
+.sec-titulo::before{content:"";width:4px;height:14px;background:var(--dourado);border-radius:2px;}
+
+/* MATERIAIS */
+.mat-tabela{width:100%;border-collapse:collapse;font-size:.84rem;}
+.mat-tabela th{text-align:left;font-size:.68rem;text-transform:uppercase;letter-spacing:.4px;color:var(--text2);padding:6px 8px;border-bottom:1px solid var(--border);}
+.mat-tabela td{padding:5px 8px;border-bottom:1px solid #f0f2f5;}
+.mat-tabela input{width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:7px;font-size:.84rem;font-family:inherit;}
+.mat-tabela input.qtd{width:90px;text-align:right;}
+.mat-del{background:none;border:none;color:var(--red);cursor:pointer;font-size:1rem;padding:2px 6px;border-radius:6px;}
+.mat-del:hover{background:#fde9e9;}
+.mat-total{font-weight:700;color:var(--azul);}
+
+/* ETAPAS (status com data) */
+.etapas-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:6px;}
+.etapa-card{border:1px solid var(--border);border-radius:10px;padding:12px;background:#fafbfd;}
+.etapa-card .et-top{display:flex;align-items:center;gap:8px;font-weight:600;font-size:.84rem;margin-bottom:8px;}
+.etapa-card .et-top input{width:17px;height:17px;accent-color:var(--green);cursor:pointer;}
+.etapa-card.feito{background:#eef9f1;border-color:#bfe6cd;}
+.etapa-card .num{width:20px;height:20px;border-radius:50%;background:var(--azul);color:#fff;font-size:.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.etapa-card.feito .num{background:var(--green);}
+.etapa-card label.dlabel{font-size:.68rem;color:var(--text2);font-weight:600;display:block;margin-bottom:3px;}
+.etapa-card input[type=date]{width:100%;padding:7px 9px;border:1px solid var(--border);border-radius:8px;font-size:.84rem;font-family:inherit;}
+
+.dep-actions{display:flex;gap:8px;margin-top:16px;justify-content:flex-end;}
+
+.vazio{text-align:center;padding:60px 20px;color:var(--text2);}
+.vazio .ico{font-size:2.6rem;opacity:.4;margin-bottom:10px;}
+
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(15,30,50,.55);z-index:200;align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto;}
+.overlay.show{display:flex;}
+.modal{background:#fff;border-radius:16px;width:100%;max-width:560px;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:up .2s ease;}
+@keyframes up{from{opacity:0;transform:translateY(-14px);}to{opacity:1;transform:translateY(0);}}
+.modal-head{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.modal-head h3{font-size:1.05rem;color:var(--azul);}
+.modal-close{background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--text2);line-height:1;}
+.modal-body{padding:18px 22px;}
+.modal-foot{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--azul);color:#fff;padding:12px 22px;border-radius:10px;font-size:.88rem;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:300;opacity:0;transition:.3s;}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+
+/* ===== IMPRESSÃO / PDF ===== */
+#print-area{display:none;}
+@media print{
+  body{background:#fff;}
+  header,.toolbar,.resumo,.lista,.dep-actions,.overlay,.toast,.no-print{display:none !important;}
+  #print-area{display:block;}
+  .container{padding:0;max-width:none;}
+  @page{margin:14mm;}
+}
+#print-area h1{font-size:18px;color:var(--azul);}
+#print-area .p-sub{font-size:11px;color:#555;margin:2px 0 14px;}
+#print-area .p-grupo{font-size:13px;font-weight:700;color:#fff;background:var(--azul);padding:5px 10px;border-radius:5px;margin:16px 0 6px;}
+#print-area table{width:100%;border-collapse:collapse;font-size:10.5px;margin-bottom:8px;}
+#print-area th{background:var(--azul-claro);color:var(--azul);text-align:left;padding:5px 6px;border:1px solid #cdd9e6;font-size:9.5px;text-transform:uppercase;}
+#print-area td{padding:4px 6px;border:1px solid #dde3ea;vertical-align:top;}
+#print-area tr{break-inside:avoid;}
+#print-area .p-foot{margin-top:18px;font-size:9px;color:#888;border-top:1px solid #ddd;padding-top:6px;}
+#print-area .ok{color:var(--green);font-weight:700;}
+#print-area .no{color:#bbb;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="top">
+    <div class="logo">CL</div>
+    <div class="brand">Controle de Materiais Gráficos
+      <small>Deputados Distritais e Federais · Campanha Celina Leão 2026</small>
+    </div>
+    <div class="salvo-info" id="salvoInfo">—</div>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="resumo" id="resumo"></div>
+
+  <div class="toolbar">
+    <input type="search" id="busca" placeholder="🔍 Buscar deputado ou partido...">
+    <select id="fEsfera">
+      <option value="">Todas as esferas</option>
+      <option value="Distrital">Distrital</option>
+      <option value="Federal">Federal</option>
+    </select>
+    <select id="fTipo">
+      <option value="">Todos os tipos</option>
+      <option value="A">Tipo A</option>
+      <option value="B">Tipo B</option>
+      <option value="C">Tipo C</option>
+    </select>
+    <select id="fStatus">
+      <option value="">Todos os status</option>
+      <option value="sem-pedido">Sem pedido</option>
+      <option value="aguardando-grafica">Aguardando gráfica</option>
+      <option value="aguardando-entrega">Aguardando entrega ao deputado</option>
+      <option value="concluido">Concluído</option>
+    </select>
+    <div class="spacer"></div>
+    <button class="btn btn-primary" onclick="abrirNovo()">＋ Novo deputado</button>
+    <button class="btn btn-gold" onclick="salvarPDF()">📄 Salvar PDF</button>
+    <button class="btn btn-ghost btn-sm" onclick="exportarBackup()" title="Salvar cópia de segurança dos dados">⬇ Backup</button>
+    <button class="btn btn-ghost btn-sm" onclick="document.getElementById('importFile').click()" title="Restaurar dados de um backup">⬆ Importar</button>
+    <input type="file" id="importFile" accept="application/json" style="display:none" onchange="importarBackup(event)">
+  </div>
+
+  <div class="lista" id="lista"></div>
+
+</div>
+
+<!-- MODAL NOVO DEPUTADO -->
+<div class="overlay" id="overlayNovo">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Novo deputado</h3>
+      <button class="modal-close" onclick="fecharNovo()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="grid-form">
+        <div class="field"><label>Nome do deputado *</label><input id="nNome" placeholder="Ex: João da Silva"></div>
+        <div class="field"><label>Partido *</label><input id="nPartido" placeholder="Ex: PP"></div>
+        <div class="field"><label>Esfera *</label>
+          <select id="nEsfera"><option value="Distrital">Distrital</option><option value="Federal">Federal</option></select>
+        </div>
+        <div class="field"><label>Tipo (classificação) *</label>
+          <select id="nTipo"><option value="A">Tipo A</option><option value="B">Tipo B</option><option value="C">Tipo C</option></select>
+        </div>
+      </div>
+      <div class="field"><label>Observação (opcional)</label><textarea id="nObs" placeholder="Anotações..."></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="fecharNovo()">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarNovo()">Adicionar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ÁREA DE IMPRESSÃO (PDF) -->
+<div id="print-area"></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+const STORAGE_KEY='materiais_graficos_deputados_2026';
+
+let dados=carregar();
+
+function carregar(){
+  try{
+    const raw=localStorage.getItem(STORAGE_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return {deputados:[], nextId:1, lastSaved:null};
+}
+function salvar(){
+  dados.lastSaved=new Date().toISOString();
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(dados));
+  renderSalvo();
+}
+
+/* ===== Datas ===== */
+function hojeISO(){
+  const d=new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function brData(iso){
+  if(!iso) return '';
+  const p=iso.split('T')[0].split('-');
+  if(p.length<3) return iso;
+  return p[2]+'/'+p[1]+'/'+p[0];
+}
+function brDataHora(iso){
+  if(!iso) return '—';
+  const d=new Date(iso);
+  return d.toLocaleDateString('pt-BR')+' às '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+}
+
+/* ===== Toast ===== */
+let toastT;
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+/* ===== Status ===== */
+function statusDe(d){
+  if(!d.pedido.feito) return {key:'sem-pedido',txt:'Sem pedido'};
+  if(!d.grafica.feito) return {key:'aguardando-grafica',txt:'Aguardando gráfica'};
+  if(!d.entregue.feito) return {key:'aguardando-entrega',txt:'Aguardando entrega'};
+  return {key:'concluido',txt:'Concluído'};
+}
+function totalQtd(d){return (d.materiais||[]).reduce((s,m)=>s+(parseInt(m.quantidade)||0),0);}
+
+/* ===== Resumo ===== */
+function renderResumo(){
+  const ds=dados.deputados;
+  const distr=ds.filter(d=>d.esfera==='Distrital').length;
+  const fed=ds.filter(d=>d.esfera==='Federal').length;
+  const semPedido=ds.filter(d=>statusDe(d).key==='sem-pedido').length;
+  const concl=ds.filter(d=>statusDe(d).key==='concluido').length;
+  const totalMat=ds.reduce((s,d)=>s+totalQtd(d),0);
+  document.getElementById('resumo').innerHTML=`
+    <div class="stat"><div class="n">${ds.length}</div><div class="l">Deputados</div></div>
+    <div class="stat"><div class="n">${distr}</div><div class="l">Distritais</div></div>
+    <div class="stat"><div class="n">${fed}</div><div class="l">Federais</div></div>
+    <div class="stat alvo"><div class="n">${totalMat.toLocaleString('pt-BR')}</div><div class="l">Itens de material</div></div>
+    <div class="stat pend"><div class="n">${semPedido}</div><div class="l">Sem pedido</div></div>
+    <div class="stat ok"><div class="n">${concl}</div><div class="l">Concluídos</div></div>`;
+}
+function renderSalvo(){
+  document.getElementById('salvoInfo').innerHTML=
+    'Última atualização salva:<br><b>'+brDataHora(dados.lastSaved)+'</b>';
+}
+
+/* ===== Lista ===== */
+function filtrados(){
+  const q=document.getElementById('busca').value.trim().toLowerCase();
+  const fe=document.getElementById('fEsfera').value;
+  const ft=document.getElementById('fTipo').value;
+  const fs=document.getElementById('fStatus').value;
+  return dados.deputados.filter(d=>{
+    if(fe&&d.esfera!==fe) return false;
+    if(ft&&d.tipo!==ft) return false;
+    if(fs&&statusDe(d).key!==fs) return false;
+    if(q){const alvo=(d.nome+' '+d.partido).toLowerCase();if(!alvo.includes(q)) return false;}
+    return true;
+  });
+}
+
+function render(){
+  renderResumo();renderSalvo();
+  const cont=document.getElementById('lista');
+  const lista=filtrados();
+  if(dados.deputados.length===0){
+    cont.innerHTML=`<div class="vazio"><div class="ico">📋</div><p>Nenhum deputado cadastrado ainda.</p><p style="margin-top:8px;font-size:.85rem">Clique em <b>＋ Novo deputado</b> para começar.</p></div>`;
+    return;
+  }
+  if(lista.length===0){cont.innerHTML=`<div class="vazio"><div class="ico">🔍</div><p>Nenhum resultado para os filtros aplicados.</p></div>`;return;}
+
+  // ordena: Distrital primeiro, depois por tipo, depois nome
+  lista.sort((a,b)=> a.esfera.localeCompare(b.esfera)||a.tipo.localeCompare(b.tipo)||a.nome.localeCompare(b.nome));
+
+  cont.innerHTML=lista.map(d=>cardHTML(d)).join('');
+}
+
+function cardHTML(d){
+  const st=statusDe(d);
+  const esfChip=d.esfera==='Federal'?'<span class="chip chip-fed">Federal</span>':'<span class="chip chip-esf">Distrital</span>';
+  const et=(c,lbl)=>`<span class="etapa ${c?'done':''}">${c?'✓':'○'} ${lbl}</span>`;
+  return `
+  <div class="dep t-${d.tipo} ${d._open?'open':''}" data-id="${d.id}">
+    <div class="dep-head" onclick="toggleDep(${d.id})">
+      <span class="toggle-ico">▶</span>
+      <div>
+        <div class="dep-nome">${esc(d.nome)} <span class="chip chip-tipo">Tipo ${d.tipo}</span></div>
+        <div class="dep-sub">${esc(d.partido||'—')} · ${esfChip}</div>
+      </div>
+      <div class="dep-prog">
+        <span class="qtd-badge">${totalQtd(d).toLocaleString('pt-BR')} itens</span>
+        ${et(d.pedido.feito,'Pedido')}
+        ${et(d.grafica.feito,'Gráfica')}
+        ${et(d.entregue.feito,'Entregue')}
+      </div>
+    </div>
+    <div class="dep-body">
+      <div class="grid-form">
+        <div class="field"><label>Nome</label><input value="${esc(d.nome)}" onchange="upd(${d.id},'nome',this.value)"></div>
+        <div class="field"><label>Partido</label><input value="${esc(d.partido)}" onchange="upd(${d.id},'partido',this.value)"></div>
+        <div class="field"><label>Esfera</label><select onchange="upd(${d.id},'esfera',this.value)">
+          <option ${d.esfera==='Distrital'?'selected':''}>Distrital</option>
+          <option ${d.esfera==='Federal'?'selected':''}>Federal</option></select></div>
+        <div class="field"><label>Tipo</label><select onchange="upd(${d.id},'tipo',this.value)">
+          <option ${d.tipo==='A'?'selected':''} value="A">Tipo A</option>
+          <option ${d.tipo==='B'?'selected':''} value="B">Tipo B</option>
+          <option ${d.tipo==='C'?'selected':''} value="C">Tipo C</option></select></div>
+      </div>
+
+      <div class="sec-titulo">Materiais e quantidades</div>
+      <table class="mat-tabela">
+        <thead><tr><th>Material</th><th style="width:110px">Quantidade</th><th style="width:40px"></th></tr></thead>
+        <tbody>
+          ${(d.materiais||[]).map((m,i)=>`
+            <tr>
+              <td><input value="${esc(m.nome)}" placeholder="Ex: Santinho, Adesivo, Bandeira..." onchange="updMat(${d.id},${i},'nome',this.value)"></td>
+              <td><input class="qtd" type="number" min="0" value="${m.quantidade}" onchange="updMat(${d.id},${i},'quantidade',this.value)"></td>
+              <td><button class="mat-del" title="Remover" onclick="delMat(${d.id},${i})">🗑</button></td>
+            </tr>`).join('')}
+          <tr><td colspan="3"><button class="btn btn-ghost btn-sm" onclick="addMat(${d.id})">＋ Adicionar material</button>
+            <span style="float:right;padding-top:8px" class="mat-total">Total: ${totalQtd(d).toLocaleString('pt-BR')} itens</span></td></tr>
+        </tbody>
+      </table>
+
+      <div class="sec-titulo">Acompanhamento das etapas</div>
+      <div class="etapas-grid">
+        ${etapaCard(d,'pedido',1,'Material pedido','Data do pedido')}
+        ${etapaCard(d,'grafica',2,'Entregue pela gráfica','Data de entrega da gráfica')}
+        ${etapaCard(d,'entregue',3,'Entregue ao deputado','Data da entrega ao deputado')}
+      </div>
+
+      <div class="grid-form" style="margin-top:14px">
+        <div class="field" style="grid-column:1/-1"><label>Observação</label>
+          <textarea onchange="upd(${d.id},'obs',this.value)">${esc(d.obs||'')}</textarea></div>
+      </div>
+
+      <div class="dep-actions">
+        <button class="btn btn-danger btn-sm" onclick="excluir(${d.id})">🗑 Excluir deputado</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function etapaCard(d,key,num,titulo,dlabel){
+  const e=d[key];
+  return `<div class="etapa-card ${e.feito?'feito':''}">
+    <div class="et-top"><span class="num">${num}</span>
+      <input type="checkbox" ${e.feito?'checked':''} onchange="toggleEtapa(${d.id},'${key}',this.checked)">
+      <span>${titulo}</span></div>
+    <label class="dlabel">${dlabel}</label>
+    <input type="date" value="${e.data||''}" onchange="updEtapaData(${d.id},'${key}',this.value)">
+  </div>`;
+}
+
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+/* ===== Ações ===== */
+function getDep(id){return dados.deputados.find(d=>d.id===id);}
+
+function toggleDep(id){const d=getDep(id);d._open=!d._open;render();}
+
+function upd(id,campo,val){getDep(id)[campo]=val;salvar();render();}
+
+function updMat(id,i,campo,val){const d=getDep(id);d.materiais[i][campo]=campo==='quantidade'?(parseInt(val)||0):val;salvar();render();}
+function addMat(id){const d=getDep(id);d.materiais.push({nome:'',quantidade:0});salvar();render();}
+function delMat(id,i){const d=getDep(id);d.materiais.splice(i,1);salvar();render();}
+
+function toggleEtapa(id,key,checked){
+  const d=getDep(id);d[key].feito=checked;
+  if(checked&&!d[key].data) d[key].data=hojeISO();
+  salvar();render();
+}
+function updEtapaData(id,key,val){const d=getDep(id);d[key].data=val;if(val)d[key].feito=true;salvar();render();}
+
+function excluir(id){
+  const d=getDep(id);
+  if(!confirm('Excluir o deputado "'+d.nome+'" e todos os seus dados? Esta ação não pode ser desfeita.'))return;
+  dados.deputados=dados.deputados.filter(x=>x.id!==id);
+  salvar();render();toast('Deputado excluído');
+}
+
+/* ===== Novo ===== */
+function abrirNovo(){
+  document.getElementById('nNome').value='';
+  document.getElementById('nPartido').value='';
+  document.getElementById('nEsfera').value='Distrital';
+  document.getElementById('nTipo').value='A';
+  document.getElementById('nObs').value='';
+  document.getElementById('overlayNovo').classList.add('show');
+  setTimeout(()=>document.getElementById('nNome').focus(),50);
+}
+function fecharNovo(){document.getElementById('overlayNovo').classList.remove('show');}
+function salvarNovo(){
+  const nome=document.getElementById('nNome').value.trim();
+  const partido=document.getElementById('nPartido').value.trim();
+  if(!nome){alert('Informe o nome do deputado.');return;}
+  dados.deputados.push({
+    id:dados.nextId++,
+    nome,partido,
+    esfera:document.getElementById('nEsfera').value,
+    tipo:document.getElementById('nTipo').value,
+    obs:document.getElementById('nObs').value.trim(),
+    materiais:[{nome:'',quantidade:0}],
+    pedido:{feito:false,data:''},
+    grafica:{feito:false,data:''},
+    entregue:{feito:false,data:''},
+    _open:true
+  });
+  salvar();render();fecharNovo();toast('Deputado adicionado');
+}
+
+/* ===== Backup ===== */
+function exportarBackup(){
+  const blob=new Blob([JSON.stringify(dados,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='backup-materiais-deputados-'+hojeISO()+'.json';
+  a.click();URL.revokeObjectURL(url);
+  toast('Backup salvo');
+}
+function importarBackup(ev){
+  const file=ev.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const obj=JSON.parse(e.target.result);
+      if(!obj.deputados)throw new Error('formato');
+      if(!confirm('Isso vai substituir os dados atuais pelos do backup. Continuar?'))return;
+      dados=obj;salvar();render();toast('Backup importado');
+    }catch(err){alert('Arquivo inválido.');}
+  };
+  reader.readAsText(file);
+  ev.target.value='';
+}
+
+/* ===== PDF (impressão) ===== */
+function salvarPDF(){
+  const ds=[...dados.deputados].sort((a,b)=>a.esfera.localeCompare(b.esfera)||a.tipo.localeCompare(b.tipo)||a.nome.localeCompare(b.nome));
+  const grupos={'Distrital':[],'Federal':[]};
+  ds.forEach(d=>{(grupos[d.esfera]||(grupos[d.esfera]=[])).push(d);});
+
+  let html=`<h1>Controle de Materiais Gráficos — Deputados</h1>
+    <div class="p-sub">Campanha Celina Leão 2026 · Relatório gerado em <b>${brDataHora(new Date().toISOString())}</b> · Última atualização salva: ${brDataHora(dados.lastSaved)}</div>`;
+
+  for(const esf of Object.keys(grupos)){
+    const arr=grupos[esf];if(!arr.length)continue;
+    html+=`<div class="p-grupo">Deputados ${esf}s — ${arr.length}</div>`;
+    html+=`<table><thead><tr>
+      <th>Deputado</th><th>Partido</th><th>Tipo</th><th>Materiais (qtd)</th>
+      <th>Pedido</th><th>Gráfica</th><th>Entregue ao dep.</th></tr></thead><tbody>`;
+    arr.forEach(d=>{
+      const mats=(d.materiais||[]).filter(m=>m.nome||m.quantidade)
+        .map(m=>esc(m.nome||'(sem nome)')+': '+(parseInt(m.quantidade)||0)).join('<br>')||'—';
+      const cel=e=>e.feito?`<span class="ok">✔ ${brData(e.data)||'sim'}</span>`:`<span class="no">—</span>`;
+      html+=`<tr>
+        <td><b>${esc(d.nome)}</b>${d.obs?'<br><i style="color:#888;font-size:9px">'+esc(d.obs)+'</i>':''}</td>
+        <td>${esc(d.partido||'—')}</td>
+        <td>${d.tipo}</td>
+        <td>${mats}<br><b>Total: ${totalQtd(d)}</b></td>
+        <td>${cel(d.pedido)}</td>
+        <td>${cel(d.grafica)}</td>
+        <td>${cel(d.entregue)}</td></tr>`;
+    });
+    html+=`</tbody></table>`;
+  }
+  if(!ds.length) html+=`<p>Nenhum deputado cadastrado.</p>`;
+  html+=`<div class="p-foot">Documento gerado pelo sistema de Controle de Materiais Gráficos · Campanha Celina Leão 2026</div>`;
+
+  document.getElementById('print-area').innerHTML=html;
+  window.print();
+}
+
+/* ===== Init ===== */
+['busca','fEsfera','fTipo','fStatus'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',render);
+});
+document.getElementById('overlayNovo').addEventListener('click',e=>{if(e.target.id==='overlayNovo')fecharNovo();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')fecharNovo();});
+
+render();
+</script>
+</body>
+</html>
