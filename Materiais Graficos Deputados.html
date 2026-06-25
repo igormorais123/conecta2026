@@ -508,7 +508,7 @@ function salvarPDF(){
     const arr=grupos[esf];if(!arr.length)continue;
     html+=`<div class="p-grupo">Deputados ${esf}s — ${arr.length}</div>`;
     html+=`<table><thead><tr>
-      <th>Deputado</th><th>Partido</th><th>Tipo</th><th>Materiais (qtd)</th>
+      <th>Deputado</th><th>Partido</th><th>Tipo</th><th>Data esfera</th><th>Materiais (qtd)</th>
       <th>Pedido</th><th>Gráfica</th><th>Entregue ao dep.</th></tr></thead><tbody>`;
     arr.forEach(d=>{
       const mats=(d.materiais||[]).filter(m=>m.nome||m.quantidade)
