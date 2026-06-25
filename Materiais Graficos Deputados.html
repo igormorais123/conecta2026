@@ -292,12 +292,10 @@ function renderResumo(){
   const fed=ds.filter(d=>d.esfera==='Federal').length;
   const semPedido=ds.filter(d=>statusDe(d).key==='sem-pedido').length;
   const concl=ds.filter(d=>statusDe(d).key==='concluido').length;
-  const totalMat=ds.reduce((s,d)=>s+totalQtd(d),0);
   document.getElementById('resumo').innerHTML=`
-    <div class="stat"><div class="n">${ds.length}</div><div class="l">Deputados</div></div>
+    <div class="stat"><div class="n">${ds.length}</div><div class="l">Pré-candidatos</div></div>
     <div class="stat"><div class="n">${distr}</div><div class="l">Distritais</div></div>
     <div class="stat"><div class="n">${fed}</div><div class="l">Federais</div></div>
-    <div class="stat alvo"><div class="n">${totalMat.toLocaleString('pt-BR')}</div><div class="l">Itens de material</div></div>
     <div class="stat pend"><div class="n">${semPedido}</div><div class="l">Sem pedido</div></div>
     <div class="stat ok"><div class="n">${concl}</div><div class="l">Concluídos</div></div>`;
 }
