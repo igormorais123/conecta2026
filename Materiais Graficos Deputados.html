@@ -368,21 +368,6 @@ function cardHTML(d){
           <option ${d.tipo==='C'?'selected':''} value="C">Tipo C</option></select></div>
       </div>
 
-      <div class="sec-titulo">Materiais e quantidades</div>
-      <table class="mat-tabela">
-        <thead><tr><th>Material</th><th style="width:110px">Quantidade</th><th style="width:40px"></th></tr></thead>
-        <tbody>
-          ${(d.materiais||[]).map((m,i)=>`
-            <tr>
-              <td><input value="${esc(m.nome)}" placeholder="Ex: Santinho, Adesivo, Bandeira..." onchange="updMat(${d.id},${i},'nome',this.value)"></td>
-              <td><input class="qtd" type="number" min="0" value="${m.quantidade}" onchange="updMat(${d.id},${i},'quantidade',this.value)"></td>
-              <td><button class="mat-del" title="Remover" onclick="delMat(${d.id},${i})">🗑</button></td>
-            </tr>`).join('')}
-          <tr><td colspan="3"><button class="btn btn-ghost btn-sm" onclick="addMat(${d.id})">＋ Adicionar material</button>
-            <span style="float:right;padding-top:8px" class="mat-total">Total: ${totalQtd(d).toLocaleString('pt-BR')} itens</span></td></tr>
-        </tbody>
-      </table>
-
       <div class="sec-titulo">Acompanhamento das etapas</div>
       <div class="etapas-grid">
         ${etapaCard(d,'pedido',1,'Pedimos o material','Data que pedimos o material')}
