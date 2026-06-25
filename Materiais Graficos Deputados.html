@@ -502,10 +502,10 @@ function salvarPDF(){
 
   for(const esf of Object.keys(grupos)){
     const arr=grupos[esf];if(!arr.length)continue;
-    html+=`<div class="p-grupo">Deputados ${esf}s — ${arr.length}</div>`;
+    html+=`<div class="p-grupo">Pré-candidatos a Deputado ${esf} — ${arr.length}</div>`;
     html+=`<table><thead><tr>
-      <th>Deputado</th><th>Partido</th><th>Tipo</th><th>Data esfera</th><th>Materiais (qtd)</th>
-      <th>Pedido</th><th>Gráfica</th><th>Entregue ao dep.</th></tr></thead><tbody>`;
+      <th>Pré-candidato</th><th>Partido</th><th>Tipo</th><th>Materiais (qtd)</th>
+      <th>Data que pedimos</th><th>Data que recebemos</th><th>Data que entregamos</th></tr></thead><tbody>`;
     arr.forEach(d=>{
       const mats=(d.materiais||[]).filter(m=>m.nome||m.quantidade)
         .map(m=>esc(m.nome||'(sem nome)')+': '+(parseInt(m.quantidade)||0)).join('<br>')||'—';
