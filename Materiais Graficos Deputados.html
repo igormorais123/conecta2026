@@ -283,7 +283,6 @@ function statusDe(d){
   if(!d.entregue.feito) return {key:'aguardando-entrega',txt:'Aguardando entrega'};
   return {key:'concluido',txt:'Concluído'};
 }
-function totalQtd(d){return (d.materiais||[]).reduce((s,m)=>s+(parseInt(m.quantidade)||0),0);}
 
 /* ===== Resumo ===== */
 function renderResumo(){
