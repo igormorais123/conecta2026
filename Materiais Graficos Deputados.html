@@ -335,7 +335,7 @@ function render(){
 
 function cardHTML(d){
   const st=statusDe(d);
-  const esfChip=d.esfera==='Federal'?'<span class="chip chip-fed">Federal</span>':'<span class="chip chip-esf">Distrital</span>';
+  const esfChip=d.esfera==='Federal'?'<span class="chip chip-fed">Pré-cand. Federal</span>':'<span class="chip chip-esf">Pré-cand. Distrital</span>';
   const et=(c,lbl)=>`<span class="etapa ${c?'done':''}">${c?'✓':'○'} ${lbl}</span>`;
   return `
   <div class="dep t-${d.tipo} ${d._open?'open':''}" data-id="${d.id}">
