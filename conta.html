@@ -208,12 +208,7 @@
         <div class="actions">
             <button class="primary" id="saveButton" type="button">Alterar senha</button>
             <a class="button-link secondary" id="linkVoltar" href="CONECTA.html">Voltar ao CONECTA</a>
-            <button class="danger" id="logoutButton" type="button">Sair</button>
         </div>
-        <div class="secondary-links">
-            <a class="button-link secondary" id="linkInteia" href="https://inteia.com.br" target="_blank" rel="noopener noreferrer">Abrir site da INTEIA</a>
-        </div>
-
         <div id="message" class="message"></div>
 
         <!-- Integracao Elexion -->
@@ -231,7 +226,7 @@
             <div id="elexionLoginForm">
                 <div class="field">
                     <label class="label" for="elexionEmail">E-mail Elexion</label>
-                    <input type="email" id="elexionEmail" placeholder="coordenador@inteia.com.br" autocomplete="username">
+                    <input type="email" id="elexionEmail" placeholder="coordenador@exemplo.com" autocomplete="username">
                 </div>
                 <div class="field">
                     <label class="label" for="elexionPassword">Senha Elexion</label>
@@ -258,7 +253,6 @@
         </div>
 
         <div class="footer">
-            Implementado por <a id="footerInteiaLink" href="https://inteia.com.br" target="_blank" rel="noopener noreferrer" style="color:#64748b;text-decoration:none;">INTEIA - Inteligência Estratégica Eleitoral</a><br>
             Sistema desenvolvido por Silvio Morais Vieira
         </div>
     </div>
@@ -291,10 +285,7 @@
         async function requireSession() {
             await ConectaDB.init();
             var user = await ConectaDB.getUser();
-            if (!user) {
-                window.location.href = (window.CONECTA_CONFIG && window.CONECTA_CONFIG.loginPath) || 'login.html';
-                return null;
-            }
+            // Login removido — nao redireciona; a pagina segue mesmo sem sessao
             return user;
         }
 
@@ -361,9 +352,11 @@
             }
         });
 
-        logoutButton.addEventListener('click', function() {
-            ConectaDB.logout();
-        });
+        if (logoutButton) {
+            logoutButton.addEventListener('click', function() {
+                ConectaDB.logout();
+            });
+        }
 
         // Ajustar link de volta
         if (linkVoltar && (window.CONECTA_CONFIG || {}).appPath) linkVoltar.href = window.CONECTA_CONFIG.appPath;

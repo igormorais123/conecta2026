@@ -207,10 +207,8 @@ tr:hover td { background:rgba(59,130,246,0.05); }
             <span id="userName" style="font-size:0.78rem;color:var(--text2);font-weight:600;"></span>
             <button class="btn btn-sm" style="background:#0277bd;color:#fff;" onclick="quickExportJSON()" title="Ctrl+E">Backup</button>
             <button class="btn btn-sm" style="background:#455a64;color:#fff;" onclick="quickImportJSON()" title="Restaurar backup">Restaurar</button>
-            <button class="btn btn-sm" style="background:var(--accent);color:#fff;" onclick="openInteiaSite()">INTEIA</button>
             <button class="btn btn-sm" style="background:var(--green);color:#fff;" onclick="window.location.href=(window.CONECTA_CONFIG && window.CONECTA_CONFIG.appPath) || 'CONECTA.html'">&#8592; CONECTA</button>
             <button class="btn btn-sm" style="background:var(--card2);color:#fff;" onclick="window.location.href=(window.CONECTA_CONFIG && window.CONECTA_CONFIG.contaPath) || 'conta.html'">Conta</button>
-            <button class="btn btn-sm" style="background:var(--red);color:#fff;" onclick="ConectaDB.logout()">Sair</button>
         </div>
     </div>
     <div class="nav-links">
@@ -3188,7 +3186,9 @@ async function bootstrapLogistica() {
     try {
         var sessionResult = await window.CONECTA_SUPABASE.auth.getSession();
         if (!sessionResult.data.session) {
-            window.location.href = (window.CONECTA_CONFIG && window.CONECTA_CONFIG.loginPath) || 'login.html';
+            // Login removido — funcionar com dados locais, sem exigir usuario/senha
+            renderDashboard();
+            setInterval(updateCountdown, 60000);
             return;
         }
 

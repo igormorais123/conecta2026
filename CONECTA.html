@@ -1938,7 +1938,6 @@
     </nav>
     <div class="sidebar-footer">
         <span>Conecta Celina Le&atilde;o 2026</span>
-        <br><a href="https://inteia.com.br" target="_blank" style="color:#94a3b8;font-size:10px;text-decoration:none;">INTEIA &mdash; Inteligência Estratégica</a>
     </div>
 </aside>
 
@@ -1950,9 +1949,7 @@
         <span class="header-clock" id="clock"></span>
         <span id="userName" style="font-size:0.8rem;color:var(--text-light);font-weight:600;"></span>
         <span id="syncStatusBadge" style="font-size:0.72rem;font-weight:700;padding:6px 10px;border-radius:999px;background:#eceff1;color:#455a64;">Sync local</span>
-        <button class="btn-header" onclick="openInteiaSite()">Site INTEIA</button>
         <button class="btn-header" onclick="window.location.href=(window.CONECTA_CONFIG && window.CONECTA_CONFIG.contaPath) || 'conta.html'">Minha Conta</button>
-        <button class="btn-header" onclick="ConectaDB.logout()">Sair</button>
         <button class="btn-header" onclick="syncAgora()">Sincronizar</button>
         <button class="btn-header" onclick="triggerImportBackup()">Importar Backup</button>
         <button class="btn-header" onclick="exportData()">Exportar Dados</button>
@@ -5840,7 +5837,8 @@ async function bootstrapApp() {
     try {
         var sessionResult = await window.CONECTA_SUPABASE.auth.getSession();
         if (!sessionResult.data.session) {
-            window.location.href = (window.CONECTA_CONFIG && window.CONECTA_CONFIG.loginPath) || 'login.html';
+            // Login removido — funcionar com dados locais, sem exigir usuario/senha
+            init();
             return;
         }
 

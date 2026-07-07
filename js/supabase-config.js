@@ -24,9 +24,9 @@
         return {
             _initialized: true,
             basePath: basePath,
-            sitePath: existing.sitePath || 'https://inteia.com.br/',
+            sitePath: existing.sitePath || './',
             fallbackIconPath: existing.fallbackIconPath || (basePath + 'icons/icon-192.png'),
-            loginPath: existing.loginPath || basePath + 'login.html',
+            loginPath: existing.loginPath || basePath + 'CONECTA.html',
             appPath: existing.appPath || basePath + 'CONECTA.html',
             contaPath: existing.contaPath || basePath + 'conta.html',
             logisticaPath: existing.logisticaPath || basePath + 'Logistica Campanha.html',
@@ -72,7 +72,7 @@
         var faviconLink = options.faviconLink || null;
         var appleTouchIcon = options.appleTouchIcon || null;
         var shouldRegisterServiceWorker = options.registerServiceWorker !== false;
-        var fallbackIconPath = cfg.fallbackIconPath || 'https://inteia.com.br/brand/escudo-v2-256.png';
+        var fallbackIconPath = cfg.fallbackIconPath || (basePath + 'icons/icon-192.png');
         var useHostedFallback = isHostedConectaProduction();
 
         if (manifestLink) {
@@ -146,23 +146,19 @@
     document.head.appendChild(script);
 
     // ===== AUTH GUARD =====
-    // Usar em paginas protegidas: window.CONECTA_AUTH_GUARD().then(function(session) { ... })
+    // Login removido — o guard nunca redireciona; resolve com a sessao (ou null) e o app segue com dados locais.
     window.CONECTA_AUTH_GUARD = function() {
         return new Promise(function(resolve) {
             function check() {
                 var sb = window.CONECTA_SUPABASE;
                 if (!sb) {
-                    window.location.href = window.CONECTA_CONFIG.loginPath;
+                    resolve(null);
                     return;
                 }
                 sb.auth.getSession().then(function(result) {
-                    if (result.data.session) {
-                        resolve(result.data.session);
-                    } else {
-                        window.location.href = window.CONECTA_CONFIG.loginPath;
-                    }
+                    resolve(result.data.session || null);
                 }).catch(function() {
-                    window.location.href = window.CONECTA_CONFIG.loginPath;
+                    resolve(null);
                 });
             }
 
